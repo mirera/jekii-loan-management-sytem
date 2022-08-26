@@ -138,9 +138,15 @@ python manage.py createsuperuser
         4. Filters available:
             1. status?=PENDING
             2. status?=APPROVED
-            3. status?=CLOSED
+            3. status?=CLEARED
         5. For example:
             1. For only one of the filters use: http://localhost:8000/loan/list-loans-admin-agent?status=APPROVED
+            
+    5. **Roll-over Loan by agent : /loan/roll-over-loan/<int:pk>/**
+        1. This endpoint is for the AGENT/credit officer role only to rollover loan for a member.
+        2. Authorization required to access this endpoint.
+        3. PUT request with <int:pk> i.e. loan ID as a URL parameter and new loan details in the body can be used to edit a loan.
+        
                    
     * **Member APIs:**
     1. **Add member by Agent : /loan/add-member/**
@@ -168,6 +174,6 @@ python manage.py createsuperuser
         4. Filters available:
             1. status?=PENDING
             2. status?=APPROVED
-            3. status?=CLOSED
+            3. status?=CLEARED
         5. For example:
             1. For only one of the filters use: http://localhost:8000/member/list-loans?status=APPROVED
