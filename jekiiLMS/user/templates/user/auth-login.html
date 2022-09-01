@@ -38,11 +38,25 @@
                                         <img class="logo-dark logo-img logo-img-lg" src="{% static 'assets/images/logo.png' %}" srcset="./images/logo-dark2x.png 2x" alt="logo-dark"> -->
                                     </a>
                                 </div>
+                                <!-- django error messages starts here -->
+                                {% if messages %}
+                                <div class=" error-messages" style="color: #a64452;">
+                                    <ul class="messages">
+                                        {% for message in messages %}
+                                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                <br>
+
+                                {% endif %}
+                                <!-- django error messages ends here -->
+
                                 <div class="nk-block-head">
                                     <div class="nk-block-head-content">
                                         <h5 class="nk-block-title">Sign-In</h5>
                                         <div class="nk-block-des">
-                                            <p>Access the Jekii Capital panel using your email and passcode.</p>
+                                            <!-- <p>Access the Jekii Capital panel using your email and passcode.</p> -->
                                         </div>
                                     </div>
                                 </div><!-- .nk-block-head -->
@@ -51,7 +65,7 @@
                                     <div class="form-group">
                                         <div class="form-label-group">
                                             <label class="form-label" name="email" for="email-address">Email or Username</label>
-                                            <a class="link link-primary link-sm" tabindex="-1" href="#">Need Help?</a>
+                                            <!-- <a class="link link-primary link-sm" tabindex="-1" href="#">Need Help?</a> -->
                                         </div>
                                         <div class="form-control-wrap">
                                             <input autocomplete="off" type="text" name="email" class="form-control form-control-lg" required id="email-address" placeholder="Enter your email address or username">
@@ -60,7 +74,7 @@
                                     <div class="form-group">
                                         <div class="form-label-group">
                                             <label class="form-label" name="password" for="password">Passcode</label>
-                                            <a class="link link-primary link-sm" tabindex="-1" href="{% static 'user/auth-reset.html' %}">Forgot Code?</a>
+                                            <a class="link link-primary link-sm" tabindex="-1" href="{% url 'password_reset' %}">Forgot Code?</a>
                                         </div>
                                         <div class="form-control-wrap">
                                             <a tabindex="-1" href="#" class="form-icon form-icon-right passcode-switch lg" data-target="password">
@@ -74,7 +88,7 @@
                                         <button class="btn btn-lg btn-primary btn-block">Sign in</button>
                                     </div>
                                 </form><!-- form -->
-                                <div class="form-note-s2 pt-4"> New on our platform? <a href="{% static 'user/aauth-register.html' %}">Create an account</a>
+                                <div class="form-note-s2 pt-4"> New on our platform? <a href="{% url 'register' %}">Create an account</a>
                                 </div>
                                 <!-- <div class="text-center pt-4 pb-3">
                                     <h6 class="overline-title overline-title-sap"><span>OR</span></h6>
