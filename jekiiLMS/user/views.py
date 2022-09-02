@@ -1,9 +1,11 @@
 from email import message
+from multiprocessing import context
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from .forms import UserCreationFormWithEmail
+from django.contrib.auth.forms import UserCreationForm
+#from .forms import UserCreationFormWithEmail
 from django.contrib import messages
 
 
@@ -30,6 +32,7 @@ def user_login(request):
 
         if user is not None:
             login(request, user)
+            return redirect('home')
         else:
             #return error message
             messages.error(request, 'The email or password is incorrect')
@@ -42,11 +45,11 @@ def user_login(request):
 #---user register  logic starts here---
 
 def user_signup(request):
-    form = UserCreationFormWithEmail()
+    form = UserCreationForm()
     if request.method == 'POST':
 
         #binding data from fields to the form
-        form = UserCreationFormWithEmail(request.POST)
+        form = UserCreationForm(request.POST)
 
         #performing validation
         if form.is_valid():
@@ -54,7 +57,6 @@ def user_signup(request):
             #save user but no commit before lowercasing the username
             user = form.save(commit=False)
             user.username = user.username.lower()
-            user.email = user.email.lower()
             user.save()
             
             login(request, user)
@@ -63,7 +65,9 @@ def user_signup(request):
             #return error message
             messages.error(request, 'An error occured during regetration, please try again!')
 
-    return render (request, 'user/auth-register.html')
+    context= {form:'form'}
+
+    return render (request, 'user/auth-register.html', context)
 
 #---user register  logic ends here---
 
