@@ -59,7 +59,6 @@ def user_signup(request):
             user = form.save(commit=False)
             # user.username = user.username.lower()
             user.save()
-            messages.success(request, 'Account created successfully, you are being redirected to home..')
             login(request, user)
             return redirect('home')
         else:
