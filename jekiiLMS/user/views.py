@@ -16,17 +16,17 @@ def user_login(request):
 
     #extracting login credential from login form
     if request.method == 'POST':
-        email = request.POST.get('email')
+        username = request.POST.get('username')
         password = request.POST.get('password')
 
-        #raise email do not exist in our databse error
+        #raise email/username do not exist in our databse error
         try:
-            user = User.objects.get(email=email)
+            user = User.objects.get(username=username)
         except:
-            messages.error(request, 'This email does not exist on our database!')
+            messages.error(request, 'This email/username does not exist on our database!')
 
         # check if email and password match to autheticate
-        user = authenticate(email=email, password=password)
+        user = authenticate(username=username, password=password)
 
         if user is not None:
             login(request, user)
