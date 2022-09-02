@@ -1,11 +1,12 @@
-from email import message
+# from email import message
+# import email
+
 from multiprocessing import context
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
-#from .forms import UserCreationFormWithEmail
+from .forms import CustomUserCreationForm
 from django.contrib import messages
 
 
@@ -21,11 +22,11 @@ def user_login(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
 
-        #raise email/username do not exist in our databse error
+        #raise username do not exist in our databse error
         try:
             user = User.objects.get(username=username)
         except:
-            messages.error(request, 'This email/username does not exist on our database!')
+            messages.error(request, 'This username does not exist on our database!')
 
         # check if email and password match to autheticate
         user = authenticate(username=username, password=password)
@@ -35,7 +36,7 @@ def user_login(request):
             return redirect('home')
         else:
             #return error message
-            messages.error(request, 'The email or password is incorrect')
+            messages.error(request, 'The username or password is incorrect')
             
     return render (request, 'user/auth-login.html')
 
@@ -45,20 +46,20 @@ def user_login(request):
 #---user register  logic starts here---
 
 def user_signup(request):
-    form = UserCreationForm()
+    form = CustomUserCreationForm()
     if request.method == 'POST':
 
         #binding data from fields to the form
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
 
         #performing validation
         if form.is_valid():
 
             #save user but no commit before lowercasing the username
             user = form.save(commit=False)
-            user.username = user.username.lower()
+            # user.username = user.username.lower()
             user.save()
-            
+            messages.success(request, 'Account created successfully, you are being redirected to home..')
             login(request, user)
             return redirect('home')
         else:
