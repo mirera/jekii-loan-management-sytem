@@ -22,5 +22,6 @@ urlpatterns = [
     path('loan/', include('loan.urls')),
     path('member/', include('member.urls')),
     path('user/', include('user.urls')),
+    path('branch/', include('user.urls')),
     path('',views.homepage, name='home')
 ]
