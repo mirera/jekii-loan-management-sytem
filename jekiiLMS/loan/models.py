@@ -51,10 +51,11 @@ INTEREST_RATE_PER_CHOICES = (
     ('year','YEAR'),
 )
 class LoanProduct(models.Model):
-    loan_name = models.CharField(max_length=300)
-    loan_term = models.PositiveSmallIntegerField()
+    loan_product_name = models.CharField(max_length=300)
+    minimum_amount = models.IntegerField(default=5000)
+    maximum_amount = models.IntegerField(default=10000)
+    loan_product_term = models.PositiveSmallIntegerField()
     repayment_frequency = models.CharField(max_length=8, choices=REPAYMENT_FREQUENCY_CHOICES, default='onetime')
-    # repayment_type = models.CharField(max_length=8, choices=REPAYMENT_FREQUENCY_CHOICES, default='days')
     interest_type = models.CharField(max_length=30, choices=INTEREST_TYPE_CHOICES, default='flat_rate')
     interest_rate = models.DecimalField(decimal_places=2, max_digits=12, validators=[MinValueValidator(Decimal('0.01'))])
     interest_rate_per = models.CharField(max_length=50, choices=INTEREST_RATE_PER_CHOICES, default='month')
@@ -63,9 +64,10 @@ class LoanProduct(models.Model):
     penalty_type = models.CharField(max_length=300, choices=PENALTY_FEE_TYPE_CHOICES, default='fixed_value')
     penalty_value = models.DecimalField(decimal_places=2, max_digits=12, validators=[MinValueValidator(Decimal('0.01'))])
     penalty_frequency = models.CharField(max_length=300, choices=PENALTY_FREQUENCY_TYPE_CHOICES, default='fixed_value')
+    loan_product_description = models.TextField(null=True, blank=True)
 
     def __str__(self):
-        return self.loan_name
+        return self.loan_product_name
 
 #Loan Prouct model ends here
 
