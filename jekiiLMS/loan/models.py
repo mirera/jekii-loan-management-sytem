@@ -4,8 +4,11 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 from decimal import Decimal
+from django.utils import timezone
+import uuid
 from member.models import Member
 from user.models import Credit_Officer
+
 
 #Loan Prouct model starts here
 
@@ -51,10 +54,11 @@ INTEREST_RATE_PER_CHOICES = (
     ('year','YEAR'),
 )
 class LoanProduct(models.Model):
-    loan_name = models.CharField(max_length=300)
-    loan_term = models.PositiveSmallIntegerField()
+    loan_product_name = models.CharField(max_length=300)
+    minimum_amount = models.IntegerField(default=5000)
+    maximum_amount = models.IntegerField(default=10000)
+    loan_product_term = models.PositiveSmallIntegerField()
     repayment_frequency = models.CharField(max_length=8, choices=REPAYMENT_FREQUENCY_CHOICES, default='onetime')
-    # repayment_type = models.CharField(max_length=8, choices=REPAYMENT_FREQUENCY_CHOICES, default='days')
     interest_type = models.CharField(max_length=30, choices=INTEREST_TYPE_CHOICES, default='flat_rate')
     interest_rate = models.DecimalField(decimal_places=2, max_digits=12, validators=[MinValueValidator(Decimal('0.01'))])
     interest_rate_per = models.CharField(max_length=50, choices=INTEREST_RATE_PER_CHOICES, default='month')
@@ -63,30 +67,59 @@ class LoanProduct(models.Model):
     penalty_type = models.CharField(max_length=300, choices=PENALTY_FEE_TYPE_CHOICES, default='fixed_value')
     penalty_value = models.DecimalField(decimal_places=2, max_digits=12, validators=[MinValueValidator(Decimal('0.01'))])
     penalty_frequency = models.CharField(max_length=300, choices=PENALTY_FREQUENCY_TYPE_CHOICES, default='fixed_value')
+    loan_product_description = models.TextField(null=True, blank=True)
 
     def __str__(self):
-        return self.loan_name
+        return self.loan_product_name
 
 #Loan Prouct model ends here
 
 class Loan(models.Model):
-    member_name = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True)
-    mobile_no = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True, related_name='member_mob_no')
-    id_no = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True, related_name='national_id_no')
-    loan_type = models.ForeignKey(LoanProduct, on_delete=models.SET_NULL, null=True)
-    interest_rate = models.ForeignKey(LoanProduct, on_delete=models.SET_NULL, null=True, related_name='interest_rate_applied', default=0.3)
-    payment_frequency = models.ForeignKey(LoanProduct, on_delete=models.SET_NULL, null=True, related_name='payment_frequency')
-    loan_term = models.ForeignKey(LoanProduct, on_delete=models.SET_NULL, null=True, related_name='loan_term_applied', default=1)
+    #id_no = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True, related_name='national_id_no')
+    id_no = models.CharField(max_length=10)
+    loan_id =models.CharField(max_length=500, null=True, unique=True)
+    member_name = models.CharField(max_length=500)
+    mobile_no = models.CharField(max_length=500)
+    loan_type = models.CharField(max_length=500)
+    interest_rate = models.IntegerField()
+    payment_frequency = models.CharField(max_length=50)
+    loan_term = models.PositiveSmallIntegerField()
     application_date = models.DateTimeField(auto_now_add=True)
     credit_officer = models.ForeignKey(Credit_Officer, on_delete=models.SET_NULL, null=True)
     loan_purpose = models.TextField()
     updated = models.DateTimeField(auto_now= True)
+
+
+# Generate loan ID based on member ID and current timestamp
+    def save(self, *args, **kwargs):
+        if not self.loan_id:
+            # Generate loan ID based on member ID and current timestamp
+            member_id = self.id_no.id
+            timestamp = timezone.now().strftime('%Y%m%d%H%M%S%f')
+            self.loan_id = f'{member_id}-{timestamp}'
+        super().save(*args, **kwargs)
     
+# a method that retrieves the Member object based on the provided id_no and updates the corresponding fields in the Loan object
+    def update_from_member(self):
+        member = Member.objects.filter(id_no=self.id_no).first()
+        if member:
+            self.member_name = member
+            self.mobile_no = member.mobile_no
+    
+    def update_from_loan_product(self):
+        loan_product = LoanProduct.objects.filter(loan_product_name=self.loan_product_name).first()
+        if loan_product:
+            self.interest_rate = loan_product.interest_rate
+            self.payment_frequency = loan_product.mobile_no
+            self.loan_term = loan_product.mobile_no
+            
+            
+
 
     class Meta:
         ordering = ['-updated', '-application_date']
 
 
     def __str__(self):
-        return self.member_name
+        return self.loan_id
 

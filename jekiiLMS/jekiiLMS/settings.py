@@ -80,23 +80,24 @@ WSGI_APPLICATION = 'jekiiLMS.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 DATABASES = {
-   'default': {
-       'ENGINE': 'django.db.backends.postgresql',
-       'NAME': 'jekiiLMS',
-       'USER': 'enigma',
-       'PASSWORD': 'BamburiMtambo@123',
-       'HOST': 'localhost',
-       'PORT': '',
-   }
+    'default':{
+        'ENGINE':'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
+
+
+# DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#        'NAME': 'jekiiLMS',
+#        'USER': 'enigma',
+#        'PASSWORD': 'BamburiMtambo@123',
+#        'HOST': 'localhost',
+#        'PORT': '',
+#    }
+# }
 
 
 # Password validation
