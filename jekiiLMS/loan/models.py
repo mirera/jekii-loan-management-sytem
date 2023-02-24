@@ -4,8 +4,11 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 from decimal import Decimal
+from django.utils import timezone
+import uuid
 from member.models import Member
 from user.models import Credit_Officer
+
 
 #Loan Prouct model starts here
 
@@ -72,23 +75,51 @@ class LoanProduct(models.Model):
 #Loan Prouct model ends here
 
 class Loan(models.Model):
-    member_name = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True)
-    mobile_no = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True, related_name='member_mob_no')
-    id_no = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True, related_name='national_id_no')
-    loan_type = models.ForeignKey(LoanProduct, on_delete=models.SET_NULL, null=True)
-    interest_rate = models.ForeignKey(LoanProduct, on_delete=models.SET_NULL, null=True, related_name='interest_rate_applied', default=0.3)
-    payment_frequency = models.ForeignKey(LoanProduct, on_delete=models.SET_NULL, null=True, related_name='payment_frequency')
-    loan_term = models.ForeignKey(LoanProduct, on_delete=models.SET_NULL, null=True, related_name='loan_term_applied', default=1)
+    #id_no = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True, related_name='national_id_no')
+    id_no = models.CharField(max_length=10)
+    loan_id =models.CharField(max_length=500, null=True, unique=True)
+    member_name = models.CharField(max_length=500)
+    mobile_no = models.CharField(max_length=500)
+    loan_type = models.CharField(max_length=500)
+    interest_rate = models.IntegerField()
+    payment_frequency = models.CharField(max_length=50)
+    loan_term = models.PositiveSmallIntegerField()
     application_date = models.DateTimeField(auto_now_add=True)
     credit_officer = models.ForeignKey(Credit_Officer, on_delete=models.SET_NULL, null=True)
     loan_purpose = models.TextField()
     updated = models.DateTimeField(auto_now= True)
+
+
+# Generate loan ID based on member ID and current timestamp
+    def save(self, *args, **kwargs):
+        if not self.loan_id:
+            # Generate loan ID based on member ID and current timestamp
+            member_id = self.id_no.id
+            timestamp = timezone.now().strftime('%Y%m%d%H%M%S%f')
+            self.loan_id = f'{member_id}-{timestamp}'
+        super().save(*args, **kwargs)
     
+# a method that retrieves the Member object based on the provided id_no and updates the corresponding fields in the Loan object
+    def update_from_member(self):
+        member = Member.objects.filter(id_no=self.id_no).first()
+        if member:
+            self.member_name = member
+            self.mobile_no = member.mobile_no
+    
+    def update_from_loan_product(self):
+        loan_product = LoanProduct.objects.filter(loan_product_name=self.loan_product_name).first()
+        if loan_product:
+            self.interest_rate = loan_product.interest_rate
+            self.payment_frequency = loan_product.mobile_no
+            self.loan_term = loan_product.mobile_no
+            
+            
+
 
     class Meta:
         ordering = ['-updated', '-application_date']
 
 
     def __str__(self):
-        return self.member_name
+        return self.loan_id
 
