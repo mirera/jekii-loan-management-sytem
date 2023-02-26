@@ -12,7 +12,7 @@ ACTIVE_CHOICES = (
 class Branch(models.Model):
     name = models.CharField(max_length=500)
     phone = models.CharField(max_length=10, default='0700000000')
-    email= models.EmailField(default='email@mail.com')
+    email= models.EmailField(default='email@mail.com', null=True)
     open_date = models.DateTimeField(auto_now_add=True)
     capital = models.DecimalField(decimal_places=2, max_digits=12, validators=[MinValueValidator(Decimal('0.01'))])
     status = models.CharField(max_length=10, choices=ACTIVE_CHOICES, default='inactive')
