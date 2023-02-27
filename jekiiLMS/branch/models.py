@@ -11,10 +11,11 @@ ACTIVE_CHOICES = (
 )
 class Branch(models.Model):
     name = models.CharField(max_length=500)
-    phone = models.CharField(max_length=10, default='0700000000')
-    email= models.EmailField(default='email@mail.com', null=True)
+    phone = models.CharField(max_length=10)
+    email= models.EmailField()
     open_date = models.DateTimeField(auto_now_add=True)
     capital = models.DecimalField(decimal_places=2, max_digits=12, validators=[MinValueValidator(Decimal('0.01'))])
+    office = models.CharField(max_length=500, default='ABC plaza, Wayaki way, Nairobi')
     status = models.CharField(max_length=10, choices=ACTIVE_CHOICES, default='inactive')
     notes = models.TextField(null=True, blank=True)
 

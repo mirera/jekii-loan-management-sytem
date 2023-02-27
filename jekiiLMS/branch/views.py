@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.contrib import messages
 from .models import Branch
 from .forms import BranchForm
 
@@ -64,4 +65,31 @@ def list_branches(request):
     context = {'branches': branches}
     return render(request, 'branch/branches_list.html', context)
 
-# list branches view starts
+# list branches view ends
+
+# delete branch view starts 
+def deleteBranch(request,pk):
+    branch = Branch.objects.get(id=pk)
+#include a functionality to limit any user from deleteng this objec unless they have admin previleges
+    if request.method == 'POST':
+        branch.delete()
+        return redirect('list')
+
+        messages.success(request, 'Branch deleted successfully.')
+
+
+     #context is {'obj':branch}, in delete.html we are accessing room/message as 'obj'
+    context = {'obj':branch}
+    return render(request,'branch/delete_branch.html', context)
+
+# delete branch ends starts
+
+
+# view branch view starts 
+def viewBranch(request, pk):
+    branch = Branch.objects.get(id=pk)
+
+    context = {'branch': branch}
+    return render(request, 'branch/branch.html', context)
+
+# view branch view ends
