@@ -75,7 +75,8 @@ k{% extends 'main.html' %}
                                                                 <div class="form-group">
                                                                     <label class="form-label" for="cp1-project-name">Product Name</label>
                                                                     <div class="form-control-wrap">
-                                                                        <input type="text" class="form-control" id="cp1-project-name" name="loan_product_name" required>
+                                                                         <!-- <input type="text" class="form-control" id="cp1-project-name" name="loan_product_name" required> -->
+                                                                        {{form.loan_product_name}}
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -83,31 +84,12 @@ k{% extends 'main.html' %}
                                                                 <div class="form-group">
                                                                     <label class="form-label" for="cp1-project-description">Product Description</label>
                                                                     <div class="form-control-wrap">
-                                                                        <textarea class="form-control form-control-sm" id="cp1-project-description" name="loan_product_description" placeholder="Write Product Description" required></textarea>
+                                                                       <!-- <textarea class="form-control form-control-sm" id="cp1-project-description" name="loan_product_description" placeholder="Write Product Description" required></textarea> -->
+                                                                        {{form.loan_product_description}}
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div class="col-12">
-                                                                <div class="form-group">
-                                                                    <label class="form-label">Product Status</label>
-                                                                    <div class="form-control-wrap">
-                                                                        <ul class="custom-control-group">
-                                                                            <li>
-                                                                                <div class="custom-control custom-radio">
-                                                                                    <input type="radio" class="custom-control-input" id="reg-enable" name="status" value="active" checked>
-                                                                                    <label class="custom-control-label tb-status text-success" for="reg-enable">Active</label>
-                                                                                </div>
-                                                                            </li>
-                                                                            <li>
-                                                                                <div class="custom-control custom-radio">
-                                                                                    <input type="radio" class="custom-control-input" id="reg-disable" name="status" value="inactive" checked>
-                                                                                    <label class=" custom-control-label tb-status text-danger" for="reg-disable">Inactive</label>
-                                                                                </div>
-                                                                            </li>
-                                                                        </ul>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
+                                                            
                                                         </div>
                                                     </div>
                                                     <div class="nk-stepper-step">
@@ -117,7 +99,8 @@ k{% extends 'main.html' %}
                                                                 <div class="form-group">
                                                                     <label class="form-label" for="cp1-project-client">Minimum Amount</label>
                                                                     <div class="form-control-wrap">
-                                                                        <input type="number" class="form-control" id="cp1-project-client" name="minimum_amount" placeholder="Minimum Loan Amount e.g 10000" required>
+                                                                        <!-- <input type="number" class="form-control" id="cp1-project-client" name="minimum_amount" placeholder="Minimum Loan Amount e.g 10000" required> -->
+                                                                        {{form.minimum_amount}}
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -125,7 +108,8 @@ k{% extends 'main.html' %}
                                                                 <div class="form-group">
                                                                     <label class="form-label" for="cp1-project-client">Maximum Amount</label>
                                                                     <div class="form-control-wrap">
-                                                                        <input type="number" class="form-control" id="cp1-project-client" name="maximum_amount" placeholder="Maximum Loan Amount e.g 20000" required>
+                                                                        <!-- <input type="number" class="form-control" id="cp1-project-client" name="maximum_amount" placeholder="Maximum Loan Amount e.g 20000" required> -->
+                                                                        {{form.maximum_amount}}
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -133,7 +117,8 @@ k{% extends 'main.html' %}
                                                                 <div class="form-group">
                                                                     <label class="form-label" for="cp1-project-client">Loan Term</label>
                                                                     <div class="form-control-wrap">
-                                                                        <input type="number" class="form-control" id="cp1-project-client" name="maximum_amount" placeholder="Loan term e.g 2" required>
+                                                                       <!-- <input type="number" class="form-control" id="cp1-project-client" name="loan_product_term" placeholder="Loan term e.g 2" required> -->
+                                                                        {{form.loan_product_term}}
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -141,15 +126,8 @@ k{% extends 'main.html' %}
                                                                 <div class="form-group">
                                                                     <label class="form-label" for="cp1-project-lead">Term Period</label>
                                                                     <div class="form-control-wrap">
-                                                                        <select class="form-select js-select2" id="cp1-project-lead" name="loan_term_period" data-placeholder="Select Term Period" required>
-                                                                            <option value=""></option>
-                                                                            <option value="Keith_Jensen">Keith Jensen</option>
-                                                                            <option value="Stefan_Zakrisson">Stefan Zakrisson</option>
-                                                                            <option value="Daisy_Morgan">Daisy Morgan</option>
-                                                                            <option value="Stefan_Harary">Stefan Harary</option>
-                                                                            <option value="Michiel_Berende">Michiel Berende</option>
-                                                                            <option value="Jonathan_Rios">Jonathan Rios</option>
-                                                                        </select>
+                                                                     
+                                                                        {{form.loan_term_period}}
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -157,15 +135,9 @@ k{% extends 'main.html' %}
                                                                 <div class="form-group">
                                                                     <label class="form-label" for="cp1-project-lead">Repayment Frequency</label>
                                                                     <div class="form-control-wrap">
-                                                                        <select class="form-select js-select2" id="cp1-project-lead" name="repayment_frequency" data-placeholder="Select Term Period" required>
-                                                                            <option value=""></option>
-                                                                            <option value="Keith_Jensen">Keith Jensen</option>
-                                                                            <option value="Stefan_Zakrisson">Stefan Zakrisson</option>
-                                                                            <option value="Daisy_Morgan">Daisy Morgan</option>
-                                                                            <option value="Stefan_Harary">Stefan Harary</option>
-                                                                            <option value="Michiel_Berende">Michiel Berende</option>
-                                                                            <option value="Jonathan_Rios">Jonathan Rios</option>
-                                                                        </select>
+                                                                      
+                                                                        
+                                                                        {{form.repayment_frequency}}
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -179,15 +151,9 @@ k{% extends 'main.html' %}
                                                                 <div class="form-group">
                                                                     <label class="form-label" for="cp1-project-lead">Interest Type</label>
                                                                     <div class="form-control-wrap">
-                                                                        <select class="form-select js-select2" id="cp1-project-lead" name="interest_type" data-placeholder="Select Interest Type" required>
-                                                                            <option value=""></option>
-                                                                            <option value="Keith_Jensen">Keith Jensen</option>
-                                                                            <option value="Stefan_Zakrisson">Stefan Zakrisson</option>
-                                                                            <option value="Daisy_Morgan">Daisy Morgan</option>
-                                                                            <option value="Stefan_Harary">Stefan Harary</option>
-                                                                            <option value="Michiel_Berende">Michiel Berende</option>
-                                                                            <option value="Jonathan_Rios">Jonathan Rios</option>
-                                                                        </select>
+                                                                        
+                                                                
+                                                                        {{form.interest_type}}
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -195,7 +161,8 @@ k{% extends 'main.html' %}
                                                                 <div class="form-group">
                                                                     <label class="form-label" for="cp1-project-client">Interest Rate</label>
                                                                     <div class="form-control-wrap">
-                                                                        <input type="number" class="form-control" id="cp1-project-client" name="interest_rate" placeholder="Interest rate e.g 20" required>
+                                                                       <!-- <input type="number" class="form-control" id="cp1-project-client" name="interest_rate" placeholder="Interest rate e.g 20" required> -->
+                                                                        {{form.interest_rate}}
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -203,15 +170,8 @@ k{% extends 'main.html' %}
                                                                 <div class="form-group">
                                                                     <label class="form-label" for="cp1-project-lead">Service Fee Type</label>
                                                                     <div class="form-control-wrap">
-                                                                        <select class="form-select js-select2" id="cp1-project-lead" name="service_fee_type" data-placeholder="Select Interest Type" required>
-                                                                            <option value=""></option>
-                                                                            <option value="Keith_Jensen">Keith Jensen</option>
-                                                                            <option value="Stefan_Zakrisson">Stefan Zakrisson</option>
-                                                                            <option value="Daisy_Morgan">Daisy Morgan</option>
-                                                                            <option value="Stefan_Harary">Stefan Harary</option>
-                                                                            <option value="Michiel_Berende">Michiel Berende</option>
-                                                                            <option value="Jonathan_Rios">Jonathan Rios</option>
-                                                                        </select>
+                                                                      
+                                                                        {{form.service_fee_type}}
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -219,7 +179,8 @@ k{% extends 'main.html' %}
                                                                 <div class="form-group">
                                                                     <label class="form-label" for="cp1-project-client">Service Fee Rate/Value</label>
                                                                     <div class="form-control-wrap">
-                                                                        <input type="number" class="form-control" id="cp1-project-client" name="service_fee_value" placeholder="Service fee e.g 20" required>
+                                                                         <!-- <input type="number" class="form-control" id="cp1-project-client" name="service_fee_value" placeholder="Service fee e.g 20" required> -->
+                                                                        {{form.service_fee_value}}
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -232,15 +193,8 @@ k{% extends 'main.html' %}
                                                                 <div class="form-group">
                                                                     <label class="form-label" for="cp1-project-lead">Penalty Type</label>
                                                                     <div class="form-control-wrap">
-                                                                        <select class="form-select js-select2" id="cp1-project-lead" name="penalty_type" data-placeholder="Select Penalty type" required>
-                                                                            <option value=""></option>
-                                                                            <option value="Keith_Jensen">Keith Jensen</option>
-                                                                            <option value="Stefan_Zakrisson">Stefan Zakrisson</option>
-                                                                            <option value="Daisy_Morgan">Daisy Morgan</option>
-                                                                            <option value="Stefan_Harary">Stefan Harary</option>
-                                                                            <option value="Michiel_Berende">Michiel Berende</option>
-                                                                            <option value="Jonathan_Rios">Jonathan Rios</option>
-                                                                        </select>
+                                                                       
+                                                                        {{form.penalty_type}}
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -248,7 +202,8 @@ k{% extends 'main.html' %}
                                                                 <div class="form-group">
                                                                     <label class="form-label" for="cp1-project-client">Penalty Value</label>
                                                                     <div class="form-control-wrap">
-                                                                        <input type="number" class="form-control" id="cp1-project-client" name="penalty_value" placeholder="Enter panalty value/rate" required>
+                                                                        <!-- <input type="number" class="form-control" id="cp1-project-client" name="penalty_value" placeholder="Enter panalty value/rate" required> -->
+                                                                        {{form.service_fee_value}}
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -256,15 +211,7 @@ k{% extends 'main.html' %}
                                                                 <div class="form-group">
                                                                     <label class="form-label" for="cp1-project-lead">Penalty Frequency</label>
                                                                     <div class="form-control-wrap">
-                                                                        <select class="form-select js-select2" id="cp1-project-lead" name="penalty_frequency" data-placeholder="Select Penalty frequency" required>
-                                                                            <option value=""></option>
-                                                                            <option value="Keith_Jensen">Keith Jensen</option>
-                                                                            <option value="Stefan_Zakrisson">Stefan Zakrisson</option>
-                                                                            <option value="Daisy_Morgan">Daisy Morgan</option>
-                                                                            <option value="Stefan_Harary">Stefan Harary</option>
-                                                                            <option value="Michiel_Berende">Michiel Berende</option>
-                                                                            <option value="Jonathan_Rios">Jonathan Rios</option>
-                                                                        </select>
+                                                                        {{form.penalty_frequency}}
                                                                     </div>
                                                                 </div>
                                                             </div> 
@@ -1076,7 +1023,7 @@ k{% extends 'main.html' %}
                                                 <ul class="nk-stepper-pagination pt-4 gx-4 gy-2 stepper-pagination">
                                                     <li class="step-prev"><button class="btn btn-dim btn-primary">Prev</button></li>
                                                     <li class="step-next"><button class="btn btn-primary">Next</button></li>
-                                                    <li class="step-submit"><button class="btn btn-primary">Submit</button></li>
+                                                    <li class="step-submit"><button type="submit" class="btn btn-primary">Submit</button></li>
                                                 </ul>
                                             </div>
                                         </div>
