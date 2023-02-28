@@ -8,26 +8,17 @@
         <div class="nk-content-inner">
             <div class="nk-content-body">
                 <div class="components-preview wide-md mx-auto">
-                    <!-- <div class="nk-block-head nk-block-head-lg wide-sm">
-                        <div class="nk-block-head-content">
-                            <div class="nk-block-head-sub"><a class="back-to" href="html/components.html"><em class="icon ni ni-arrow-left"></em><span>Components</span></a></div>
-                            <h2 class="nk-block-title fw-normal">DataTable Example</h2>
-                            <div class="nk-block-des">
-                                <p class="lead">Using <a href="https://datatables.net/" target="_blank">DataTables</a>, add advanced interaction controls to your HTML tables. It is a highly flexible tool and all advanced features allow you to display table instantly and nice way.</p>
-                                <p>Check out the <a href="https://datatables.net/" target="_blank">documentation</a> for a full overview.</p>
-                            </div>
-                        </div>
-                    </div> -->
                     <!-- .nk-block-head -->
                     <div class="nk-block nk-block-lg">
-                        <div class="nk-block-head">
-                            <div class="nk-block-head-content">
+                        <div class="nk-block-head row">
+                            <div class="nk-block-head-content col-md-8">
                                 <h4 class="nk-block-title">All Branches</h4>
-                                <div class="nk-block-des">
-                                    <p>This is the list of <code class="code-class">Branches</code> both active and inactive.</p>
-                                </div>
+                            </div>
+                            <div class="col-md-4 text-right">
+                                <a href="{% url 'create' %}" class="btn btn-primary "><em class="icon ni ni-plus-sm"></em><span>Add Branch</span> </a>
                             </div>
                         </div>
+                          
                         <div class="card card-bordered card-preview">
                             <div class="card-inner">
                                 <table class="datatable-init nowrap nk-tb-list nk-tb-ulist" data-auto-responsive="false">
@@ -93,7 +84,7 @@
                                             </td>
                                             <td class="nk-tb-col nk-tb-col-tools">
                                                 <ul class="nk-tb-actions gx-1">
-                                                    <li class="nk-tb-action-hidden">
+                                                    <!-- <li class="nk-tb-action-hidden">
                                                         <a href="#" class="btn btn-trigger btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="Wallet">
                                                             <em class="icon ni ni-wallet-fill"></em>
                                                         </a>
@@ -107,19 +98,18 @@
                                                         <a href="#" class="btn btn-trigger btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="Suspend">
                                                             <em class="icon ni ni-user-cross-fill"></em>
                                                         </a>
-                                                    </li>
+                                                    </li> -->
                                                     <li>
                                                         <div class="drodown">
                                                             <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
                                                             <div class="dropdown-menu dropdown-menu-end">
                                                                 <ul class="link-list-opt no-bdr">
-                                                                    <li><a href="#"><em class="icon ni ni-focus"></em><span>Edit Branch</span></a></li>
-                                                                    <li><a href="#"><em class="icon ni ni-eye"></em><span>View Details</span></a></li>
-                                                                    <li><a href="#"><em class="icon ni ni-repeat"></em><span>Transaction</span></a></li>
-                                                                    <li><a href="#"><em class="icon ni ni-activity-round"></em><span>Activities</span></a></li>
+                                                                    <li><a href="{% url 'edit' branch.id %}"><em class="icon ni ni-edit-alt"></em><span>Edit Branch</span></a></li>
+                                                                    <li><a href="{% url 'view' branch.id %}"><em class="icon ni ni-eye"></em><span>View Details</span></a></li>
+                                                                    <!-- <li><a href="#"><em class="icon ni ni-activity-round"></em><span>Activities</span></a></li> -->
                                                                     <li class="divider"></li>
-                                                                    <li><a href="#"><em class="icon ni ni-shield-star"></em><span>Reset Pass</span></a></li>
-                                                                    <li><a href="#"><em class="icon ni ni-na"></em><span>Delete Branch</span></a></li>
+                                                                    <!-- <li><a href="#"><em class="icon ni ni-shield-star"></em><span>Reset Pass</span></a></li> -->
+                                                                    <li><a href="{% url 'delete' branch.id %}"><em class="icon ni ni-trash"></em><span>Delete Branch</span></a></li>
                                                                 </ul>
                                                             </div>
                                                         </div>

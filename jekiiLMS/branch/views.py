@@ -8,22 +8,22 @@ from .forms import BranchForm
 
 #create branch view starts
 def createBranch(request):
-    
+    form = BranchForm()
     #processing the data
     if request.method == 'POST':
-
         Branch.objects.create(
             name = request.POST.get('name'),
             phone= request.POST.get('phone'),
             email = request.POST.get('email'),
             capital = request.POST.get('capital'),
+            office = request.POST.get('office'),
             open_date = request.POST.get('open_date'),
             notes = request.POST.get('notes'),
         )
         #redirecting user to branches page(url name) after submitting form
         return redirect('list')
-
-    return render(request,'branch/branch-create-form.html')
+    context= {'form':form}
+    return render(request,'branch/branch-create-form.html', context)
 #create branch view ends
 
 #edit branch view starts
@@ -33,6 +33,7 @@ def editBranch(request,pk):
     if request.method == 'POST':
         # update the branch with the submitted form data
         branch.name = request.POST.get('name')
+        branch.office = request.POST.get('office')
         branch.phone = request.POST.get('phone')
         branch.email = request.POST.get('email')
         branch.open_date = request.POST.get('open_date')
@@ -46,6 +47,7 @@ def editBranch(request,pk):
         # prepopulate the form with existing data
         form_data = {
             'name': branch.name,
+            'office': branch.office,
             'phone': branch.phone,
             'email': branch.email,
             'open_date': branch.open_date,
