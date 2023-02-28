@@ -48,26 +48,36 @@ PENALTY_FREQUENCY_TYPE_CHOICES = (
     ('monthly', 'MONTHLY'),
 )
 
-INTEREST_RATE_PER_CHOICES = (
+
+
+ACTIVE_CHOICES = (
+    ('active','ACTIVE'),
+    ('inactive','INACTIVE'),
+)
+
+TERM_PERIOD = (
     ('day','DAY'),
+    ('week','WEEK'),
     ('month','MONTH'),
     ('year','YEAR'),
 )
+
 class LoanProduct(models.Model):
     loan_product_name = models.CharField(max_length=300)
     minimum_amount = models.IntegerField(default=5000)
     maximum_amount = models.IntegerField(default=10000)
     loan_product_term = models.PositiveSmallIntegerField()
+    loan_term_period= models.CharField(max_length=20, choices=TERM_PERIOD, default='month')
     repayment_frequency = models.CharField(max_length=8, choices=REPAYMENT_FREQUENCY_CHOICES, default='onetime')
     interest_type = models.CharField(max_length=30, choices=INTEREST_TYPE_CHOICES, default='flat_rate')
     interest_rate = models.DecimalField(decimal_places=2, max_digits=12, validators=[MinValueValidator(Decimal('0.01'))])
-    interest_rate_per = models.CharField(max_length=50, choices=INTEREST_RATE_PER_CHOICES, default='month')
     service_fee_type = models.CharField(max_length=300, choices=SERVICE_FEE_TYPE_CHOICES, default='fixed_value')
     service_fee_value = models.DecimalField(decimal_places=2, max_digits=12, validators=[MinValueValidator(Decimal('0.01'))])
     penalty_type = models.CharField(max_length=300, choices=PENALTY_FEE_TYPE_CHOICES, default='fixed_value')
     penalty_value = models.DecimalField(decimal_places=2, max_digits=12, validators=[MinValueValidator(Decimal('0.01'))])
     penalty_frequency = models.CharField(max_length=300, choices=PENALTY_FREQUENCY_TYPE_CHOICES, default='fixed_value')
-    loan_product_description = models.TextField(null=True, blank=True)
+    status = models.CharField(max_length=10, choices=ACTIVE_CHOICES, default='inactive')
+    loan_product_description = models.TextField()
 
     def __str__(self):
         return self.loan_product_name
@@ -123,3 +133,4 @@ class Loan(models.Model):
     def __str__(self):
         return self.loan_id
 
+  
