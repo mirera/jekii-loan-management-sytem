@@ -77,7 +77,7 @@ class LoanProduct(models.Model):
     penalty_value = models.DecimalField(decimal_places=2, max_digits=12, validators=[MinValueValidator(Decimal('0.01'))])
     penalty_frequency = models.CharField(max_length=300, choices=PENALTY_FREQUENCY_TYPE_CHOICES, default='fixed_value')
     status = models.CharField(max_length=10, choices=ACTIVE_CHOICES, default='inactive')
-    loan_product_description = models.TextField()
+    loan_product_description = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return self.loan_product_name
