@@ -1,4 +1,4 @@
-{% extends 'main.html' %}
+k{% extends 'main.html' %}
 
 {% block content %}
 
@@ -38,19 +38,29 @@
                                             <div class="form-group">
                                                 <label class="form-label" for="full-name-1">Name</label>
                                                 <div class="form-control-wrap">
-                                                    <input type="text" class="form-control" id="full-name-1" name="name">
+                                                    <!-- <input type="text" class="form-control" id="full-name-1" name="name"> -->
+                                                    {{form.name}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label class="form-label" for="full-name-1">Office</label>
+                                                <div class="form-control-wrap">
+                                                    <!-- <input type="text" class="form-control" id="full-name-1" name="name"> -->
+                                                    {{form.office}}
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="form-label" for="fv-email">Email address</label>
+                                                <label class="form-label" for="fv-email">Contact Email</label>
                                                 <div class="form-control-wrap">
                                                     <div class="form-icon form-icon-right">
                                                         <em class="icon ni ni-mail"></em>
                                                     </div>
-                                                    <input type="email" class="form-control" id="fv-email" name="fv-email" name="email" required>
-                                                
+                                                   <!-- <input type="email" class="form-control" id="fv-email" name="fv-email" name="email" required> -->
+                                                    {{form.email}}
                                                 </div>
                                             </div>
                                         </div>
@@ -62,8 +72,7 @@
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text" id="fv-phone">+254</span>
                                                         </div>
-                                                        <input type="number" class="form-control" name="phone" required>
-                                                       
+                                                        {{form.phone}}
                                                     </div>
                                                 </div>
                                             </div>
@@ -75,8 +84,7 @@
                                                     <div class="form-icon form-icon-left">
                                                         <em class="icon ni ni-calendar"></em>
                                                     </div>
-                                                    <input type="date" class="form-control date-picker" name="date_opened" data-date-format="yyyy-mm-dd">
-                                                    
+                                                    {{form.open_date}}
                                                 </div>
                                                 <div class="form-note">Date format <code>yyyy-mm-dd</code></div>
                                             </div>
@@ -85,28 +93,11 @@
                                             <div class="form-group">
                                                 <label class="form-label" for="pay-amount-1">Capital Amount</label>
                                                 <div class="form-control-wrap">
-                                                    <input type="number" class="form-control" id="pay-amount-1" name="capital">
-                                                    
+                                                    {{form.capital}}
+                                                   <div class="col-lg-6">
+                                        </div> 
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="col-lg-7">
-                                            <ul class="custom-control-group g-3 align-center flex-wrap">
-                                                <li>
-                                                    <div class="custom-control custom-radio">
-                                                        <input type="radio" class="custom-control-input" checked name="reg-public" id="reg-enable">
-                                                        <label class="custom-control-label tb-status text-success" for="reg-enable">Active</label>
-                                                    </div>
-                                                </li>
-                                                
-                                                <li>
-                                                    <div class="custom-control custom-radio">
-                                                        <input type="radio" class="custom-control-input" name="reg-public" id="reg-disable">
-                                                        <label class=" custom-control-label tb-status text-danger" for="reg-disable">Inactive</label>
-                                                    </div>
-                                                </li>
-                                                
-                                            </ul>
                                         </div>
                                         <div class="form-group">
                                             <label class="form-label" for="cf-default-textarea">Notes</label>

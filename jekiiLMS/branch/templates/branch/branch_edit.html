@@ -34,12 +34,24 @@
                                 <form action="" class="form-validate" method="POST">
                                     {% csrf_token %}
                                     <div class="row g-4">
-                                        <div class="col-lg-6">
+                                        <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="form-label" for="full-name-1">Name</label>
-                                                <div class="form-control-wrap form-control">
-                                                    <!-- <input type="text" class="form-control" id="full-name-1" name="name"> -->
+                                                <label class="form-label" for="fv-email">Branch Name</label>
+                                                <div class="form-control-wrap">
+                                                    <!-- <div class="form-icon form-icon-right">
+                                                        <em class="icon ni ni-mail"></em>
+                                                    </div> -->
+                                                    <!-- <input type="email" class="form-control" id="fv-email" name="fv-email" name="email" required> -->
                                                     {{form.name}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="form-label" for="fv-email">Office</label>
+                                                <div class="form-control-wrap">
+                                                    <!-- <input type="email" class="form-control" id="fv-email" name="fv-email" name="email" required> -->
+                                                    {{form.office}}
                                                 </div>
                                             </div>
                                         </div>
@@ -69,19 +81,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-sm-6">
-                                            <div class="form-group">
-                                                <label class="form-label">Date Opened</label>
-                                                <div class="form-control-wrap">
-                                                    <div class="form-icon form-icon-left">
-                                                        <em class="icon ni ni-calendar"></em>
-                                                    </div>
-                                                    <input type="date" class="form-control date-picker" name="open_date" data-date-format="yyyy-mm-dd"> 
-                                            
-                                                </div>
-                                                <div class="form-note">Date format <code>yyyy-mm-dd</code></div>
-                                            </div>
-                                        </div>
+                                        
                                         <div class="col-lg-6">
                                             <div class="form-group">
                                                 <label class="form-label" for="pay-amount-1">Capital Amount</label>
@@ -91,21 +91,30 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <label class="form-label">Date Opened</label>
+                                                <div class="form-control-wrap">
+                                                    <div class="form-icon form-icon-left">
+                                                        <em class="icon ni ni-calendar"></em>
+                                                    </div>
+                                                    <!-- <input type="date" class="form-control date-picker" name="date_opened" data-date-format="yyyy-mm-dd"> -->
+                                                    {{form.open_date}}
+                                                </div>
+                                                <!-- <div class="form-note">Date format <code>yyyy-mm-dd</code></div> -->
+                                            </div>
+                                        </div>
                                         <div class="col-lg-7">
-                                            <ul class="custom-control-group g-3 align-center flex-wrap">
+                                            <ul class="custom-control-group g-3 align-center flex-wrap"> 
                                                 <li>
                                                     <div class="custom-control custom-radio">
-                                                       <input type="radio" class="custom-control-input" checked name="reg-public" id="reg-enable"> 
-                                                        
+                                                        <input type="radio" class="custom-control-input" id="reg-enable" name="status" value="active" {% if form.status.value == 'active' %}checked{% endif %}>
                                                         <label class="custom-control-label tb-status text-success" for="reg-enable">Active</label>
                                                     </div>
                                                 </li>
-                                                
                                                 <li>
                                                     <div class="custom-control custom-radio">
-                                                        <input type="radio" class="custom-control-input" name="reg-public" id="reg-disable"> 
-                                                       
-                                                       
+                                                        <input type="radio" class="custom-control-input" id="reg-disable" name="status" value="inactive" {% if form.status.value == 'inactive' %}checked{% endif %}>
                                                         <label class=" custom-control-label tb-status text-danger" for="reg-disable">Inactive</label>
                                                     </div>
                                                 </li>
