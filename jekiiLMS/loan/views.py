@@ -53,3 +53,20 @@ def viewLoanProduct(request, pk):
     return render(request, 'loan/loan-product-view.html', context)
 
 # detailview Loan Products view ends
+
+# delete branch view starts 
+def deleteLoanProduct(request,pk):
+    loanproduct = LoanProduct.objects.get(id=pk)
+#include a functionality to limit any user from deleteng this objec unless they have admin previleges
+    if request.method == 'POST':
+        loanproduct.delete()
+        return redirect('loan-products')
+
+        messages.success(request, 'Branch deleted successfully.')
+
+
+     #context is {'obj':branch}, in delete.html we are accessing room/message as 'obj'
+    context = {'obj':loanproduct}
+    return render(request,'loan/delete-loan-product.html', context)
+
+# delete branch ends starts
