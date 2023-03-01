@@ -1,0 +1,75 @@
+{% extends 'main.html' %}
+
+{% block content %}
+  
+ <!-- content @s -->
+ <div class="nk-content ">
+    <div class="container-fluid">
+        <div class="nk-content-inner">
+            <div class="nk-content-body">
+                <div class="components-preview wide-md mx-auto">
+                    <div class="nk-block-head nk-block-head-lg wide-sm">
+                        <div class="nk-block-head-content">
+                            <div class="nk-block-head-sub"><a class="back-to" href="{% url 'loan-products' %}"><em class="icon ni ni-arrow-left"></em><span> Go to Loan Products</span></a></div>
+                        </div>
+                    </div><!-- .nk-block-head -->
+                    <div class="nk-block nk-block-lg">
+                        <div class="card card-bordered card-preview">
+                            <div class="card-inner">
+                                <div class="row">
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="card card-bordered pricing">
+                                            <div class="pricing-head">
+                                                <div class="pricing-title">
+                                                    <h4 class="card-title title">{{loanproduct.loan_product_name}}</h4>
+                                                    <p class="sub-text">{{loanproduct.loan_product_description}}</p>
+                                                </div>
+                                                <div class="card-text">
+                                                    <div class="row">
+                                                        <div class="col-6">
+                                                            <span class="h4 fw-500">{{loanproduct.interest_rate}}%</span>
+                                                            <span class="sub-text">Interest per {{loanproduct.loan_term_period}}  </span>
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <span class="h4 fw-500">{{loanproduct.loan_product_term}}</span>
+                                                            <span class="sub-text">Term {{loanproduct.loan_term_period}}s</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="pricing-body">
+                                                <ul class="pricing-features">
+                                                    <li><span class="w-50">Min Amount</span> - <span class="ms-auto">Ksh{{loanproduct.minimum_amount}}</span></li>
+                                                    <li><span class="w-50">Max Amount</span> - <span class="ms-auto">Ksh{{loanproduct.maximum_amount}}</span></li>
+                                                    <li><span class="w-50">interest_type</span> - <span class="ms-auto">{{loanproduct.interest_type}}</span></li>
+                                                    <li><span class="w-50">Loan Term</span> - <span class="ms-auto">{{loanproduct.loan_product_term}} {{loanproduct.loan_term_period}}s</span></li>
+                                                    <li><span class="w-50">Repayment Frequency</span> - <span class="ms-auto">{{loanproduct.repayment_frequency}}</span></li>
+                                                    <li class="divider"></li>
+                                                    <li><span class="w-50">Service Fee </span> - <span class="ms-auto"> {{loanproduct.service_fee_value}}% of {{loanproduct.service_fee_type}}</span></li>
+                                                    <li><span class="w-50">Penalty</span> - <span class="ms-auto">{{loanproduct.penalty_value}}% of {{loanproduct.penalty_type}}</span></li>
+                                                    <li><span class="w-50">Penalty Frequency</span> - <span class="ms-auto">{{loanproduct.penalty_frequency}}</span></li>
+                                                    {% if loanproduct.status == 'active' %}
+                                                    <li><span class="w-50">Status</span> - <span class="ms-auto text-success">{{loanproduct.status}}</span></li>
+                                                    {% else %}
+                                                    <li><span class="w-50">Status</span> - <span class="ms-auto  text-danger">{{loanproduct.status}}</span></li>
+                                                    {% endif %}
+                                                </ul>
+                                                <div class="pricing-action">
+                                                    <a href="{% url 'create-loan-product' %}"><button class="btn btn-outline-light">Edit Product</button></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div><!-- .col -->
+                                </div>
+                            </div>
+                        </div><!-- .card-preview -->
+                    </div>
+                </div><!-- .components-preview -->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- content @e -->
+
+
+{% endblock content %}

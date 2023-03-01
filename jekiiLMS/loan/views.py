@@ -25,11 +25,48 @@ def createLoanProduct(request):
             penalty_type = request.POST.get('penalty_type'),
             penalty_value = request.POST.get('penalty_value'),
             penalty_frequency = request.POST.get('penalty_frequency'),
-            status = request.POST.get('status'),
             loan_product_description = request.POST.get('loan_product_description'),
         )
         #redirecting user to branches page(url name) after submitting form
-        return redirect('list')
-    context= {'form':form}
+        return redirect('loan-products')
+
+    loanproducts = LoanProduct.objects.all() #this loanproducts context is added to form conext because of {{loanproducts.count}} in the sidebar 
+    context= {'form':form,'loanproducts':loanproducts }
     return render(request,'loan/loan-product-create.html', context)
 #create branch view ends
+
+
+# list Loan Products view starts 
+def listLoanProducts(request):
+    loanproducts = LoanProduct.objects.all()
+
+    context = {'loanproducts': loanproducts}
+    return render(request, 'loan/loan-product-list.html', context)
+
+# list Loan Products view ends
+
+# detailview Loan Products view starts 
+def viewLoanProduct(request, pk):
+    loanproduct = LoanProduct.objects.get(id=pk)
+
+    context = {'loanproduct': loanproduct}
+    return render(request, 'loan/loan-product-view.html', context)
+
+# detailview Loan Products view ends
+
+# delete branch view starts 
+def deleteLoanProduct(request,pk):
+    loanproduct = LoanProduct.objects.get(id=pk)
+#include a functionality to limit any user from deleteng this objec unless they have admin previleges
+    if request.method == 'POST':
+        loanproduct.delete()
+        return redirect('loan-products')
+
+        messages.success(request, 'Branch deleted successfully.')
+
+
+     #context is {'obj':branch}, in delete.html we are accessing room/message as 'obj'
+    context = {'obj':loanproduct}
+    return render(request,'loan/delete-loan-product.html', context)
+
+# delete branch ends starts

@@ -1,0 +1,122 @@
+{% extends 'main.html' %}
+
+{% block content %}
+  
+<!-- content @s -->
+<div class="nk-content ">
+    <div class="container-fluid">
+        <div class="nk-content-inner">
+            <div class="nk-content-body">
+                <div class="components-preview wide-md mx-auto">
+                    <!-- .nk-block-head -->
+                    <div class="nk-block nk-block-lg">
+                        <div class="nk-block-head row">
+                            <div class="nk-block-head-content col-md-8">
+                                <h4 class="nk-block-title">Loan Products</h4>
+                            </div>
+                            <div class="col-md-4 text-right">
+                                <a href="{% url 'create-loan-product' %}" class="btn btn-primary "><em class="icon ni ni-plus-sm"></em><span>Add Loan Product</span> </a>
+                            </div>
+                        </div>
+                          
+                        <div class="card card-bordered card-preview">
+                            <div class="card-inner">
+                                <table class="datatable-init nowrap nk-tb-list nk-tb-ulist" data-auto-responsive="false">
+                                    <thead>
+                                        <tr class="nk-tb-item nk-tb-head">
+                                            <th class="nk-tb-col nk-tb-col-check">
+                                                <div class="custom-control custom-control-sm custom-checkbox notext">
+                                                    <input type="checkbox" class="custom-control-input" id="uid">
+                                                    <label class="custom-control-label" for="uid"></label>
+                                                </div>
+                                            </th>
+                                            <th class="nk-tb-col"><span class="sub-text">Name</span></th>
+                                            <th class="nk-tb-col tb-col-mb"><span class="sub-text">Interest Rate</span></th>
+                                            <th class="nk-tb-col tb-col-md"><span class="sub-text">Interest Type</span></th>
+                                            <th class="nk-tb-col tb-col-lg"><span class="sub-text">Service Fee</span></th>
+                                            <th class="nk-tb-col tb-col-lg"><span class="sub-text">Min Amount</span></th>
+                                            <th class="nk-tb-col tb-col-md"><span class="sub-text">Max Amount</span></th>
+                                            <th class="nk-tb-col nk-tb-col-tools text-end">
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for loanproduct in loanproducts %}
+                                        
+                                        <tr class="nk-tb-item">
+                                            <td class="nk-tb-col nk-tb-col-check">
+                                                <div class="custom-control custom-control-sm custom-checkbox notext">
+                                                    <input type="checkbox" class="custom-control-input" id="uid1">
+                                                    <label class="custom-control-label" for="uid1"></label>
+                                                </div>
+                                            </td>
+                                            <td class="nk-tb-col">
+                                                <div class="user-card">
+                                                    <div class="user-avatar bg-dim-primary d-none d-sm-flex">
+                                                        <span>AB</span>
+                                                    </div>
+                                                    <div class="user-info">
+                                                        <span class="tb-lead">{{loanproduct.loan_product_name}} <span class="dot dot-success d-md-none ms-1"></span></span>
+                                                        {% if loanproduct.status == 'active' %}
+                                                        <span class="tb-status text-success">{{loanproduct.status}}</span>
+                                                        {% else %}
+                                                        <span class="tb-status text-danger">{{loanproduct.status}}</span>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="nk-tb-col tb-col-md">
+                                                <span>{{loanproduct.interest_rate}}%</span>
+                                            </td>
+                                            <td class="nk-tb-col tb-col-mb">
+                                                <span class="tb-amount">{{loanproduct.interest_type}}</span>
+                                            </td>
+                                            <td class="nk-tb-col tb-col-lg" >
+                                                <ul class="list-status">
+                                                    <li> <span>{{loanproduct.service_fee_value}}%</span></li>
+                                                
+                                                </ul>
+                                            </td>
+                                            <td class="nk-tb-col tb-col-mb" data-order="35040.34">
+                                                <span class="tb-amount">{{loanproduct.minimum_amount}}<span class="currency">Ksh</span></span>
+                                            </td>
+                                            <td class="nk-tb-col tb-col-mb" data-order="35040.34">
+                                                <span class="tb-amount">{{loanproduct.maximum_amount}} <span class="currency">Ksh</span></span>
+                                            </td>
+                                            <td class="nk-tb-col nk-tb-col-tools">
+                                                <ul class="nk-tb-actions gx-1">
+                                                    <li>
+                                                        <div class="drodown">
+                                                            <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
+                                                            <div class="dropdown-menu dropdown-menu-end">
+                                                                <ul class="link-list-opt no-bdr">
+                                                                    <li><a href="{% url 'view-loan-product' loanproduct.id %}"><em class="icon ni ni-edit-alt"></em><span>Edit Loan Product</span></a></li>
+                                                                    <li><a href="{% url 'view-loan-product' loanproduct.id %}"><em class="icon ni ni-eye"></em><span>View Details</span></a></li>
+                                                                    <!-- <li><a href="#"><em class="icon ni ni-activity-round"></em><span>Activities</span></a></li> -->
+                                                                    <li class="divider"></li>
+                                                                    <!-- <li><a href="#"><em class="icon ni ni-shield-star"></em><span>Reset Pass</span></a></li> -->
+                                                                    <li><a href="{% url 'delete-loan-product' loanproduct.id %}"><em class="icon ni ni-trash"></em><span>Delete Loan Product</span></a></li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                            
+                                        <!-- .nk-tb-item  -->
+                                        {% endfor %}
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div><!-- .card-preview -->
+                    </div> <!-- nk-block -->
+                </div><!-- .components-preview -->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- content @e -->
+
+{% endblock content %}
