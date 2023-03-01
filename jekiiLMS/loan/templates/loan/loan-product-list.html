@@ -78,7 +78,7 @@
                                                 </ul>
                                             </td>
                                             <td class="nk-tb-col tb-col-mb" data-order="35040.34">
-                                                <span class="tb-amount">{{loanproduct.minimum_amount}} <span class="currency">Ksh</span></span>
+                                                <span class="tb-amount">{{loanproduct.minimum_amount}}<span class="currency">Ksh</span></span>
                                             </td>
                                             <td class="nk-tb-col tb-col-mb" data-order="35040.34">
                                                 <span class="tb-amount">{{loanproduct.maximum_amount}} <span class="currency">Ksh</span></span>
@@ -90,8 +90,8 @@
                                                             <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
                                                             <div class="dropdown-menu dropdown-menu-end">
                                                                 <ul class="link-list-opt no-bdr">
-                                                                    <li><a href="#"><em class="icon ni ni-edit-alt"></em><span>Edit Loan Product</span></a></li>
-                                                                    <li><a href="#"><em class="icon ni ni-eye"></em><span>View Details</span></a></li>
+                                                                    <li><a href="{% url 'view-loan-product' loanproduct.id %}"><em class="icon ni ni-edit-alt"></em><span>Edit Loan Product</span></a></li>
+                                                                    <li><a href="{% url 'view-loan-product' loanproduct.id %}"><em class="icon ni ni-eye"></em><span>View Details</span></a></li>
                                                                     <!-- <li><a href="#"><em class="icon ni ni-activity-round"></em><span>Activities</span></a></li> -->
                                                                     <li class="divider"></li>
                                                                     <!-- <li><a href="#"><em class="icon ni ni-shield-star"></em><span>Reset Pass</span></a></li> -->

@@ -44,3 +44,12 @@ def listLoanProducts(request):
     return render(request, 'loan/loan-product-list.html', context)
 
 # list Loan Products view ends
+
+# detailview Loan Products view starts 
+def viewLoanProduct(request, pk):
+    loanproduct = LoanProduct.objects.get(id=pk)
+
+    context = {'loanproduct': loanproduct}
+    return render(request, 'loan/loan-product-view.html', context)
+
+# detailview Loan Products view ends
