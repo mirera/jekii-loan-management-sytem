@@ -22,8 +22,9 @@ class LoanProductForm(forms.ModelForm):
             'service_fee_type': forms.Select(attrs={'class': 'form-select js-select2'}),
             'service_fee_value': forms.NumberInput(attrs={'class': 'form-control','placeholder':'10,20,30,...'}),
             'penalty_type': forms.Select(attrs={'class': 'form-select js-select2', 'id': 'pay-amount-1'}),
-            'penalty_value': forms.NumberInput(attrs={'class': 'custom-control-input','placeholder':'20'}),
+            'penalty_value': forms.NumberInput(attrs={'class': 'form-control','placeholder':'Enter penalty value/rate e.g 20'}),
             'penalty_frequency': forms.Select(attrs={'class': 'form-select js-select2'}),
             'status': forms.Select(attrs={'class': 'form-select js-select2'}),
             'loan_product_description': forms.Textarea(attrs={'class': 'form-control form-control-sm','placeholder':'Describe your product....'}),
         }
+ 

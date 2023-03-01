@@ -88,10 +88,7 @@
                                 <a href="html/apps-file-manager.html" class="nk-menu-link"><span class="nk-menu-text">Overdue Loans</span><span class="nk-menu-badge">6</span></a>
                             </li>
                             <li class="nk-menu-item">
-                                <a href="html/apps-chats.html" class="nk-menu-link"><span class="nk-menu-text">Loan Products</span><span class="nk-menu-badge">2</span></a>
-                            </li>
-                            <li class="nk-menu-item">
-                                <a href="html/apps-calendar.html" class="nk-menu-link"><span class="nk-menu-text">Add Loan Product</span></a>
+                                <a href="{% url 'loan-products' %}" class="nk-menu-link"><span class="nk-menu-text">Loan Products</span><span class="nk-menu-badge">{{loanproducts.count}}</span></a>
                             </li>
                             <li class="nk-menu-item">
                                 <a href="html/apps-kanban.html" class="nk-menu-link"><span class="nk-menu-text">Loan Calculator</span></a>

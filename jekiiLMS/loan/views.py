@@ -25,11 +25,22 @@ def createLoanProduct(request):
             penalty_type = request.POST.get('penalty_type'),
             penalty_value = request.POST.get('penalty_value'),
             penalty_frequency = request.POST.get('penalty_frequency'),
-            status = request.POST.get('status'),
             loan_product_description = request.POST.get('loan_product_description'),
         )
         #redirecting user to branches page(url name) after submitting form
-        return redirect('list')
-    context= {'form':form}
+        return redirect('loan-products')
+
+    loanproducts = LoanProduct.objects.all() #this loanproducts context is added to form conext because of {{loanproducts.count}} in the sidebar 
+    context= {'form':form,'loanproducts':loanproducts }
     return render(request,'loan/loan-product-create.html', context)
 #create branch view ends
+
+
+# list Loan Products view starts 
+def listLoanProducts(request):
+    loanproducts = LoanProduct.objects.all()
+
+    context = {'loanproducts': loanproducts}
+    return render(request, 'loan/loan-product-list.html', context)
+
+# list Loan Products view ends

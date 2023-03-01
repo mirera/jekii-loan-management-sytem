@@ -26,19 +26,19 @@ REPAYMENT_FREQUENCY_CHOICES = (
 # )
 
 INTEREST_TYPE_CHOICES = (
-    ('flat_rate','FLAT RATE'),
-    ('reducing_balance', 'REDUCING BALANCE'),
+    ('flat rate','FLAT RATE'),
+    ('reducing balance', 'REDUCING BALANCE'),
 )
 
 SERVICE_FEE_TYPE_CHOICES = (
-    ('fixed_value','FIXED VALUE'),
-    ('percentage_of_principal', 'p.c of Principal'),
+    ('fixed value','FIXED VALUE'),
+    ('percentage of principal', 'p.c of Principal'),
 )
 
 PENALTY_FEE_TYPE_CHOICES = (
     ('fixed_value','FIXED VALUE'),
-    ('percentage_of_principal', 'p.c of Due Principal'),
-    ('percentage_of_principal_interest', 'p.c of Due P + I'),
+    ('percentage of principal', 'p.c of Due Principal'),
+    ('percentage of principal interest', 'p.c of Due P + I'),
 )
 
 PENALTY_FREQUENCY_TYPE_CHOICES = (
