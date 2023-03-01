@@ -16,7 +16,8 @@ k{% extends 'main.html' %}
                     </div><!-- .nk-block-head -->
                     <div class="nk-block nk-block-lg">
                         <div class="card card-bordered">
-                            <form class="nk-stepper stepper-init is-alter nk-stepper-s1" action=" " id="stepper-create-project" method="POST">
+                            <form action=" " method="POST" class="nk-stepper stepper-init is-alter nk-stepper-s1"  id="stepper-create-project" >
+                                {% csrf_token %}
                                 <div class="row g-0 col-sep col-sep-md col-sep-xl">
                                     <div class="col-md-4 col-xl-4">
                                         <div class="card-inner">
@@ -193,7 +194,6 @@ k{% extends 'main.html' %}
                                                                 <div class="form-group">
                                                                     <label class="form-label" for="cp1-project-lead">Penalty Type</label>
                                                                     <div class="form-control-wrap">
-                                                                       
                                                                         {{form.penalty_type}}
                                                                     </div>
                                                                 </div>
@@ -203,7 +203,7 @@ k{% extends 'main.html' %}
                                                                     <label class="form-label" for="cp1-project-client">Penalty Value</label>
                                                                     <div class="form-control-wrap">
                                                                         <!-- <input type="number" class="form-control" id="cp1-project-client" name="penalty_value" placeholder="Enter panalty value/rate" required> -->
-                                                                        {{form.service_fee_value}}
+                                                                        {{form.penalty_value}}
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -1024,7 +1024,9 @@ k{% extends 'main.html' %}
                                                     <li class="step-prev"><button class="btn btn-dim btn-primary">Prev</button></li>
                                                     <li class="step-next"><button class="btn btn-primary">Next</button></li>
                                                     <li class="step-submit"><button type="submit" class="btn btn-primary">Submit</button></li>
-                                                </ul>
+                                                    
+                                                </ul> <br>
+                                                <button type="submit" class="btn btn-primary">Submit</button>
                                             </div>
                                         </div>
                                     </div>
