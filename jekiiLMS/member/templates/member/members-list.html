@@ -83,12 +83,12 @@
                                                             <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
                                                             <div class="dropdown-menu dropdown-menu-end">
                                                                 <ul class="link-list-opt no-bdr">
-                                                                    <li><a href="#"><em class="icon ni ni-edit-alt"></em><span>Update Member </span></a></li>
+                                                                    <li><a href="{% url 'edit-member' member.id %}"><em class="icon ni ni-edit-alt"></em><span>Update Member </span></a></li>
                                                                     <li><a href="{% url 'view-member' member.id %}"><em class="icon ni ni-eye"></em><span>View Details</span></a></li>
                                                                     <!-- <li><a href="#"><em class="icon ni ni-activity-round"></em><span>Activities</span></a></li> -->
                                                                     <li class="divider"></li>
                                                                     <!-- <li><a href="#"><em class="icon ni ni-shield-star"></em><span>Reset Pass</span></a></li> -->
-                                                                    <li><a href="#"><em class="icon ni ni-trash"></em><span>Delete Member</span></a></li>
+                                                                    <li><a href="{% url 'delete-member' member.id %}"><em class="icon ni ni-trash"></em><span>Delete Member</span></a></li>
                                                                 </ul>
                                                             </div>
                                                         </div>
