@@ -1,0 +1,147 @@
+k{% extends 'main.html' %}
+
+{% block content %}
+
+<div class="nk-content ">
+    <div class="container-fluid">
+        <div class="nk-content-inner">
+            <div class="nk-content-body">
+                <div class="components-preview wide-md mx-auto">
+                    <div class="nk-block nk-block-lg">
+                        <div class="nk-block-head">
+                            <div class="nk-block-head-content">
+                                <h4 class="title nk-block-title">Add New Member</h4>
+                            </div>
+                        </div>
+                        <div class="card card-bordered">
+                            <div class="card-inner">
+                                <div class="card-head">
+                                    <h5 class="card-title">Member Details</h5>
+                                </div>
+                                <form action="" class="form-validate" method="POST">
+                                    {% csrf_token %}
+                                    <div class="row g-4">
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label class="form-label" for="full-name-1">First Name</label>
+                                                <div class="form-control-wrap">
+                                                    <!-- <input type="text" class="form-control" id="full-name-1" name="name"> -->
+                                                    {{form.first_name}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label class="form-label" for="full-name-1">Last Name</label>
+                                                <div class="form-control-wrap">
+                                                    <!-- <input type="text" class="form-control" id="full-name-1" name="name"> -->
+                                                    {{form.last_name}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label class="form-label" for="full-name-1">ID No.</label>
+                                                <div class="form-control-wrap">
+                                                    <!-- <input type="text" class="form-control" id="full-name-1" name="name"> -->
+                                                    {{form.id_no}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="form-label" for="fv-phone">Phone</label>
+                                                <div class="form-control-wrap">
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text" id="fv-phone">+254</span>
+                                                        </div>
+                                                        {{form.phone_no}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="form-label" for="fv-email">Contact Email</label>
+                                                <div class="form-control-wrap">
+                                                    <div class="form-icon form-icon-right">
+                                                        <em class="icon ni ni-mail"></em>
+                                                    </div>
+                                                   <!-- <input type="email" class="form-control" id="fv-email" name="fv-email" name="email" required> -->
+                                                    {{form.email}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="form-label" for="fv-phone">Branch</label>
+                                                <div class="form-control-wrap">
+                                                    <div class="input-group">
+                                                        <div class="form-icon form-icon-right">
+                                                            <em class="icon ni ni-home"></em>
+                                                        </div>
+                                                        {{form.branch}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="form-label" for="fv-phone">Business Name</label>
+                                                <div class="form-control-wrap">
+                                                    <div class="input-group">
+                                                        {{form.business_name}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="form-label" for="fv-phone">Business Address</label>
+                                                <div class="form-control-wrap">
+                                                    <div class="input-group">
+                                                        {{form.address}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="form-label" for="fv-phone">Industry</label>
+                                                <div class="form-control-wrap">
+                                                    <div class="input-group">
+                                                        {{form.industry}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="form-label" for="fv-phone">Passport Photo</label>
+                                                <div class="form-control-wrap">
+                                                    <div class="input-group">
+                                                        {{form.passport_photo}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <button type="submit" class="btn btn-lg btn-primary">Create Member</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div><!-- .nk-block -->
+                    
+                </div><!-- .components-preview -->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- content @e -->
+
+{% endblock content %}
