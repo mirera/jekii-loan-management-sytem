@@ -145,3 +145,7 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # LOGIN_URL = 'user/auth-login.html'
+
+MEDIA_URL = '/images/'
+
+MEDIA_ROOT =  os.path.join(BASE_DIR, 'static/images')
