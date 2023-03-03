@@ -144,9 +144,12 @@
                                                                     <a class="text-soft dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
                                                                     <div class="dropdown-menu dropdown-menu-end dropdown-menu-xs">
                                                                         <ul class="link-list-plain">
-                                                                            <li><a href="#">View</a></li>
-                                                                            <li><a href="#">Edit</a></li>
-                                                                            <li><a href="#">Remove</a></li>
+                                                                            {% if loan.status == 'pending' %}
+                                                                            <li><a href="{% url 'edit-loan' loan.id %}">Edit</a></li>
+                                                                            <li><a href="% url 'delete-loan' loan.id %}">Delete</a></li>
+                                                                            {% else %}
+                                                                            <li><a href="% url 'edit-loan' loan.id %}">View</a></li>
+                                                                            {% endif %}
                                                                         </ul>
                                                                     </div>
                                                                 </div>

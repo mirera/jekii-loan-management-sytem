@@ -97,7 +97,7 @@ class Loan(models.Model):
     member = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True, related_name='loans_as_member')
     applied_amount = models.IntegerField()
     guarantor = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True, related_name='loans_as_guarantor')
-    application_date = models.DateTimeField()
+    application_date = models.DateField()
     loan_officer = models.ForeignKey(User,on_delete=models.SET_NULL, null=True)
     loan_purpose = models.TextField()
     status = models.CharField(max_length=50, choices=LOAN_STATUS, default='pending')

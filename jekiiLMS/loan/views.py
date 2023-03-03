@@ -195,3 +195,19 @@ def listLoans(request):
     return render(request, 'loan/loans-list.html', context)
 
 # list Loan  view ends
+
+
+# delete Loan  view starts 
+def deleteLoan(request,pk):
+    loan = Loan.objects.get(id=pk)
+#include a functionality to limit any user from deleteng this objec unless they have admin previleges
+    if request.method == 'POST':
+        loan.delete()
+        return redirect('loans')
+
+
+     #context is {'obj':branch}, in delete.html we are accessing room/message as 'obj'
+    context = {'obj':loan}
+    return render(request,'loan/delete-loan.html', context)
+
+# delete Loan  ends starts
