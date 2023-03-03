@@ -84,20 +84,25 @@ class LoanProduct(models.Model):
 
 #Loan Prouct model ends here
 
+LOAN_STATUS = (
+    ('pending','PENDING'),
+    ('approved','APPROVED'),
+    ('cancelled','CANCELLED'),
+    ('overdue','OVERDUE'),
+    ('cleared','CLEARED'),
+)
 class Loan(models.Model):
-    #id_no = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True, related_name='national_id_no')
-    id_no = models.CharField(max_length=10)
     loan_id =models.CharField(max_length=500, null=True, unique=True)
-    member_name = models.CharField(max_length=500)
-    mobile_no = models.CharField(max_length=500)
-    loan_type = models.CharField(max_length=500)
-    interest_rate = models.IntegerField()
-    payment_frequency = models.CharField(max_length=50)
-    loan_term = models.PositiveSmallIntegerField()
-    application_date = models.DateTimeField(auto_now_add=True)
-    credit_officer = models.ForeignKey(Credit_Officer, on_delete=models.SET_NULL, null=True)
+    loan_product = models.ForeignKey(LoanProduct, on_delete=models.SET_NULL, null=True)
+    member = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True, related_name='loans_as_member')
+    applied_amount = models.IntegerField()
+    guarantor = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True, related_name='loans_as_guarantor')
+    application_date = models.DateField()
+    loan_officer = models.ForeignKey(User,on_delete=models.SET_NULL, null=True)
     loan_purpose = models.TextField()
-    updated = models.DateTimeField(auto_now= True)
+    status = models.CharField(max_length=50, choices=LOAN_STATUS, default='pending')
+    attachments = models.FileField(upload_to='attachments', null=True, blank=True)
+    
 
 
 # Generate loan ID based on member ID and current timestamp
@@ -127,10 +132,10 @@ class Loan(models.Model):
 
 
     class Meta:
-        ordering = ['-updated', '-application_date']
+        ordering = ['application_date']
 
 
     def __str__(self):
         return self.loan_id
 
-  
+    
