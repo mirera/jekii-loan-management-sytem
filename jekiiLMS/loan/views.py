@@ -197,6 +197,16 @@ def listLoans(request):
 # list Loan  view ends
 
 
+# detailview Loan  view starts 
+def viewLoan(request, pk):
+    loan = Loan.objects.get(id=pk)
+
+    context = {'loan': loan}
+    return render(request, 'loan/loan-view.html', context)
+
+# detailview Loan  view ends
+
+
 # delete Loan  view starts 
 def deleteLoan(request,pk):
     loan = Loan.objects.get(id=pk)
