@@ -1,0 +1,129 @@
+{% extends 'main.html' %}
+
+{% block content %}
+
+<div class="nk-content ">
+    <div class="container-fluid">
+        <div class="nk-content-inner">
+            <div class="nk-content-body">
+                <div class="components-preview wide-md mx-auto">
+                    <div class="nk-block nk-block-lg">
+                        <div class="nk-block-head">
+                            <div class="nk-block-head-content">
+                                <h4 class="title nk-block-title">Add New Loan</h4>
+                            </div>
+                        </div>
+                        <div class="card card-bordered">
+                            <div class="card-inner">
+                                <div class="card-head">
+                                    <h5 class="card-title">Loan Details</h5>
+                                </div>
+                                <form action="" class="form-validate" method="POST">
+                                    {% csrf_token %}
+                                    <div class="row g-4">
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label class="form-label" for="full-name-1">Loan ID</label>
+                                                <div class="form-control-wrap">
+                                                    <!-- <input type="text" class="form-control" id="full-name-1" name="name"> -->
+                                                    {{form.loan_id}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label class="form-label" for="full-name-1">Loan Product</label>
+                                                <div class="form-control-wrap">
+                                                    <!-- <input type="text" class="form-control" id="full-name-1" name="name"> -->
+                                                    {{form.loan_product}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label class="form-label" for="full-name-1">Member</label>
+                                                <div class="form-control-wrap">
+                                                    <!-- <input type="text" class="form-control" id="full-name-1" name="name"> -->
+                                                    {{form.member}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="form-label" for="fv-phone">Applied Amount</label>
+                                                <div class="form-control-wrap">
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text" id="fv-phone">Ksh</span>
+                                                        </div>
+                                                        {{form.applied_amount}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="form-label" for="fv-email">Guarantor</label>
+                                                <div class="form-control-wrap">
+                                                   <!-- <input type="email" class="form-control" id="fv-email" name="fv-email" name="email" required> -->
+                                                    {{form.guarantor}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <label class="form-label">Application Date</label>
+                                                <div class="form-control-wrap">
+                                                    <div class="form-icon form-icon-left">
+                                                        <em class="icon ni ni-calendar"></em>
+                                                    </div>
+                                                    {{form.application_date}}
+                                                </div>
+                                                <div class="form-note">Date format <code>yyyy-mm-dd</code></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="form-label" for="fv-phone">Loan Officer</label>
+                                                <div class="form-control-wrap">
+                                                    <div class="input-group">
+                                                        {{form.loan_officer}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="form-label" for="fv-phone">Attachments</label>
+                                                <div class="form-control-wrap">
+                                                    <div class="input-group">
+                                                        {{form.attachments}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label" for="cf-default-textarea">Loan Purpose</label>
+                                            <div class="form-control-wrap">
+                                                {{form.loan_purpose}}    
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <button type="submit" class="btn btn-lg btn-primary">Save</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div><!-- .nk-block -->
+                    
+                </div><!-- .components-preview -->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- content @e -->
+
+{% endblock content %}

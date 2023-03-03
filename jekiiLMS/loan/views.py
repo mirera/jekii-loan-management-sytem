@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .models import LoanProduct
-from .forms import LoanProductForm
+from .models import LoanProduct, Loan
+from .forms import LoanProductForm, LoanForm
+
 
 
 
@@ -33,7 +34,7 @@ def createLoanProduct(request):
     loanproducts = LoanProduct.objects.all() #this loanproducts context is added to form conext because of {{loanproducts.count}} in the sidebar 
     context= {'form':form,'loanproducts':loanproducts }
     return render(request,'loan/loan-product-create.html', context)
-#create branch view ends
+#create loan Product view ends
 
 
 # list Loan Products view starts 
@@ -118,3 +119,79 @@ def editLoanProduct(request,pk):
         return render(request,'loan/edit-loan-product.html',{'form':form})
 
 #edit Loan Products view ends
+
+
+
+
+#views for loan 
+
+#create Loan view starts
+def createLoan(request):
+    form = LoanForm()
+    #processing the data
+    if request.method == 'POST':
+        Loan.objects.create(
+            loan_id = request.POST.get('loan_id'),
+            loan_product= request.POST.get('loan_product'),
+            member= request.POST.get('member'),
+            applied_amount = request.POST.get('applied_amount'),
+            guarantor = request.POST.get('guarantor'),
+            application_date = request.POST.get('application_date'),
+            loan_officer = request.POST.get('loan_officer'),
+            loan_purpose = request.POST.get('loan_purpose'),
+            attachments = request.POST.get('attachments'),
+        )
+        #redirecting user to branches page(url name) after submitting form
+        return redirect('loans')
+ 
+    context= {'form':form}
+    return render(request,'loan/loan-create.html', context)
+#create loan view ends
+
+#edit Loan  view starts
+def editLoan(request,pk):
+    loan = Loan.objects.get(id=pk)
+    
+    if request.method == 'POST':
+        # update the branch with the submitted form data
+        loan.loan_id = request.POST.get('loan_id')
+        loan.loan_product = request.POST.get('loan_product')
+        loan.member = request.POST.get('member')
+        loan.applied_amount = request.POST.get('applied_amount')
+        loan.guarantor = request.POST.get('guarantor')
+        loan.application_date = request.POST.get('application_date')
+        loan.loan_officer = request.POST.get('loan_officer')
+        loan.loan_purpose = request.POST.get('loan_purpose')
+        loan.status = request.POST.get('status')
+        loan.attachments = request.POST.get('attachments')
+
+        loan.save()
+
+        return redirect('loans')
+    else:
+        # prepopulate the form with existing data
+        form_data = {
+            'loan_id': loan.loan_id,
+            'loan_product': loan.loan_product,
+            'member': loan.member,
+            'applied_amount': loan.applied_amount,
+            'guarantor': loan.guarantor,
+            'application_date': loan.application_date,
+            'loan_officer': loan.loan_officer,
+            'loan_purpose ': loan.loan_purpose ,
+            'status': loan.status,
+            'attachments': loan.attachments,
+        }
+        form = LoanForm(initial=form_data)
+        return render(request,'loan/edit-loan.html',{'form':form})
+
+#edit Loan view ends
+
+# list Loan  view starts 
+def listLoans(request):
+    loans = Loan.objects.all()
+
+    context = {'loans': loans}
+    return render(request, 'loan/loans-list.html', context)
+
+# list Loan  view ends
