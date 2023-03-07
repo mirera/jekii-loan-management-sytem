@@ -1,13 +1,14 @@
 from tkinter import CASCADE
 from django.db import models
 from django.urls import reverse
+from datetime import timedelta
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 from decimal import Decimal
 from django.utils import timezone
 import uuid
 from member.models import Member
-from user.models import Credit_Officer
+
 
 
 #Loan Prouct model starts here
@@ -102,10 +103,43 @@ class Loan(models.Model):
     loan_purpose = models.TextField()
     status = models.CharField(max_length=50, choices=LOAN_STATUS, default='pending')
     attachments = models.FileField(upload_to='attachments', null=True, blank=True)
+
+    #method to calculate first_repayment_date
+    def first_repayment_date(self):
+        if self.loan_product.repayment_frequency == 'weekly':
+            return self.application_date + timedelta(days=7)
+        elif self.loan_product.repayment_frequency == 'monthly':
+            return self.application_date + timedelta(days=30)
+        else:
+            return self.application_date  # for daily repayment frequency
+
     
+    # method to calculate total_payable
+    def total_payable(self):
+        principal = self.applied_amount
+        interest_rate = self.loan_product.interest_rate
+        penalty_value = self.loan_product.penalty_value
+
+        interest = 0
+
+        if self.loan_product.interest_type == 'flat_rate':
+            interest = principal * interest_rate
+        elif self.loan_product.interest_type == 'reducing_balance':
+            interest = (principal * interest_rate * self.loan_product.loan_product_term) / 100
+
+        if self.loan_product.penalty_type == 'fixed_value':
+            penalty_fee = penalty_value
+        elif self.loan_product.penalty_type == 'percentage of principal':
+            penalty_fee = (principal * penalty_value) / 100
+        elif self.loan_product.penalty_type == 'percentage of principal interest':
+            penalty_fee = (principal + interest) * penalty_value / 100
+
+        total_payable = principal + interest + penalty_fee
+
+        return total_payable
 
 
-# Generate loan ID based on member ID and current timestamp
+    # Generate loan ID based on member ID and current timestamp
     def save(self, *args, **kwargs):
         if not self.loan_id:
             # Generate loan ID based on member ID and current timestamp
@@ -114,7 +148,7 @@ class Loan(models.Model):
             self.loan_id = f'{member_id}-{timestamp}'
         super().save(*args, **kwargs)
     
-# a method that retrieves the Member object based on the provided id_no and updates the corresponding fields in the Loan object
+    # a method that retrieves the Member object based on the provided id_no and updates the corresponding fields in the Loan object
     def update_from_member(self):
         member = Member.objects.filter(id_no=self.id_no).first()
         if member:
