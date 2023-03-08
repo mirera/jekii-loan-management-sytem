@@ -156,33 +156,26 @@
                                     <div class="nk-divider divider md"></div>
                                     <div class="nk-block">
                                         <div class="nk-block-head nk-block-head-sm nk-block-between">
-                                            <h5 class="title">Admin Note</h5>
+                                            <h5 class="title">Notes</h5>
                                             <a href="#" class="link link-sm">+ Add Note</a>
                                         </div><!-- .nk-block-head -->
                                         <div class="bq-note">
+                                            {% for note in notes %}
                                             <div class="bq-note-item">
                                                 <div class="bq-note-text">
-                                                    <p>Aproin at metus et dolor tincidunt feugiat eu id quam. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Aenean sollicitudin non nunc vel pharetra. </p>
+                                                    <p>{{note.body}}</p>
                                                 </div>
                                                 <div class="bq-note-meta">
-                                                    <span class="bq-note-added">Added on <span class="date">November 18, 2019</span> at <span class="time">5:34 PM</span></span>
+                                                    <span class="bq-note-added">Added <span class="date">{{note.created|timesince}}</span> ago </span>
                                                     <span class="bq-note-sep sep">|</span>
-                                                    <span class="bq-note-by">By <span>Softnio</span></span>
+                                                    <span class="bq-note-by">By <span>{{note.author}}</span></span>
+                                                    {% if request.user == note.author%}
                                                     <a href="#" class="link link-sm link-danger">Delete Note</a>
+                                                    {% endif %}
                                                 </div>
                                             </div><!-- .bq-note-item -->
-                                            <div class="bq-note-item">
-                                                <div class="bq-note-text">
-                                                    <p>Aproin at metus et dolor tincidunt feugiat eu id quam. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Aenean sollicitudin non nunc vel pharetra. </p>
-                                                </div>
-                                                <div class="bq-note-meta">
-                                                    <span class="bq-note-added">Added on <span class="date">November 18, 2019</span> at <span class="time">5:34 PM</span></span>
-                                                    <span class="bq-note-sep sep">|</span>
-                                                    <span class="bq-note-by">By <span>Softnio</span></span>
-                                                    <a href="#" class="link link-sm link-danger">Delete Note</a>
-                                                </div>
-                                            </div><!-- .bq-note-item -->
-                                        </div><!-- .bq-note -->
+                                            {% endfor %}
+                                        </div><!-- .bq-note -->  
                                     </div><!-- .nk-block -->
                                 </div><!-- .card-inner -->
                             </div><!-- .card-content -->
@@ -190,13 +183,14 @@
                                 <div class="card-inner-group" data-simplebar>
                                     <div class="card-inner">
                                         <div class="user-card user-card-s2">
-                                            <div class="user-avatar lg bg-primary">
-                                                <span>AB</span>
+                                            <div class="user-avatar lg bg-white">
+                                                <span><img src="{{loan.member.passport_photo.url}}"></span>
+                                                
                                             </div>
                                             <div class="user-info">
-                                                <div class="badge bg-outline-light rounded-pill ucap">Investor</div>
-                                                <h5>Abu Bin Ishtiyak</h5>
-                                                <span class="sub-text">info@softnio.com</span>
+                                                <div class="badge bg-outline-light rounded-pill ucap">Member</div>
+                                                <h5>{{loan.member.first_name}} {{loan.member.last_name}}</h5>
+                                                <span class="sub-text">{{loan.member.email}}</span>
                                             </div>
                                         </div>
                                     </div><!-- .card-inner -->
@@ -210,12 +204,12 @@
                                         </ul>
                                     </div><!-- .card-inner -->
                                     <div class="card-inner">
-                                        <div class="overline-title-alt mb-2">In Account</div>
+                                        <div class="overline-title-alt mb-2">Loan Balance</div>
                                         <div class="profile-balance">
                                             <div class="profile-balance-group gx-4">
                                                 <div class="profile-balance-sub">
                                                     <div class="profile-balance-amount">
-                                                        <div class="number">2,500.00 <small class="currency currency-usd">USD</small></div>
+                                                        <div class="number">{{loan.total_payable}} <small class="currency currency-usd">Ksh</small></div>
                                                     </div>
                                                     <div class="profile-balance-subtitle">Invested Amount</div>
                                                 </div>
@@ -224,7 +218,7 @@
                                                     <div class="profile-balance-amount">
                                                         <div class="number">1,643.76</div>
                                                     </div>
-                                                    <div class="profile-balance-subtitle">Profit Earned</div>
+                                                    <div class="profile-balance-subtitle">Total Paid</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -234,19 +228,19 @@
                                             <div class="col-4">
                                                 <div class="profile-stats">
                                                     <span class="amount">23</span>
-                                                    <span class="sub-text">Total Order</span>
+                                                    <span class="sub-text">Loans Taken</span>
                                                 </div>
                                             </div>
                                             <div class="col-4">
                                                 <div class="profile-stats">
                                                     <span class="amount">20</span>
-                                                    <span class="sub-text">Complete</span>
+                                                    <span class="sub-text">Paid on-time</span>
                                                 </div>
                                             </div>
                                             <div class="col-4">
                                                 <div class="profile-stats">
                                                     <span class="amount">3</span>
-                                                    <span class="sub-text">Progress</span>
+                                                    <span class="sub-text">Late payments</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -273,10 +267,10 @@
                                         </div>
                                     </div><!-- .card-inner -->
                                     <div class="card-inner">
-                                        <h6 class="overline-title-alt mb-3">Groups</h6>
+                                        <h6 class="overline-title-alt mb-3">Industry</h6>
                                         <ul class="g-1">
                                             <li class="btn-group">
-                                                <a class="btn btn-xs btn-light btn-dim" href="#">investor</a>
+                                                <a class="btn btn-xs btn-light btn-dim" href="#">{{loan.member.industry}}</a>
                                                 <a class="btn btn-xs btn-icon btn-light btn-dim" href="#"><em class="icon ni ni-cross"></em></a>
                                             </li>
                                             <li class="btn-group">

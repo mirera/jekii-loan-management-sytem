@@ -103,6 +103,7 @@ class Loan(models.Model):
     loan_purpose = models.TextField()
     status = models.CharField(max_length=50, choices=LOAN_STATUS, default='pending')
     attachments = models.FileField(upload_to='attachments', null=True, blank=True)
+    
 
     #method to calculate first_repayment_date
     def first_repayment_date(self):
@@ -173,3 +174,15 @@ class Loan(models.Model):
         return self.loan_id
 
     
+class Notes(models.Model):
+    loan =models.ForeignKey(Loan, on_delete=models.CASCADE)
+    body= models.TextField()
+    author= models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    created = models.DateField(auto_now_add=True)
+    
+
+    class Meta:
+        ordering = ['-created']
+
+    def __str__(self):
+        return self.body[0:50]
