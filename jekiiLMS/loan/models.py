@@ -173,7 +173,7 @@ class Loan(models.Model):
     def __str__(self):
         return self.loan_id
 
-    
+# Note models starts here   
 class Note(models.Model):
     loan =models.ForeignKey(Loan, on_delete=models.CASCADE)
     body= models.TextField()
@@ -186,3 +186,22 @@ class Note(models.Model):
 
     def __str__(self):
         return self.body[0:50]
+
+#Note model ends
+
+# Repayment models starts here   
+class Repayment(models.Model):
+    transaction_id = models.CharField(max_length=20)
+    loan_id = models.ForeignKey(Loan, on_delete=models.SET_NULL, null=True)
+    member = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True)
+    amount= models.IntegerField()
+    date_paid = models.DateField()
+
+
+    class Meta:
+        ordering = ['-date_paid']
+
+    def __str__(self):
+        return self.transaction_id
+
+#Repayment model ends
