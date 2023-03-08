@@ -1,0 +1,96 @@
+{% extends 'main.html' %}
+
+{% block content %}
+
+<!-- content @s -->
+<div class="nk-content ">
+    <div class="container-fluid">
+        <div class="nk-content-inner">
+            <div class="nk-content-body">
+                <div class="components-preview wide-md mx-auto">
+                    <div class="nk-block-head nk-block-head-lg wide-sm">
+                        <div class="nk-block-head-content">
+                            <div class="nk-block-head-sub"><a class="back-to" href="{% url 'repayments' %}"><em class="icon ni ni-arrow-left"></em><span>Repayments</span></a></div>
+                            <h2 class="nk-block-title fw-normal">Add Repayment</h2>
+                            <!-- <div class="nk-block-des">
+                                <p class="lead">Form is most esential part of your project. We styled out nicely so you can build your form so quickly.</p>
+                            </div> -->
+                        </div>
+                    </div><!-- .nk-block -->
+                    
+                    <div class="nk-block nk-block-lg">
+                        <div class="nk-block-head">
+                            <div class="nk-block-head-content">
+                                <h4 class="title nk-block-title">Basic Form Style - S2</h4>
+                                <div class="nk-block-des">
+                                    <p>You can alow display form in column as example below.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card card-bordered">
+                            <div class="card-inner">
+                                <div class="card-head">
+                                    <h5 class="card-title">Repayment Info</h5>
+                                </div>
+                                <form action=" " method="POST">
+                                    {% csrf_token %}
+                                    <div class="row g-4">
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label class="form-label" for="full-name-1">Transaction ID</label>
+                                                <div class="form-control-wrap">
+                                                    {{form.transaction_id}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label class="form-label" for="email-address-1">Member</label>
+                                                <div class="form-control-wrap">
+                                                    {{form.member}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label class="form-label" for="email-address-1">Loan ID</label>
+                                                <div class="form-control-wrap">
+                                                    {{form.loan_id}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label class="form-label" for="phone-no-1">Amount</label>
+                                                <div class="form-control-wrap">
+                                                    {{form.amount}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label class="form-label" for="pay-amount-1">Date Paid</label>
+                                                <div class="form-control-wrap">
+                                                    {{form.date_paid}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <button type="submit" class="btn btn-lg btn-primary">Save Payment</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div><!-- .nk-block -->
+                    
+                </div><!-- .components-preview -->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- content @e -->
+{% endblock content %}

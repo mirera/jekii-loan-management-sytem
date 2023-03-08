@@ -1,7 +1,7 @@
 from dataclasses import fields
 from django.forms import ModelForm
 from django import forms
-from .models import LoanProduct, Loan
+from .models import LoanProduct, Loan, Repayment
 
 
 class LoanProductForm(forms.ModelForm):
@@ -46,6 +46,21 @@ class LoanForm(forms.ModelForm):
             'status': forms.Select(attrs={'class': 'form-select js-select2'}),
             'loan_purpose': forms.Textarea(attrs={'class': 'form-control form-control-sm', 'id': 'cf-default-textarea' ,'placeholder':'Write loan purpose'}),
             'attachments': forms.FileInput(attrs={'class': 'form-control'}),     
+            
+        }
+
+class RepaymentForm(forms.ModelForm):
+    class Meta:
+        model = Repayment
+        fields = '__all__'
+        
+        
+        widgets = {
+            'transaction_id': forms.TextInput(attrs={'class': 'form-control'}),
+            'loan_id': forms.Select(attrs={'class': 'form-select js-select2'}),
+            'member': forms.Select(attrs={'class': 'form-select js-select2'}),
+            'amount': forms.NumberInput(attrs={'class': 'form-control','placeholder':'1000'}),
+            'date_paid': forms.DateInput(attrs={'class': 'form-control date-picker', 'data-date-format':'yyyy-mm-dd'}),   
             
         }
  

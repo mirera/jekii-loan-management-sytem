@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .models import LoanProduct, Loan, Note
-from .forms import LoanProductForm, LoanForm
+from .models import LoanProduct, Loan, Note, Repayment
+from .forms import LoanProductForm, LoanForm, RepaymentForm
 
 
 
@@ -230,3 +230,32 @@ def deleteLoan(request,pk):
     return render(request,'loan/delete-loan.html', context)
 
 # delete Loan  ends starts
+
+
+#create repayment view starts
+def createRepayment(request):
+    form = RepaymentForm()
+    #processing the data
+    if request.method == 'POST':
+        Repayment.objects.create(
+            transaction_id= request.POST.get('transaction_id'),
+            loan_id = request.POST.get('loan_id'),
+            member = request.POST.get('member'),
+            amount= request.POST.get('amount'),
+            date_paid = request.POST.get('date_paid'),
+        )
+        #redirecting user to Repayments page(url name) after submitting form
+        return redirect('repayments')
+ 
+    context= {'form':form}
+    return render(request,'loan/repayment-create.html', context)
+#create loan view ends
+
+# list Repayments  view starts 
+def listRepayments(request):
+    repayments = Repayment.objects.all()
+
+    context = {'repayments': repayments}
+    return render(request, 'loan/repayment-list.html', context)
+
+# list Repayment  view ends
