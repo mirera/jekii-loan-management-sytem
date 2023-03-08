@@ -174,12 +174,12 @@ class Loan(models.Model):
         return self.loan_id
 
     
-class Notes(models.Model):
+class Note(models.Model):
     loan =models.ForeignKey(Loan, on_delete=models.CASCADE)
     body= models.TextField()
     author= models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    created = models.DateField(auto_now_add=True)
-    
+    created = models.DateTimeField(auto_now_add= True)
+
 
     class Meta:
         ordering = ['-created']

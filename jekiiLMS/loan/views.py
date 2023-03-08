@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .models import LoanProduct, Loan, Notes
+from .models import LoanProduct, Loan, Note
 from .forms import LoanProductForm, LoanForm
 
 
@@ -200,9 +200,17 @@ def listLoans(request):
 # detailview Loan  view starts 
 def viewLoan(request, pk):
     loan = Loan.objects.get(id=pk)
-    notes= Notes.objects.all()
+    loan_notes = loan.note_set.all().order_by('-created')
 
-    context = {'loan': loan, 'notes':notes}
+    if request.method == 'POST':
+        Note.objects.create(
+            author = request.user,
+            loan = loan,
+            body = request.POST.get('body')
+        )
+        return redirect('view-loan', pk=loan.id)
+
+    context = {'loan_notes': loan_notes, 'loan':loan}
     return render(request, 'loan/loan-view.html', context)
 
 # detailview Loan  view ends

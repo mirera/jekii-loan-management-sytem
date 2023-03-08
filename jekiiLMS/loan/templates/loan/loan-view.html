@@ -157,10 +157,23 @@
                                     <div class="nk-block">
                                         <div class="nk-block-head nk-block-head-sm nk-block-between">
                                             <h5 class="title">Notes</h5>
-                                            <a href="#" class="link link-sm">+ Add Note</a>
+                                            <a href="#" class="link link-sm">.</a>
                                         </div><!-- .nk-block-head -->
+                                        <form action=" " method="POST">
+                                            {% csrf_token %}
+                                            <div class="form-control-wrap">
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" name="body" placeholder="Jot some notes about this loan...">
+                                                    <div class="input-group-append">
+                                                        <button type="submit" class="btn btn-outline-primary btn-dim">+ Add Note</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        <br>
+                                        <br>
                                         <div class="bq-note">
-                                            {% for note in notes %}
+                                            {% for note in loan_notes %}
                                             <div class="bq-note-item">
                                                 <div class="bq-note-text">
                                                     <p>{{note.body}}</p>
