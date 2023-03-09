@@ -1,6 +1,7 @@
 from tkinter import CASCADE
 from django.db import models
 from django.urls import reverse
+from django.db.models import Sum
 from datetime import timedelta
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
@@ -203,6 +204,28 @@ class Repayment(models.Model):
 
     def __str__(self):
         return self.transaction_id
+
+    
+
+    def loanBalance(self):
+        loan = Loan.objects.get(pk=self.loan_id.pk)
+        loan_repayments = Repayment.objects.filter(loan_id=self.loan_id).aggregate(Sum('amount'))['amount__sum']
+        total_payable = loan.total_payable()
+        loan_balance = total_payable - loan_repayments
+        return loan_balance
+
+    #method to calculate next_repayment_date
+    def next_repayment_date(self):
+        if self.loan_id.loan_product.repayment_frequency == 'weekly':
+            return self.date_paid + timedelta(days=7)
+        elif self.loan_id.loan_product.repayment_frequency == 'monthly':
+            return self.date_paid + timedelta(days=30)
+        else: 
+            return self.date_paid + timedelta(days=1)
+        
+
+
+
     
 
 #Repayment model ends
