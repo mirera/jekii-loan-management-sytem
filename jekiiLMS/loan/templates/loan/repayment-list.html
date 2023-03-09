@@ -64,13 +64,11 @@
                                             <td class="nk-tb-col tb-col-md">
                                                 <span>{{repayment.date_paid}}</span>
                                             </td>
-                                            <td class="nk-tb-col tb-col-mb" data-order="35040.34">
-                                                <span class="tb-amount">{{member.credit_score}}</span>
+                                            <td class=" nk-tb-col tb-col-lg" >
+                                                <span class="tb-amount">{{repayment.next_repayment_date}}</span>
                                             </td>
-                                            <td class="nk-tb-col tb-col-lg">
-                                                {% with a=repayment.loan_id.total_payable b=repayment.amount %}
-                                                <span>{{ a|add:-b }}</span>
-                                                {% endwith %}
+                                            <td class="nk-tb-col tb-col-mb">
+                                                <span>{{ repayment.loanBalance }}</span>
                                             </td>
                                             <td class="nk-tb-col tb-col-md">
                                                 <span>{{repayment.transaction_id}}</span>
@@ -82,12 +80,11 @@
                                                             <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
                                                             <div class="dropdown-menu dropdown-menu-end">
                                                                 <ul class="link-list-opt no-bdr">
-                                                                    <li><a href="#"><em class="icon ni ni-edit-alt"></em><span>Update Member </span></a></li>
-                                                                    <li><a href="#"><em class="icon ni ni-eye"></em><span>View Details</span></a></li>
+                                                                    <li><a href="{% url 'edit-repayment' repayment.id %}"><em class="icon ni ni-edit-alt"></em><span>Edit Repayment </span></a></li>
                                                                     <!-- <li><a href="#"><em class="icon ni ni-activity-round"></em><span>Activities</span></a></li> -->
                                                                     <li class="divider"></li>
                                                                     <!-- <li><a href="#"><em class="icon ni ni-shield-star"></em><span>Reset Pass</span></a></li> -->
-                                                                    <li><a href="#"><em class="icon ni ni-trash"></em><span>Delete Member</span></a></li>
+                                                                    <li><a href="{% url 'delete-repayment' repayment.id %}"><em class="icon ni ni-trash"></em><span>Delete Repayment</span></a></li>
                                                                 </ul>
                                                             </div>
                                                         </div>

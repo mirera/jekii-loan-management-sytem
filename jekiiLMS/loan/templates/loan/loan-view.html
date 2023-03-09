@@ -104,7 +104,7 @@
                                             <div class="profile-ud-item">
                                                 <div class="profile-ud wider">
                                                     <span class="profile-ud-label">Total Paid:</span>
-                                                    <span class="profile-ud-value">Ksh{{loan.applied_amount}}</span>
+                                                    <span class="profile-ud-value">Ksh{{loan_repayments}}</span>
                                                 </div>
                                             </div>
                                             <div class="profile-ud-item">
@@ -222,14 +222,14 @@
                                             <div class="profile-balance-group gx-4">
                                                 <div class="profile-balance-sub">
                                                     <div class="profile-balance-amount">
-                                                        <div class="number">{{loan.total_payable}} <small class="currency currency-usd">Ksh</small></div>
+                                                        <div class="number"><small class="currency currency-usd">Ksh</small>{{ loan_balance}} </div>
                                                     </div>
                                                     <div class="profile-balance-subtitle">Invested Amount</div>
                                                 </div>
                                                 <div class="profile-balance-sub">
-                                                    <span class="profile-balance-plus text-soft"><em class="icon ni ni-plus"></em></span>
+                                                    <span class="profile-balance-plus text-soft"></span>
                                                     <div class="profile-balance-amount">
-                                                        <div class="number">1,643.76</div>
+                                                        <div class="number"><small class="currency currency-usd">Ksh</small>{{loan_repayments}}</div>
                                                     </div>
                                                     <div class="profile-balance-subtitle">Total Paid</div>
                                                 </div>

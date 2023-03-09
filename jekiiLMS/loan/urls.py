@@ -20,7 +20,6 @@ urlpatterns = [
     #repayment urls
     path('repayments', views.listRepayments, name='repayments'),
     path('create-repayment', views.createRepayment, name='create-repayment'),
-    #path('edit-loan/<str:pk>', views.editLoan, name='edit-loan'),
-    #path('view-loan/<str:pk>', views.viewLoan, name='view-loan'),
-    #path('delete-loan/<str:pk>', views.deleteLoan, name='delete-loan'),
+    path('edit-repayment/<str:pk>', views.editRepayment, name='edit-repayment'),
+    path('delete-repayment/<str:pk>', views.deleteRepayment, name='delete-repayment'),
 ]
