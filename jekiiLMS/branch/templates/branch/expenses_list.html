@@ -1,0 +1,122 @@
+{% extends 'main.html' %}
+
+{% block content %}
+  
+<!-- content @s -->
+<div class="nk-content ">
+    <div class="container-fluid">
+        <div class="nk-content-inner">
+            <div class="nk-content-body">
+                <div class="components-preview wide-md mx-auto">
+                    <!-- .nk-block-head -->
+                    <div class="nk-block nk-block-lg">
+                        <div class="nk-block-head row">
+                            <div class="nk-block-head-content col-md-8">
+                                <h4 class="nk-block-title">All Expenses</h4>
+                            </div>
+                            <div class="col-md-4 text-right">
+                                <a href="{% url 'create-expense' %}" class="btn btn-primary "><em class="icon ni ni-plus-sm"></em><span>Add Expense</span> </a>
+                            </div>
+                        </div>
+                          
+                        <div class="card card-bordered card-preview">
+                            <div class="card-inner">
+                                <table class="datatable-init nowrap nk-tb-list nk-tb-ulist" data-auto-responsive="false">
+                                    <thead>
+                                        <tr class="nk-tb-item nk-tb-head">
+                                            <th class="nk-tb-col nk-tb-col-check">
+                                                <div class="custom-control custom-control-sm custom-checkbox notext">
+                                                    <input type="checkbox" class="custom-control-input" id="uid">
+                                                    <label class="custom-control-label" for="uid"></label>
+                                                </div>
+                                            </th>
+                                            <th class="nk-tb-col"><span class="sub-text">Name</span></th>
+                                            <th class="nk-tb-col tb-col-mb"><span class="sub-text">Contact Phone</span></th>
+                                            <th class="nk-tb-col tb-col-md"><span class="sub-text">Capital</span></th>
+                                            <th class="nk-tb-col tb-col-lg"><span class="sub-text">Office</span></th>
+                                            <th class="nk-tb-col tb-col-lg"><span class="sub-text">Opening Date</span></th>
+                                            <th class="nk-tb-col tb-col-md"><span class="sub-text">Status</span></th>
+                                            <th class="nk-tb-col nk-tb-col-tools text-end">
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for expense in expenses %}
+                                        
+                                        <tr class="nk-tb-item">
+                                            <td class="nk-tb-col nk-tb-col-check">
+                                                <div class="custom-control custom-control-sm custom-checkbox notext">
+                                                    <input type="checkbox" class="custom-control-input" id="uid1">
+                                                    <label class="custom-control-label" for="uid1"></label>
+                                                </div>
+                                            </td>
+                                            <td class="nk-tb-col">
+                                                <div class="user-card">
+                                                    <div class="user-avatar bg-dim-primary d-none d-sm-flex">
+                                                        <span>AB</span>
+                                                    </div>
+                                                    <div class="user-info">
+                                                        <span class="tb-lead">{{expense.expense_date}} <span class="dot dot-success d-md-none ms-1"></span></span>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="nk-tb-col tb-col-md">
+                                                <span>{{expense.category}}</span>
+                                            </td>
+                                            <td class="nk-tb-col tb-col-mb" data-order="35040.34">
+                                                <span class="tb-amount">{{expense.amount}} <span class="currency">Ksh</span></span>
+                                            </td>
+                                            <td class="nk-tb-col tb-col-lg" data-order="Email Verified - Kyc Unverified">
+                                                <ul class="list-status">
+                                                    <li><em class="icon text-success ni ni-check-circle"></em> <span>open</span></li>
+                                                
+                                                </ul>
+                                            </td>
+                                            <td class="nk-tb-col tb-col-lg">
+                                                <span>{{expense.branch}}</span>
+                                            </td>
+                                            <td class="nk-tb-col tb-col-md">
+                                                {% if branch.status == 'active' %}
+                                                <span class="tb-status text-success">{{branch.status}}</span>
+                                                {% else %}
+                                                <span class="tb-status text-danger">{{branch.status}}</span>
+                                                {% endif %}
+                                            </td>
+                                            <td class="nk-tb-col nk-tb-col-tools">
+                                                <ul class="nk-tb-actions gx-1">
+                                                    <li>
+                                                        <div class="drodown">
+                                                            <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
+                                                            <div class="dropdown-menu dropdown-menu-end">
+                                                                <ul class="link-list-opt no-bdr">
+                                                                    <li><a href="{% url 'edit-expense' expense.id %}"><em class="icon ni ni-edit-alt"></em><span>Edit Expense</span></a></li>
+                                                                    <li><a href="#"><em class="icon ni ni-eye"></em><span>View Details</span></a></li>
+                                                                    <!-- <li><a href="#"><em class="icon ni ni-activity-round"></em><span>Activities</span></a></li> -->
+                                                                    <li class="divider"></li>
+                                                                    <!-- <li><a href="#"><em class="icon ni ni-shield-star"></em><span>Reset Pass</span></a></li> -->
+                                                                    <li><a href="{% url 'delete-expense' expense.id %}"><em class="icon ni ni-trash"></em><span>Delete Expense</span></a></li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                            
+                                        <!-- .nk-tb-item  -->
+                                        {% endfor %}
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div><!-- .card-preview -->
+                    </div> <!-- nk-block -->
+                </div><!-- .components-preview -->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- content @e -->
+
+{% endblock content %}

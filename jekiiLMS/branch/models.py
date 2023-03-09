@@ -3,6 +3,7 @@ from django.db import models
 from django.urls import reverse
 from django.core.validators import MinValueValidator
 from decimal import Decimal
+from django.contrib.auth.models import User
 
 #Branch model for a branch
 ACTIVE_CHOICES = (
@@ -22,3 +23,25 @@ class Branch(models.Model):
 
     def __str__(self):
         return self.name 
+
+class ExpenseCategory(models.Model):
+    name = models.CharField(max_length=50)
+    description = models.TextField(null=True, blank=True)
+
+
+    def __str__(self):
+        return self.name 
+
+
+class Expense(models.Model):
+    expense_date = models.DateField()
+    category = models.ForeignKey(ExpenseCategory, on_delete=models.SET_NULL, null=True)
+    amount= models.IntegerField()
+    branch= models.ForeignKey(Branch, on_delete=models.SET_NULL, null=True)
+    created_by = models.ForeignKey(User,on_delete=models.SET_NULL, null=True)
+    note = models.TextField(null=True, blank=True)
+    attachement = models.FileField(null=True, blank=True)
+
+
+    def __str__(self):
+        return self.note[0:50] 
