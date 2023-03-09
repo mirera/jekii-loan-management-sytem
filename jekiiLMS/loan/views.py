@@ -266,3 +266,18 @@ def listRepayments(request):
     return render(request, 'loan/repayment-list.html', context)
 
 # list Repayment  view ends
+
+# delete Repayment  view starts 
+def deleteRepayment(request,pk):
+    repayment = Repayment.objects.get(id=pk)
+#include a functionality to limit any user from deleteng this objec unless they have admin previleges
+    if request.method == 'POST':
+        repayment.delete()
+        return redirect('repayments')
+
+
+     #context is {'obj':branch}, in delete.html we are accessing room/message as 'obj'
+    context = {'obj':repayment}
+    return render(request,'loan/delete-repayment.html', context)
+
+# delete Repayment  ends 
