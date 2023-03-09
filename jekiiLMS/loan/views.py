@@ -281,3 +281,32 @@ def deleteRepayment(request,pk):
     return render(request,'loan/delete-repayment.html', context)
 
 # delete Repayment  ends 
+
+#edit repayment  view starts
+def editRepayment(request,pk):
+    repayment = Repayment.objects.get(id=pk)
+    
+    if request.method == 'POST':
+        # update the branch with the submitted form data
+        repayment.loan_id = request.POST.get('loan_id')
+        repayment.transaction_id = request.POST.get('transaction_id')
+        repayment.member = request.POST.get('member')
+        repayment.amount = request.POST.get('amount')
+        repayment.date_paid = request.POST.get('date_paid')
+        repayment.save()
+
+        return redirect('repayments')
+    else:
+        # prepopulate the form with existing data
+        form_data = {
+            'loan_id': repayment.loan_id,
+            'member': repayment.member,
+            'amount': repayment.amount,
+            'transaction_id': repayment.transaction_id,
+            'date_paid': repayment.date_paid,
+
+        }
+        form = RepaymentForm(initial=form_data)
+        return render(request,'loan/edit-repayment.html',{'form':form})
+
+#edit repayment view ends
