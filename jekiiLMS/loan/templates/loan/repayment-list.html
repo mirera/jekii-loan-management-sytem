@@ -69,7 +69,7 @@
                                             </td>
                                             <td class="nk-tb-col tb-col-lg">
                                                 {% with a=repayment.loan_id.total_payable b=repayment.amount %}
-                                                <span>{{ a|add:-b }}</span>
+                                                <span>{{ a|add:b }}</span>
                                                 {% endwith %}
                                             </td>
                                             <td class="nk-tb-col tb-col-md">

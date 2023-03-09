@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .models import LoanProduct, Loan, Note, Repayment
+from django.db.models import Sum
+from .models import LoanProduct, Loan, Note, Repayment 
 from .forms import LoanProductForm, LoanForm, RepaymentForm
 
 
@@ -202,6 +203,12 @@ def viewLoan(request, pk):
     loan = Loan.objects.get(id=pk)
     loan_notes = loan.note_set.all().order_by('-created')
 
+    #a sum of all repayments made toward a specifi loan 
+    loan_repayments = Repayment.objects.filter(loan_id=loan.id).aggregate(Sum('amount'))['amount__sum']
+    #loan balance
+    total_payable= loan.total_payable()
+    loan_balance= total_payable-loan_repayments
+
     if request.method == 'POST':
         Note.objects.create(
             author = request.user,
@@ -210,7 +217,7 @@ def viewLoan(request, pk):
         )
         return redirect('view-loan', pk=loan.id)
 
-    context = {'loan_notes': loan_notes, 'loan':loan}
+    context = {'loan_notes': loan_notes, 'loan':loan, 'loan_repayments':loan_repayments, 'loan_balance':loan_balance}
     return render(request, 'loan/loan-view.html', context)
 
 # detailview Loan  view ends

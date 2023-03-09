@@ -203,5 +203,6 @@ class Repayment(models.Model):
 
     def __str__(self):
         return self.transaction_id
+    
 
 #Repayment model ends
