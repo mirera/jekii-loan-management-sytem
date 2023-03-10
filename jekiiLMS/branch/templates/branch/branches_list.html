@@ -10,14 +10,29 @@
                 <div class="components-preview wide-md mx-auto">
                     <!-- .nk-block-head -->
                     <div class="nk-block nk-block-lg">
-                        <div class="nk-block-head row">
-                            <div class="nk-block-head-content col-md-8">
-                                <h4 class="nk-block-title">All Branches</h4>
-                            </div>
-                            <div class="col-md-4 text-right">
-                                <a href="{% url 'create' %}" class="btn btn-primary "><em class="icon ni ni-plus-sm"></em><span>Add Branch</span> </a>
-                            </div>
-                        </div>
+                        <div class="nk-block-head nk-block-head-sm">
+                            <div class="nk-block-between g-3">
+                                <div class="nk-block-head-content">
+                                    <h3 class="nk-block-title page-title"> Branches</h3>
+                                    
+                                </div><!-- .nk-block-head-content -->
+                                <div class="nk-block-head-content">
+                                    <ul class="nk-block-tools g-3">
+                                        <li>
+                                            <div class="drodown">
+                                                <a href="#" class="dropdown-toggle btn btn-icon btn-primary" data-bs-toggle="dropdown"><em class="icon ni ni-plus"></em></a>
+                                                <div class="dropdown-menu dropdown-menu-end">
+                                                    <ul class="link-list-opt no-bdr">
+                                                        <li><a data-bs-toggle="modal" href="#addBranch"><span>Add Branch</span></a></li>
+                                                        
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div><!-- .nk-block-head-content -->
+                            </div><!-- .nk-block-between -->
+                        </div><!-- .nk-block-head -->
                           
                         <div class="card card-bordered card-preview">
                             <div class="card-inner">
@@ -95,7 +110,7 @@
                                                                     <!-- <li><a href="#"><em class="icon ni ni-activity-round"></em><span>Activities</span></a></li> -->
                                                                     <li class="divider"></li>
                                                                     <!-- <li><a href="#"><em class="icon ni ni-shield-star"></em><span>Reset Pass</span></a></li> -->
-                                                                    <li><a href="{% url 'delete' branch.id %}"><em class="icon ni ni-trash"></em><span>Delete Branch</span></a></li>
+                                                                    <li><a data-bs-toggle="modal" href="#deleteBranch"><em class="icon ni ni-trash"></em><span>Delete Branch</span></a></li>
                                                                 </ul>
                                                             </div>
                                                         </div>
@@ -119,4 +134,130 @@
 </div>
 <!-- content @e -->
 
-{% endblock content %}
+<div class="modal fade" id="deleteBranch">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-bs-dismiss="modal"><em class="icon ni ni-cross"></em></a>
+            <div class="modal-body modal-body-sm text-center">
+                <div class="nk-modal py-4">
+                    <em class="nk-modal-icon icon icon-circle icon-circle-xxl ni ni-cross bg-danger"></em>
+                    <h4 class="nk-modal-title">Are You Sure ?</h4>
+                    <div class="nk-modal-text mt-n2">
+                        <p class="text-soft">This Branch will be removed permanently.</p>
+                    </div>
+                    <ul class="d-flex justify-content-center gx-4 mt-4">
+                        {% for branch in branches %}
+                        <form action="{% url 'delete' branch.id %}" method="POST">
+                        {% endfor %}
+                            {% csrf_token %}
+                        <li>
+                            <button type="submit" data-bs-dismiss="modal" id="deleteWH" class="btn btn-primary">Yes, Delete it</button>
+                        </li>
+                        </form>
+                        <li>
+                            <button data-bs-dismiss="modal" data-toggle="modal" data-target="#editEventPopup" class="btn btn-danger btn-dim">Cancel</button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div><!-- .Delete Modal-content -->
+
+
+<div class="modal fade" id="addBranch">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <em class="icon ni ni-cross-sm"></em>
+            </a>
+            <div class="modal-body modal-body-md">
+                <h5 class="modal-title">Add Branch</h5>
+                <form action="{% url 'create' %}" class="form-validate" method="POST">
+                    {% csrf_token %}
+                    <div class="row g-4">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-label" for="full-name-1">Name</label>
+                                <div class="form-control-wrap">
+                                    <!-- <input type="text" class="form-control" id="full-name-1" name="name"> -->
+                                    {{form.name}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-label" for="full-name-1">Office</label>
+                                <div class="form-control-wrap">
+                                    <!-- <input type="text" class="form-control" id="full-name-1" name="name"> -->
+                                    {{form.office}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="fv-email">Contact Email</label>
+                                <div class="form-control-wrap">
+                                    <div class="form-icon form-icon-right">
+                                        <em class="icon ni ni-mail"></em>
+                                    </div>
+                                   <!-- <input type="email" class="form-control" id="fv-email" name="fv-email" name="email" required> -->
+                                    {{form.email}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="fv-phone">Phone</label>
+                                <div class="form-control-wrap">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="fv-phone">+254</span>
+                                        </div>
+                                        {{form.phone}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="form-label">Date Opened</label>
+                                <div class="form-control-wrap">
+                                    <div class="form-icon form-icon-left">
+                                        <em class="icon ni ni-calendar"></em>
+                                    </div>
+                                    {{form.open_date}}
+                                </div>
+                                <div class="form-note">Date format <code>yyyy-mm-dd</code></div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-label" for="pay-amount-1">Capital Amount</label>
+                                <div class="form-control-wrap">
+                                    {{form.capital}}
+                                   <div class="col-lg-6">
+                        </div> 
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="cf-default-textarea">Notes</label>
+                            <div class="form-control-wrap">
+                                <textarea class="form-control form-control-sm" id="cf-default-textarea" placeholder="Write your message" name="notes"></textarea>
+                                
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-lg btn-primary">Create Branch</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div><!-- .Add Modal-Content -->
+
+{% endblock content %}  

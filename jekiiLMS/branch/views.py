@@ -63,8 +63,9 @@ def editBranch(request,pk):
 # list branches view starts 
 def list_branches(request):
     branches = Branch.objects.all().order_by('-open_date')
+    form = BranchForm()
 
-    context = {'branches': branches}
+    context = {'branches': branches, 'form':form}
     return render(request, 'branch/branches_list.html', context)
 
 # list branches view ends
@@ -80,9 +81,9 @@ def deleteBranch(request,pk):
         messages.success(request, 'Branch deleted successfully.')
 
 
-     #context is {'obj':branch}, in delete.html we are accessing room/message as 'obj'
-    context = {'obj':branch}
-    return render(request,'branch/delete_branch.html', context)
+     #context is {'obj':branch}, in delete.html we are accessing room/message as 'obj' delete_branch.html
+    context = {'branch':branch}
+    return render(request,'branch/branches_list.html', context)
 
 # delete branch ends starts
 

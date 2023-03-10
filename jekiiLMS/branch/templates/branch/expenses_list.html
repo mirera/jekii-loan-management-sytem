@@ -10,14 +10,11 @@
                 <div class="components-preview wide-md mx-auto">
                     <!-- .nk-block-head -->
                     <div class="nk-block nk-block-lg">
-                        <div class="nk-block-head row">
-                            <div class="nk-block-head-content col-md-8">
-                                <h4 class="nk-block-title">All Expenses</h4>
-                            </div>
-                            <div class="col-md-4 text-right">
-                                <a href="{% url 'create-expense' %}" class="btn btn-primary "><em class="icon ni ni-plus-sm"></em><span>Add Expense</span> </a>
-                            </div>
-                        </div>
+                        
+                        <div class="nk-block-head nk-block-head-sm nk-block-between">
+                            <h2 class="nk-block-title fw-normal">Expenses</h2>
+                            <a href="{% url 'create-expense' %}" class="link link-sm">+ Add Expense</a>
+                        </div><!-- .nk-block-head -->
                           
                         <div class="card card-bordered card-preview">
                             <div class="card-inner">

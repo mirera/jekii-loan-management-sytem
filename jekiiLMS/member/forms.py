@@ -4,7 +4,7 @@ from .models import Member, Branch
 class MemberForm(forms.ModelForm):
     
     
-    branch = forms.ModelChoiceField(queryset=Branch.objects.all().order_by('open_date'))
+    
 
 
     class Meta:
@@ -26,13 +26,6 @@ class MemberForm(forms.ModelForm):
                 'passport_photo': forms.FileInput(attrs={'class': 'form-control'}),
             }
         
-        def save(self, commit=True):
-            member = super().save(commit=False)
-            branch_id = self.cleaned_data.get('branch')
-            branch = Branch.objects.get(id=branch_id)
-            member.branch = branch
-            if commit:
-                member.save()
-            return member
+       
 
-    
+      

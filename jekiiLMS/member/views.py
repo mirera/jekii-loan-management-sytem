@@ -102,4 +102,4 @@ def editMember(request,pk):
         form = MemberForm(initial=form_data)
         return render(request,'member/edit-member.html',{'form':form})
 
-#edit member view ends
+#edit member view ends  

@@ -7,6 +7,12 @@ k{% extends 'main.html' %}
         <div class="nk-content-inner">
             <div class="nk-content-body">
                 <div class="components-preview wide-md mx-auto">
+                    <div class="nk-block-head nk-block-head-lg wide-sm">
+                        <div class="nk-block-head-content">
+                            <div class="nk-block-head-sub"><a class="back-to" href="{% url 'members' %}"><em class="icon ni ni-arrow-left"></em><span>Go to Members</span></a></div>  
+                        </div>
+                    </div>
+                    <!-- .nk-block -->
                     <div class="nk-block nk-block-lg">
                         <div class="nk-block-head">
                             <div class="nk-block-head-content">
@@ -73,14 +79,12 @@ k{% extends 'main.html' %}
                                                 </div>
                                             </div>
                                         </div>
+                                        
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="form-label" for="fv-phone">Branch</label>
                                                 <div class="form-control-wrap">
                                                     <div class="input-group">
-                                                        <div class="form-icon form-icon-right">
-                                                            <em class="icon ni ni-home"></em>
-                                                        </div>
                                                         {{form.branch}}
                                                     </div>
                                                 </div>
