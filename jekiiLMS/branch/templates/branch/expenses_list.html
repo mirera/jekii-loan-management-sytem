@@ -30,12 +30,12 @@
                                                     <label class="custom-control-label" for="uid"></label>
                                                 </div>
                                             </th>
-                                            <th class="nk-tb-col"><span class="sub-text">Name</span></th>
-                                            <th class="nk-tb-col tb-col-mb"><span class="sub-text">Contact Phone</span></th>
-                                            <th class="nk-tb-col tb-col-md"><span class="sub-text">Capital</span></th>
-                                            <th class="nk-tb-col tb-col-lg"><span class="sub-text">Office</span></th>
-                                            <th class="nk-tb-col tb-col-lg"><span class="sub-text">Opening Date</span></th>
-                                            <th class="nk-tb-col tb-col-md"><span class="sub-text">Status</span></th>
+                                            <th class="nk-tb-col"><span class="sub-text">Date</span></th>
+                                            <th class="nk-tb-col tb-col-mb"><span class="sub-text">Category</span></th>
+                                            <th class="nk-tb-col tb-col-md"><span class="sub-text">Amount</span></th>
+                                            <th class="nk-tb-col tb-col-lg"><span class="sub-text">Branch</span></th>
+                                            <th class="nk-tb-col tb-col-lg"><span class="sub-text">Created By</span></th>
+                                            <th class="nk-tb-col tb-col-md"><span class="sub-text">Note</span></th>
                                             <th class="nk-tb-col nk-tb-col-tools text-end">
                                             </th>
                                         </tr>
@@ -52,9 +52,6 @@
                                             </td>
                                             <td class="nk-tb-col">
                                                 <div class="user-card">
-                                                    <div class="user-avatar bg-dim-primary d-none d-sm-flex">
-                                                        <span>AB</span>
-                                                    </div>
                                                     <div class="user-info">
                                                         <span class="tb-lead">{{expense.expense_date}} <span class="dot dot-success d-md-none ms-1"></span></span>
                                                         
@@ -65,23 +62,19 @@
                                                 <span>{{expense.category}}</span>
                                             </td>
                                             <td class="nk-tb-col tb-col-mb" data-order="35040.34">
-                                                <span class="tb-amount">{{expense.amount}} <span class="currency">Ksh</span></span>
+                                                <span class=" tb-status text-warning"><span class="currency">Ksh</span>{{expense.amount}}</span>
                                             </td>
                                             <td class="nk-tb-col tb-col-lg" data-order="Email Verified - Kyc Unverified">
                                                 <ul class="list-status">
-                                                    <li><em class="icon text-success ni ni-check-circle"></em> <span>open</span></li>
+                                                    <li><em class="icon text-success ni ni-home"></em> <span>{{expense.branch}}</span></li>
                                                 
                                                 </ul>
                                             </td>
                                             <td class="nk-tb-col tb-col-lg">
-                                                <span>{{expense.branch}}</span>
+                                                <span>{{expense.created_by}}</span>
                                             </td>
                                             <td class="nk-tb-col tb-col-md">
-                                                {% if branch.status == 'active' %}
-                                                <span class="tb-status text-success">{{branch.status}}</span>
-                                                {% else %}
-                                                <span class="tb-status text-danger">{{branch.status}}</span>
-                                                {% endif %}
+                                                <span>{{expense.note}}</span>
                                             </td>
                                             <td class="nk-tb-col nk-tb-col-tools">
                                                 <ul class="nk-tb-actions gx-1">
@@ -91,7 +84,6 @@
                                                             <div class="dropdown-menu dropdown-menu-end">
                                                                 <ul class="link-list-opt no-bdr">
                                                                     <li><a href="{% url 'edit-expense' expense.id %}"><em class="icon ni ni-edit-alt"></em><span>Edit Expense</span></a></li>
-                                                                    <li><a href="#"><em class="icon ni ni-eye"></em><span>View Details</span></a></li>
                                                                     <!-- <li><a href="#"><em class="icon ni ni-activity-round"></em><span>Activities</span></a></li> -->
                                                                     <li class="divider"></li>
                                                                     <!-- <li><a href="#"><em class="icon ni ni-shield-star"></em><span>Reset Pass</span></a></li> -->
