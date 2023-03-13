@@ -191,8 +191,9 @@ def editLoan(request,pk):
 # list Loan  view starts 
 def listLoans(request):
     loans = Loan.objects.all()
+    form = LoanForm()
 
-    context = {'loans': loans}
+    context = {'loans': loans, 'form':form}
     return render(request, 'loan/loans-list.html', context)
 
 # list Loan  view ends
