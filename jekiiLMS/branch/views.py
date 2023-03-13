@@ -64,8 +64,9 @@ def editBranch(request,pk):
 def list_branches(request):
     branches = Branch.objects.all().order_by('-open_date')
     form = BranchForm()
+    
 
-    context = {'branches': branches, 'form':form}
+    context = {'branches': branches, 'form':form, }
     return render(request, 'branch/branches_list.html', context)
 
 # list branches view ends
@@ -138,8 +139,9 @@ def editCategory(request,pk):
 # list expense Categories view starts 
 def list_categories(request):
     categories = ExpenseCategory.objects.all()
+    form = ExpenseCategoryForm()
 
-    context = {'categories': categories}
+    context = {'categories': categories, 'form':form}
     return render(request, 'branch/categories_list.html', context)
 
 # list expense categories view ends
