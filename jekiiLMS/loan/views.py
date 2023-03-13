@@ -261,8 +261,9 @@ def createRepayment(request):
 # list Repayments  view starts 
 def listRepayments(request):
     repayments = Repayment.objects.all()
+    form = RepaymentForm()
 
-    context = {'repayments': repayments}
+    context = {'repayments': repayments, 'form':form}
     return render(request, 'loan/repayment-list.html', context)
 
 # list Repayment  view ends
@@ -310,3 +311,4 @@ def editRepayment(request,pk):
         return render(request,'loan/edit-repayment.html',{'form':form})
 
 #edit repayment view ends
+ 
