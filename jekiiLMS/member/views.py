@@ -31,9 +31,10 @@ def createMember(request):
 # list member view starts 
 def listMembers(request):
     members = Member.objects.all().order_by('date_joined')
+    form = MemberForm()
 
     #later on add a loan context so as to utilize them on the member table.
-    context = {'members': members}
+    context = {'members': members, 'form':form}
     return render(request, 'member/members-list.html', context)
 
 # list member view ends
@@ -102,4 +103,4 @@ def editMember(request,pk):
         form = MemberForm(initial=form_data)
         return render(request,'member/edit-member.html',{'form':form})
 
-#edit member view ends
+#edit member view ends    

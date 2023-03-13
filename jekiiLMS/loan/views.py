@@ -41,8 +41,9 @@ def createLoanProduct(request):
 # list Loan Products view starts 
 def listLoanProducts(request):
     loanproducts = LoanProduct.objects.all()
+    form = LoanProductForm()
 
-    context = {'loanproducts': loanproducts}
+    context = {'loanproducts': loanproducts, 'form':form}
     return render(request, 'loan/loan-product-list.html', context)
 
 # list Loan Products view ends
@@ -191,8 +192,9 @@ def editLoan(request,pk):
 # list Loan  view starts 
 def listLoans(request):
     loans = Loan.objects.all()
+    form = LoanForm()
 
-    context = {'loans': loans}
+    context = {'loans': loans, 'form':form}
     return render(request, 'loan/loans-list.html', context)
 
 # list Loan  view ends
@@ -261,8 +263,9 @@ def createRepayment(request):
 # list Repayments  view starts 
 def listRepayments(request):
     repayments = Repayment.objects.all()
+    form = RepaymentForm()
 
-    context = {'repayments': repayments}
+    context = {'repayments': repayments, 'form':form}
     return render(request, 'loan/repayment-list.html', context)
 
 # list Repayment  view ends
@@ -310,3 +313,4 @@ def editRepayment(request,pk):
         return render(request,'loan/edit-repayment.html',{'form':form})
 
 #edit repayment view ends
+ 

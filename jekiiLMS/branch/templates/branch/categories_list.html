@@ -2,121 +2,249 @@
 
 {% block content %}
   
-<!-- content @s -->
-<div class="nk-content ">
+ <!-- content @s -->
+ <div class="nk-content ">
     <div class="container-fluid">
         <div class="nk-content-inner">
             <div class="nk-content-body">
                 <div class="components-preview wide-md mx-auto">
-                    <!-- .nk-block-head -->
-                    <div class="nk-block nk-block-lg">
-                        <div class="nk-block-head row">
-                            <div class="nk-block-head-content col-md-8">
-                                <h4 class="nk-block-title">All Expense Categories</h4>
-                            </div>
-                            <div class="col-md-4 text-right">
-                                <a href="{% url 'create-exp-cat' %}" class="btn btn-primary "><em class="icon ni ni-plus-sm"></em><span>Add Expense Category</span> </a>
-                            </div>
+                    <div class="nk-block-head nk-block-head-lg wide-sm">
+                        <div class="nk-block-head-content">
+                            <div class="nk-block-head-sub"><a class="back-to" href="{% url 'expenses' %}"><em class="icon ni ni-arrow-left"></em><span>Go to Expenses</span></a></div>  
                         </div>
-                          
+                    </div><!-- nk-block-head -->
+                    <div class="nk-block-head nk-block-head-sm nk-block-between">
+                        <h2 class="nk-block-title fw-normal">Expense Categories</h2>
+                        <a data-bs-toggle="modal" href="#addExpenseCategory" class="link link-sm">+ Add Category</a>
+                    </div><!-- .nk-block-head -->
+                    <div class="nk-block nk-block-lg">
                         <div class="card card-bordered card-preview">
-                            <div class="card-inner">
-                                <table class="datatable-init nowrap nk-tb-list nk-tb-ulist" data-auto-responsive="false">
-                                    <thead>
-                                        <tr class="nk-tb-item nk-tb-head">
-                                            <th class="nk-tb-col nk-tb-col-check">
-                                                <div class="custom-control custom-control-sm custom-checkbox notext">
-                                                    <input type="checkbox" class="custom-control-input" id="uid">
-                                                    <label class="custom-control-label" for="uid"></label>
-                                                </div>
-                                            </th>
-                                            <th class="nk-tb-col"><span class="sub-text">Name</span></th>
-                                            <th class="nk-tb-col tb-col-mb"><span class="sub-text">Contact Phone</span></th>
-                                            <th class="nk-tb-col tb-col-md"><span class="sub-text">Capital</span></th>
-                                            <th class="nk-tb-col tb-col-lg"><span class="sub-text">Office</span></th>
-                                            <th class="nk-tb-col tb-col-lg"><span class="sub-text">Opening Date</span></th>
-                                            <th class="nk-tb-col tb-col-md"><span class="sub-text">Status</span></th>
-                                            <th class="nk-tb-col nk-tb-col-tools text-end">
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for category in categories %}
-                                        
-                                        <tr class="nk-tb-item">
-                                            <td class="nk-tb-col nk-tb-col-check">
-                                                <div class="custom-control custom-control-sm custom-checkbox notext">
-                                                    <input type="checkbox" class="custom-control-input" id="uid1">
-                                                    <label class="custom-control-label" for="uid1"></label>
-                                                </div>
-                                            </td>
-                                            <td class="nk-tb-col">
-                                                <div class="user-card">
-                                                    <div class="user-avatar bg-dim-primary d-none d-sm-flex">
-                                                        <span>AB</span>
-                                                    </div>
-                                                    <div class="user-info">
-                                                        <span class="tb-lead">{{category.name}} <span class="dot dot-success d-md-none ms-1"></span></span>
-                                                        
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="nk-tb-col tb-col-md">
-                                                <span>{{branch.phone}}</span>
-                                            </td>
-                                            <td class="nk-tb-col tb-col-mb" data-order="35040.34">
-                                                <span class="tb-amount">{{branch.capital}} <span class="currency">Ksh</span></span>
-                                            </td>
-                                            <td class="nk-tb-col tb-col-lg" data-order="Email Verified - Kyc Unverified">
-                                                <ul class="list-status">
-                                                    <li><em class="icon text-success ni ni-check-circle"></em> <span>open</span></li>
-                                                
-                                                </ul>
-                                            </td>
-                                            <td class="nk-tb-col tb-col-lg">
-                                                <span>{{branch.open_date}}</span>
-                                            </td>
-                                            <td class="nk-tb-col tb-col-md">
-                                                {% if branch.status == 'active' %}
-                                                <span class="tb-status text-success">{{branch.status}}</span>
-                                                {% else %}
-                                                <span class="tb-status text-danger">{{branch.status}}</span>
-                                                {% endif %}
-                                            </td>
-                                            <td class="nk-tb-col nk-tb-col-tools">
-                                                <ul class="nk-tb-actions gx-1">
-                                                    <li>
-                                                        <div class="drodown">
-                                                            <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
-                                                            <div class="dropdown-menu dropdown-menu-end">
-                                                                <ul class="link-list-opt no-bdr">
-                                                                    <li><a href="{% url 'edit-exp-cat' category.id %}"><em class="icon ni ni-edit-alt"></em><span>Edit Category</span></a></li>
-                                                                    <li><a href="#"><em class="icon ni ni-eye"></em><span>View Details</span></a></li>
-                                                                    <!-- <li><a href="#"><em class="icon ni ni-activity-round"></em><span>Activities</span></a></li> -->
-                                                                    <li class="divider"></li>
-                                                                    <!-- <li><a href="#"><em class="icon ni ni-shield-star"></em><span>Reset Pass</span></a></li> -->
-                                                                    <li><a href="{% url 'delete-exp-cat' category.id %}"><em class="icon ni ni-trash"></em><span>Delete Category</span></a></li>
-                                                                </ul>
-                                                            </div>
+                            <table class="table table-ulogs">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="tb-col-os"><span class="overline-title">Name <span class="d-sm-none">/ IP</span></span></th>
+                                        <th class="tb-col-ip"><span class="overline-title">Description</span></th>
+                                        <th class="tb-col-time"><span class="overline-title">Total Expense</span></th>
+                                        <th class="tb-col-action"><span class="overline-title">&nbsp;</span></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for category in categories %}
+                                    <tr>
+                                        <td class="tb-col-os">{{category.name}}</td>
+                                        <td class="tb-col-ip"><span class="sub-text">{{category.description}}</span></td>
+                                        <td class="tb-col-time"><span class="sub-text">{{category.name}}</span></td>
+                                        <td class="nk-tb-col nk-tb-col-tools">
+                                            <ul class="nk-tb-actions gx-1">
+                                                <li>
+                                                    <div class="drodown">
+                                                        <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
+                                                        <div class="dropdown-menu dropdown-menu-end">
+                                                            <ul class="link-list-opt no-bdr">
+                                                                <li><a href="{% url 'edit-exp-cat' category.id %}"><em class="icon ni ni-edit-alt"></em><span>Edit Category</span></a></li>
+                                                               
+                                                                <!-- <li><a href="#"><em class="icon ni ni-activity-round"></em><span>Activities</span></a></li> -->
+                                                                <li class="divider"></li>
+                                                                <!-- <li><a href="#"><em class="icon ni ni-shield-star"></em><span>Reset Pass</span></a></li> -->
+                                                                <li><a data-bs-toggle="modal" href="#deleteExpenseCategory"><em class="icon ni ni-trash"></em><span>Delete Category</span></a></li>
+                                                            </ul>
                                                         </div>
-                                                    </li>
-                                                </ul>
-                                            </td>
-                                        </tr>
-                            
-                                        <!-- .nk-tb-item  -->
-                                        {% endfor %}
-                                        
-                                    </tbody>
-                                </table>
-                            </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    
+                                </tbody>
+                            </table>
                         </div><!-- .card-preview -->
-                    </div> <!-- nk-block -->
+                    </div><!-- nk-block -->
                 </div><!-- .components-preview -->
             </div>
         </div>
     </div>
 </div>
 <!-- content @e -->
+
+<div class="modal fade" id="deleteExpenseCategory">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-bs-dismiss="modal"><em class="icon ni ni-cross"></em></a>
+            <div class="modal-body modal-body-sm text-center">
+                <div class="nk-modal py-4">
+                    <em class="nk-modal-icon icon icon-circle icon-circle-xxl ni ni-cross bg-danger"></em>
+                    <h4 class="nk-modal-title">Are You Sure ?</h4>
+                    <div class="nk-modal-text mt-n2">
+                        <p class="text-soft">This Category will be removed permanently.</p>
+                    </div>
+                    <ul class="d-flex justify-content-center gx-4 mt-4">
+                        {% for category in categories %}
+                        <form action="{% url 'delete-exp-cat' category.id %}" method="POST">
+                        {% endfor %}
+                            {% csrf_token %}
+                        <li>
+                            <button type="submit" data-bs-dismiss="modal" id="deleteWH" class="btn btn-primary">Yes, Delete it</button>
+                        </li>
+                        </form>
+                        <li>
+                            <button data-bs-dismiss="modal" data-toggle="modal" data-target="#editEventPopup" class="btn btn-danger btn-dim">Cancel</button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div><!-- .Delete Expense Category Modal-content -->
+
+
+<div class="modal fade" id="addExpenseCategory">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <em class="icon ni ni-cross-sm"></em>
+            </a>
+            <div class="modal-body modal-body-md">
+                <h5 class="modal-title">Add Expense Category</h5><br>
+            
+                <form action="{% url 'create-exp-cat' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label class="form-label" for="cf-full-name">Category Name</label>
+                        {{form.name}}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="cf-default-textarea">Description</label>
+                        <div class="form-control-wrap">
+                            {{form.description}}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-lg btn-primary">Save Category</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div><!-- .Add Expense Category Modal-Content -->
+
+<div class="modal fade" id="editBranch">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <em class="icon ni ni-cross-sm"></em>
+            </a>
+            <div class="modal-body modal-body-md">
+                <h5 class="modal-title">Add Branch</h5>
+                {% for branch in branches %}
+                <form action="{% url 'edit' branch.id %}" class="form-validate" method="POST">
+                {% endfor %}
+                    {% csrf_token %}
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="fv-email">Branch Name</label>
+                                <div class="form-control-wrap">
+                                    <!-- <div class="form-icon form-icon-right">
+                                        <em class="icon ni ni-mail"></em>
+                                    </div> -->
+                                    <!-- <input type="email" class="form-control" id="fv-email" name="fv-email" name="email" required> -->
+                                    {{form_data.name}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="fv-email">Office</label>
+                                <div class="form-control-wrap">
+                                    <!-- <input type="email" class="form-control" id="fv-email" name="fv-email" name="email" required> -->
+                                    {{form.office}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="fv-email">Email address</label>
+                                <div class="form-control-wrap">
+                                    <div class="form-icon form-icon-right">
+                                        <em class="icon ni ni-mail"></em>
+                                    </div>
+                                    <!-- <input type="email" class="form-control" id="fv-email" name="fv-email" name="email" required> -->
+                                    {{form.email}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="fv-phone">Phone</label>
+                                <div class="form-control-wrap">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="fv-phone">+254</span>
+                                        </div>
+                                        <!-- <input type="number" class="form-control" name="phone" required> -->
+                                        {{form.phone}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-label" for="pay-amount-1">Capital Amount</label>
+                                <div class="form-control-wrap">
+                                    <!-- <input type="number" class="form-control" id="pay-amount-1" name="capital"> -->
+                                    {{form.capital}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="form-label">Date Opened</label>
+                                <div class="form-control-wrap">
+                                    <div class="form-icon form-icon-left">
+                                        <em class="icon ni ni-calendar"></em>
+                                    </div>
+                                    <!-- <input type="date" class="form-control date-picker" name="date_opened" data-date-format="yyyy-mm-dd"> -->
+                                    {{form.open_date}}
+                                </div>
+                                <!-- <div class="form-note">Date format <code>yyyy-mm-dd</code></div> -->
+                            </div>
+                        </div>
+                        <div class="col-lg-7">
+                            <ul class="custom-control-group g-3 align-center flex-wrap"> 
+                                <li>
+                                    <div class="custom-control custom-radio">
+                                        <input type="radio" class="custom-control-input" id="reg-enable" name="status" value="active" {% if form.status.value == 'active' %}checked{% endif %}>
+                                        <label class="custom-control-label tb-status text-success" for="reg-enable">Active</label>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="custom-control custom-radio">
+                                        <input type="radio" class="custom-control-input" id="reg-disable" name="status" value="inactive" {% if form.status.value == 'inactive' %}checked{% endif %}>
+                                        <label class=" custom-control-label tb-status text-danger" for="reg-disable">Inactive</label>
+                                    </div>
+                                </li>
+                                
+                            </ul>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="cf-default-textarea">Notes</label>
+                            <div class="form-control-wrap">
+                                <!-- <textarea class="form-control form-control-sm" id="cf-default-textarea" placeholder="Write your message" name="notes"></textarea> -->
+                                {{form.notes}}
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-lg btn-primary">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div><!-- .Edit Expense Category Modal-Content -->
 
 {% endblock content %}

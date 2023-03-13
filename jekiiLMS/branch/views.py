@@ -63,8 +63,10 @@ def editBranch(request,pk):
 # list branches view starts 
 def list_branches(request):
     branches = Branch.objects.all().order_by('-open_date')
+    form = BranchForm()
+    
 
-    context = {'branches': branches}
+    context = {'branches': branches, 'form':form, }
     return render(request, 'branch/branches_list.html', context)
 
 # list branches view ends
@@ -80,9 +82,9 @@ def deleteBranch(request,pk):
         messages.success(request, 'Branch deleted successfully.')
 
 
-     #context is {'obj':branch}, in delete.html we are accessing room/message as 'obj'
-    context = {'obj':branch}
-    return render(request,'branch/delete_branch.html', context)
+     #context is {'obj':branch}, in delete.html we are accessing room/message as 'obj' delete_branch.html
+    context = {'branch':branch}
+    return render(request,'branch/branches_list.html', context)
 
 # delete branch ends starts
 
@@ -137,8 +139,9 @@ def editCategory(request,pk):
 # list expense Categories view starts 
 def list_categories(request):
     categories = ExpenseCategory.objects.all()
+    form = ExpenseCategoryForm()
 
-    context = {'categories': categories}
+    context = {'categories': categories, 'form':form}
     return render(request, 'branch/categories_list.html', context)
 
 # list expense categories view ends
@@ -186,8 +189,9 @@ def createExpense(request):
 # list expense Categories view starts 
 def list_expenses(request):
     expenses = Expense.objects.all()
+    form = ExpenseForm()
 
-    context = {'expenses': expenses}
+    context = {'expenses': expenses, 'form':form}
     return render(request, 'branch/expenses_list.html', context)
 
 # list expense categories view ends
