@@ -189,8 +189,9 @@ def createExpense(request):
 # list expense Categories view starts 
 def list_expenses(request):
     expenses = Expense.objects.all()
+    form = ExpenseForm()
 
-    context = {'expenses': expenses}
+    context = {'expenses': expenses, 'form':form}
     return render(request, 'branch/expenses_list.html', context)
 
 # list expense categories view ends

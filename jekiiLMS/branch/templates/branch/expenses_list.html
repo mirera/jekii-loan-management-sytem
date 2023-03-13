@@ -13,7 +13,7 @@
                         
                         <div class="nk-block-head nk-block-head-sm nk-block-between">
                             <h2 class="nk-block-title fw-normal">Expenses</h2>
-                            <a href="{% url 'create-expense' %}" class="link link-sm">+ Add Expense</a>
+                            <a data-bs-toggle="modal" href="#addExpense" class="link link-sm">+ Add Expense</a>
                         </div><!-- .nk-block-head -->
                           
                         <div class="card card-bordered card-preview">
@@ -107,5 +107,240 @@
     </div>
 </div>
 <!-- content @e -->
+
+<div class="modal fade" id="deleteExpenseCategory">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-bs-dismiss="modal"><em class="icon ni ni-cross"></em></a>
+            <div class="modal-body modal-body-sm text-center">
+                <div class="nk-modal py-4">
+                    <em class="nk-modal-icon icon icon-circle icon-circle-xxl ni ni-cross bg-danger"></em>
+                    <h4 class="nk-modal-title">Are You Sure ?</h4>
+                    <div class="nk-modal-text mt-n2">
+                        <p class="text-soft">This Expense will be removed permanently.</p>
+                    </div>
+                    <ul class="d-flex justify-content-center gx-4 mt-4">
+                        {% for expense in expenses %}
+                        <form action="{% url 'delete-expense' expense.id %}" method="POST">
+                        {% endfor %}
+                            {% csrf_token %}
+                        <li>
+                            <button type="submit" data-bs-dismiss="modal" id="deleteWH" class="btn btn-primary">Yes, Delete it</button>
+                        </li>
+                        </form>
+                        <li>
+                            <button data-bs-dismiss="modal" data-toggle="modal" data-target="#editEventPopup" class="btn btn-danger btn-dim">Cancel</button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div><!-- .Delete Expense Modal-content -->
+
+
+<div class="modal fade" id="addExpense">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <em class="icon ni ni-cross-sm"></em>
+            </a>
+            <div class="modal-body modal-body-md">
+                <h5 class="modal-title">Add Expense </h5><br>
+            
+                <form action="{% url 'create-expense' %} " method="POST">
+                    {% csrf_token %}
+                    <div class="row g-4">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-label" for="full-name-1"> Expense Category</label>
+                                <div class="form-control-wrap">
+                                    {{form.category}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-label" for="email-address-1">Expense Date</label>
+                                <div class="form-control-wrap">
+                                    <div class="form-icon form-icon-left">
+                                        <em class="icon ni ni-calendar"></em>
+                                    </div>
+                                    {{form.expense_date}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-label" for="email-address-1">Branch</label>
+                                <div class="form-control-wrap">
+                                    {{form.branch}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-label" for="phone-no-1">Amount</label>
+                                <div class="form-control-wrap">
+                                    {{form.amount}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-label" for="pay-amount-1"> Created By</label>
+                                <div class="form-control-wrap">
+                                    {{form.created_by}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-label" for="pay-amount-1"> Attachement</label>
+                                <div class="form-control-wrap">
+                                    {{form.attachement}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-label" for="pay-amount-1"> Note</label>
+                                <div class="form-control-wrap">
+                                    {{form.note}}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        
+                        <div class="col-12">
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-lg btn-primary">Save Expense</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div><!-- .Add Expense  Modal-Content -->
+
+<div class="modal fade" id="editBranch">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <em class="icon ni ni-cross-sm"></em>
+            </a>
+            <div class="modal-body modal-body-md">
+                <h5 class="modal-title">Add Branch</h5>
+                {% for branch in branches %}
+                <form action="{% url 'edit' branch.id %}" class="form-validate" method="POST">
+                {% endfor %}
+                    {% csrf_token %}
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="fv-email">Branch Name</label>
+                                <div class="form-control-wrap">
+                                    <!-- <div class="form-icon form-icon-right">
+                                        <em class="icon ni ni-mail"></em>
+                                    </div> -->
+                                    <!-- <input type="email" class="form-control" id="fv-email" name="fv-email" name="email" required> -->
+                                    {{form_data.name}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="fv-email">Office</label>
+                                <div class="form-control-wrap">
+                                    <!-- <input type="email" class="form-control" id="fv-email" name="fv-email" name="email" required> -->
+                                    {{form.office}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="fv-email">Email address</label>
+                                <div class="form-control-wrap">
+                                    <div class="form-icon form-icon-right">
+                                        <em class="icon ni ni-mail"></em>
+                                    </div>
+                                    <!-- <input type="email" class="form-control" id="fv-email" name="fv-email" name="email" required> -->
+                                    {{form.email}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="fv-phone">Phone</label>
+                                <div class="form-control-wrap">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="fv-phone">+254</span>
+                                        </div>
+                                        <!-- <input type="number" class="form-control" name="phone" required> -->
+                                        {{form.phone}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-label" for="pay-amount-1">Capital Amount</label>
+                                <div class="form-control-wrap">
+                                    <!-- <input type="number" class="form-control" id="pay-amount-1" name="capital"> -->
+                                    {{form.capital}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="form-label">Date Opened</label>
+                                <div class="form-control-wrap">
+                                    <div class="form-icon form-icon-left">
+                                        <em class="icon ni ni-calendar"></em>
+                                    </div>
+                                    <!-- <input type="date" class="form-control date-picker" name="date_opened" data-date-format="yyyy-mm-dd"> -->
+                                    {{form.open_date}}
+                                </div>
+                                <!-- <div class="form-note">Date format <code>yyyy-mm-dd</code></div> -->
+                            </div>
+                        </div>
+                        <div class="col-lg-7">
+                            <ul class="custom-control-group g-3 align-center flex-wrap"> 
+                                <li>
+                                    <div class="custom-control custom-radio">
+                                        <input type="radio" class="custom-control-input" id="reg-enable" name="status" value="active" {% if form.status.value == 'active' %}checked{% endif %}>
+                                        <label class="custom-control-label tb-status text-success" for="reg-enable">Active</label>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="custom-control custom-radio">
+                                        <input type="radio" class="custom-control-input" id="reg-disable" name="status" value="inactive" {% if form.status.value == 'inactive' %}checked{% endif %}>
+                                        <label class=" custom-control-label tb-status text-danger" for="reg-disable">Inactive</label>
+                                    </div>
+                                </li>
+                                
+                            </ul>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="cf-default-textarea">Notes</label>
+                            <div class="form-control-wrap">
+                                <!-- <textarea class="form-control form-control-sm" id="cf-default-textarea" placeholder="Write your message" name="notes"></textarea> -->
+                                {{form.notes}}
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-lg btn-primary">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div><!-- .Edit Expense  Modal-Content -->
 
 {% endblock content %}
