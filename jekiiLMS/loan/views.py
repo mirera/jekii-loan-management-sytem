@@ -41,8 +41,9 @@ def createLoanProduct(request):
 # list Loan Products view starts 
 def listLoanProducts(request):
     loanproducts = LoanProduct.objects.all()
+    form = LoanProductForm()
 
-    context = {'loanproducts': loanproducts}
+    context = {'loanproducts': loanproducts, 'form':form}
     return render(request, 'loan/loan-product-list.html', context)
 
 # list Loan Products view ends
