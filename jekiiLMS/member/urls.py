@@ -9,3 +9,4 @@ urlpatterns = [
     path('view-member/<str:pk>', views.viewMember, name='view-member'),
     path('delete-member/<str:pk>', views.deleteMember, name='delete-member'),
 ]
+

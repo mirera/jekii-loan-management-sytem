@@ -6,7 +6,7 @@ from datetime import timedelta
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 from decimal import Decimal
-from django.utils import timezone
+from django.utils.timezone import now
 import uuid
 from member.models import Member
 
@@ -94,7 +94,7 @@ LOAN_STATUS = (
     ('cleared','CLEARED'),
 )
 class Loan(models.Model):
-    loan_id =models.CharField(max_length=500, null=True, unique=True)
+    loan_id =models.CharField(max_length=50, null=True, unique=True)
     loan_product = models.ForeignKey(LoanProduct, on_delete=models.SET_NULL, null=True)
     member = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True, related_name='loans_as_member')
     applied_amount = models.IntegerField()
@@ -104,7 +104,22 @@ class Loan(models.Model):
     loan_purpose = models.TextField()
     status = models.CharField(max_length=50, choices=LOAN_STATUS, default='pending')
     attachments = models.FileField(upload_to='attachments', null=True, blank=True)
+
+    # Generate loan ID based on member ID and current timestamp
+    def save(self, *args, **kwargs):
+        if not self.loan_id:
+            member_id = str(self.member_id).zfill(6)
+            date_str = now().strftime('%Y%m%d')
+            last_loan = Loan.objects.filter(loan_id__startswith=member_id+date_str).last()
+            if last_loan:
+                last_id = last_loan.loan_id[-4:]
+                next_id = str(int(last_id)+1).zfill(4)
+                self.loan_id = member_id+date_str+next_id
+            else:
+                self.loan_id = member_id+date_str+'0001'
+        super(Loan, self).save(*args, **kwargs)
     
+
 
     #method to calculate first_repayment_date
     def first_repayment_date(self):
@@ -140,15 +155,6 @@ class Loan(models.Model):
 
         return total_payable
 
-
-    # Generate loan ID based on member ID and current timestamp
-    def save(self, *args, **kwargs):
-        if not self.loan_id:
-            # Generate loan ID based on member ID and current timestamp
-            member_id = self.id_no.id
-            timestamp = timezone.now().strftime('%Y%m%d%H%M%S%f')
-            self.loan_id = f'{member_id}-{timestamp}'
-        super().save(*args, **kwargs)
     
     # a method that retrieves the Member object based on the provided id_no and updates the corresponding fields in the Loan object
     def update_from_member(self):
