@@ -14,8 +14,8 @@ INDUSTRIES = (
 )
 
 class Member(models.Model):
-    first_name = models.CharField(max_length=500)
-    last_name = models.CharField(max_length=500)
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
     id_no = models.CharField(max_length=10, unique=True)
     phone_no = models.CharField(max_length=10, unique=True)
     email=models.EmailField(null=True, blank=True)

@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import Member 
 from .forms import MemberForm
@@ -50,17 +50,17 @@ def viewMember(request, pk):
 
 # delete member view starts 
 def deleteMember(request,pk):
-    member = Member.objects.get(id=pk)
+    #member = Member.objects.get(id=pk)
+    member = get_object_or_404(Member, id=pk)
 
     if request.method == 'POST':
         member.delete()
         return redirect('members')
 
-     #context is {'obj':branch}, in delete.html we are accessing room/message as 'obj'
-    context = {'obj':member}
+    context = {'member':member}
     return render(request,'member/delete-member.html', context)
 
-# delete member ends starts
+# delete member ends 
 
 #edit member view starts
 def editMember(request,pk):
