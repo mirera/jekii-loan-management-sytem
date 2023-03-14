@@ -91,7 +91,16 @@
                                     <span class="tb-sub tb-amount">{{loan.applied_amount}}<span>Ksh</span></span>
                                 </div>
                                 <div class="nk-tb-col">
-                                    <span class="badge badge-dot badge-dot-xs bg-success">Paid</span>
+                                    
+                                    {% if loan.status == 'pending' %}
+                                        <span class="badge badge-dot bg-warning">{{loan.status}}</span>
+                                        {% elif loan.status == 'cleared' %}
+                                        <span class="badge badge-dot bg-success">{{loan.status}}</span>
+                                        {% elif loan.status == 'approved' %}
+                                        <span class="badge badge-dot bg-primary">{{loan.status}}</span>
+                                        {% else %}
+                                        <span class="badge badge-dot bg-danger">{{loan.status}}</span>
+                                    {% endif %}
                                 </div>
                                 <div class="nk-tb-col nk-tb-col-action">
                                     <div class="dropdown">
@@ -99,7 +108,7 @@
                                         <div class="dropdown-menu dropdown-menu-end dropdown-menu-xs">
                                             <ul class="link-list-plain">
                                                 {% if loan.status == 'pending' %}
-                                                <li><a href="{% url 'edit-loan' loan.id %}">Edit</a></li>
+                                                <li><a href="{% url 'edit-loan' loan.id %}">Approve</a></li>
                                                 <li><a href="{% url 'delete-loan' loan.id %}">Delete</a></li>
                                                 {% else %}
                                                 <li><a href="{% url 'view-loan' loan.id %}">View Details</a></li>

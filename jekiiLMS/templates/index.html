@@ -21,16 +21,14 @@
                                                     <ul class="nk-block-tools g-3">
                                                         <li>
                                                             <div class="dropdown">
-                                                                <a href="#" class="dropdown-toggle btn btn-white btn-dim btn-outline-light" data-bs-toggle="dropdown"><em class="d-none d-sm-inline icon ni ni-home"></em><span><span class="d-none d-md-inline">Last</span> 30 Days</span><em class="dd-indc icon ni ni-chevron-down"></em></a>
+                                                                <a href="#" class="dropdown-toggle btn btn-white btn-dim btn-outline-light" data-bs-toggle="dropdown"><em class="d-none d-sm-inline icon ni ni-home"></em><span><span class="d-none d-md-inline">All</span> Branches</span><em class="dd-indc icon ni ni-chevron-down"></em></a>
                                                                 <div class="dropdown-menu dropdown-menu-end">
-                                                                    {% for branch in branches %}
                                                                     <ul class="link-list-opt no-bdr">
+                                                                        {% for branch in branches %}
                                                                         <li><a href="#"><span>{{branch.name}}</span></a></li>
-                                                                        <li><a href="#"><span>Last 6 Months</span></a></li>
-                                                                        <li><a href="#"><span>Last 1 Years</span></a></li>
-                                                                        <li><a href="#"><span>User Customized Period</span></a></li>
+                                                                        {% endfor %} 
                                                                     </ul>
-                                                                    {% endfor %}
+                                                                    
                                                                 </div>
                                                             </div>
                                                         </li>
@@ -41,6 +39,9 @@
                                         </div><!-- .nk-block-head-content -->
                                     </div><!-- .nk-block-between -->
                                 </div><!-- .nk-block-head -->
+
+    
+
                                 <div class="nk-block">
                                     <div class="row g-gs">
                                         <div class="col-xxl-6">
@@ -99,7 +100,10 @@
                                                                     </div>
                                                                 </div>
                                                             </div><!-- .card -->
+                                                            
                                                         </div><!-- .col -->
+
+
                                                         <div class="col-sm-6 col-lg-12 col-xxl-6">
                                                             <div class="card card-bordered">
                                                                 <div class="card-inner">
@@ -460,94 +464,33 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    {% for member in members %}
                                                     <div class="card-inner card-inner-md">
                                                         <div class="user-card">
+                                                            
                                                             <div class="user-avatar bg-primary-dim">
                                                                 <span>AB</span>
                                                             </div>
                                                             <div class="user-info">
-                                                                <span class="lead-text">Abu Bin Ishtiyak</span>
-                                                                <span class="sub-text">info@softnio.com</span>
+                                                                <span class="lead-text">{{member.first_name}} {{member.last_name}}</span>
+                                                                <span class="sub-text">{{member.phone_no}}</span>
                                                             </div>
                                                             <div class="user-action">
                                                                 <div class="drodown">
                                                                     <a href="#" class="dropdown-toggle btn btn-icon btn-trigger me-n1" data-bs-toggle="dropdown" aria-expanded="false"><em class="icon ni ni-more-h"></em></a>
                                                                     <div class="dropdown-menu dropdown-menu-end">
                                                                         <ul class="link-list-opt no-bdr">
-                                                                            <li><a href="#"><em class="icon ni ni-setting"></em><span>Action Settings</span></a></li>
-                                                                            <li><a href="#"><em class="icon ni ni-notify"></em><span>Push Notification</span></a></li>
+                                                                            <li><a href="{% url 'view-member' member.id %}"><em class="icon ni ni-eye-alt"></em><span>View Details</span></a></li>
+                                                                            <li><a href="{% url 'edit-member' member.id %}"><em class="icon ni ni-edit-fill"></em><span>Edit</span></a></li>
                                                                         </ul>
                                                                     </div>
                                                                 </div>
                                                             </div>
+                                                            
                                                         </div>
                                                     </div>
-                                                    <div class="card-inner card-inner-md">
-                                                        <div class="user-card">
-                                                            <div class="user-avatar bg-pink-dim">
-                                                                <span>SW</span>
-                                                            </div>
-                                                            <div class="user-info">
-                                                                <span class="lead-text">Sharon Walker</span>
-                                                                <span class="sub-text">sharon-90@example.com</span>
-                                                            </div>
-                                                            <div class="user-action">
-                                                                <div class="drodown">
-                                                                    <a href="#" class="dropdown-toggle btn btn-icon btn-trigger me-n1" data-bs-toggle="dropdown" aria-expanded="false"><em class="icon ni ni-more-h"></em></a>
-                                                                    <div class="dropdown-menu dropdown-menu-end">
-                                                                        <ul class="link-list-opt no-bdr">
-                                                                            <li><a href="#"><em class="icon ni ni-setting"></em><span>Action Settings</span></a></li>
-                                                                            <li><a href="#"><em class="icon ni ni-notify"></em><span>Push Notification</span></a></li>
-                                                                        </ul>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="card-inner card-inner-md">
-                                                        <div class="user-card">
-                                                            <div class="user-avatar bg-warning-dim">
-                                                                <span>GO</span>
-                                                            </div>
-                                                            <div class="user-info">
-                                                                <span class="lead-text">Gloria Oliver</span>
-                                                                <span class="sub-text">gloria_72@example.com</span>
-                                                            </div>
-                                                            <div class="user-action">
-                                                                <div class="drodown">
-                                                                    <a href="#" class="dropdown-toggle btn btn-icon btn-trigger me-n1" data-bs-toggle="dropdown" aria-expanded="false"><em class="icon ni ni-more-h"></em></a>
-                                                                    <div class="dropdown-menu dropdown-menu-end">
-                                                                        <ul class="link-list-opt no-bdr">
-                                                                            <li><a href="#"><em class="icon ni ni-setting"></em><span>Action Settings</span></a></li>
-                                                                            <li><a href="#"><em class="icon ni ni-notify"></em><span>Push Notification</span></a></li>
-                                                                        </ul>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="card-inner card-inner-md">
-                                                        <div class="user-card">
-                                                            <div class="user-avatar bg-success-dim">
-                                                                <span>PS</span>
-                                                            </div>
-                                                            <div class="user-info">
-                                                                <span class="lead-text">Phillip Sullivan</span>
-                                                                <span class="sub-text">phillip-85@example.com</span>
-                                                            </div>
-                                                            <div class="user-action">
-                                                                <div class="drodown">
-                                                                    <a href="#" class="dropdown-toggle btn btn-icon btn-trigger me-n1" data-bs-toggle="dropdown" aria-expanded="false"><em class="icon ni ni-more-h"></em></a>
-                                                                    <div class="dropdown-menu dropdown-menu-end">
-                                                                        <ul class="link-list-opt no-bdr">
-                                                                            <li><a href="#"><em class="icon ni ni-setting"></em><span>Action Settings</span></a></li>
-                                                                            <li><a href="#"><em class="icon ni ni-notify"></em><span>Push Notification</span></a></li>
-                                                                        </ul>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                                    {% endfor %}
+                                                    
                                                 </div>
                                             </div><!-- .card -->
                                         </div><!-- .col -->

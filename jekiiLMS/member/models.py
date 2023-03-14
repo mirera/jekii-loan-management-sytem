@@ -27,6 +27,10 @@ class Member(models.Model):
     date_joined = models.DateTimeField(auto_now_add=True)
     passport_photo = models.ImageField(null=True, blank=True)
 
+
+    class Meta:
+        ordering = ['-date_joined']
+
     def __str__(self):
         return self.first_name
-  
+    
