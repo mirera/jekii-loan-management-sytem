@@ -9,7 +9,7 @@
                                 <div class="nk-block-head nk-block-head-sm">
                                     <div class="nk-block-between">
                                         <div class="nk-block-head-content">
-                                            <h3 class="nk-block-title page-title">Sales Overview</h3>
+                                            <h3 class="nk-block-title page-title">Loans Overview</h3>
                                             <div class="nk-block-des text-soft">
                                                 <p>Welcome to Jekii Capital Dashboard.</p>
                                             </div>
@@ -21,14 +21,16 @@
                                                     <ul class="nk-block-tools g-3">
                                                         <li>
                                                             <div class="dropdown">
-                                                                <a href="#" class="dropdown-toggle btn btn-white btn-dim btn-outline-light" data-bs-toggle="dropdown"><em class="d-none d-sm-inline icon ni ni-calender-date"></em><span><span class="d-none d-md-inline">Last</span> 30 Days</span><em class="dd-indc icon ni ni-chevron-right"></em></a>
+                                                                <a href="#" class="dropdown-toggle btn btn-white btn-dim btn-outline-light" data-bs-toggle="dropdown"><em class="d-none d-sm-inline icon ni ni-home"></em><span><span class="d-none d-md-inline">Last</span> 30 Days</span><em class="dd-indc icon ni ni-chevron-down"></em></a>
                                                                 <div class="dropdown-menu dropdown-menu-end">
+                                                                    {% for branch in branches %}
                                                                     <ul class="link-list-opt no-bdr">
-                                                                        <li><a href="#"><span>Last 30 Days</span></a></li>
+                                                                        <li><a href="#"><span>{{branch.name}}</span></a></li>
                                                                         <li><a href="#"><span>Last 6 Months</span></a></li>
                                                                         <li><a href="#"><span>Last 1 Years</span></a></li>
                                                                         <li><a href="#"><span>User Customized Period</span></a></li>
                                                                     </ul>
+                                                                    {% endfor %}
                                                                 </div>
                                                             </div>
                                                         </li>
@@ -451,7 +453,7 @@
                                                     <div class="card-inner">
                                                         <div class="card-title-group">
                                                             <div class="card-title">
-                                                                <h6 class="title">New Users</h6>
+                                                                <h6 class="title">New Members</h6>
                                                             </div>
                                                             <div class="card-tools">
                                                                 <a href="html/user-list-regular.html" class="link">View All</a>
