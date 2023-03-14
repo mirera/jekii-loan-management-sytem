@@ -140,7 +140,7 @@
                         <p class="text-soft">This member will be removed permanently.</p>
                     </div>
                     <ul class="d-flex justify-content-center gx-4 mt-4">
-                        <form action="{% url 'delete-member' member.id %}" method="POST">
+                        <form action="" method="POST">
                         {% csrf_token %}
                         <li>
                             <button type="submit" data-bs-dismiss="modal" id="deleteWH" class="btn btn-primary">Yes, Delete.</button>

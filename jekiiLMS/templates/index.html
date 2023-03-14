@@ -173,13 +173,13 @@
                                                 <div class="card-inner">
                                                     <div class="card-title-group">
                                                         <div class="card-title">
-                                                            <h6 class="title"><span class="me-2">Loans Transaction</span> <a href="#" class="link d-none d-sm-inline">See History</a></h6>
+                                                            <h6 class="title"><span class="me-2">Recent Loans</span> <a href="#" class="link d-none d-sm-inline">See History</a></h6>
                                                         </div>
                                                         <div class="card-tools">
                                                             <ul class="card-tools-nav">
                                                                 <li><a href="#"><span>Overdue</span></a></li>
                                                                 <li><a href="#"><span>Due Today</span></a></li>
-                                                                <li class="active"><a href="#"><span>All</span></a></li>
+                                                                <li class="active"><a href="{% url 'loans' %}"><span>All</span></a></li>
                                                             </ul>
                                                         </div>
                                                     </div>
@@ -193,12 +193,13 @@
                                                             <div class="nk-tb-col tb-col-md"><span>Date Due</span></div>
                                                             <div class="nk-tb-col tb-col-lg"><span>Loan Balance</span></div>
                                                             <div class="nk-tb-col"><span>Status</span></div>
-                                                            <div class="nk-tb-col"><span class="d-none d-sm-inline">Something else</span></div>
+                                                            <div class="nk-tb-col"><span class="d-none d-sm-inline">Status</span></div>
                                                             <div class="nk-tb-col"><span>&nbsp;</span></div>
                                                         </div>
+                                                        {% for loan in loans %}
                                                         <div class="nk-tb-item">
                                                             <div class="nk-tb-col">
-                                                                <span class="tb-lead"><a href="#">#95954</a></span>
+                                                                <span class="tb-lead"><a href="#">#{{loan.loan_id}}</a></span>
                                                             </div>
                                                             <div class="nk-tb-col tb-col-sm">
                                                                 <div class="user-card">
@@ -206,190 +207,48 @@
                                                                         <span>AB</span>
                                                                     </div>
                                                                     <div class="user-name">
-                                                                        <span class="tb-lead">Abu Bin Ishtiyak</span>
+                                                                        <span class="tb-lead">{{loan.member.first_name}} {{loan.member.last_name}}</span>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                             <div class="nk-tb-col tb-col-md">
-                                                                <span class="tb-sub">02/11/2020</span>
+                                                                <span class="tb-sub">{{loan.application_date}}</span>
                                                             </div>
                                                             <div class="nk-tb-col tb-col-lg">
-                                                                <span class="tb-sub text-primary">SUB-2309232</span>
+                                                                <span class="tb-sub text-primary">{{loan.application_date}}</span>
                                                             </div>
                                                             <div class="nk-tb-col">
-                                                                <span class="tb-sub tb-amount">4,596.75 <span>USD</span></span>
+                                                                <span class="tb-sub tb-amount">{{loan.applied_amount}} <span>Ksh</span></span>
                                                             </div>
                                                             <div class="nk-tb-col">
-                                                                <span class="badge badge-dot badge-dot-xs bg-success">Paid</span>
+                                                                {% if loan.status == 'pending' %}
+                                                                    <span class="badge badge-dot bg-warning">{{loan.status}}</span>
+                                                                    {% elif loan.status == 'cleared' %}
+                                                                    <span class="badge badge-dot bg-success">{{loan.status}}</span>
+                                                                    {% elif loan.status == 'approved' %}
+                                                                    <span class="badge badge-dot bg-primary">{{loan.status}}</span>
+                                                                    {% else %}
+                                                                    <span class="badge badge-dot bg-danger">{{loan.status}}</span>
+                                                                {% endif %}
                                                             </div>
                                                             <div class="nk-tb-col nk-tb-col-action">
                                                                 <div class="dropdown">
                                                                     <a class="text-soft dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
                                                                     <div class="dropdown-menu dropdown-menu-end dropdown-menu-xs">
                                                                         <ul class="link-list-plain">
-                                                                            <li><a href="#">View</a></li>
-                                                                            <li><a href="#">Invoice</a></li>
-                                                                            <li><a href="#">Print</a></li>
+                                                                            {% if loan.status == 'pending' %}
+                                                                            <li><a href="{% url 'edit-loan' loan.id %}">Approve</a></li>
+                                                                            <li><a href="{% url 'delete-loan' loan.id %}">Delete</a></li>
+                                                                            {% else %}
+                                                                            <li><a href="{% url 'view-loan' loan.id %}">View Details</a></li>
+                                                                            {% endif %}
                                                                         </ul>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="nk-tb-item">
-                                                            <div class="nk-tb-col">
-                                                                <span class="tb-lead"><a href="#">#95850</a></span>
-                                                            </div>
-                                                            <div class="nk-tb-col tb-col-sm">
-                                                                <div class="user-card">
-                                                                    <div class="user-avatar user-avatar-sm bg-azure">
-                                                                        <span>DE</span>
-                                                                    </div>
-                                                                    <div class="user-name">
-                                                                        <span class="tb-lead">Desiree Edwards</span>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="nk-tb-col tb-col-md">
-                                                                <span class="tb-sub">02/02/2020</span>
-                                                            </div>
-                                                            <div class="nk-tb-col tb-col-lg">
-                                                                <span class="tb-sub text-primary">SUB-2309154</span>
-                                                            </div>
-                                                            <div class="nk-tb-col">
-                                                                <span class="tb-sub tb-amount">596.75 <span>USD</span></span>
-                                                            </div>
-                                                            <div class="nk-tb-col">
-                                                                <span class="badge badge-dot badge-dot-xs bg-danger">Canceled</span>
-                                                            </div>
-                                                            <div class="nk-tb-col nk-tb-col-action">
-                                                                <div class="dropdown">
-                                                                    <a class="text-soft dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
-                                                                    <div class="dropdown-menu dropdown-menu-end dropdown-menu-xs">
-                                                                        <ul class="link-list-plain">
-                                                                            <li><a href="#">View</a></li>
-                                                                            <li><a href="#">Remove</a></li>
-                                                                        </ul>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="nk-tb-item">
-                                                            <div class="nk-tb-col">
-                                                                <span class="tb-lead"><a href="#">#95812</a></span>
-                                                            </div>
-                                                            <div class="nk-tb-col tb-col-sm">
-                                                                <div class="user-card">
-                                                                    <div class="user-avatar user-avatar-sm bg-warning">
-                                                                        <img src="./images/avatar/b-sm.jpg" alt="">
-                                                                    </div>
-                                                                    <div class="user-name">
-                                                                        <span class="tb-lead">Blanca Schultz</span>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="nk-tb-col tb-col-md">
-                                                                <span class="tb-sub">02/01/2020</span>
-                                                            </div>
-                                                            <div class="nk-tb-col tb-col-lg">
-                                                                <span class="tb-sub text-primary">SUB-2309143</span>
-                                                            </div>
-                                                            <div class="nk-tb-col">
-                                                                <span class="tb-sub tb-amount">199.99 <span>USD</span></span>
-                                                            </div>
-                                                            <div class="nk-tb-col">
-                                                                <span class="badge badge-dot badge-dot-xs bg-success">Paid</span>
-                                                            </div>
-                                                            <div class="nk-tb-col nk-tb-col-action">
-                                                                <div class="dropdown">
-                                                                    <a class="text-soft dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
-                                                                    <div class="dropdown-menu dropdown-menu-end dropdown-menu-xs">
-                                                                        <ul class="link-list-plain">
-                                                                            <li><a href="#">View</a></li>
-                                                                            <li><a href="#">Invoice</a></li>
-                                                                            <li><a href="#">Print</a></li>
-                                                                        </ul>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="nk-tb-item">
-                                                            <div class="nk-tb-col">
-                                                                <span class="tb-lead"><a href="#">#95256</a></span>
-                                                            </div>
-                                                            <div class="nk-tb-col tb-col-sm">
-                                                                <div class="user-card">
-                                                                    <div class="user-avatar user-avatar-sm bg-purple">
-                                                                        <span>NL</span>
-                                                                    </div>
-                                                                    <div class="user-name">
-                                                                        <span class="tb-lead">Naomi Lawrence</span>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="nk-tb-col tb-col-md">
-                                                                <span class="tb-sub">01/29/2020</span>
-                                                            </div>
-                                                            <div class="nk-tb-col tb-col-lg">
-                                                                <span class="tb-sub text-primary">SUB-2305684</span>
-                                                            </div>
-                                                            <div class="nk-tb-col">
-                                                                <span class="tb-sub tb-amount">1099.99 <span>USD</span></span>
-                                                            </div>
-                                                            <div class="nk-tb-col">
-                                                                <span class="badge badge-dot badge-dot-xs bg-success">Paid</span>
-                                                            </div>
-                                                            <div class="nk-tb-col nk-tb-col-action">
-                                                                <div class="dropdown">
-                                                                    <a class="text-soft dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
-                                                                    <div class="dropdown-menu dropdown-menu-end dropdown-menu-xs">
-                                                                        <ul class="link-list-plain">
-                                                                            <li><a href="#">View</a></li>
-                                                                            <li><a href="#">Invoice</a></li>
-                                                                            <li><a href="#">Print</a></li>
-                                                                        </ul>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="nk-tb-item">
-                                                            <div class="nk-tb-col">
-                                                                <span class="tb-lead"><a href="#">#95135</a></span>
-                                                            </div>
-                                                            <div class="nk-tb-col tb-col-sm">
-                                                                <div class="user-card">
-                                                                    <div class="user-avatar user-avatar-sm bg-success">
-                                                                        <span>CH</span>
-                                                                    </div>
-                                                                    <div class="user-name">
-                                                                        <span class="tb-lead">Cassandra Hogan</span>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="nk-tb-col tb-col-md">
-                                                                <span class="tb-sub">01/29/2020</span>
-                                                            </div>
-                                                            <div class="nk-tb-col tb-col-lg">
-                                                                <span class="tb-sub text-primary">SUB-2305564</span>
-                                                            </div>
-                                                            <div class="nk-tb-col">
-                                                                <span class="tb-sub tb-amount">1099.99 <span>USD</span></span>
-                                                            </div>
-                                                            <div class="nk-tb-col">
-                                                                <span class="badge badge-dot badge-dot-xs bg-warning">Due</span>
-                                                            </div>
-                                                            <div class="nk-tb-col nk-tb-col-action">
-                                                                <div class="dropdown">
-                                                                    <a class="text-soft dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
-                                                                    <div class="dropdown-menu dropdown-menu-end dropdown-menu-xs">
-                                                                        <ul class="link-list-plain">
-                                                                            <li><a href="#">View</a></li>
-                                                                            <li><a href="#">Invoice</a></li>
-                                                                            <li><a href="#">Notify</a></li>
-                                                                        </ul>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                        {% endfor %}
+                                                        
                                                     </div>
                                                 </div>
                                                 <div class="card-inner-sm border-top text-center d-sm-none">
@@ -402,52 +261,26 @@
                                                 <div class="card-inner border-bottom">
                                                     <div class="card-title-group">
                                                         <div class="card-title">
-                                                            <h6 class="title">Recent Activities</h6>
+                                                            <h6 class="title">Recent Payments</h6>
                                                         </div>
                                                         <div class="card-tools">
                                                             <ul class="card-tools-nav">
                                                                 <li><a href="#"><span>Cancel</span></a></li>
-                                                                <li class="active"><a href="#"><span>All</span></a></li>
+                                                                <li class="active"><a href="{% url 'repayments' %}"><span>All</span></a></li>
                                                             </ul>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <ul class="nk-activity">
+                                                    {% for repayment in repayments %}
                                                     <li class="nk-activity-item">
                                                         <div class="nk-activity-media user-avatar bg-success"><img src="./images/avatar/c-sm.jpg" alt=""></div>
                                                         <div class="nk-activity-data">
-                                                            <div class="label">Keith Jensen requested to Widthdrawl.</div>
-                                                            <span class="time">2 hours ago</span>
+                                                            <div class="label">{{repayment.member.first_name}} {{repayment.member.last_name}} repaid <b>Ksh{{repayment.amount}}</b>.</div>
+                                                            <span class="time">{{repayment.date_paid|timesince}} ago</span>
                                                         </div>
                                                     </li>
-                                                    <li class="nk-activity-item">
-                                                        <div class="nk-activity-media user-avatar bg-warning">HS</div>
-                                                        <div class="nk-activity-data">
-                                                            <div class="label">Harry Simpson placed a Order.</div>
-                                                            <span class="time">2 hours ago</span>
-                                                        </div>
-                                                    </li>
-                                                    <li class="nk-activity-item">
-                                                        <div class="nk-activity-media user-avatar bg-azure">SM</div>
-                                                        <div class="nk-activity-data">
-                                                            <div class="label">Stephanie Marshall got a huge bonus.</div>
-                                                            <span class="time">2 hours ago</span>
-                                                        </div>
-                                                    </li>
-                                                    <li class="nk-activity-item">
-                                                        <div class="nk-activity-media user-avatar bg-purple"><img src="./images/avatar/d-sm.jpg" alt=""></div>
-                                                        <div class="nk-activity-data">
-                                                            <div class="label">Nicholas Carr deposited funds.</div>
-                                                            <span class="time">2 hours ago</span>
-                                                        </div>
-                                                    </li>
-                                                    <li class="nk-activity-item">
-                                                        <div class="nk-activity-media user-avatar bg-pink">TM</div>
-                                                        <div class="nk-activity-data">
-                                                            <div class="label">Timothy Moreno placed a Order.</div>
-                                                            <span class="time">2 hours ago</span>
-                                                        </div>
-                                                    </li>
+                                                    {% endfor %}
                                                 </ul>
                                             </div><!-- .card -->
                                         </div><!-- .col -->
@@ -460,7 +293,7 @@
                                                                 <h6 class="title">New Members</h6>
                                                             </div>
                                                             <div class="card-tools">
-                                                                <a href="html/user-list-regular.html" class="link">View All</a>
+                                                                <a href="{% url 'members' %}" class="link">View All</a>
                                                             </div>
                                                         </div>
                                                     </div>
