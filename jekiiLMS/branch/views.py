@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.contrib.auth.models import User
 from .models import Branch ,ExpenseCategory, Expense
 from .forms import BranchForm, ExpenseCategoryForm , ExpenseForm
 
@@ -170,12 +171,31 @@ def createExpense(request):
     form = ExpenseForm()
     #processing the data
     if request.method == 'POST':
+
+        # Get the selected category id from the form
+        category_id = request.POST.get('category')
+        
+        # Get the corresponding ExpenseCategory object
+        category = ExpenseCategory.objects.get(pk=category_id)
+
+        # Get the selected branch id from the form
+        branch_id = request.POST.get('branch')
+        
+        # Get the corresponding Branch object
+        branch = Branch.objects.get(pk=branch_id)
+
+        # Get the selected user id from the form
+        creator_id = request.POST.get('created_by')
+        
+        # Get the corresponding user object
+        created_by = User.objects.get(pk=creator_id)
+
         Expense.objects.create(
             expense_date = request.POST.get('expense_date'),
-            category = request.POST.get('category'),
+            category = category,
             amount = request.POST.get('amount'),
-            branch = request.POST.get('branch'),
-            created_by = request.POST.get('created_by'),
+            branch = branch,
+            created_by = created_by,
             note = request.POST.get('note'),
             attachement = request.POST.get('attachement'),
         )
@@ -202,12 +222,29 @@ def editExpense(request,pk):
     expense = Expense.objects.get(id=pk)
     
     if request.method == 'POST':
+        # Get the selected category id from the form
+        category_id = request.POST.get('category')
+        
+        # Get the corresponding ExpenseCategory object
+        category = ExpenseCategory.objects.get(pk=category_id)
+
+        # Get the selected branch id from the form
+        branch_id = request.POST.get('branch')
+        
+        # Get the corresponding Branch object
+        branch = Branch.objects.get(pk=branch_id)
+
+        # Get the selected user id from the form
+        creator_id = request.POST.get('created_by')
+        
+        # Get the corresponding user object
+        created_by = User.objects.get(pk=creator_id)
         # update the branch with the submitted form data
         expense.expense_date = request.POST.get('expense_date')
-        expense.category = request.POST.get('category')
+        expense.category = category
         expense.amount = request.POST.get('amount')
-        expense.branch = request.POST.get('branch')
-        expense.created_by = request.POST.get('created_by')
+        expense.branch = branch
+        expense.created_by = created_by
         expense.note = request.POST.get('note')
         expense.attachement = request.POST.get('attachement')
         expense.save()

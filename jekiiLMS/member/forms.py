@@ -10,7 +10,7 @@ class MemberForm(forms.ModelForm):
     class Meta:
         model = Member
         fields = '__all__'
-        exclude = ['credit_score', 'date_joined']
+        exclude = [ 'date_joined']
 
   
         widgets = {
@@ -22,9 +22,10 @@ class MemberForm(forms.ModelForm):
                 'branch': forms.Select(attrs={'class': 'form-select js-select2'}),
                 'business_name': forms.TextInput(attrs={'class': 'form-control'}),
                 'industry': forms.Select(attrs={'class': 'form-select js-select2'}),
+                'credit_score': forms.NumberInput(attrs={'class': 'form-control'}),
                 'address': forms.TextInput(attrs={'class': 'form-control form-control-sm', 'id': 'cf-default-textarea' ,'placeholder':'Write your message'}),
                 'passport_photo': forms.FileInput(attrs={'class': 'form-control'}),
-            }
+            } 
         
        
 

@@ -182,14 +182,36 @@ def editLoan(request,pk):
     loan = Loan.objects.get(id=pk)
     
     if request.method == 'POST':
+        # Get the selected loanproduct id from the form
+        loanproduct_id = request.POST.get('loan_product')
+        
+        # Get the corresponding LoanProduct object
+        loanproduct = LoanProduct.objects.get(pk=loanproduct_id)
+        # Get the selected member id from the form
+        member_id = request.POST.get('member')
+        
+        # Get the corresponding Member object
+        member = Member.objects.get(pk=member_id)
+
+        # Get the selected member id from the form
+        guarantor_id = request.POST.get('guarantor')
+        
+        # Get the corresponding Member object
+        guarantor = Member.objects.get(pk=guarantor_id)
+
+        # Get the selected member id from the form
+        loan_officer_id = request.POST.get('loan_officer')
+        
+        # Get the corresponding Member object
+        loan_officer = User.objects.get(pk=loan_officer_id)
         # update the branch with the submitted form data
         loan.loan_id = request.POST.get('loan_id')
-        loan.loan_product = request.POST.get('loan_product')
-        loan.member = request.POST.get('member')
+        loan.loan_product = loanproduct
+        loan.member = member
         loan.applied_amount = request.POST.get('applied_amount')
-        loan.guarantor = request.POST.get('guarantor')
+        loan.guarantor = guarantor
         loan.application_date = request.POST.get('application_date')
-        loan.loan_officer = request.POST.get('loan_officer')
+        loan.loan_officer = loan_officer
         loan.loan_purpose = request.POST.get('loan_purpose')
         loan.status = request.POST.get('status')
         loan.attachments = request.POST.get('attachments')
@@ -274,10 +296,21 @@ def createRepayment(request):
     form = RepaymentForm()
     #processing the data
     if request.method == 'POST':
+        # Get the selected member id from the form
+        member_id = request.POST.get('member')
+        
+        # Get the corresponding Member object
+        member = Member.objects.get(pk=member_id)
+
+        # Get the selected loanproduct id from the form
+        loan_id = request.POST.get('loan_id')
+        
+        # Get the corresponding LoanProduct object
+        loan = Loan.objects.get(pk=loan_id)
         Repayment.objects.create(
             transaction_id= request.POST.get('transaction_id'),
-            loan_id = request.POST.get('loan_id'),
-            member = request.POST.get('member'),
+            loan_id = loan,
+            member = member,
             amount= request.POST.get('amount'),
             date_paid = request.POST.get('date_paid'),
         )
@@ -318,10 +351,23 @@ def editRepayment(request,pk):
     repayment = Repayment.objects.get(id=pk)
     
     if request.method == 'POST':
+
+        # Get the selected member id from the form
+        member_id = request.POST.get('member')
+        
+        # Get the corresponding Member object
+        member = Member.objects.get(pk=member_id)
+
+        # Get the selected loanproduct id from the form
+        loan_id = request.POST.get('loan_id')
+        
+        # Get the corresponding LoanProduct object
+        loan = Loan.objects.get(pk=loan_id)
+
         # update the branch with the submitted form data
-        repayment.loan_id = request.POST.get('loan_id')
+        repayment.loan_id = loan
         repayment.transaction_id = request.POST.get('transaction_id')
-        repayment.member = request.POST.get('member')
+        repayment.member = member
         repayment.amount = request.POST.get('amount')
         repayment.date_paid = request.POST.get('date_paid')
         repayment.save()
@@ -349,10 +395,17 @@ def loanCalculator(request):
     formCal = LoanCalcForm()
 
     if request.method == 'POST':
-        applied_amount = request.POST.get('minimum_amount')
-        loan_product = request.POST.get('loan_product_name')
-        total_payable = None
+         # Get the selected loanproduct id from the form
+        loanproduct_id = request.POST.get('loan_product')
+        
+        # Get the corresponding LoanProduct object
+        loanproduct = LoanProduct.objects.get(pk=loanproduct_id)
 
+        applied_amount = request.POST.get('minimum_amount')
+        loan_product = loanproduct
+        total_payable = None
+    
+        
         for loanproduct in loanproducts:
             if loan_product == loanproduct.loan_product_name:
                 interest_type = loanproduct.interest_type
@@ -362,10 +415,13 @@ def loanCalculator(request):
                     total_payable = (applied_amount * interest_rate * loan_term) / 100 + applied_amount
                 else:
                     total_payable = applied_amount * ((1 + interest_rate)**loan_term - 1) / (interest_rate * (1 + interest_rate)**loan_term)
-                break    
+                break
+
+        if total_payable is None:
+            total_payable = 0    
          
 
-    context = {'loanproducts': loanproducts, 'formCal':formCal, 'total_payable':total_payable}
+    context = {'loanproducts': loanproducts, 'formCal':formCal}
     return render(request, 'loan/loan-calculator.html', context)
     
   
