@@ -1,8 +1,11 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.db.models import Sum
+from django.contrib.auth.models import User
 from .models import LoanProduct, Loan, Note, Repayment 
 from .forms import LoanProductForm, LoanForm, RepaymentForm, LoanCalcForm
+from member.models import Member
+
 
 
 
@@ -132,14 +135,38 @@ def createLoan(request):
     form = LoanForm()
     #processing the data
     if request.method == 'POST':
+        # Get the selected loanproduct id from the form
+        loanproduct_id = request.POST.get('loan_product')
+        
+        # Get the corresponding LoanProduct object
+        loanproduct = LoanProduct.objects.get(pk=loanproduct_id)
+
+        # Get the selected member id from the form
+        member_id = request.POST.get('member')
+        
+        # Get the corresponding Member object
+        member = Member.objects.get(pk=member_id)
+
+        # Get the selected member id from the form
+        guarantor_id = request.POST.get('guarantor')
+        
+        # Get the corresponding Member object
+        guarantor = Member.objects.get(pk=guarantor_id)
+
+        # Get the selected member id from the form
+        loan_officer_id = request.POST.get('loan_officer')
+        
+        # Get the corresponding Member object
+        loan_officer = User.objects.get(pk=loan_officer_id)
+
         Loan.objects.create(
             loan_id = request.POST.get('loan_id'),
-            loan_product= request.POST.get('loan_product'),
-            member= request.POST.get('member'),
+            loan_product= loanproduct,
+            member= member,
             applied_amount = request.POST.get('applied_amount'),
-            guarantor = request.POST.get('guarantor'),
+            guarantor = guarantor,
             application_date = request.POST.get('application_date'),
-            loan_officer = request.POST.get('loan_officer'),
+            loan_officer = loan_officer,
             loan_purpose = request.POST.get('loan_purpose'),
             attachments = request.POST.get('attachments'),
         )
@@ -341,3 +368,4 @@ def loanCalculator(request):
     context = {'loanproducts': loanproducts, 'formCal':formCal, 'total_payable':total_payable}
     return render(request, 'loan/loan-calculator.html', context)
     
+  
