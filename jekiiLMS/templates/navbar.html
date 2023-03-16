@@ -55,22 +55,10 @@
                                 <a href="{% url 'loans' %}" class="nk-menu-link"><span class="nk-menu-text">All Loans</span></a>
                             </li>
                             <li class="nk-menu-item">
-                                <a href="{% url 'create-loan' %}" class="nk-menu-link"><span class="nk-menu-text">Add Loan</span></a>
-                            </li>
-                            <li class="nk-menu-item">
-                                <a href="html/apps-inbox.html" class="nk-menu-link"><span class="nk-menu-text">Pending Loans</span><span class="nk-menu-badge">12</span></a>
-                            </li>
-                            <li class="nk-menu-item">
-                                <a href="html/apps-file-manager.html" class="nk-menu-link"><span class="nk-menu-text">Active Loans</span><span class="nk-menu-badge">50</span></a>
-                            </li>
-                            <li class="nk-menu-item">
-                                <a href="html/apps-file-manager.html" class="nk-menu-link"><span class="nk-menu-text">Overdue Loans</span><span class="nk-menu-badge">6</span></a>
-                            </li>
-                            <li class="nk-menu-item">
                                 <a href="{% url 'loan-products' %}" class="nk-menu-link"><span class="nk-menu-text">Loan Products</span><span class="nk-menu-badge">{{loanproducts.count}}</span></a>
                             </li>
                             <li class="nk-menu-item">
-                                <a href="html/apps-kanban.html" class="nk-menu-link"><span class="nk-menu-text">Loan Calculator</span></a>
+                                <a href="{% url 'loan-calculator' %}" class="nk-menu-link"><span class="nk-menu-text">Loan Calculator</span></a>
                             </li>
                         </ul><!-- .nk-menu-sub -->
                     </li><!-- .nk-menu-item -->
