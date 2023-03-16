@@ -174,7 +174,7 @@ class Loan(models.Model):
 
 
     class Meta:
-        ordering = ['application_date']
+        ordering = ['-application_date']
 
 
     def __str__(self):
@@ -234,4 +234,4 @@ class Repayment(models.Model):
 
     
 
-#Repayment model ends
+#Repayment model ends 
