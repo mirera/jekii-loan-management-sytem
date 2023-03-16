@@ -74,13 +74,19 @@ def editMember(request,pk):
     member = Member.objects.get(id=pk)
     
     if request.method == 'POST':
+
+        # Get the selected branch id from the form
+        branch_id = request.POST.get('branch')
+        
+        # Get the corresponding Branch object
+        branch = Branch.objects.get(pk=branch_id)
         # update the branch with the submitted form data
         member.first_name = request.POST.get('first_name')
         member.last_name = request.POST.get('last_name')
         member.id_no = request.POST.get('id_no')
         member.phone_no = request.POST.get('phone_no')
         member.email = request.POST.get('email')
-        member.branch = request.POST.get('branch')
+        member.branch = branch
         member.business_name = request.POST.get('business_name')
         member.industry = request.POST.get('industry')
         member.address = request.POST.get('address')

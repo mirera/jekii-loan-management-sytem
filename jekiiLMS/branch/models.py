@@ -41,6 +41,9 @@ class Expense(models.Model):
     created_by = models.ForeignKey(User,on_delete=models.SET_NULL, null=True)
     note = models.TextField(null=True, blank=True)
     attachement = models.FileField(null=True, blank=True)
+    
+    class Meta:
+        ordering = ['-expense_date']
 
 
     def __str__(self):
