@@ -1,0 +1,124 @@
+
+{% extends 'main.html' %}
+
+{% block content %}
+
+<!-- content @s -->
+<div class="nk-content ">
+    <div class="container-fluid">
+        <div class="nk-content-inner">
+            <div class="nk-content-body">
+                <div class="nk-block-head nk-block-head-sm">
+                    <div class="nk-block-between g-3">
+                        <div class="nk-block-head-content">
+                            <h3 class="nk-block-title page-title">Loan Calculator</h3>
+                            
+                        </div><!-- .nk-block-head-content -->
+                        <div class="nk-block-head-content">
+                            <ul class="nk-block-tools g-3">
+                                <li>
+                                    <div class="drodown">
+                                        <a href="#" class="dropdown-toggle btn btn-icon btn-primary" data-bs-toggle="dropdown"><em class="icon ni ni-plus"></em></a>
+                                        <div class="dropdown-menu dropdown-menu-end">
+                                            <ul class="link-list-opt no-bdr">
+                                                <li><a data-bs-toggle="modal" href="#addLoan"><span>Add Loan</span></a></li>
+                                                <li><a href="#"><span>Add Loan Repayment</span></a></li>
+                                                <li><a data-bs-toggle="modal" href="#loanCalc"><span>Loan Calculator</span></a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div><!-- .nk-block-head-content -->
+                    </div><!-- .nk-block-between -->
+                </div><!-- .nk-block-head -->
+                <form action=" " class="form-validate" method="POST">
+                    {% csrf_token %}
+                    <div class="row g-4">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-label" for="full-name-1">Loan Product</label>
+                                
+                                <div class="form-control-wrap">
+                                    <!-- <input type="text" class="form-control" id="full-name-1" name="name"> -->
+                                    {{form.loan_product}}
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="fv-phone">Applied Amount</label>
+                                <div class="form-control-wrap">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="fv-phone">Ksh</span>
+                                        </div>
+                                        {{form.applied_amount}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-lg btn-primary">Calculate</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                   <br> 
+
+                {% for loanproduct in loanproducts %}
+                {% if loanproduct.id == loan_product.id %}
+                <div class="nk-block-des text-soft">
+                    <p>Total payable is Ksh39000 with interest of 20% {{loanproduct.interest_rate}} per {{loanproduct.loan_term_period}} payable in {{loanproduct.loan_product_term}}(s). </p>
+                </div><br>
+                <div class="card card-bordered card-full">
+                    <div class="card-inner p-0 border-top">
+                        <div class="nk-tb-list nk-tb-orders">
+                            <div class="nk-tb-item nk-tb-head">
+                                <div class="nk-tb-col"><span>Principal</span></div>
+                                <div class="nk-tb-col tb-col-sm"><span>Total Payable</span></div>
+                                <div class="nk-tb-col tb-col-md"><span>Interest Rate</span></div>
+                                <div class="nk-tb-col tb-col-md"><span>Amount to Pay</span></div>
+                             
+                                <div class="nk-tb-col"><span>&nbsp;</span></div>
+                            </div>
+                            
+                            <div class="nk-tb-item">
+                                <div class="nk-tb-col">
+                                    <span class="tb-lead text-muted"><a href="#">Kes</a></span>
+                                </div>
+                                <div class="nk-tb-col tb-col-sm">
+                                    <div class="user-card">
+                                        <div class="user-name">
+                                            <span class="tb-lead">Kes{{total_payable}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="nk-tb-col tb-col-md">
+                                    <span class="tb-sub">{{loanproduct.interest_rate}}</span>
+                                </div>
+                                <div class="nk-tb-col tb-col-lg">
+                                    <span class="tb-sub text-primary">{{loan.application_date}}</span>
+                                </div>
+                                
+                            </div>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="card-inner-sm border-top text-center d-sm-none">
+                        <a href="#" class="btn btn-link btn-block">See History</a>
+                    </div>
+                </div><!-- .card -->
+                {% endif %}
+                {% endfor %}
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- content @e -->
+
+{% endblock content %}  

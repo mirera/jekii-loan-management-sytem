@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.db.models import Sum
+from decimal import Decimal
 from django.contrib.auth.models import User
 from .models import LoanProduct, Loan, Note, Repayment 
-from .forms import LoanProductForm, LoanForm, RepaymentForm, LoanCalcForm
+from .forms import LoanProductForm, LoanForm, RepaymentForm
 from member.models import Member
 
 
@@ -392,7 +393,7 @@ def editRepayment(request,pk):
 
 def loanCalculator(request):
     loanproducts = LoanProduct.objects.all()
-    formCal = LoanCalcForm()
+    form = LoanForm()
 
     if request.method == 'POST':
          # Get the selected loanproduct id from the form
@@ -401,13 +402,15 @@ def loanCalculator(request):
         # Get the corresponding LoanProduct object
         loanproduct = LoanProduct.objects.get(pk=loanproduct_id)
 
-        applied_amount = request.POST.get('minimum_amount')
+        applied_amount = request.POST.get('applied_amount')
+        applied_amount = Decimal(applied_amount)
         loan_product = loanproduct
         total_payable = None
+        interest_rate = 0
     
         
         for loanproduct in loanproducts:
-            if loan_product == loanproduct.loan_product_name:
+            if loan_product.loan_product_name == loanproduct.loan_product_name:
                 interest_type = loanproduct.interest_type
                 interest_rate = loanproduct.interest_rate
                 loan_term = loanproduct.loan_product_term
@@ -416,12 +419,15 @@ def loanCalculator(request):
                 else:
                     total_payable = applied_amount * ((1 + interest_rate)**loan_term - 1) / (interest_rate * (1 + interest_rate)**loan_term)
                 break
+        print('my interestt rate', interest_rate)
 
         if total_payable is None:
             total_payable = 0    
+            
+        print(total_payable, 'This is the total' 'and this is the loanproduct', loan_product, applied_amount)
          
 
-    context = {'loanproducts': loanproducts, 'formCal':formCal}
-    return render(request, 'loan/loan-calculator.html', context)
+    context = {'loanproducts': loanproducts, 'form':form}
+    return render(request, 'loan/loan-calculator.html', context) 
     
   
