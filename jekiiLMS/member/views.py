@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from .models import Member 
+from .models import Member, Branch
 from .forms import MemberForm
 
 #create member view starts
@@ -8,12 +8,19 @@ def createMember(request):
     form = MemberForm()
     #processing the data
     if request.method == 'POST':
+        # Get the selected branch id from the form
+        branch_id = request.POST.get('branch')
+        
+        # Get the corresponding Branch object
+        branch = Branch.objects.get(pk=branch_id)
+        
+        # Create the new Member instance with the retrieved Branch object
         Member.objects.create(
             first_name = request.POST.get('first_name'),
             last_name= request.POST.get('last_name'),
             id_no= request.POST.get('id_no'),
             phone_no = request.POST.get('phone_no'),
-            branch = request.POST.get('branch'),
+            branch = branch,
             email= request.POST.get('email'),
             business_name = request.POST.get('business_name'),
             industry = request.POST.get('industry'),
