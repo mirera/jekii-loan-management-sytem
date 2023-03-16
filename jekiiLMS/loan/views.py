@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.db.models import Sum
 from .models import LoanProduct, Loan, Note, Repayment 
-from .forms import LoanProductForm, LoanForm, RepaymentForm
+from .forms import LoanProductForm, LoanForm, RepaymentForm, LoanCalcForm
 
 
 
@@ -193,8 +193,9 @@ def editLoan(request,pk):
 def listLoans(request):
     loans = Loan.objects.all()
     form = LoanForm()
+    formCal = LoanCalcForm()
 
-    context = {'loans': loans, 'form':form}
+    context = {'loans': loans, 'form':form, 'formCal':formCal}
     return render(request, 'loan/loans-list.html', context)
 
 # list Loan  view ends
@@ -314,3 +315,29 @@ def editRepayment(request,pk):
 
 #edit repayment view ends
  
+#loan cacl view start
+
+def loanCalculator(request):
+    loanproducts = LoanProduct.objects.all()
+    formCal = LoanCalcForm()
+
+    if request.method == 'POST':
+        applied_amount = request.POST.get('minimum_amount')
+        loan_product = request.POST.get('loan_product_name')
+        total_payable = None
+
+        for loanproduct in loanproducts:
+            if loan_product == loanproduct.loan_product_name:
+                interest_type = loanproduct.interest_type
+                interest_rate = loanproduct.interest_rate
+                loan_term = loanproduct.loan_product_term
+                if interest_type == 'flat rate':
+                    total_payable = (applied_amount * interest_rate * loan_term) / 100 + applied_amount
+                else:
+                    total_payable = applied_amount * ((1 + interest_rate)**loan_term - 1) / (interest_rate * (1 + interest_rate)**loan_term)
+                break    
+         
+
+    context = {'loanproducts': loanproducts, 'formCal':formCal, 'total_payable':total_payable}
+    return render(request, 'loan/loan-calculator.html', context)
+    

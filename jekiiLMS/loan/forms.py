@@ -62,7 +62,26 @@ class RepaymentForm(forms.ModelForm):
             'amount': forms.NumberInput(attrs={'class': 'form-control','placeholder':'1000'}),
             'date_paid': forms.DateInput(attrs={'class': 'form-control date-picker', 'data-date-format':'yyyy-mm-dd'}),   
             
-        }
+        } 
  
+
+class LoanCalcForm(forms.ModelForm):
+    class Meta:
+        model = LoanProduct
+        fields = [ 'loan_product_name', 'minimum_amount', 'loan_product_term',
+         'loan_term_period', 'repayment_frequency', 'interest_type',
+         'interest_rate'
+          ]
+        
+        
+        widgets = {
+        'loan_product_name': forms.Select(attrs={'class': 'form-select js-select2'}),
+        'minimum_amount': forms.NumberInput(attrs={'class': 'form-control','placeholder':'Minimum Loan Amount e.g 10000'}),
+        'loan_product_term': forms.NumberInput(attrs={'class': 'form-control','placeholder':'1,2,3..'}),
+        'loan_term_period': forms.Select(attrs={'class': 'form-select js-select2'}),
+        'repayment_frequency': forms.Select(attrs={'class': 'form-select js-select2', 'data-placeholder':'Select Term Period'}),   
+        'interest_type': forms.Select(attrs={'class': 'form-select js-select2'}),
+        'interest_rate': forms.NumberInput(attrs={'class': 'form-control', 'placeholder':'20'}),
+    }
  
 
