@@ -243,9 +243,8 @@ def editLoan(request,pk):
 def listLoans(request):
     loans = Loan.objects.all()
     form = LoanForm()
-    formCal = LoanCalcForm()
 
-    context = {'loans': loans, 'form':form, 'formCal':formCal}
+    context = {'loans': loans, 'form':form}
     return render(request, 'loan/loans-list.html', context)
 
 # list Loan  view ends
@@ -391,43 +390,58 @@ def editRepayment(request,pk):
  
 #loan cacl view start
 
-def loanCalculator(request):
-    loanproducts = LoanProduct.objects.all()
-    form = LoanForm()
+def loan_calculator(request):
+    if request.method == "POST":
+        loan_product_id = request.POST.get("loan_product")
+        amount = float(request.POST.get("amount"))
+        loan_product = LoanProduct.objects.get(id=loan_product_id)
 
-    if request.method == 'POST':
-         # Get the selected loanproduct id from the form
-        loanproduct_id = request.POST.get('loan_product')
-        
-        # Get the corresponding LoanProduct object
-        loanproduct = LoanProduct.objects.get(pk=loanproduct_id)
+        interest_rate = loan_product.interest_rate
+        interest_type = loan_product.interest_type
+        loan_term = loan_product.loan_product_term
 
-        applied_amount = request.POST.get('applied_amount')
-        applied_amount = Decimal(applied_amount)
-        loan_product = loanproduct
-        total_payable = None
-        interest_rate = 0
-    
-        
-        for loanproduct in loanproducts:
-            if loan_product.loan_product_name == loanproduct.loan_product_name:
-                interest_type = loanproduct.interest_type
-                interest_rate = loanproduct.interest_rate
-                loan_term = loanproduct.loan_product_term
-                if interest_type == 'flat rate':
-                    total_payable = (applied_amount * interest_rate * loan_term) / 100 + applied_amount
-                else:
-                    total_payable = applied_amount * ((1 + interest_rate)**loan_term - 1) / (interest_rate * (1 + interest_rate)**loan_term)
-                break
-        print('my interestt rate', interest_rate)
+        amount_to_pay = 0
+        total_interest = 0
 
-        if total_payable is None:
-            total_payable = 0    
+        if interest_type == 'flat rate':
+            interest_rate = loan_product.interest_rate / 100
+            total_interest = amount * interest_rate * loan_term
+            total_payable = amount + total_interest 
+            amount_to_pay = total_payable / loan_term
+        else:
+            interest_rate = loan_product.interest_rate / 100
+            payment_amount = (interest_rate * amount) / (1 - (1 + interest_rate)**(-loan_term))
+            total_payable = payment_amount * loan_term
             
-        print(total_payable, 'This is the total' 'and this is the loanproduct', loan_product, applied_amount)
-         
 
-    context = {'loanproducts': loanproducts, 'form':form}
-    return render(request, 'loan/loan-calculator.html', context) 
-    
+        table_data = []
+        for i in range(loan_term):
+            principal_amount = amount_to_pay * (i+1)
+            interest_per_term = total_interest / loan_term
+            principal_per_term = amount / loan_term
+            amount_per_term = interest_per_term + principal_per_term
+            loan_balance = principal_amount - amount_per_term
+            table_data.append({
+                "principal_amount": principal_amount,
+                "total_payable": total_payable,
+                "amount_to_pay": amount_to_pay,
+                'principal_per_term': principal_per_term,
+                'interest_per_term':interest_per_term,
+                'amount_per_term': amount_per_term,
+                'loan_balance': loan_balance,
+            })
+
+        context = {
+            "loanproducts": LoanProduct.objects.all(),
+            "table_data": table_data
+        }
+
+        return render(request, "loan/loan-calculator.html", context)
+
+    context = {
+        "loanproducts": LoanProduct.objects.all(),
+        "table_data": []
+    }
+    return render(request, "loan/loan-calculator.html", context)
+
   

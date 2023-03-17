@@ -38,23 +38,25 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label class="form-label" for="full-name-1">Loan Product</label>
-                                
+                                <select name="loan_product" class="form-select js-select2 " id="loan_product">
+                                {% for loanproduct in loanproducts %}
                                 <div class="form-control-wrap">
-                                    <!-- <input type="text" class="form-control" id="full-name-1" name="name"> -->
-                                    {{form.loan_product}}
+                                    <!-- <input type="text" class="form-control" id="full-name-1" name="name" value="{{ loan_product.name }}"> -->
+                                     <option value="{{ loanproduct.id }}">{{ loanproduct.loan_product_name }}</option>
                                 </div>
-                                
+                                {% endfor %}
+                                </select>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label class="form-label" for="fv-phone">Applied Amount</label>
+                                <label class="form-label" for="fv-phone">Amount</label>
                                 <div class="form-control-wrap">
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="fv-phone">Ksh</span>
                                         </div>
-                                        {{form.applied_amount}}
+                                        <input type="number" step="0.01" min="0" name="amount" class="form-control" id="amount" required>
                                     </div>
                                 </div>
                             </div>
@@ -67,54 +69,52 @@
                     </div>
                 </form>
                    <br> 
-
-                {% for loanproduct in loanproducts %}
-                {% if loanproduct.id == loan_product.id %}
-                <div class="nk-block-des text-soft">
-                    <p>Total payable is Ksh39000 with interest of 20% {{loanproduct.interest_rate}} per {{loanproduct.loan_term_period}} payable in {{loanproduct.loan_product_term}}(s). </p>
-                </div><br>
+                <br>
+                {% if table_data %}
                 <div class="card card-bordered card-full">
                     <div class="card-inner p-0 border-top">
                         <div class="nk-tb-list nk-tb-orders">
                             <div class="nk-tb-item nk-tb-head">
-                                <div class="nk-tb-col"><span>Principal</span></div>
-                                <div class="nk-tb-col tb-col-sm"><span>Total Payable</span></div>
-                                <div class="nk-tb-col tb-col-md"><span>Interest Rate</span></div>
-                                <div class="nk-tb-col tb-col-md"><span>Amount to Pay</span></div>
+                                <div class="nk-tb-col"><span>No.</span></div>
+                                <div class="nk-tb-col tb-col-sm"><span>Principal</span></div>
+                                <div class="nk-tb-col tb-col-sm"><span>Principal p.term</span></div>
+                                <div class="nk-tb-col tb-col-md"><span>Interest p.term</span></div>
+                                <div class="nk-tb-col tb-col-md"><span>Amount p.term</span></div>
+                                <div class="nk-tb-col tb-col-md"><span>Balance</span></div>
+                                
                              
                                 <div class="nk-tb-col"><span>&nbsp;</span></div>
                             </div>
-                            
+                            {% for data in table_data %}
                             <div class="nk-tb-item">
                                 <div class="nk-tb-col">
-                                    <span class="tb-lead text-muted"><a href="#">Kes</a></span>
+                                    <span class="tb-lead text-muted"><a href="#">{{ data.total_payable }} </a></span>
                                 </div>
                                 <div class="nk-tb-col tb-col-sm">
                                     <div class="user-card">
                                         <div class="user-name">
-                                            <span class="tb-lead">Kes{{total_payable}}</span>
+                                            <span class="tb-lead">{{ data.principal_amount }}</span>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="nk-tb-col tb-col-md">
-                                    <span class="tb-sub">{{loanproduct.interest_rate}}</span>
+                                    <span class="tb-sub">{{ data.principal_per_term }}</span>
                                 </div>
                                 <div class="nk-tb-col tb-col-lg">
-                                    <span class="tb-sub text-primary">{{loan.application_date}}</span>
-                                </div>
-                                
+                                    <span class="tb-sub text-primary">{{ data.interest_per_term  }}</span>
+                                </div>  
+                                <div class="nk-tb-col tb-col-lg">
+                                    <span class="tb-sub text-primary">{{ data.amount_per_term }}</span>
+                                </div>  
+                                <div class="nk-tb-col tb-col-lg">
+                                    <span class="tb-sub text-primary">{{ data.loan_balance }}</span>
+                                </div> 
                             </div>
-                            
+                            {% endfor %}
                         </div>
-                    </div>
-                    
-                    <div class="card-inner-sm border-top text-center d-sm-none">
-                        <a href="#" class="btn btn-link btn-block">See History</a>
-                    </div>
+                    </div> 
                 </div><!-- .card -->
                 {% endif %}
-                {% endfor %}
-
             </div>
         </div>
     </div>

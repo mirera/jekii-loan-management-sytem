@@ -1,0 +1,46 @@
+{% extends 'main.html' %}
+
+{% block content %}
+
+<h1>Loan Calculator</h1>
+<form method="post">
+  {% csrf_token %}
+  <div class="form-group">
+    <label for="loan_product">Loan Product:</label>
+    <select name="loan_product" class="form-select js-select2 " id="loan_product">
+        {% for loan_product in loan_products %}
+          <option value="{{ loan_product.id }}">{{ loan_product.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="amount">Amount:</label>
+      <input type="number" step="0.01" min="0" name="amount" class="form-control" id="amount" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Calculate</button>
+  </form>
+  {% if table_data %}
+
+  <div>
+    <span> Total payabble will be </span>
+  </div>
+    <table class="table mt-5">
+      <thead>
+        <tr>
+          <th>Principal Amount</th>
+          <th>Total Payable</th>
+          <th>Amount to Pay on Each Payment Schedule</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for data in table_data %}
+          <tr>
+            <td>{{ data.principal_amount }}</td>
+            <td>{{ data.total_payable }}</td>
+            <td>{{ data.amount_to_pay }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+{% endblock %}
