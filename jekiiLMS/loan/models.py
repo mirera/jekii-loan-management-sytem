@@ -95,7 +95,7 @@ LOAN_STATUS = (
     ('cleared','CLEARED'),
 )
 class Loan(models.Model):
-    loan_id =models.CharField(max_length=50, null=True, unique=True)
+    loan_id =models.CharField(max_length=50, null=True, unique=True, blank=True)
     loan_product = models.ForeignKey(LoanProduct, on_delete=models.SET_NULL, null=True)
     member = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True, related_name='loans_as_member')
     applied_amount = models.IntegerField()
@@ -109,7 +109,7 @@ class Loan(models.Model):
     # Generate loan ID based on member ID and current timestamp
     def save(self, *args, **kwargs):
         if not self.loan_id:
-            member_id = str(self.member_id).zfill(6)
+            member_id = str(self.member_id)
             date_str = now().strftime('%Y%m%d')
             last_loan = Loan.objects.filter(loan_id__startswith=member_id+date_str).last()
             if last_loan:
@@ -117,7 +117,7 @@ class Loan(models.Model):
                 next_id = str(int(last_id)+1).zfill(4)
                 self.loan_id = member_id+date_str+next_id
             else:
-                self.loan_id = member_id+date_str+'0001'
+                self.loan_id = member_id+date_str
         super(Loan, self).save(*args, **kwargs)
     
 

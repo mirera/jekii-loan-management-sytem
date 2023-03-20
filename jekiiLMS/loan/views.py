@@ -161,7 +161,6 @@ def createLoan(request):
         loan_officer = User.objects.get(pk=loan_officer_id)
 
         Loan.objects.create(
-             loan_id = request.POST.get('loan_id'),
              loan_product= loanproduct,
              member= member,
              applied_amount = request.POST.get('applied_amount'),

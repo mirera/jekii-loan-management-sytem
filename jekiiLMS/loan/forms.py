@@ -59,7 +59,7 @@ class LoanForm(forms.ModelForm):
     
         
         widgets = {
-            'loan_id': forms.TextInput(attrs={'class': 'form-control'}),
+            'loan_id': forms.TextInput(attrs={'class': 'form-control' }),
             'loan_product': forms.Select(attrs={'class': 'form-select js-select2'}),
             'member': forms.Select(attrs={'class': 'form-select js-select2'}),
             'applied_amount': forms.NumberInput(attrs={'class': 'form-control','placeholder':'1000'}),
