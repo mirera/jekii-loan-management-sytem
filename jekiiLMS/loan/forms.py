@@ -52,6 +52,12 @@ class LoanForm(forms.ModelForm):
         if guarantor == member:
             raise forms.ValidationError("Guarantor cannot be the same as the borrower.")
         return guarantor
+    
+    #disabling the loan id field in the edit form
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        var = self.fields['loan_id']
+        var.disabled = True
         
     class Meta:
         model = Loan
