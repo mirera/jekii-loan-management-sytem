@@ -85,6 +85,8 @@ class LoanProduct(models.Model):
     def __str__(self):
         return self.loan_product_name
 
+
+
 #Loan Prouct model ends here
 
 LOAN_STATUS = (
@@ -106,18 +108,17 @@ class Loan(models.Model):
     status = models.CharField(max_length=50, choices=LOAN_STATUS, default='pending')
     attachments = models.FileField(upload_to='attachments', null=True, blank=True)
 
-    # Generate loan ID based on member ID and current timestamp
+    # Generate loan ID based and current timestamp 
     def save(self, *args, **kwargs):
         if not self.loan_id:
-            member_id = str(self.member_id)
             date_str = now().strftime('%Y%m%d')
-            last_loan = Loan.objects.filter(loan_id__startswith=member_id+date_str).last()
+            last_loan = Loan.objects.filter(loan_id__startswith=date_str).last()
             if last_loan:
-                last_id = last_loan.loan_id[-4:]
-                next_id = str(int(last_id)+1).zfill(4)
-                self.loan_id = member_id+date_str+next_id
+                last_id = last_loan.loan_id[-5:]
+                next_id = str(int(last_id)+1).zfill(5)
+                self.loan_id = date_str+next_id
             else:
-                self.loan_id = member_id+date_str
+                self.loan_id = date_str+'00001'
         super(Loan, self).save(*args, **kwargs)
     
 
