@@ -128,7 +128,7 @@ def editLoanProduct(request,pk):
 
 
 
-
+ 
 #views for loan 
 
 #create Loan view starts
@@ -153,7 +153,7 @@ def createLoan(request):
         
         # Get the corresponding Member object
         guarantor = Member.objects.get(pk=guarantor_id)
-
+      
         # Get the selected member id from the form
         loan_officer_id = request.POST.get('loan_officer')
         
@@ -161,16 +161,16 @@ def createLoan(request):
         loan_officer = User.objects.get(pk=loan_officer_id)
 
         Loan.objects.create(
-            loan_id = request.POST.get('loan_id'),
-            loan_product= loanproduct,
-            member= member,
-            applied_amount = request.POST.get('applied_amount'),
-            guarantor = guarantor,
-            application_date = request.POST.get('application_date'),
-            loan_officer = loan_officer,
-            loan_purpose = request.POST.get('loan_purpose'),
-            attachments = request.POST.get('attachments'),
-        )
+             loan_id = request.POST.get('loan_id'),
+             loan_product= loanproduct,
+             member= member,
+             applied_amount = request.POST.get('applied_amount'),
+             guarantor = guarantor,
+             application_date = request.POST.get('application_date'),
+             loan_officer = loan_officer,
+             loan_purpose = request.POST.get('loan_purpose'),
+             attachments = request.POST.get('attachments'),
+         )
         #redirecting user to branches page(url name) after submitting form
         return redirect('loans')
  
@@ -187,24 +187,37 @@ def editLoan(request,pk):
         loanproduct_id = request.POST.get('loan_product')
         
         # Get the corresponding LoanProduct object
-        loanproduct = LoanProduct.objects.get(pk=loanproduct_id)
+        try:
+            loanproduct = LoanProduct.objects.get(pk=loanproduct_id)
+        except LoanProduct.DoesNotExist:
+            loanproduct = None
         # Get the selected member id from the form
         member_id = request.POST.get('member')
         
         # Get the corresponding Member object
-        member = Member.objects.get(pk=member_id)
+        try:
+            member = Member.objects.get(pk=member_id)
+        except Member.DoesNotExist:
+            member = None
 
         # Get the selected member id from the form
         guarantor_id = request.POST.get('guarantor')
         
         # Get the corresponding Member object
-        guarantor = Member.objects.get(pk=guarantor_id)
+        try:
+            guarantor = Member.objects.get(pk=guarantor_id)
+        except Member.DoesNotExist:
+            guarantor = None
 
         # Get the selected member id from the form
         loan_officer_id = request.POST.get('loan_officer')
         
         # Get the corresponding Member object
-        loan_officer = User.objects.get(pk=loan_officer_id)
+        try:
+            loan_officer = User.objects.get(pk=loan_officer_id)
+        except User.DoesNotExist:
+            loan_officer = None
+
         # update the branch with the submitted form data
         loan.loan_id = request.POST.get('loan_id')
         loan.loan_product = loanproduct

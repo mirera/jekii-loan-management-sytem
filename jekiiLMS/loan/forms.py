@@ -2,6 +2,7 @@ from dataclasses import fields
 from django.forms import ModelForm
 from django import forms
 from .models import LoanProduct, Loan, Repayment
+from member.models import Member
 
 
 class LoanProductForm(forms.ModelForm):
@@ -28,12 +29,34 @@ class LoanProductForm(forms.ModelForm):
             'loan_product_description': forms.Textarea(attrs={'class': 'form-control form-control-sm','placeholder':'Describe your product....'}),
         }
 
-
+ 
 class LoanForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Get the current instance of the loan object being edited, if any
+        self.instance = kwargs.get('instance', None)
+        
+        # If the current instance is not None, set the 'member' field value as a disabled option in the 'guarantor' field
+        if self.instance:
+            self.fields['guarantor'].queryset = Member.objects.exclude(id=self.instance.member.id)
+            self.fields['guarantor'].widget.attrs['disabled'] = True
+
+    
+    def clean_guarantor(self):
+        """
+        Validate that the selected guarantor is not the same as the selected member
+        """
+        guarantor = self.cleaned_data['guarantor']
+        member = self.cleaned_data.get('member')
+        if guarantor == member:
+            raise forms.ValidationError("Guarantor cannot be the same as the borrower.")
+        return guarantor
+        
     class Meta:
         model = Loan
         fields = '__all__'
-        
+    
         
         widgets = {
             'loan_id': forms.TextInput(attrs={'class': 'form-control'}),
