@@ -60,10 +60,11 @@ class LoanForm(forms.ModelForm):
         var = self.fields['loan_id']
         var.disabled = True
         
-        
+
     class Meta:
         model = Loan
         fields = '__all__'
+      
     
         
         widgets = {

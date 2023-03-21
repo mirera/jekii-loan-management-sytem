@@ -5,9 +5,11 @@ from django.db.models import Sum
 from datetime import timedelta
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
+from django.core.exceptions import ValidationError
 from decimal import Decimal
 from django.utils.timezone import now
 import uuid
+from django.db import transaction
 from member.models import Member
 
 
@@ -20,12 +22,6 @@ REPAYMENT_FREQUENCY_CHOICES = (
     ('weekly','WEEKLY'),
     ('monthly','MONTHLY'),
 )
-
-# REPAYMENT_TYPE_CHOICES = (
-#     ('days','DAYS'),
-#     ('weeks', 'WEEKS'),
-#     ('months','MONTHS'),
-# )
 
 INTEREST_TYPE_CHOICES = (
     ('flat rate','FLAT RATE'),
@@ -108,19 +104,26 @@ class Loan(models.Model):
     status = models.CharField(max_length=50, choices=LOAN_STATUS, default='pending')
     attachments = models.FileField(upload_to='attachments', null=True, blank=True)
 
-    # Generate loan ID based and current timestamp 
+
+    #Generatinf loan id based on date 
     def save(self, *args, **kwargs):
         if not self.loan_id:
             date_str = now().strftime('%Y%m%d')
-            last_loan = Loan.objects.filter(loan_id__startswith=date_str).last()
-            if last_loan:
-                last_id = last_loan.loan_id[-5:]
-                next_id = str(int(last_id)+1).zfill(5)
-                self.loan_id = date_str+next_id
-            else:
-                self.loan_id = date_str+'00001'
+            #averting race condition using 'select_for_update()'
+            with transaction.atomic():
+                last_loan = Loan.objects.select_for_update().filter(loan_id__startswith=date_str).order_by('-loan_id').first()
+                if last_loan:
+                    last_id = last_loan.loan_id[-5:]
+                    next_id = str(int(last_id)+1).zfill(5)
+                    self.loan_id = date_str+next_id
+                else:
+                    self.loan_id = date_str+'00001'
         super(Loan, self).save(*args, **kwargs)
-    
+
+    #method to limit the application date input to be today or earlier date
+    def clean(self):
+        if self.application_date > now().date():
+            raise ValidationError('Application date cannot be in the future.')
 
 
     #method to calculate first_repayment_date
@@ -156,24 +159,7 @@ class Loan(models.Model):
         total_payable = principal + interest + penalty_fee
 
         return total_payable
-
-    
-    # a method that retrieves the Member object based on the provided id_no and updates the corresponding fields in the Loan object
-    def update_from_member(self):
-        member = Member.objects.filter(id_no=self.id_no).first()
-        if member:
-            self.member_name = member
-            self.mobile_no = member.mobile_no
-    
-    def update_from_loan_product(self):
-        loan_product = LoanProduct.objects.filter(loan_product_name=self.loan_product_name).first()
-        if loan_product:
-            self.interest_rate = loan_product.interest_rate
-            self.payment_frequency = loan_product.mobile_no
-            self.loan_term = loan_product.mobile_no
             
-            
-
 
     class Meta:
         ordering = ['-application_date']
