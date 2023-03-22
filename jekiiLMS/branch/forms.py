@@ -15,7 +15,7 @@ class BranchForm(forms.ModelForm):
             'office': forms.TextInput(attrs={'class': 'form-control'}),
             'phone': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control','id': 'fv-email'}),
-            'open_date': forms.DateTimeInput(attrs={'class': 'form-control date-picker', 'data-date-format':'yyyy-mm-dd'}),
+            'open_date': forms.DateTimeInput(attrs={'class': 'form-control date-picker-range', 'data-date-format':'yyyy-mm-dd'}),
             'capital': forms.NumberInput(attrs={'class': 'form-control', 'id': 'pay-amount-1'}),
             'status': forms.Select(attrs={'class': 'custom-control-input'}),
             'notes': forms.Textarea(attrs={'class': 'form-control form-control-sm', 'id': 'cf-default-textarea' ,'placeholder':'Write your message'}),
@@ -41,7 +41,7 @@ class ExpenseForm(forms.ModelForm):
         
         
         widgets = {
-            'expense_date': forms.DateInput(attrs={'class': 'form-control date-picker', 'data-date-format':'yyyy-mm-dd'}),
+            'expense_date': forms.DateInput(attrs={'class': 'form-control date-picker-range', 'data-date-format':'yyyy-mm-dd'}),
             'category': forms.Select(attrs={'class': 'form-select js-select2'}),
             'amount': forms.NumberInput(attrs={'class': 'form-control', 'id': 'pay-amount-1'}),
             'branch': forms.Select(attrs={'class': 'form-select js-select2'}),
