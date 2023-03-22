@@ -147,12 +147,6 @@ def createLoan(request):
         
         # Get the corresponding Member object
         member = Member.objects.get(pk=member_id)
-
-        # Get the selected member id from the form
-        guarantor_id = request.POST.get('guarantor')
-        
-        # Get the corresponding Member object
-        guarantor = Member.objects.get(pk=guarantor_id)
       
         # Get the selected member id from the form
         loan_officer_id = request.POST.get('loan_officer')
@@ -164,7 +158,6 @@ def createLoan(request):
              loan_product= loanproduct,
              member= member,
              applied_amount = request.POST.get('applied_amount'),
-             guarantor = guarantor,
              application_date = request.POST.get('application_date'),
              loan_officer = loan_officer,
              loan_purpose = request.POST.get('loan_purpose'),
@@ -200,15 +193,6 @@ def editLoan(request,pk):
             member = None
 
         # Get the selected member id from the form
-        guarantor_id = request.POST.get('guarantor')
-        
-        # Get the corresponding Member object
-        try:
-            guarantor = Member.objects.get(pk=guarantor_id)
-        except Member.DoesNotExist:
-            guarantor = None
-
-        # Get the selected member id from the form
         loan_officer_id = request.POST.get('loan_officer')
         
         # Get the corresponding Member object
@@ -222,7 +206,6 @@ def editLoan(request,pk):
         loan.loan_product = loanproduct
         loan.member = member
         loan.applied_amount = request.POST.get('applied_amount')
-        loan.guarantor = guarantor
         loan.application_date = request.POST.get('application_date')
         loan.loan_officer = loan_officer
         loan.loan_purpose = request.POST.get('loan_purpose')
@@ -239,7 +222,6 @@ def editLoan(request,pk):
             'loan_product': loan.loan_product,
             'member': loan.member,
             'applied_amount': loan.applied_amount,
-            'guarantor': loan.guarantor,
             'application_date': loan.application_date,
             'loan_officer': loan.loan_officer,
             'loan_purpose ': loan.loan_purpose ,

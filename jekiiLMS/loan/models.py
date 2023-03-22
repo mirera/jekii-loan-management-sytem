@@ -97,7 +97,7 @@ class Loan(models.Model):
     loan_product = models.ForeignKey(LoanProduct, on_delete=models.SET_NULL, null=True)
     member = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True, related_name='loans_as_member')
     applied_amount = models.IntegerField()
-    guarantor = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True, related_name='loans_as_guarantor')
+    guarantor = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True, related_name='loans_as_guarantor', blank=True)
     application_date = models.DateField()
     loan_officer = models.ForeignKey(User,on_delete=models.SET_NULL, null=True)
     loan_purpose = models.TextField()
