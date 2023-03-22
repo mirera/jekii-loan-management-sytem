@@ -966,7 +966,8 @@
     NioApp.Picker.time('.time-picker');
     NioApp.Picker.date('.date-picker-range', {
       todayHighlight: false,
-      autoclose: false
+      autoclose: false,
+      endDate: new Date() // Disable future dates
     });
   }; // Addons @v1
 

@@ -83,7 +83,7 @@ class LoanProduct(models.Model):
 
 
 
-#Loan Prouct model ends here
+#Loan  model starts here
 
 LOAN_STATUS = (
     ('pending','PENDING'),
