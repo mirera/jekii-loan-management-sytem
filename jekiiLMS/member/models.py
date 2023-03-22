@@ -12,6 +12,10 @@ INDUSTRIES = (
     ('skilled','SKILLED'),
     ('others','OTHERS'),
 )
+STATUS = (
+    ('active','ACTIVE'),
+    ('inactive', 'INACTIVE')
+)
 
 class Member(models.Model):
     first_name = models.CharField(max_length=50)
@@ -25,8 +29,8 @@ class Member(models.Model):
     address = models.CharField(max_length=500)
     credit_score = models.IntegerField(default=0)
     date_joined = models.DateTimeField(auto_now_add=True)
-    passport_photo = models.ImageField(null=True, blank=True)
-
+    passport_photo = models.ImageField(default='default.png', upload_to='member_passports/')
+    status = models.CharField(max_length=50, choices=STATUS, default='inactive', )
 
     class Meta:
         ordering = ['-date_joined']

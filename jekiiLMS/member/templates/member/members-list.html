@@ -166,7 +166,7 @@
             <div class="modal-body modal-body-md">
                 <h5 class="modal-title">Add Member </h5><br>
             
-                <form action="{% url 'create-member' %}" class="form-validate" method="POST">
+                <form action="{% url 'create-member' %}" class="form-validate" method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="row g-4">
                         <div class="col-lg-6">

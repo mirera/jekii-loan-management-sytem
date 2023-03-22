@@ -18,7 +18,7 @@ k{% extends 'main.html' %}
                                 <div class="card-head">
                                     <h5 class="card-title">Member Details</h5>
                                 </div>
-                                <form action="" class="form-validate" method="POST">
+                                <form action="" class="form-validate" method="POST" enctype="multipart/form-data">
                                     {% csrf_token %}
                                     <div class="row g-4">
                                         <div class="col-lg-6">

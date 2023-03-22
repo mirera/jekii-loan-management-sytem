@@ -161,7 +161,7 @@ def createLoan(request):
              application_date = request.POST.get('application_date'),
              loan_officer = loan_officer,
              loan_purpose = request.POST.get('loan_purpose'),
-             attachments = request.POST.get('attachments'),
+             attachments = request.FILES.get('attachments'),
          )
         #redirecting user to branches page(url name) after submitting form
         return redirect('loans')
@@ -210,7 +210,7 @@ def editLoan(request,pk):
         loan.loan_officer = loan_officer
         loan.loan_purpose = request.POST.get('loan_purpose')
         loan.status = request.POST.get('status')
-        loan.attachments = request.POST.get('attachments')
+        loan.attachments = request.FILES.get('attachments'),
 
         loan.save()
 

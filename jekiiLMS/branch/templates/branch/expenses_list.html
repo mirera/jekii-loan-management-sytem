@@ -148,7 +148,7 @@
             <div class="modal-body modal-body-md">
                 <h5 class="modal-title">Add Expense </h5><br>
             
-                <form action="{% url 'create-expense' %} " method="POST">
+                <form action="{% url 'create-expense' %} " method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="row g-4">
                         <div class="col-lg-6">

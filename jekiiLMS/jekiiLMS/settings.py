@@ -146,6 +146,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # LOGIN_URL = 'user/auth-login.html'
 
-MEDIA_URL = '/images/'
+MEDIA_URL = '/media/'
 
-MEDIA_ROOT =  os.path.join(BASE_DIR, 'static/images')
+MEDIA_ROOT =  os.path.join(BASE_DIR, 'static/media')
