@@ -1,4 +1,6 @@
 from tkinter import CASCADE
+import os
+from django.conf import settings
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
@@ -18,6 +20,8 @@ STATUS = (
 )
 
 class Member(models.Model):
+
+
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     id_no = models.CharField(max_length=10, unique=True)
@@ -28,9 +32,14 @@ class Member(models.Model):
     industry = models.CharField(max_length=500, choices=INDUSTRIES, null=True)
     address = models.CharField(max_length=500)
     credit_score = models.IntegerField(default=0)
-    date_joined = models.DateTimeField(auto_now_add=True)
-    passport_photo = models.ImageField(default='default.png', upload_to='member_passports/')
+    date_joined = models.DateField()
+    passport_photo = models.ImageField( default='default.png', upload_to='member_passports/')
     status = models.CharField(max_length=50, choices=STATUS, default='inactive', )
+
+    #check is member has active loan
+    def has_active_loan(self):
+        active_loans = self.loans_as_member.filter(status__in=['pending', 'approved', 'overdue'])
+        return bool(active_loans)
 
     class Meta:
         ordering = ['-date_joined']

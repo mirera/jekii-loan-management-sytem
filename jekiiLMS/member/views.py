@@ -22,6 +22,7 @@ def createMember(request):
             phone_no = request.POST.get('phone_no'),
             branch = branch,
             email= request.POST.get('email'),
+            date_joined= request.POST.get('date_joined'),
             business_name = request.POST.get('business_name'),
             industry = request.POST.get('industry'),
             address = request.POST.get('address'),
@@ -86,6 +87,7 @@ def editMember(request,pk):
         member.id_no = request.POST.get('id_no')
         member.phone_no = request.POST.get('phone_no')
         member.email = request.POST.get('email')
+        member.date_joined = request.POST.get('date_joined')
         member.branch = branch
         member.business_name = request.POST.get('business_name')
         member.industry = request.POST.get('industry')
@@ -107,6 +109,7 @@ def editMember(request,pk):
             'phone_no': member.phone_no,
             'email': member.email,
             'branch': member.branch,
+            'date_joined': member.date_joined,
             'business_name': member.business_name,
             'industry': member.industry,
             'address': member.address,
