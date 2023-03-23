@@ -103,7 +103,7 @@ class Loan(models.Model):
     loan_purpose = models.TextField()
     status = models.CharField(max_length=50, choices=LOAN_STATUS, default='pending')
     attachments = models.FileField(upload_to='loan_attachments/', null=True, blank=True)
-
+   
 
     #Generating loan id based on date 
     def save(self, *args, **kwargs):

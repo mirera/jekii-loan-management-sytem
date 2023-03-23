@@ -133,7 +133,6 @@ def editLoanProduct(request,pk):
 
 #create Loan view starts
 def createLoan(request):
-    form = LoanForm()
     #processing the data
     if request.method == 'POST':
         # Get the selected loanproduct id from the form
@@ -154,6 +153,11 @@ def createLoan(request):
         # Get the corresponding Member object
         loan_officer = User.objects.get(pk=loan_officer_id)
 
+        if member.has_active_loan():
+            # redirect to an error page or show an error message
+            #messages.error(request, 'This Member has an active loan!')
+            return render(request, 'loan/error.html', {'message': 'You cannot apply for a new loan while you have an active loan.'})
+
         Loan.objects.create(
              loan_product= loanproduct,
              member= member,
@@ -164,6 +168,7 @@ def createLoan(request):
              attachments = request.FILES.get('attachments'),
          )
         #redirecting user to branches page(url name) after submitting form
+        messages.success(request, 'Loan created successfully!')
         return redirect('loans')
  
     context= {'form':form}
