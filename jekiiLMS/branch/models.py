@@ -40,7 +40,7 @@ class Expense(models.Model):
     branch= models.ForeignKey(Branch, on_delete=models.SET_NULL, null=True)
     created_by = models.ForeignKey(User,on_delete=models.SET_NULL, null=True)
     note = models.TextField(null=True, blank=True)
-    attachement = models.FileField(null=True, blank=True)
+    attachement = models.FileField(upload_to='expense_attachments/', null=True, blank=True)
     
     class Meta:
         ordering = ['-expense_date']

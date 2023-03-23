@@ -197,7 +197,7 @@ def createExpense(request):
             branch = branch,
             created_by = created_by,
             note = request.POST.get('note'),
-            attachement = request.POST.get('attachement'),
+            attachement = request.FILES.get('attachement'),
         )
         #redirecting user to branches page(url name) after submitting form
         return redirect('expenses')
@@ -246,7 +246,7 @@ def editExpense(request,pk):
         expense.branch = branch
         expense.created_by = created_by
         expense.note = request.POST.get('note')
-        expense.attachement = request.POST.get('attachement')
+        expense.attachement = request.FILES.get('attachement')
         expense.save()
 
         return redirect('expenses')

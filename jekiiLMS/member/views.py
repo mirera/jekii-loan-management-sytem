@@ -25,7 +25,7 @@ def createMember(request):
             business_name = request.POST.get('business_name'),
             industry = request.POST.get('industry'),
             address = request.POST.get('address'),
-            passport_photo = request.POST.get('passport_photo')
+            passport_photo=request.FILES.get('passport_photo')
         )
         #redirecting user to branches page(url name) after submitting form
         return redirect('members')
@@ -91,7 +91,7 @@ def editMember(request,pk):
         member.industry = request.POST.get('industry')
         member.address = request.POST.get('address')
         member.credit_score = request.POST.get('credit_score')
-        member.passport_photo = request.POST.get('passport_photo')
+        member.passport_photo = request.FILES.get('passport_photo')
 
         
 

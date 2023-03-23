@@ -18,7 +18,7 @@ k{% extends 'main.html' %}
                                 <div class="card-head">
                                     <h5 class="card-title">Loan Details</h5>
                                 </div>
-                                <form action="" class="form-validate" method="POST">
+                                <form action="" class="form-validate" method="POST" enctype="multipart/form-data">
                                     {% csrf_token %}
                                     <div class="row g-4">
                                         <div class="col-lg-6">
@@ -58,15 +58,6 @@ k{% extends 'main.html' %}
                                                         </div>
                                                         {{form.applied_amount}}
                                                     </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="form-label" for="fv-email">Guarantor</label>
-                                                <div class="form-control-wrap">
-                                                   <!-- <input type="email" class="form-control" id="fv-email" name="fv-email" name="email" required> -->
-                                                    {{form.guarantor}}
                                                 </div>
                                             </div>
                                         </div>

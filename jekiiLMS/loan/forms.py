@@ -32,22 +32,6 @@ class LoanProductForm(forms.ModelForm):
 
  
 class LoanForm(forms.ModelForm):
-    def clean_guarantor(self):
-        """
-        Validate that the selected guarantor is not the same as the selected member
-        """
-        guarantor = self.cleaned_data['guarantor']
-        member = self.cleaned_data.get('member')
-        if guarantor == member:
-            raise forms.ValidationError("Guarantor cannot be the same as the borrower.")
-        return print(guarantor)
-
-    #disabling the loan id field in the edit form
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        var = self.fields['loan_id']
-        var.disabled = True
-        
     class Meta:
         model = Loan
         fields = '__all__'
@@ -57,7 +41,6 @@ class LoanForm(forms.ModelForm):
             'loan_product': forms.Select(attrs={'class': 'form-select js-select2'}),
             'member': forms.Select(attrs={'class': 'form-select js-select2'}),
             'applied_amount': forms.NumberInput(attrs={'class': 'form-control','placeholder':'1000'}),
-            'guarantor': forms.Select(attrs={'class': 'form-select js-select2'}),
             'application_date': forms.DateInput(attrs={'class': 'form-control  date-picker-range', 'data-date-format':'yyyy-mm-dd'}),
             'loan_officer': forms.Select(attrs={'class': 'form-select js-select2'}),
             'status': forms.Select(attrs={'class': 'form-select js-select2'}),
@@ -65,6 +48,14 @@ class LoanForm(forms.ModelForm):
             'attachments': forms.FileInput(attrs={'class': 'form-control'}),     
             
         }
+
+    #disabling the loan id field in the edit form
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        var = self.fields['loan_id']
+        var.disabled = True
+        
+    
 
 
 

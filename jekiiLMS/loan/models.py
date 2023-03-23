@@ -97,15 +97,15 @@ class Loan(models.Model):
     loan_product = models.ForeignKey(LoanProduct, on_delete=models.SET_NULL, null=True)
     member = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True, related_name='loans_as_member')
     applied_amount = models.IntegerField()
-    guarantor = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True, related_name='loans_as_guarantor')
+    guarantor = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True, related_name='loans_as_guarantor', blank=True)
     application_date = models.DateField()
     loan_officer = models.ForeignKey(User,on_delete=models.SET_NULL, null=True)
     loan_purpose = models.TextField()
     status = models.CharField(max_length=50, choices=LOAN_STATUS, default='pending')
-    attachments = models.FileField(upload_to='attachments', null=True, blank=True)
+    attachments = models.FileField(upload_to='loan_attachments/', null=True, blank=True)
 
 
-    #Generatinf loan id based on date 
+    #Generating loan id based on date 
     def save(self, *args, **kwargs):
         if not self.loan_id:
             date_str = now().strftime('%Y%m%d')
