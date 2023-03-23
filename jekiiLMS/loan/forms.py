@@ -45,8 +45,7 @@ class LoanForm(forms.ModelForm):
             'loan_officer': forms.Select(attrs={'class': 'form-select js-select2'}),
             'status': forms.Select(attrs={'class': 'form-select js-select2'}),
             'loan_purpose': forms.Textarea(attrs={'class': 'form-control form-control-sm', 'id': 'cf-default-textarea' ,'placeholder':'Write loan purpose'}),
-            'attachments': forms.FileInput(attrs={'class': 'form-control'}),     
-            
+            'attachments': forms.FileInput(attrs={'class': 'form-control'})
         }
 
     #disabling the loan id field in the edit form

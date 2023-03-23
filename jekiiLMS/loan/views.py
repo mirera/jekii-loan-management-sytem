@@ -133,6 +133,7 @@ def editLoanProduct(request,pk):
 
 #create Loan view starts
 def createLoan(request):
+    form = LoanForm()
     #processing the data
     if request.method == 'POST':
         # Get the selected loanproduct id from the form
@@ -214,8 +215,7 @@ def editLoan(request,pk):
         loan.application_date = request.POST.get('application_date')
         loan.loan_officer = loan_officer
         loan.loan_purpose = request.POST.get('loan_purpose')
-        loan.status = request.POST.get('status')
-        loan.attachments = request.FILES.get('attachments'),
+        loan.attachments = request.FILES.get('attachments')
 
         loan.save()
 
@@ -229,9 +229,8 @@ def editLoan(request,pk):
             'applied_amount': loan.applied_amount,
             'application_date': loan.application_date,
             'loan_officer': loan.loan_officer,
-            'loan_purpose ': loan.loan_purpose ,
-            'status': loan.status,
-            'attachments': loan.attachments,
+            'loan_purpose': loan.loan_purpose,
+            'attachments': loan.attachments
         }
         form = LoanForm(initial=form_data)
         return render(request,'loan/edit-loan.html',{'form':form})
