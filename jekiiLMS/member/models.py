@@ -41,6 +41,14 @@ class Member(models.Model):
         active_loans = self.loans_as_member.filter(status__in=['pending', 'approved', 'overdue'])
         return bool(active_loans)
 
+    #assign member active status if they have active loan
+    #def update_status(self):
+        #if self.has_active_loan():
+            #self.status = 'active'
+            #self.save()
+
+  
+
     class Meta:
         ordering = ['-date_joined']
 

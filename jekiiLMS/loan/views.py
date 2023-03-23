@@ -133,6 +133,7 @@ def editLoanProduct(request,pk):
 
 #create Loan view starts
 def createLoan(request):
+    form = LoanForm()
     #processing the data
     if request.method == 'POST':
         # Get the selected loanproduct id from the form
