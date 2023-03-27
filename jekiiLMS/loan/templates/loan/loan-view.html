@@ -19,7 +19,7 @@
                             </div>
                         </div>
                         <div class="nk-block-head-content">
-                            <a href="html/user-list-regular.html" class="btn btn-outline-light bg-white d-none d-sm-inline-flex"><em class="icon ni ni-arrow-left"></em><span>Back</span></a>
+                            <a href="{% url 'loans' %}" class="btn btn-outline-light bg-white d-none d-sm-inline-flex"><em class="icon ni ni-arrow-left"></em><span>Back</span></a>
                             <a href="html/user-list-regular.html" class="btn btn-icon btn-outline-light bg-white d-inline-flex d-sm-none"><em class="icon ni ni-arrow-left"></em></a>
                         </div>
                     </div>
@@ -52,75 +52,78 @@
                                     <div class="nk-block">
                                         <div class="nk-block-head">
                                             <h5 class="title">Loan Information</h5>
-                                            <p>Basic info, like your name and address, that you use on Nio Platform.</p>
+                                            <div class="alert-warning">
+                                                <span> Check Member KYC status and score before approving loan request</span>
+                                            </div>
                                         </div><!-- .nk-block-head -->
-                                        <div class="profile-ud-list">
-                                            <div class="profile-ud-item">
-                                                <div class="profile-ud wider">
-                                                    <span class="profile-ud-label">Loan Type:</span>
-                                                    <span class="profile-ud-value">{{loan.loan_product.loan_product_name}}</span>
-                                                </div>
+                                        <div class="card card-bordered card-preview">
+                                            <div class="card-inner">
+                                                <table class="table table-hover">
+                                                    <tbody>
+                                                    <tr>
+                                                        <td class="profile-ud-label">Loan Type:</td>
+                                                        <td class="profile-ud-value">{{loan.loan_product.loan_product_name}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="profile-ud-label">Loan No:</td>
+                                                        <td class="profile-ud-value">{{loan.loan_id}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="profile-ud-label">Borrower:</td>
+                                                        <td class="profile-ud-value">{{loan.member.first_name}} {{loan.member.last_name}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="profile-ud-label">Member Tel:</td>
+                                                        <td class="profile-ud-value">{{loan.member.phone_no}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="profile-ud-label">Status:</td>
+                                                        {% if loan.status == 'pending' %}
+                                                        <td class="profile-ud-value text-warning">{{loan.status.upper}}</td>
+                                                        {% elif loan.status == 'cleared' %}
+                                                        <td class="profile-ud-value text-success">{{loan.status.upper}}</td>
+                                                        {% elif loan.status == 'approved' %}
+                                                        <td class="profile-ud-value text-primary">{{loan.status.upper}}</td>
+                                                        {% else %}
+                                                        <td class="profile-ud-value text-danger">{{loan.status.upper}}</td>
+                                                        {% endif %}
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="profile-ud-label">First Payment Date:</td>
+                                                        <td class="profile-ud-value">{{loan.first_repayment_date}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="profile-ud-label">Disbursement Date:</td>
+                                                        <td class="profile-ud-value">{{loan.application_date}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="profile-ud-label">Applied Amount	:</td>
+                                                        <td class="profile-ud-value">{{loan.applied_amount}} Kes</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="profile-ud-label">Total Payable:</td>
+                                                        <td class="profile-ud-value">{{loan.total_payable}} Kes</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="profile-ud-label">Total Paid:</td>
+                                                        <td class="profile-ud-value">{{loan_repayments}} Kes</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="profile-ud-label">Due Amount:</td>
+                                                        <td class="profile-ud-value">{{loan.applied_amount}} Kes</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="profile-ud-label">Late Payment Penalties:</td>
+                                                        <td class="profile-ud-value">{{loan.applied_amount}} Kes</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="profile-ud-label">Loan Purpose:</td>
+                                                        <td class="profile-ud-value">{{loan.loan_purpose}}</td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
                                             </div>
-                                            <div class="profile-ud-item">
-                                                <div class="profile-ud wider">
-                                                    <span class="profile-ud-label">Loan Status:</span>
-                                                    {% if loan.status == 'pending' %}
-                                                    <span class="profile-ud-value text-warning">{{loan.status.upper}}</span>
-                                                    {% elif loan.status == 'cleared' %}
-                                                    <span class="profile-ud-value text-success">{{loan.status.upper}}</span>
-                                                    {% elif loan.status == 'approved' %}
-                                                    <span class="profile-ud-value text-primary ">{{loan.status.upper}}</span>
-                                                    {% else %}
-                                                    <span class="profile-ud-value text-danger">{{loan.status.upper}}</span>
-                                                    {% endif %}
-                                                </div>
-                                            </div>
-                                            <div class="profile-ud-item">
-                                                <div class="profile-ud wider">
-                                                    <span class="profile-ud-label">Disbursement Date:</span>
-                                                    <span class="profile-ud-value">{{loan.application_date}}</span>
-                                                </div>
-                                            </div>
-                                            <div class="profile-ud-item">
-                                                <div class="profile-ud wider">
-                                                    <span class="profile-ud-label">First Repayment Date:</span>
-                                                    <span class="profile-ud-value">{{loan.first_repayment_date}}</span>
-                                                </div>
-                                            </div>
-                                            <div class="profile-ud-item">
-                                                <div class="profile-ud wider">
-                                                    <span class="profile-ud-label">Applied Amount:</span>
-                                                    <span class="profile-ud-value">Ksh{{loan.applied_amount}}</span>
-                                                </div>
-                                            </div>
-                                            <div class="profile-ud-item">
-                                                <div class="profile-ud wider">
-                                                    <span class="profile-ud-label">Total Payable:</span>
-                                                    {% with loan.total_payable as total %}
-                                                    <span class="profile-ud-value">Ksh{{ total }}</span>
-                                                    {% endwith %}
-                                                </div>
-                                            </div>
-                                            <div class="profile-ud-item">
-                                                <div class="profile-ud wider">
-                                                    <span class="profile-ud-label">Total Paid:</span>
-                                                    <span class="profile-ud-value">Ksh{{loan_repayments}}</span>
-                                                </div>
-                                            </div>
-                                            <div class="profile-ud-item">
-                                                <div class="profile-ud wider">
-                                                    <span class="profile-ud-label">Due Amount:</span>
-                                                    <span class="profile-ud-value">Ksh{{loan.applied_amount}}</span>
-                                                </div>
-                                            </div>
-                                            <div class="profile-ud-item">
-                                                <div class="profile-ud wider">
-                                                    <span class="profile-ud-label">Late Payment Penalty:</span>
-                                                    <span class="profile-ud-value">Ksh{{loan.applied_amount}}</span>
-                                                </div>
-                                            </div>
-
-                                        </div><!-- .profile-ud-list -->
+                                        </div><!-- .card-preview -->
                                     </div><!-- .nk-block -->
                                     <div class="nk-block">
                                         <div class="nk-block-head nk-block-head-line">

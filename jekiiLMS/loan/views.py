@@ -237,6 +237,11 @@ def editLoan(request,pk):
 
 #edit Loan view ends
 
+#approve loan logic starts here
+def approveLoan(request,pk):
+    return render(request,'loan/approve-loan.html')
+#approve logic ends
+
 # list Loan  view starts 
 def listLoans(request):
     loans = Loan.objects.all()
@@ -257,7 +262,13 @@ def viewLoan(request, pk):
     loan_repayments = Repayment.objects.filter(loan_id=loan.id).aggregate(Sum('amount'))['amount__sum']
     #loan balance
     total_payable= loan.total_payable()
-    loan_balance= total_payable-loan_repayments
+    if loan_repayments:
+        if total_payable:
+            loan_balance= total_payable-loan_repayments
+        else:
+            loan_balance = 0
+    else:
+        loan_balance = total_payable
 
     if request.method == 'POST':
         Note.objects.create(
@@ -442,4 +453,4 @@ def loan_calculator(request):
     }
     return render(request, "loan/loan-calculator.html", context)
 
-  
+   

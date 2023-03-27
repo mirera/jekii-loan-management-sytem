@@ -15,6 +15,7 @@ urlpatterns = [
     path('create-loan', views.createLoan, name='create-loan'),
     path('edit-loan/<str:pk>', views.editLoan, name='edit-loan'),
     path('view-loan/<str:pk>', views.viewLoan, name='view-loan'),
+    path('approve-loan/<str:pk>', views.approveLoan, name='approve-loan'),
     path('delete-loan/<str:pk>', views.deleteLoan, name='delete-loan'),
 
     #repayment urls
@@ -24,6 +25,6 @@ urlpatterns = [
     path('delete-repayment/<str:pk>', views.deleteRepayment, name='delete-repayment'),
 
     #loan calculator url
-    path('loancalculator', views.loan_calculator, name='loancalculator'),
+    path('loancalculator', views.loan_calculator, name='loancalculator'), 
 
 ] 

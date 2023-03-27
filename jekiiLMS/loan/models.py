@@ -227,7 +227,7 @@ class Repayment(models.Model):
         
 
 
-
+  
     
 
 #Repayment model ends 
