@@ -198,7 +198,7 @@ class Repayment(models.Model):
     loan_id = models.ForeignKey(Loan, on_delete=models.SET_NULL, null=True)
     member = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True)
     amount= models.IntegerField()
-    date_paid = models.DateField()
+    date_paid = models.DateField() 
 
 
     class Meta:

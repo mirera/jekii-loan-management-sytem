@@ -1,4 +1,4 @@
-{% extends 'main.html' %}
+{% extends 'main.html' %}  
 
 {% block content %}
         <!-- content @s -->
@@ -66,7 +66,7 @@
                                                 </div>
                                             </div>
                                             <div class="card-amount">
-                                                <span class="amount"> 11,230 </span>
+                                                <span class="amount"> {{total_disbursed_amount}} <span class=" ">KES </span> </span>
                                                 <span class="change down text-danger"><em class="icon ni ni-arrow-long-down"></em>1.93%</span>
                                             </div>
                                             <div class="invest-data">
@@ -95,22 +95,29 @@
                                                     <h6 class="title">Pending Loans</h6>
                                                 </div>
                                                 <div class="card-tools">
-                                                    <em class="card-hint icon ni ni-help-fill" data-bs-toggle="tooltip" data-bs-placement="left" title="Total Room"></em>
+                                                    <em class="card-hint icon ni ni-help-fill" data-bs-toggle="tooltip" data-bs-placement="left" title="Total pending loans"></em>
                                                 </div>
                                             </div>
                                             <div class="card-amount">
-                                                <span class="amount"> 312 </span>
+                                                {% if total_pending_loans == 0 %}
+                                                <span class="amount" > {{ total_pending_loans }} </span>
+                                                {% else %}
+                                                <span class="amount text-warning" > {{ total_pending_loans }} </span>
+                                                {% endif %}
                                             </div>
                                             <div class="invest-data">
                                                 <div class="invest-data-amount g-2">
                                                     <div class="invest-data-history">
-                                                        <div class="title">Booked (Month)</div>
-                                                        <div class="amount">913</div>
+                                                        <div class="title">Amount</div>
+                                                        {% if total_pending_loans == 0 %}
+                                                        <div class="amount">{{total_pending_amount}}</div>
+                                                        {% else %}
+                                                        <div class="amount text-warning ">{{total_pending_amount}}</div>
+                                                        {% endif %}
                                                     </div>
-                                                    <div class="invest-data-history">
-                                                        <div class="title">Booked (Week)</div>
-                                                        <div class="amount">125</div>
-                                                    </div>
+                                                    {% if total_pending_loans > 0 %}
+                                                    <a href="{% url 'loans' %}" class="btn btn-dim btn-outline-primary">View</a>
+                                                    {% endif %}
                                                 </div>
                                                 <div class="invest-data-ck">
                                                     <canvas class="iv-data-chart" id="totalRoom"></canvas>
@@ -131,18 +138,18 @@
                                                 </div>
                                             </div>
                                             <div class="card-amount">
-                                                <span class="amount"> 79,358.50 <span class="currency currency-usd">USD</span>
+                                                <span class="amount"> {{expense}} <span class="currency currency-usd">KES</span>
                                                 </span>
                                             </div>
                                             <div class="invest-data">
                                                 <div class="invest-data-amount g-2">
                                                     <div class="invest-data-history">
                                                         <div class="title">This Month</div>
-                                                        <div class="amount">3,540.59 <span class="currency currency-usd">USD</span></div>
+                                                        <div class="amount">3,540.59 <span class="currency currency-usd">KES</span></div>
                                                     </div>
                                                     <div class="invest-data-history">
                                                         <div class="title">This Week</div>
-                                                        <div class="amount">1,259.28 <span class="currency currency-usd">USD</span></div>
+                                                        <div class="amount">1,259.28 <span class="currency currency-usd">KES</span></div>
                                                     </div>
                                                 </div>
                                                 <div class="invest-data-ck">
@@ -151,86 +158,6 @@
                                             </div>
                                         </div>
                                     </div><!-- .card -->
-                                </div><!-- .col -->
-                                <div class="col-xxl-4">
-                                    <div class="card card-bordered card-full">
-                                        <div class="card-inner d-flex flex-column h-100">
-                                            <div class="card-title-group mb-3">
-                                                <div class="card-title me-1">
-                                                    <h6 class="title">Top Performing Industries</h6>
-                                                    <p>Top performing industry category. Based on credit score</p>
-                                                </div>
-                                                <div class="card-tools mt-n1 me-n1">
-                                                    <div class="drodown">
-                                                        <a href="#" class="dropdown-toggle dropdown-indicator btn btn-sm btn-outline-light btn-white" data-bs-toggle="dropdown">30 Days</a>
-                                                        <div class="dropdown-menu dropdown-menu-end dropdown-menu-xs">
-                                                            <ul class="link-list-opt no-bdr">
-                                                                <li><a href="#"><span>7 Days</span></a></li>
-                                                                <li><a href="#"><span>15 Days</span></a></li>
-                                                                <li><a href="#"><span>30 Days</span></a></li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="progress-list gy-3">
-                                                <div class="progress-wrap">
-                                                    <div class="progress-text">
-                                                        <div class="progress-label">Strater Package</div>
-                                                        <div class="progress-amount">58%</div>
-                                                    </div>
-                                                    <div class="progress progress-md">
-                                                        <div class="progress-bar" data-progress="58"></div>
-                                                    </div>
-                                                </div>
-                                                <div class="progress-wrap">
-                                                    <div class="progress-text">
-                                                        <div class="progress-label">Honeymoon Package</div>
-                                                        <div class="progress-amount">43%</div>
-                                                    </div>
-                                                    <div class="progress progress-md">
-                                                        <div class="progress-bar bg-warning" data-progress="43"></div>
-                                                    </div>
-                                                </div>
-                                                <div class="progress-wrap">
-                                                    <div class="progress-text">
-                                                        <div class="progress-label">Vacation Package</div>
-                                                        <div class="progress-amount">33%</div>
-                                                    </div>
-                                                    <div class="progress progress-md">
-                                                        <div class="progress-bar bg-azure" data-progress="33"></div>
-                                                    </div>
-                                                </div>
-                                                <div class="progress-wrap">
-                                                    <div class="progress-text">
-                                                        <div class="progress-label">Continental Package</div>
-                                                        <div class="progress-amount">29%</div>
-                                                    </div>
-                                                    <div class="progress progress-md">
-                                                        <div class="progress-bar bg-pink" data-progress="29"></div>
-                                                    </div>
-                                                </div>
-                                                <div class="progress-wrap">
-                                                    <div class="progress-text">
-                                                        <div class="progress-label">Spring Package</div>
-                                                        <div class="progress-amount">18.49%</div>
-                                                    </div>
-                                                    <div class="progress progress-md">
-                                                        <div class="progress-bar bg-orange" data-progress="18.49"></div>
-                                                    </div>
-                                                </div>
-                                                <div class="progress-wrap">
-                                                    <div class="progress-text">
-                                                        <div class="progress-label">All suite Package</div>
-                                                        <div class="progress-amount">16%</div>
-                                                    </div>
-                                                    <div class="progress progress-md">
-                                                        <div class="progress-bar bg-teal" data-progress="16"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div><!-- .col -->
                                 <div class="col-md-6 col-xxl-5">
                                     <div class="card card-bordered h-100">
@@ -360,6 +287,86 @@
                                         </div>
                                     </div><!-- .card -->
                                 </div><!-- .col -->
+                                <div class="col-xxl-4">
+                                    <div class="card card-bordered card-full">
+                                        <div class="card-inner d-flex flex-column h-100">
+                                            <div class="card-title-group mb-3">
+                                                <div class="card-title me-1">
+                                                    <h6 class="title">Top Performing Industries</h6>
+                                                    <p>Top performing industry category. Based on credit score</p>
+                                                </div>
+                                                <div class="card-tools mt-n1 me-n1">
+                                                    <div class="drodown">
+                                                        <a href="#" class="dropdown-toggle dropdown-indicator btn btn-sm btn-outline-light btn-white" data-bs-toggle="dropdown">30 Days</a>
+                                                        <div class="dropdown-menu dropdown-menu-end dropdown-menu-xs">
+                                                            <ul class="link-list-opt no-bdr">
+                                                                <li><a href="#"><span>7 Days</span></a></li>
+                                                                <li><a href="#"><span>15 Days</span></a></li>
+                                                                <li><a href="#"><span>30 Days</span></a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="progress-list gy-3">
+                                                <div class="progress-wrap">
+                                                    <div class="progress-text">
+                                                        <div class="progress-label">Strater Package</div>
+                                                        <div class="progress-amount">58%</div>
+                                                    </div>
+                                                    <div class="progress progress-md">
+                                                        <div class="progress-bar" data-progress="58"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="progress-wrap">
+                                                    <div class="progress-text">
+                                                        <div class="progress-label">Honeymoon Package</div>
+                                                        <div class="progress-amount">43%</div>
+                                                    </div>
+                                                    <div class="progress progress-md">
+                                                        <div class="progress-bar bg-warning" data-progress="43"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="progress-wrap">
+                                                    <div class="progress-text">
+                                                        <div class="progress-label">Vacation Package</div>
+                                                        <div class="progress-amount">33%</div>
+                                                    </div>
+                                                    <div class="progress progress-md">
+                                                        <div class="progress-bar bg-azure" data-progress="33"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="progress-wrap">
+                                                    <div class="progress-text">
+                                                        <div class="progress-label">Continental Package</div>
+                                                        <div class="progress-amount">29%</div>
+                                                    </div>
+                                                    <div class="progress progress-md">
+                                                        <div class="progress-bar bg-pink" data-progress="29"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="progress-wrap">
+                                                    <div class="progress-text">
+                                                        <div class="progress-label">Spring Package</div>
+                                                        <div class="progress-amount">18.49%</div>
+                                                    </div>
+                                                    <div class="progress progress-md">
+                                                        <div class="progress-bar bg-orange" data-progress="18.49"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="progress-wrap">
+                                                    <div class="progress-text">
+                                                        <div class="progress-label">All suite Package</div>
+                                                        <div class="progress-amount">16%</div>
+                                                    </div>
+                                                    <div class="progress progress-md">
+                                                        <div class="progress-bar bg-teal" data-progress="16"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div><!-- .col -->
                                 <div class="col-md-6 col-xxl-3">
                                     <div class="card card-bordered card-full">
                                         <div class="card-inner-group">
@@ -378,7 +385,7 @@
                                                 <div class="user-card">
                                                     
                                                     <div class="user-avatar bg-primary-dim">
-                                                        <span>AB</span>
+                                                       <img src=" {{member.passport_photo.url}} " >
                                                     </div>
                                                     <div class="user-info">
                                                         <span class="lead-text">{{member.first_name}} {{member.last_name}}</span>
@@ -493,7 +500,7 @@
                                                     <div class="nk-tb-col tb-col-sm">
                                                         <div class="user-card">
                                                             <div class="user-avatar user-avatar-sm bg-purple">
-                                                                <span>AB</span>
+                                                                <img src="{{loan.member.passport_photo.url}}">
                                                             </div>
                                                             <div class="user-name">
                                                                 <span class="tb-lead">{{loan.member.first_name}} {{loan.member.last_name}}</span>
@@ -543,34 +550,6 @@
                                         <div class="card-inner-sm border-top text-center d-sm-none">
                                             <a href="#" class="btn btn-link btn-block">See History</a>
                                         </div>
-                                    </div><!-- .card -->
-                                </div><!-- .col -->
-                                <div class="col-md-6 col-xxl-4">
-                                    <div class="card card-bordered card-full">
-                                        <div class="card-inner border-bottom">
-                                            <div class="card-title-group">
-                                                <div class="card-title">
-                                                    <h6 class="title">Recent Payments</h6>
-                                                </div>
-                                                <div class="card-tools">
-                                                    <ul class="card-tools-nav">
-                                                        <li><a href="#"><span>Cancel</span></a></li>
-                                                        <li class="active"><a href="{% url 'repayments' %}"><span>All</span></a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <ul class="nk-activity">
-                                            {% for repayment in repayments %}
-                                            <li class="nk-activity-item">
-                                                <div class="nk-activity-media user-avatar bg-success"><img src="./images/avatar/c-sm.jpg" alt=""></div>
-                                                <div class="nk-activity-data">
-                                                    <div class="label">{{repayment.member.first_name}} {{repayment.member.last_name}} repaid <b>Ksh{{repayment.amount}}</b>.</div>
-                                                    <span class="time">{{repayment.date_paid|timesince}} ago</span>
-                                                </div>
-                                            </li>
-                                            {% endfor %}
-                                        </ul>
                                     </div><!-- .card -->
                                 </div><!-- .col -->
                             </div><!-- .row -->
