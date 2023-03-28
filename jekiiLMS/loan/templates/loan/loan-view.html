@@ -129,12 +129,20 @@
                                             </tr>
                                             </tbody>
                                         </table><br>
-                                        <a data-bs-toggle="modal" href="#editLoanDetails" class="btn btn-primary"> Edit Details</a>
+                                        {% if loan.status == 'pending' %}
+                                        <div class="row justify-content-center">
+                                            <div class="col-md-4 text-center">
+                                              <a data-bs-toggle="modal" href="#editLoanDetails" class="btn btn-primary">Edit Details</a>
+                                            </div>
+                                        </div>                                          
+                                        {% endif %}
                                     </div>
                                     <div class="tab-pane" id="tabItem18">
                                         <div class="nk-block-head d-flex justify-content-between align-items-center">
                                             <h5 class="title">Guarantor Information</h5> 
+                                            {% if loan.status == 'pending' %}
                                             <a data-bs-toggle="modal" href="#addGuarantor" class="btn btn-primary ml-auto ">+ Add Guarantor</a>
+                                            {% endif %}
                                         </div><!-- .nk-block-head -->
                                         <div class="nk-divider divider md"></div>
                                         <table class="table">
@@ -144,7 +152,9 @@
                                                 <th scope="col">ID No</th>
                                                 <th scope="col">Tel No.</th>
                                                 <th scope="col">Amount</th>
+                                                {% if loan.status == 'pending' %}
                                                 <th scope="col">Action</th>
+                                                {% endif %}
                                               </tr>
                                             </thead>
                                             <tbody>
@@ -154,7 +164,9 @@
                                                 <td>{{guarantor.member.id_no}}</td>
                                                 <td>{{guarantor.member.phone_no}}</td>
                                                 <td>{{guarantor.amount}}</td>
+                                                {% if loan.status == 'pending' %}
                                                 <td><a data-bs-toggle="modal" href="#removeGuarantor" class="btn btn-dim btn-danger">Remove</a></td>
+                                                {% endif %}
                                               </tr>
                                               {% endfor %}
                                             </tbody>
@@ -164,7 +176,9 @@
                                     <div class="tab-pane" id="tabItem19">
                                         <div class="nk-block-head d-flex justify-content-between align-items-center">
                                             <h5 class="title">Collateral Information</h5> 
+                                            {% if loan.status == 'pending' %}
                                             <a data-bs-toggle="modal" href="#addCollateral" class="btn btn-primary ml-auto ">+ Add Collateral</a>
+                                            {% endif %}
                                         </div><!-- .nk-block-head -->
                                         <div class="nk-divider divider md"></div>
                                         <table class="table">
@@ -174,7 +188,9 @@
                                                 <th scope="col">Type</th>
                                                 <th scope="col">S/Number</th>
                                                 <th scope="col">Estimated Value	</th>
+                                                {% if loan.status == 'pending' %}
                                                 <th scope="col">Action</th>
+                                                {% endif %}
                                               </tr>
                                             </thead>
                                             <tbody>
@@ -185,6 +201,7 @@
                                                 <td>{{guarantor.member.phone_no}}</td>
                                                 <td>{{guarantor.amount}}</td>
                                                 <td>
+                                                    {% if loan.status == 'pending' %}
                                                     <div class="dropdown">
                                                         <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="dropdown"><span>Action</span><em class="icon ni ni-chevron-down"></em></a>
                                                         <div class="dropdown-menu dropdown-menu-end dropdown-menu-auto mt-1">
@@ -194,6 +211,7 @@
                                                             </ul>
                                                         </div>
                                                     </div>
+                                                    {% endif %}
                                                 </td>    
                                               </tr>
                                               {% endfor %}
@@ -204,7 +222,9 @@
                                         {% if loan.status != 'cleared' or 'pending' %}
                                         <div class="nk-block-head d-flex justify-content-between align-items-center">
                                             <h5 class="title">Repayments</h5> 
+                                            {% if loan.status == 'approved'%}
                                             <a data-bs-toggle="modal" href="#addRepayment" class="btn btn-primary ml-auto ">+ Add Repayment</a>
+                                            {% endif %}
                                         </div><!-- .nk-block-head -->
                                         {% endif %}
                                         <div class="nk-divider divider md"></div>
