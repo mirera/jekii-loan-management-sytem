@@ -24,32 +24,179 @@
                         </div>
                     </div>
                 </div><!-- .nk-block-head -->
+
+                <div class="card card-bordered card-preview">
+                    <div class="card-inner">
+                        <div class="row g-gs">
+                            <div class="col-md-4">
+                                <ul class="nav link-list-menu border border-light round m-0">
+                                    <li>
+                                        <a class="active" data-bs-toggle="tab" href="#tabItem17"><em class="icon ni ni-coin"></em><span>Loan Details</span></a>
+                                    </li>
+                                    <li>
+                                        <a data-bs-toggle="tab" href="#tabItem18"><em class="icon ni ni-user-circle"></em><span>Guarantor</span></a>
+                                    </li>
+                                    <li>
+                                        <a data-bs-toggle="tab" href="#tabItem19"><em class="icon ni ni-bell"></em><span>Collateral</span></a>
+                                    </li>
+                                    <li>
+                                        <a data-bs-toggle="tab" href="#tabItem20"><em class="icon ni ni-link"></em><span>Repayment Schedule</span></a>
+                                    </li>
+                                    <li>
+                                        <a data-bs-toggle="tab" href="#tabItem20"><em class="icon ni ni-link"></em><span>Repayment</span></a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="tab-content">
+                                    <div class="tab-pane active" id="tabItem17">
+                                        <div class="nk-block-head">
+                                            <h5 class="title">Loan Information</h5>
+                                            <div class="alert-warning">
+                                                <span> Check Member KYC status and score before approving loan request</span>
+                                            </div>
+                                        </div><!-- .nk-block-head -->
+                                        <table class="table table-hover">
+                                            <tbody>
+                                            <tr>
+                                                <td class="profile-ud-label">Loan Type:</td>
+                                                <td class="profile-ud-value">{{loan.loan_product.loan_product_name}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="profile-ud-label">Loan No:</td>
+                                                <td class="profile-ud-value">{{loan.loan_id}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="profile-ud-label">Borrower:</td>
+                                                <td class="profile-ud-value">{{loan.member.first_name}} {{loan.member.last_name}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="profile-ud-label">Member Tel:</td>
+                                                <td class="profile-ud-value">{{loan.member.phone_no}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="profile-ud-label">Status:</td>
+                                                {% if loan.status == 'pending' %}
+                                                <td class="profile-ud-value text-warning">{{loan.status.upper}}</td>
+                                                {% elif loan.status == 'cleared' %}
+                                                <td class="profile-ud-value text-success">{{loan.status.upper}}</td>
+                                                {% elif loan.status == 'approved' %}
+                                                <td class="profile-ud-value text-primary">{{loan.status.upper}}</td>
+                                                {% else %}
+                                                <td class="profile-ud-value text-danger">{{loan.status.upper}}</td>
+                                                {% endif %}
+                                            </tr>
+                                            <tr>
+                                                <td class="profile-ud-label">First Payment Date:</td>
+                                                <td class="profile-ud-value">{{loan.first_repayment_date}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="profile-ud-label">Disbursement Date:</td>
+                                                <td class="profile-ud-value">{{loan.application_date}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="profile-ud-label">Applied Amount	:</td>
+                                                <td class="profile-ud-value">{{loan.applied_amount}} Kes</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="profile-ud-label">Total Payable:</td>
+                                                <td class="profile-ud-value">{{loan.total_payable}} Kes</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="profile-ud-label">Total Paid:</td>
+                                                <td class="profile-ud-value">{{loan_repayments}} Kes</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="profile-ud-label">Due Amount:</td>
+                                                <td class="profile-ud-value">{{loan.applied_amount}} Kes</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="profile-ud-label">Late Payment Penalties:</td>
+                                                <td class="profile-ud-value">{{loan.applied_amount}} Kes</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="profile-ud-label">Loan Purpose:</td>
+                                                <td class="profile-ud-value">{{loan.loan_purpose}}</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="tab-pane" id="tabItem18">
+                                        <div class="nk-block-head d-flex justify-content-between align-items-center">
+                                            <h5 class="title">Guarantor Information</h5> 
+                                            <a href="#" class="btn btn-primary ml-auto ">+ Add Guarantor</a>
+                                        </div><!-- .nk-block-head -->
+                                        <div class="nk-divider divider md"></div>
+                                        <table class="table">
+                                            <thead class="thead-dark">
+                                              <tr>
+                                                <th scope="col">Name</th>
+                                                <th scope="col">ID No</th>
+                                                <th scope="col">Tel No.</th>
+                                                <th scope="col">Credit Score</th>
+                                                <th scope="col">Action</th>
+                                              </tr>
+                                            </thead>
+                                            <tbody>
+                                              <tr>
+                                                <th scope="row">Mark Moriasi</th>
+                                                <td>31265348</td>
+                                                <td>0706043064</td>
+                                                <td>30</td>
+                                                <td><a href="#" class="btn btn-dim btn-danger">Remove</a></td>
+                                              </tr>
+                                              <tr>
+                                                <th scope="row">Medussa Medura</th>
+                                                <td>32434576</td>
+                                                <td>0706040406</td>
+                                                <td>50</td>
+                                                <td><a href="#" class="btn btn-dim btn-danger">Remove</a></td>
+                                              </tr>
+                                            </tbody>
+                                        </table>
+                                          
+                                    </div>
+                                    <div class="tab-pane" id="tabItem19">
+                                        <p>Fugiat id quis dolor culpa eiusmod anim velit excepteur proident dolor aute qui magna. Ad proident laboris ullamco esse anim Lorem Lorem veniam quis Lorem irure occaecat velit nostrud magna nulla. Velit et et proident Lorem do ea tempor officia dolor. Reprehenderit Lorem aliquip labore est magna commodo est ea veniam consectetur.</p>
+                                        <p>Eu dolore ea ullamco dolore Lorem id cupidatat excepteur reprehenderit consectetur elit id dolor proident in cupidatat officia. Voluptate excepteur commodo labore nisi cillum duis aliqua do. Aliqua amet qui mollit consectetur nulla mollit velit aliqua veniam nisi id do Lorem deserunt amet. Culpa ullamco sit adipisicing labore officia magna elit nisi in aute tempor commodo eiusmod.</p>
+                                    </div>
+                                    <div class="tab-pane" id="tabItem20">
+                                        <p>Eu dolore ea ullamco dolore Lorem id cupidatat excepteur reprehenderit consectetur elit id dolor proident in cupidatat officia. Voluptate excepteur commodo labore nisi cillum duis aliqua do. Aliqua amet qui mollit consectetur nulla mollit velit aliqua veniam nisi id do Lorem deserunt amet. Culpa ullamco sit adipisicing labore officia magna elit nisi in aute tempor commodo eiusmod.</p>
+                                        <p>Fugiat id quis dolor culpa eiusmod anim velit excepteur proident dolor aute qui magna. Ad proident laboris ullamco esse anim Lorem Lorem veniam quis Lorem irure occaecat velit nostrud magna nulla. Velit et et proident Lorem do ea tempor officia dolor. Reprehenderit Lorem aliquip labore est magna commodo est ea veniam consectetur.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- .card-preview --><br><br>
+
                 <div class="nk-block">
                     <div class="card card-bordered">
                         <div class="card-aside-wrap">
+                            <!-- Tab section-->
                             <div class="card-content">
                                 <ul class="nav nav-tabs nav-tabs-mb-icon nav-tabs-card">
                                     <li class="nav-item">
-                                        <a class="nav-link active" href="#"><em class="icon ni ni-coin"></em><span>Loan Details</span></a>
+                                        <a class="nav-link active" data-bs-toggle="tab" href="#loanDetails"><em class="icon ni ni-coin"></em><span>Loan Details</span></a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="#"><em class="icon ni ni-user-circle"></em><span>Guarantor</span></a>
+                                        <a class="nav-link" data-bs-toggle="tab" href="#guarantor"><em class="icon ni ni-user-circle"></em><span>Guarantor</span></a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="#"><em class="icon ni ni-coins"></em><span>Collateral</span></a>
+                                        <a class="nav-link" data-bs-toggle="tab" href="#collateral"><em class="icon ni ni-coins"></em><span>Collateral</span></a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="#"><em class="icon ni ni-tranx-fill"></em><span>Repayment Schedule</span></a>
+                                        <a class="nav-link" data-bs-toggle="tab" href="#repaymentSchedule"><em class="icon ni ni-tranx-fill"></em><span>Repayment Schedule</span></a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="#"><em class="icon ni ni-wallet-in"></em><span>Repayments</span></a>
+                                        <a class="nav-link" data-bs-toggle="tab" href="#repayments"><em class="icon ni ni-wallet-in"></em><span>Repayments</span></a>
                                     </li>
                                     <li class="nav-item nav-item-trigger d-xxl-none">
                                         <a href="#" class="toggle btn btn-icon btn-trigger" data-target="userAside"><em class="icon ni ni-user-list-fill"></em></a>
                                     </li>
                                 </ul><!-- .nav-tabs -->
                                 <div class="card-inner">
-                                    <div class="nk-block">
+                                    <div class="nk-block active" id="loanDetails">
                                         <div class="nk-block-head">
                                             <h5 class="title">Loan Information</h5>
                                             <div class="alert-warning">
@@ -125,36 +272,128 @@
                                             </div>
                                         </div><!-- .card-preview -->
                                     </div><!-- .nk-block -->
+                                    <div class="nk-divider divider md"></div>
+                                    <!--Loan notes Section-->
                                     <div class="nk-block">
-                                        <div class="nk-block-head nk-block-head-line">
-                                            <h6 class="title overline-title text-base">Additional Information</h6>
+                                        <div class="nk-block-head nk-block-head-sm nk-block-between">
+                                            <h5 class="title">Notes</h5>
+                                            <a href="#" class="link link-sm">.</a>
                                         </div><!-- .nk-block-head -->
-                                        <div class="profile-ud-list">
-                                            <div class="profile-ud-item">
-                                                <div class="profile-ud wider">
-                                                    <span class="profile-ud-label">Joining Date</span>
-                                                    <span class="profile-ud-value">08-16-2018 09:04PM</span>
+                                        <form action=" " method="POST">
+                                            {% csrf_token %}
+                                            <div class="form-control-wrap">
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" name="body" placeholder="Jot some notes about this loan...">
+                                                    <div class="input-group-append">
+                                                        <button type="submit" class="btn btn-outline-primary btn-dim">+ Add Note</button>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div class="profile-ud-item">
-                                                <div class="profile-ud wider">
-                                                    <span class="profile-ud-label">Reg Method</span>
-                                                    <span class="profile-ud-value">Email</span>
+                                        </form>
+                                        <br>
+                                        <br>
+                                        <div class="bq-note">
+                                            {% for note in loan_notes %}
+                                            <div class="bq-note-item">
+                                                <div class="bq-note-text">
+                                                    <p>{{note.body}}</p>
                                                 </div>
-                                            </div>
-                                            <div class="profile-ud-item">
-                                                <div class="profile-ud wider">
-                                                    <span class="profile-ud-label">Country</span>
-                                                    <span class="profile-ud-value">United State</span>
+                                                <div class="bq-note-meta">
+                                                    <span class="bq-note-added">Added <span class="date">{{note.created|timesince}}</span> ago </span>
+                                                    <span class="bq-note-sep sep">|</span>
+                                                    <span class="bq-note-by">By <span>{{note.author}}</span></span>
+                                                    {% if request.user == note.author%}
+                                                    <a href="#" class="link link-sm link-danger">Delete Note</a>
+                                                    {% endif %}
                                                 </div>
+                                            </div><!-- .bq-note-item -->
+                                            {% endfor %}
+                                        </div><!-- .bq-note -->  
+                                    </div><!-- .nk-block -->
+                                </div><!-- .card-inner -->
+                                <div class="card-inner">
+                                    <div class="nk-block tab-pane" id="guarantor">
+                                        <div class="nk-block-head">
+                                            <h5 class="title">Guarantor Information</h5>
+                                        </div><!-- .nk-block-head -->
+                                        <div class="card card-bordered card-preview">
+                                            <div class="card-inner">
+                                                <table class="datatable-init nowrap nk-tb-list nk-tb-ulist" data-auto-responsive="false">
+                                                    <thead>
+                                                        <tr class="nk-tb-item nk-tb-head">
+                                                            <th class="nk-tb-col nk-tb-col-check">
+                                                                <div class="custom-control custom-control-sm custom-checkbox notext">
+                                                                    <input type="checkbox" class="custom-control-input" id="uid">
+                                                                    <label class="custom-control-label" for="uid"></label>
+                                                                </div>
+                                                            </th>
+                                                            <th class="nk-tb-col"><span class="sub-text">Name</span></th>
+                                                            <th class="nk-tb-col tb-col-mb"><span class="sub-text">Id No.</span></th>
+                                                            <th class="nk-tb-col tb-col-md"><span class="sub-text">Phone</span></th>
+                                                            <th class="nk-tb-col tb-col-lg"><span class="sub-text">Credit Score</span></th>
+                                                            <th class="nk-tb-col nk-tb-col-tools text-end">
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for member in members %}
+                                                        
+                                                        <tr class="nk-tb-item">
+                                                            <td class="nk-tb-col nk-tb-col-check">
+                                                                <div class="custom-control custom-control-sm custom-checkbox notext">
+                                                                    <input type="checkbox" class="custom-control-input" id="uid1">
+                                                                    <label class="custom-control-label" for="uid1"></label>
+                                                                </div>
+                                                            </td>
+                                                            <td class="nk-tb-col">
+                                                                <div class="user-card">
+                                                                    <div class="user-avatar bg-dim-primary d-none d-sm-flex">
+                                                                        <img src="{{ member.passport_photo.url }}" >
+                                                                    </div>
+                                                                    <div class="user-info">
+                                                                        <span class="tb-lead">{{member.first_name}} {{member.last_name}}<span class="dot dot-success d-md-none ms-1"></span></span>
+                                                                        <span>{{member.email}}</span>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td class="nk-tb-col tb-col-md">
+                                                                <span>{{member.id_no}}</span>
+                                                            </td>
+                                                            <td class="nk-tb-col tb-col-md">
+                                                                <span>{{member.phone_no}}</span>
+                                                            </td>
+                                                            <td class="nk-tb-col tb-col-lg">
+                                                                <span>{{member.industry}}</span>
+                                                            </td>
+                                                            <td class="nk-tb-col nk-tb-col-tools">
+                                                                <ul class="nk-tb-actions gx-1">
+                                                                    <li>
+                                                                        <div class="drodown">
+                                                                            <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
+                                                                            <div class="dropdown-menu dropdown-menu-end">
+                                                                                <ul class="link-list-opt no-bdr">
+                                                                                    <li><a href="{% url 'edit-member' member.id %}"><em class="icon ni ni-edit-alt"></em><span>Update Member </span></a></li>
+                                                                                    <li><a href="{% url 'view-member' member.id %}"><em class="icon ni ni-eye"></em><span>View Details</span></a></li>
+                                                                                    <!-- <li><a href="#"><em class="icon ni ni-activity-round"></em><span>Activities</span></a></li> -->
+                                                                                    <li class="divider"></li>
+                                                                                    <!-- <li><a href="#"><em class="icon ni ni-shield-star"></em><span>Reset Pass</span></a></li> -->
+                                                                                    <li><a data-bs-toggle="modal" data-member-id="{{ member.id }}" href="#deleteMember"><em class="icon ni ni-trash"></em><span>Delete Member</span></a></li>
+                                                                                    
+                                                                                </ul>
+                                                                            </div>
+                                                                        </div>
+                                                                    </li>
+                                                                </ul>
+                                                            </td>
+                                                        </tr>
+                                            
+                                                        <!-- .nk-tb-item  -->
+                                                        {% endfor %}
+                                                        
+                                                    </tbody>
+                                                </table>
                                             </div>
-                                            <div class="profile-ud-item">
-                                                <div class="profile-ud wider">
-                                                    <span class="profile-ud-label">Nationality</span>
-                                                    <span class="profile-ud-value">United State</span>
-                                                </div>
-                                            </div>
-                                        </div><!-- .profile-ud-list -->
+                                        </div><!-- .card-preview -->
                                     </div><!-- .nk-block -->
                                     <div class="nk-divider divider md"></div>
                                     <div class="nk-block">
@@ -193,8 +432,9 @@
                                             {% endfor %}
                                         </div><!-- .bq-note -->  
                                     </div><!-- .nk-block -->
-                                </div><!-- .card-inner -->
+                                </div><!-- .card-inner -->  
                             </div><!-- .card-content -->
+                            <!-- Sidebar section-->
                             <div class="card-aside card-aside-right user-aside toggle-slide toggle-slide-right toggle-break-xxl" data-content="userAside" data-toggle-screen="xxl" data-toggle-overlay="true" data-toggle-body="true">
                                 <div class="card-inner-group" data-simplebar>
                                     <div class="card-inner">
