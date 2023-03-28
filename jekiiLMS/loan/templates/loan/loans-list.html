@@ -110,7 +110,7 @@
                                         <div class="dropdown-menu dropdown-menu-end dropdown-menu-xs">
                                             <ul class="link-list-plain">
                                                 {% if loan.status == 'pending' %}
-                                                <li><a href="{% url 'edit-loan' loan.id %}">Approve</a></li>
+                                                <li><a href="{% url 'view-loan' loan.id %}">Approve</a></li>
                                                 <li><a href="{% url 'delete-loan' loan.id %}">Delete</a></li>
                                                 {% else %}
                                                 <li><a href="{% url 'view-loan' loan.id %}">View Details</a></li>
@@ -135,9 +135,6 @@
                             <li class="page-item"><a class="page-link" href="#">Next</a></li>
                         </ul><!-- .pagination -->
                     </div><!-- .card-inner -->
-                    <div class="card-inner-sm border-top text-center d-sm-none">
-                        <a href="#" class="btn btn-link btn-block">See History</a>
-                    </div>
                 </div><!-- .card -->
 
             </div>

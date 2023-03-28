@@ -88,7 +88,7 @@ class LoanProduct(models.Model):
 LOAN_STATUS = (
     ('pending','PENDING'),
     ('approved','APPROVED'),
-    ('cancelled','CANCELLED'),
+    ('rejected','REJECTED'),
     ('overdue','OVERDUE'),
     ('cleared','CLEARED'),
 )
@@ -225,9 +225,20 @@ class Repayment(models.Model):
         else: 
             return self.date_paid + timedelta(days=1)
         
-
-
-  
     
 
 #Repayment model ends 
+
+#Guarantor Model starts
+class Guarantor(models.Model):
+    loan_no =models.ForeignKey(Loan, on_delete=models.CASCADE, related_name = 'loan_as_no')
+    name= models.ForeignKey(Member, on_delete=models.SET_NULL, null=True)
+    amount= models.IntegerField()
+    created = models.DateTimeField(auto_now_add=True)
+ 
+
+    class Meta:
+        ordering = ['-created']
+
+    def __str__(self):
+        return str(self.name)

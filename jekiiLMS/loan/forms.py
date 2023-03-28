@@ -2,7 +2,7 @@ from dataclasses import fields
 from django.forms import ModelForm
 from django import forms
 from datetime import datetime
-from .models import LoanProduct, Loan, Repayment
+from .models import LoanProduct, Loan, Repayment, Guarantor
 from member.models import Member
 
 
@@ -71,6 +71,20 @@ class RepaymentForm(forms.ModelForm):
             'amount': forms.NumberInput(attrs={'class': 'form-control','placeholder':'1000'}),
             'date_paid': forms.DateInput(attrs={'class': 'form-control date-picker-range', 'data-date-format':'yyyy-mm-dd'}),   
             
+        } 
+
+
+class GuarantorForm(forms.ModelForm):
+    class Meta:
+        model = Guarantor
+        fields = '__all__'
+        exclude = ['created']
+        
+        
+        widgets = {
+            'loan_no': forms.Select(attrs={'class': 'form-select js-select2'}),
+            'name': forms.Select(attrs={'class': 'form-select js-select2'}),
+            'amount': forms.NumberInput(attrs={'class': 'form-control','placeholder':'1000'})      
         } 
  
 
