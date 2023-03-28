@@ -4,8 +4,8 @@ from django.contrib import messages
 from django.db.models import Sum
 from decimal import Decimal
 from django.contrib.auth.models import User
-from .models import LoanProduct, Loan, Note, Repayment, Guarantor
-from .forms import LoanProductForm, LoanForm, RepaymentForm, GuarantorForm
+from .models import LoanProduct, Loan, Note, Repayment, Guarantor, Collateral
+from .forms import LoanProductForm, LoanForm, RepaymentForm, GuarantorForm, CollateralForm
 from member.models import Member
 
 
@@ -285,7 +285,9 @@ def viewLoan(request, pk):
     loan = Loan.objects.get(id=pk)
     loan_notes = loan.note_set.all().order_by('-created')
     guarantors = Guarantor.objects.filter(loan_no=loan)
+    collaterals = Collateral.objects.filter(loan_id=loan)
     form = GuarantorForm()
+    form_collateral = CollateralForm()
 
     #a sum of all repayments made toward a specifi loan 
     loan_repayments = Repayment.objects.filter(loan_id=loan.id).aggregate(Sum('amount'))['amount__sum']
@@ -313,7 +315,9 @@ def viewLoan(request, pk):
         'loan_repayments':loan_repayments,
         'loan_balance':loan_balance,
         'form':form,
-        'guarantors':guarantors
+        'guarantors':guarantors,
+        'collaterals':collaterals,
+        'form_collateral':form_collateral
         }
     return render(request, 'loan/loan-view.html', context)
 
@@ -521,7 +525,7 @@ def addGuarantor(request):
  
     context= {'form':form}
     return render(request,'loan/loan-view.html', context)
-#dd guarontor view ends   removeGuarantor
+#dd guarontor view ends   
 
 #remove guarantor view
 # delete Repayment  view starts 
@@ -537,4 +541,34 @@ def removeGuarantor(request,pk):
 
 # delete Repayment  ends 
 
+
+#add guarontor view starts
+def addCollateral(request):
+    form = CollateralForm()
+    #processing the data
+    if request.method == 'POST':
+        loan_id = request.POST.get('loan_id')
+        loan = Loan.objects.get(pk=loan_id)
+
+        # Get the URL pattern for the 'view-loan' view
+        url = reverse('view-loan', args=[loan_id])
+
+        # Append the anchor to the end of the URL
+        url_with_anchor = f'{url}#tabItem18'
+
+        Collateral.objects.create(
+            loan_id= loan,
+            name= request.POST.get('name'),
+            type= request.POST.get('type'),
+            serial_number= request.POST.get('serial_number'), 
+            estimated_value= request.POST.get('estimated_value')
+        )
+        #redirecting user to view loan page with loan id
+        messages.success(request, 'Collateral added successfully.')
+        #return redirect('view-loan', pk=loan_id)
+        return redirect(url_with_anchor)
+ 
+    context= {'form':form}
+    return render(request,'loan/loan-view.html', context)
+#dd guarontor view ends   
    

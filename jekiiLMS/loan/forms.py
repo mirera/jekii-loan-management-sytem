@@ -2,7 +2,7 @@ from dataclasses import fields
 from django.forms import ModelForm
 from django import forms
 from datetime import datetime
-from .models import LoanProduct, Loan, Repayment, Guarantor
+from .models import LoanProduct, Loan, Repayment, Guarantor, Collateral
 from member.models import Member
 
 
@@ -85,6 +85,20 @@ class GuarantorForm(forms.ModelForm):
             'loan_no': forms.Select(attrs={'class': 'form-select js-select2'}),
             'name': forms.Select(attrs={'class': 'form-select js-select2'}),
             'amount': forms.NumberInput(attrs={'class': 'form-control','placeholder':'1000'})      
+        } 
+ 
+class CollateralForm(forms.ModelForm):
+    class Meta:
+        model = Collateral
+        fields = '__all__'
+        
+        
+        widgets = {
+            'loan_id': forms.Select(attrs={'class': 'form-select js-select2'}),
+            'name': forms.TextInput(attrs={'class': 'form-control','placeholder':'Samsung 41 TV'}),
+            'type': forms.TextInput(attrs={'class': 'form-control','placeholder':'Electronics'}),
+            'estimated_value': forms.NumberInput(attrs={'class': 'form-control','placeholder':'30000'}),
+            'serial_number': forms.NumberInput(attrs={'class': 'form-control','placeholder':'0123-239'})
         } 
  
 

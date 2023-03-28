@@ -30,6 +30,11 @@ urlpatterns = [
     path('add-guarantor', views.addGuarantor, name='add-guarantor'),
     path('remove-guarantor/<str:pk>', views.removeGuarantor, name='remove-guarantor'),
 
+    #collateral urls
+    path('add-collateral', views.addCollateral, name='add-collateral'),
+    #path('edit-collateral/<str:pk>', views.editCollateral, name='edit-collateral'),
+    #path('remove-collateral/<str:pk>', views.removeCollateral, name='remove-collateral'),
+
     #loan calculator url
     path('loancalculator', views.loan_calculator, name='loancalculator'), 
 
