@@ -129,12 +129,20 @@
                                             </tr>
                                             </tbody>
                                         </table><br>
-                                        <a data-bs-toggle="modal" href="#editLoanDetails" class="btn btn-primary"> Edit Details</a>
+                                        {% if loan.status == 'pending' %}
+                                        <div class="row justify-content-center">
+                                            <div class="col-md-4 text-center">
+                                              <a data-bs-toggle="modal" href="#editLoanDetails" class="btn btn-primary">Edit Details</a>
+                                            </div>
+                                        </div>                                          
+                                        {% endif %}
                                     </div>
                                     <div class="tab-pane" id="tabItem18">
                                         <div class="nk-block-head d-flex justify-content-between align-items-center">
                                             <h5 class="title">Guarantor Information</h5> 
+                                            {% if loan.status == 'pending' %}
                                             <a data-bs-toggle="modal" href="#addGuarantor" class="btn btn-primary ml-auto ">+ Add Guarantor</a>
+                                            {% endif %}
                                         </div><!-- .nk-block-head -->
                                         <div class="nk-divider divider md"></div>
                                         <table class="table">
@@ -144,7 +152,9 @@
                                                 <th scope="col">ID No</th>
                                                 <th scope="col">Tel No.</th>
                                                 <th scope="col">Amount</th>
+                                                {% if loan.status == 'pending' %}
                                                 <th scope="col">Action</th>
+                                                {% endif %}
                                               </tr>
                                             </thead>
                                             <tbody>
@@ -154,7 +164,9 @@
                                                 <td>{{guarantor.member.id_no}}</td>
                                                 <td>{{guarantor.member.phone_no}}</td>
                                                 <td>{{guarantor.amount}}</td>
+                                                {% if loan.status == 'pending' %}
                                                 <td><a data-bs-toggle="modal" href="#removeGuarantor" class="btn btn-dim btn-danger">Remove</a></td>
+                                                {% endif %}
                                               </tr>
                                               {% endfor %}
                                             </tbody>
@@ -164,7 +176,9 @@
                                     <div class="tab-pane" id="tabItem19">
                                         <div class="nk-block-head d-flex justify-content-between align-items-center">
                                             <h5 class="title">Collateral Information</h5> 
+                                            {% if loan.status == 'pending' %}
                                             <a data-bs-toggle="modal" href="#addCollateral" class="btn btn-primary ml-auto ">+ Add Collateral</a>
+                                            {% endif %}
                                         </div><!-- .nk-block-head -->
                                         <div class="nk-divider divider md"></div>
                                         <table class="table">
@@ -174,17 +188,20 @@
                                                 <th scope="col">Type</th>
                                                 <th scope="col">S/Number</th>
                                                 <th scope="col">Estimated Value	</th>
+                                                {% if loan.status == 'pending' %}
                                                 <th scope="col">Action</th>
+                                                {% endif %}
                                               </tr>
                                             </thead>
                                             <tbody>
-                                                {% for guarantor in guarantors %}
+                                                {% for collateral in collaterals %}
                                               <tr>
-                                                <th scope="row">Mark Moriasi {{guarantor.member.first_name}} {{guarantor.member.last_name}}</th>
-                                                <td>{{guarantor.member.id_no}}</td>
-                                                <td>{{guarantor.member.phone_no}}</td>
-                                                <td>{{guarantor.amount}}</td>
+                                                <th scope="row">{{collateral.name}}</th>
+                                                <td>{{collateral.type}}</td>
+                                                <td>{{collateral.serial_number}}</td>
+                                                <td>{{collateral.estimated_value}}</td>
                                                 <td>
+                                                    {% if loan.status == 'pending' %}
                                                     <div class="dropdown">
                                                         <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="dropdown"><span>Action</span><em class="icon ni ni-chevron-down"></em></a>
                                                         <div class="dropdown-menu dropdown-menu-end dropdown-menu-auto mt-1">
@@ -194,6 +211,7 @@
                                                             </ul>
                                                         </div>
                                                     </div>
+                                                    {% endif %}
                                                 </td>    
                                               </tr>
                                               {% endfor %}
@@ -204,7 +222,9 @@
                                         {% if loan.status != 'cleared' or 'pending' %}
                                         <div class="nk-block-head d-flex justify-content-between align-items-center">
                                             <h5 class="title">Repayments</h5> 
+                                            {% if loan.status == 'approved'%}
                                             <a data-bs-toggle="modal" href="#addRepayment" class="btn btn-primary ml-auto ">+ Add Repayment</a>
+                                            {% endif %}
                                         </div><!-- .nk-block-head -->
                                         {% endif %}
                                         <div class="nk-divider divider md"></div>
@@ -468,5 +488,77 @@
         </div>
     </div>
 </div><!-- .Reject Loan Modal-content -->
+<div class="modal fade" id="addCollateral">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <em class="icon ni ni-cross-sm"></em>
+            </a>
+            <div class="modal-body modal-body-md">
+                <h5 class="modal-title">Add Collateral </h5><br>
+            
+                <form action="{% url 'add-collateral' %}" class="form-validate" method="POST" enctype="multipart/form-data" >
+                    {% csrf_token %}
+                    <div class="row g-4">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-label" for="full-name-1">ID</label>
+                                <div class="form-control-wrap">
+                                    <!-- <input type="text" class="form-control" id="full-name-1" name="name"> -->
+                                    {{form_collateral.loan_id}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-label" for="full-name-1">Name</label>
+                                <div class="form-control-wrap">
+                                    <!-- <input type="text" class="form-control" id="full-name-1" name="name"> -->
+                                    {{form_collateral.name}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-label" for="full-name-1">Type</label>
+                                <div class="form-control-wrap">
+                                    <!-- <input type="text" class="form-control" id="full-name-1" name="name"> -->
+                                    {{form_collateral.type}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-label" for="full-name-1">Serial No.</label>
+                                <div class="form-control-wrap">
+                                    <!-- <input type="text" class="form-control" id="full-name-1" name="name"> -->
+                                    {{form_collateral.serial_number}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="fv-phone">Estimated Value</label>
+                                <div class="form-control-wrap">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="fv-phone">Ksh</span>
+                                        </div>
+                                        {{form_collateral.estimated_value}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-lg btn-primary">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div><!-- .Add Collateral Modal-Content -->
 
 {% endblock content %}

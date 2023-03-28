@@ -242,3 +242,15 @@ class Guarantor(models.Model):
 
     def __str__(self):
         return str(self.name)
+
+#Collateral Model starts
+class Collateral(models.Model):
+    loan_id = models.ForeignKey(Loan, on_delete= models.CASCADE)
+    name =models.CharField(max_length=20)
+    type= models.CharField(max_length=50)
+    serial_number= models.CharField(max_length=20)
+    estimated_value = models.IntegerField()
+ 
+
+    def __str__(self):
+        return self.name
