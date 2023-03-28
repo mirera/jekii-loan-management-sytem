@@ -15,7 +15,10 @@ urlpatterns = [
     path('create-loan', views.createLoan, name='create-loan'),
     path('edit-loan/<str:pk>', views.editLoan, name='edit-loan'),
     path('view-loan/<str:pk>', views.viewLoan, name='view-loan'),
+    path('approve-loan/<str:pk>', views.approveLoan, name='approve-loan'),
     path('delete-loan/<str:pk>', views.deleteLoan, name='delete-loan'),
+    path('approve/<str:pk>', views.approveLoan, name='approve'),
+    path('reject/<str:pk>', views.rejectLoan, name='reject'),
 
     #repayment urls
     path('repayments', views.listRepayments, name='repayments'),
@@ -23,7 +26,11 @@ urlpatterns = [
     path('edit-repayment/<str:pk>', views.editRepayment, name='edit-repayment'),
     path('delete-repayment/<str:pk>', views.deleteRepayment, name='delete-repayment'),
 
+    #guarantor urls
+    path('add-guarantor', views.addGuarantor, name='add-guarantor'),
+    path('remove-guarantor/<str:pk>', views.removeGuarantor, name='remove-guarantor'),
+
     #loan calculator url
-    path('loancalculator', views.loan_calculator, name='loancalculator'),
+    path('loancalculator', views.loan_calculator, name='loancalculator'), 
 
 ] 

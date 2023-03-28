@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.contrib import messages
 from django.db.models import Sum
 from decimal import Decimal
 from django.contrib.auth.models import User
-from .models import LoanProduct, Loan, Note, Repayment 
-from .forms import LoanProductForm, LoanForm, RepaymentForm
+from .models import LoanProduct, Loan, Note, Repayment, Guarantor
+from .forms import LoanProductForm, LoanForm, RepaymentForm, GuarantorForm
 from member.models import Member
 
 
@@ -237,6 +238,37 @@ def editLoan(request,pk):
 
 #edit Loan view ends
 
+#approve loan logic starts here
+def approveLoan(request,pk):
+    if request.method == 'POST':
+        loan = Loan.objects.get(id=pk)
+        # Get the URL pattern for the 'view-loan' view
+        url = reverse('view-loan', args=[pk])
+        # Append the anchor to the end of the URL
+        url_with_anchor = f'{url}'
+
+        if loan.status == 'pending':
+            loan.status = 'approved'
+            loan.save()
+            messages.success(request,'The loan was approved succussesfully!')
+            return redirect(url_with_anchor)
+    return render(request,'loan/loans-list.html')
+#approve logic ends
+
+#approve loan logic starts here
+def rejectLoan(request,pk):
+    if request.method == 'POST':
+        loan = Loan.objects.get(id=pk)
+        url = reverse('view-loan', args=[pk])
+        url_with_anchor = f'{url}'
+        if loan.status == 'pending':
+            loan.status = 'rejected'
+            loan.save()
+            messages.info(request,'The loan was rejected succussesfully!')
+            return redirect(url_with_anchor)
+    return render(request,'loan/loans-list.html')
+#approve logic ends
+
 # list Loan  view starts 
 def listLoans(request):
     loans = Loan.objects.all()
@@ -252,12 +284,20 @@ def listLoans(request):
 def viewLoan(request, pk):
     loan = Loan.objects.get(id=pk)
     loan_notes = loan.note_set.all().order_by('-created')
+    guarantors = Guarantor.objects.filter(loan_no=loan)
+    form = GuarantorForm()
 
     #a sum of all repayments made toward a specifi loan 
     loan_repayments = Repayment.objects.filter(loan_id=loan.id).aggregate(Sum('amount'))['amount__sum']
     #loan balance
     total_payable= loan.total_payable()
-    loan_balance= total_payable-loan_repayments
+    if loan_repayments:
+        if total_payable:
+            loan_balance= total_payable-loan_repayments
+        else:
+            loan_balance = 0
+    else:
+        loan_balance = total_payable
 
     if request.method == 'POST':
         Note.objects.create(
@@ -267,7 +307,14 @@ def viewLoan(request, pk):
         )
         return redirect('view-loan', pk=loan.id)
 
-    context = {'loan_notes': loan_notes, 'loan':loan, 'loan_repayments':loan_repayments, 'loan_balance':loan_balance}
+    context = {
+        'loan_notes': loan_notes,
+        'loan':loan,
+        'loan_repayments':loan_repayments,
+        'loan_balance':loan_balance,
+        'form':form,
+        'guarantors':guarantors
+        }
     return render(request, 'loan/loan-view.html', context)
 
 # detailview Loan  view ends
@@ -441,5 +488,53 @@ def loan_calculator(request):
         "table_data": []
     }
     return render(request, "loan/loan-calculator.html", context)
+#loan cacl view ends
 
-  
+#add guarontor view starts
+def addGuarantor(request):
+    form = GuarantorForm()
+    #processing the data
+    if request.method == 'POST':
+        # Get the selected loan id from the form
+        loan_id = request.POST.get('loan_no')
+        loan = Loan.objects.get(pk=loan_id)
+
+        # Get the selected member id from the form
+        member_id = request.POST.get('name')
+        member = Member.objects.get(pk=member_id)
+
+        # Get the URL pattern for the 'view-loan' view
+        url = reverse('view-loan', args=[loan_id])
+
+        # Append the anchor to the end of the URL
+        url_with_anchor = f'{url}#tabItem18'
+
+        Guarantor.objects.create(
+            loan_no = loan,
+            name= member,
+            amount= request.POST.get('amount')
+        )
+        #redirecting user to view loan page with loan id
+        messages.success(request, 'Guarantor added successfully.')
+        #return redirect('view-loan', pk=loan_id)
+        return redirect(url_with_anchor)
+ 
+    context= {'form':form}
+    return render(request,'loan/loan-view.html', context)
+#dd guarontor view ends   removeGuarantor
+
+#remove guarantor view
+# delete Repayment  view starts 
+def removeGuarantor(request,pk):
+    guarantor = Guarantor.objects.get(id=pk)
+#include a functionality to limit any user from deleteng this objec unless they have admin previleges
+    if request.method == 'POST':
+        guarantor.delete()
+        return redirect('repayments')
+     #context is {'obj':branch}, in delete.html we are accessing room/message as 'obj'
+    context = {'obj':guarantor}
+    return render(request,'loan/delete-repayment.html', context)
+
+# delete Repayment  ends 
+
+   
