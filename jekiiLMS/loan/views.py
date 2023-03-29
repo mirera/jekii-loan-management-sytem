@@ -286,8 +286,10 @@ def viewLoan(request, pk):
     loan_notes = loan.note_set.all().order_by('-created')
     guarantors = Guarantor.objects.filter(loan_no=loan)
     collaterals = Collateral.objects.filter(loan_id=loan)
+    repayments = Repayment.objects.filter(loan_id=loan)
     form = GuarantorForm()
     form_collateral = CollateralForm()
+    form_repayment = RepaymentForm()
 
     #a sum of all repayments made toward a specifi loan 
     loan_repayments = Repayment.objects.filter(loan_id=loan.id).aggregate(Sum('amount'))['amount__sum']
@@ -316,8 +318,10 @@ def viewLoan(request, pk):
         'loan_balance':loan_balance,
         'form':form,
         'guarantors':guarantors,
+        'repayments':repayments,
         'collaterals':collaterals,
-        'form_collateral':form_collateral
+        'form_collateral':form_collateral,
+        'form_repayment':form_repayment
         }
     return render(request, 'loan/loan-view.html', context)
 
@@ -429,8 +433,7 @@ def editRepayment(request,pk):
             'member': repayment.member,
             'amount': repayment.amount,
             'transaction_id': repayment.transaction_id,
-            'date_paid': repayment.date_paid,
-
+            'date_paid': repayment.date_paid
         }
         form = RepaymentForm(initial=form_data)
         return render(request,'loan/edit-repayment.html',{'form':form})
@@ -571,4 +574,45 @@ def addCollateral(request):
     context= {'form':form}
     return render(request,'loan/loan-view.html', context)
 #dd guarontor view ends   
-   
+
+
+
+#add guarontor view starts
+def editCollateral(request,pk):
+    collateral = Collateral.objects.get(id=pk)
+    #processing the data
+    if request.method == 'POST':
+        loan_id = request.POST.get('loan_id')
+        loan = Loan.objects.get(pk=loan_id)
+
+        # Get the URL pattern for the 'view-loan' view
+        url = reverse('view-loan', args=[loan_id])
+
+        # Append the anchor to the end of the URL
+        url_with_anchor = f'{url}#tabItem18'
+
+        collateral.loan_id = loan
+        collateral.name = request.POST.get('name')
+        collateral.type = request.POST.get('type')
+        collateral.serial_number = request.POST.get('serial_number')
+        collateral.estimated_value = request.POST.get('estimated_value')
+        collateral.save()
+        
+        messages.success(request, 'Collateral saved successfully.')
+        #return redirect('view-loan', pk=loan_id)
+        return redirect(url_with_anchor)
+    else:
+        # prepopulate the form with existing data
+        form_data = {
+            'loan_id': collateral.loan_id,
+            'name': collateral.name,
+            'type': collateral.type,
+            'serial_number': collateral.serial_number,
+            'estimated_value': collateral.estimated_value
+        }
+        form = CollateralForm(initial=form_data)
+        context= {'form':form}
+        return render(request,'loan/loan-view.html', context)
+ 
+#edit collateral view ends  
+

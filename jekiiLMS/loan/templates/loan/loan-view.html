@@ -160,8 +160,8 @@
                                             <tbody>
                                                 {% for guarantor in guarantors %}
                                               <tr>
-                                                <th scope="row">Mark Moriasi {{guarantor.member.first_name}} {{guarantor.member.last_name}}</th>
-                                                <td>{{guarantor.member.id_no}}</td>
+                                                <th scope="row">{{guarantor.name}} {{guarantor.last_name}}</th>
+                                                <td>{{guarantor.id_no}}</td>
                                                 <td>{{guarantor.member.phone_no}}</td>
                                                 <td>{{guarantor.amount}}</td>
                                                 {% if loan.status == 'pending' %}
@@ -240,12 +240,12 @@
                                               </tr>
                                             </thead>
                                             <tbody>
-                                                {% for guarantor in guarantors %}
+                                                {% for repayment in repayments %}
                                               <tr>
-                                                <th scope="row">Mark Moriasi {{guarantor.member.first_name}} {{guarantor.member.last_name}}</th>
-                                                <td>{{guarantor.member.id_no}}</td>
-                                                <td>{{guarantor.member.phone_no}}</td>
-                                                <td>{{guarantor.amount}}</td>
+                                                <th scope="row">{{repayment.date_paid}}</th>
+                                                <td>{{repayment.amount}}</td>
+                                                <td>{{repayment.member.phone_no}}</td>
+                                                <td>{{loan_balance}}</td>
                                                 {% if loan.status != 'cleared' %}
                                                 <td>
                                                     <div class="dropdown">
@@ -560,5 +560,142 @@
         </div>
     </div>
 </div><!-- .Add Collateral Modal-Content -->
+<div class="modal fade" id="editCollateral">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <em class="icon ni ni-cross-sm"></em>
+            </a>
+            <div class="modal-body modal-body-md">
+                <h5 class="modal-title">Edit Collateral </h5><br>
+                {% for collateral in collaterals %}
+                <form action="{% url 'edit-collateral' collateral.id %}" class="form-validate" method="POST" enctype="multipart/form-data" >
+                {% endfor %}
+                    {% csrf_token %}
+                    <div class="row g-4">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-label" for="full-name-1">ID</label>
+                                <div class="form-control-wrap">
+                                    <!-- <input type="text" class="form-control" id="full-name-1" name="name"> -->
+                                    {{form_collateral.loan_id}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-label" for="full-name-1">Name</label>
+                                <div class="form-control-wrap">
+                                    <!-- <input type="text" class="form-control" id="full-name-1" name="name"> -->
+                                    {{form_collateral.name}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-label" for="full-name-1">Type</label>
+                                <div class="form-control-wrap">
+                                    <!-- <input type="text" class="form-control" id="full-name-1" name="name"> -->
+                                    {{form_collateral.type}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-label" for="full-name-1">Serial No.</label>
+                                <div class="form-control-wrap">
+                                    <!-- <input type="text" class="form-control" id="full-name-1" name="name"> -->
+                                    {{form_collateral.serial_number}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="fv-phone">Estimated Value</label>
+                                <div class="form-control-wrap">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="fv-phone">Ksh</span>
+                                        </div>
+                                        {{form_collateral.estimated_value}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-lg btn-primary">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div><!-- .edit Collateral Modal-Content -->
+<div class="modal fade" id="addRepayment">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <em class="icon ni ni-cross-sm"></em>
+            </a>
+            <div class="modal-body modal-body-md">
+                <h5 class="modal-title">Add Repaymemt </h5><br>
+            
+                <form action="{% url 'create-repayment' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="row g-4">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-label" for="full-name-1">Transaction ID</label>
+                                <div class="form-control-wrap">
+                                    {{form_repayment.transaction_id}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-label" for="email-address-1">Member</label>
+                                <div class="form-control-wrap">
+                                    {{form_repayment.member}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-label" for="email-address-1">Loan ID</label>
+                                <div class="form-control-wrap">
+                                    {{form_repayment.loan_id}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-label" for="phone-no-1">Amount</label>
+                                <div class="form-control-wrap">
+                                    {{form_repayment.amount}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-label" for="pay-amount-1">Date Paid</label>
+                                <div class="form-control-wrap">
+                                    {{form_repayment.date_paid}}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12">
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-lg btn-primary">Save Payment</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div><!-- .Add Repayment  Modal-Content -->
 
 {% endblock content %}

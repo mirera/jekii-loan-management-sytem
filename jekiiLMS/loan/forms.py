@@ -75,17 +75,16 @@ class RepaymentForm(forms.ModelForm):
 
 
 class GuarantorForm(forms.ModelForm):
+
     class Meta:
         model = Guarantor
         fields = '__all__'
         exclude = ['created']
-        
-        
         widgets = {
             'loan_no': forms.Select(attrs={'class': 'form-select js-select2'}),
             'name': forms.Select(attrs={'class': 'form-select js-select2'}),
-            'amount': forms.NumberInput(attrs={'class': 'form-control','placeholder':'1000'})      
-        } 
+            'amount': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '1000'})      
+        }
  
 class CollateralForm(forms.ModelForm):
     class Meta:

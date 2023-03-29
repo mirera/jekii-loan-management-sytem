@@ -210,20 +210,22 @@ class Repayment(models.Model):
     
 
     def loanBalance(self):
-        loan = Loan.objects.get(pk=self.loan_id.pk)
-        loan_repayments = Repayment.objects.filter(loan_id=self.loan_id).aggregate(Sum('amount'))['amount__sum']
-        total_payable = loan.total_payable()
-        loan_balance = total_payable - loan_repayments
-        return loan_balance
+        if self.loan_id:
+            loan = Loan.objects.get(pk=self.loan_id.pk)
+            loan_repayments = Repayment.objects.filter(loan_id=self.loan_id).aggregate(Sum('amount'))['amount__sum']
+            total_payable = loan.total_payable()
+            loan_balance = total_payable - loan_repayments
+            return loan_balance
 
     #method to calculate next_repayment_date
     def next_repayment_date(self):
-        if self.loan_id.loan_product.repayment_frequency == 'weekly':
-            return self.date_paid + timedelta(days=7)
-        elif self.loan_id.loan_product.repayment_frequency == 'monthly':
-            return self.date_paid + timedelta(days=30)
-        else: 
-            return self.date_paid + timedelta(days=1)
+        if self.loan_id:
+            if self.loan_id.loan_product.repayment_frequency == 'weekly':
+                return self.date_paid + timedelta(days=7)
+            elif self.loan_id.loan_product.repayment_frequency == 'monthly':
+                return self.date_paid + timedelta(days=30)
+            else: 
+                return self.date_paid + timedelta(days=1)
         
     
 
@@ -244,10 +246,18 @@ class Guarantor(models.Model):
         return str(self.name)
 
 #Collateral Model starts
+TYPE = (
+    ('electronics','ELECTRONICS'),
+    ('vehicle','VEHICLE'),
+    ('land','LAND'),
+    ('shares','SHARES'),
+    ('cash deposit','CASH DEPOSIT'),
+    ('others','OTHERS'),
+)
 class Collateral(models.Model):
     loan_id = models.ForeignKey(Loan, on_delete= models.CASCADE)
     name =models.CharField(max_length=20)
-    type= models.CharField(max_length=50)
+    type= models.CharField(max_length=50, choices=TYPE, default='others')
     serial_number= models.CharField(max_length=20)
     estimated_value = models.IntegerField()
  
