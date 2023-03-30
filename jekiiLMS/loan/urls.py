@@ -26,6 +26,8 @@ urlpatterns = [
     path('edit-repayment/<str:pk>', views.editRepayment, name='edit-repayment'),
     path('delete-repayment/<str:pk>', views.deleteRepayment, name='delete-repayment'),
 
+    path('view-loan/<str:pk>/add-repayment', views.addRepayment, name='add-repayment'),
+
     #guarantor urls
     path('view-loan/<str:pk>/add-guarantor', views.addGuarantor, name='add-guarantor'),
     path('view-loan/<str:pk>/remove-guarantor', views.removeGuarantor, name='remove-guarantor'),

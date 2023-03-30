@@ -104,14 +104,7 @@ class Loan(models.Model):
     status = models.CharField(max_length=50, choices=LOAN_STATUS, default='pending')
     attachments = models.FileField(upload_to='loan_attachments/', null=True, blank=True)
    
-   # call the update_status method whenever a loan is created or updated
-    # def save(self, *args, **kwargs):
-    #     super().save(*args, **kwargs)
-    #     self.member.update_status()
-       
 
-    # def update_status(self):
-    #     self.member.update_status()
 
     #Generating loan id based on date 
     def save(self, *args, **kwargs):

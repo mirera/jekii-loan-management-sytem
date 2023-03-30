@@ -595,4 +595,24 @@ def editCollateral(request,pk):
  
 #edit collateral view ends  
 
+#add repayment on a loanview view starts
+def addRepayment(request, pk):
+    loan = get_object_or_404(Loan, id=pk)
+    member = loan.member #retrieving the loan borrower
+    form = RepaymentForm()
+    #processing the data
+    if request.method == 'POST':
+        Repayment.objects.create(
+            transaction_id = request.POST.get('transaction_id'),
+            loan_id = loan,
+            member = member,
+            amount = request.POST.get('amount'),
+            date_paid = request.POST.get('date_paid')
+        )
+        messages.success(request, 'Repayment added successfully.')
+        return redirect('view-loan', pk=loan.id)
+ 
+    context= {'form':form, 'loan':loan}
+    return render(request,'loan/loan-view.html', context)
+#add repayment on a loanview view ends 
   
