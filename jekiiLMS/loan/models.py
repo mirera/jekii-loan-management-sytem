@@ -104,14 +104,7 @@ class Loan(models.Model):
     status = models.CharField(max_length=50, choices=LOAN_STATUS, default='pending')
     attachments = models.FileField(upload_to='loan_attachments/', null=True, blank=True)
    
-   # call the update_status method whenever a loan is created or updated
-    # def save(self, *args, **kwargs):
-    #     super().save(*args, **kwargs)
-    #     self.member.update_status()
-       
 
-    # def update_status(self):
-    #     self.member.update_status()
 
     #Generating loan id based on date 
     def save(self, *args, **kwargs):
@@ -233,7 +226,7 @@ class Repayment(models.Model):
 
 #Guarantor Model starts
 class Guarantor(models.Model):
-    loan_no =models.ForeignKey(Loan, on_delete=models.CASCADE, related_name = 'loan_as_no')
+    loan =models.ForeignKey(Loan, on_delete=models.CASCADE, related_name = 'loan_as_no')
     name= models.ForeignKey(Member, on_delete=models.SET_NULL, null=True)
     amount= models.IntegerField()
     created = models.DateTimeField(auto_now_add=True)
@@ -255,7 +248,7 @@ TYPE = (
     ('others','OTHERS'),
 )
 class Collateral(models.Model):
-    loan_id = models.ForeignKey(Loan, on_delete= models.CASCADE)
+    loan = models.ForeignKey(Loan, on_delete= models.CASCADE)
     name =models.CharField(max_length=20)
     type= models.CharField(max_length=50, choices=TYPE, default='others')
     serial_number= models.CharField(max_length=20)
@@ -263,4 +256,4 @@ class Collateral(models.Model):
  
 
     def __str__(self):
-        return self.name
+        return self.name  

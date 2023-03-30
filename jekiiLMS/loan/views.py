@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib import messages
 from django.db.models import Sum
@@ -284,8 +284,8 @@ def listLoans(request):
 def viewLoan(request, pk):
     loan = Loan.objects.get(id=pk)
     loan_notes = loan.note_set.all().order_by('-created')
-    guarantors = Guarantor.objects.filter(loan_no=loan)
-    collaterals = Collateral.objects.filter(loan_id=loan)
+    guarantors = Guarantor.objects.filter(loan=loan) #here loan=loan mean loan_obj=loan loan_obj in guarantor model and form
+    collaterals = Collateral.objects.filter(loan=loan)
     repayments = Repayment.objects.filter(loan_id=loan)
     form = GuarantorForm()
     form_collateral = CollateralForm()
@@ -498,78 +498,57 @@ def loan_calculator(request):
 #loan cacl view ends
 
 #add guarontor view starts
-def addGuarantor(request):
+def addGuarantor(request, pk):
+    loan = get_object_or_404(Loan, id=pk)
     form = GuarantorForm()
-    #processing the data
+    guarantor_id = request.POST.get('name')
+    guarantor = Member.objects.get(id=guarantor_id)
+
     if request.method == 'POST':
-        # Get the selected loan id from the form
-        loan_id = request.POST.get('loan_no')
-        loan = Loan.objects.get(pk=loan_id)
-
-        # Get the selected member id from the form
-        member_id = request.POST.get('name')
-        member = Member.objects.get(pk=member_id)
-
-        # Get the URL pattern for the 'view-loan' view
-        url = reverse('view-loan', args=[loan_id])
-
-        # Append the anchor to the end of the URL
-        url_with_anchor = f'{url}#tabItem18'
+        form = GuarantorForm(request.POST)
 
         Guarantor.objects.create(
-            loan_no = loan,
-            name= member,
-            amount= request.POST.get('amount')
+            loan = loan,
+            name = guarantor,
+            amount = request.POST.get('amount')
         )
-        #redirecting user to view loan page with loan id
         messages.success(request, 'Guarantor added successfully.')
-        #return redirect('view-loan', pk=loan_id)
-        return redirect(url_with_anchor)
- 
-    context= {'form':form}
+        return redirect('view-loan', pk=loan.id)
+       
+    context= {'form':form, 'loan':loan}
     return render(request,'loan/loan-view.html', context)
 #dd guarontor view ends   
 
 #remove guarantor view
 # delete Repayment  view starts 
 def removeGuarantor(request,pk):
-    guarantor = Guarantor.objects.get(id=pk)
-#include a functionality to limit any user from deleteng this objec unless they have admin previleges
+    guarantor = get_object_or_404(Guarantor, id=guarantor.id)
+    loan = get_object_or_404(Loan, id=pk)
     if request.method == 'POST':
         guarantor.delete()
-        return redirect('repayments')
-     #context is {'obj':branch}, in delete.html we are accessing room/message as 'obj'
-    context = {'obj':guarantor}
-    return render(request,'loan/delete-repayment.html', context)
+        messages.success(request, 'Guarantor deleted successfully.')
+        return redirect('view-loan', pk=loan.id)
+    context = {'obj':guarantor, 'loan':loan}
+    return render(request,'loan/loan-view.html', context)
 
 # delete Repayment  ends 
 
 
 #add guarontor view starts
-def addCollateral(request):
+def addCollateral(request, pk):
+    loan = get_object_or_404(Loan, id=pk)
     form = CollateralForm()
     #processing the data
     if request.method == 'POST':
-        loan_id = request.POST.get('loan_id')
-        loan = Loan.objects.get(pk=loan_id)
-
-        # Get the URL pattern for the 'view-loan' view
-        url = reverse('view-loan', args=[loan_id])
-
-        # Append the anchor to the end of the URL
-        url_with_anchor = f'{url}#tabItem18'
-
         Collateral.objects.create(
-            loan_id= loan,
-            name= request.POST.get('name'),
-            type= request.POST.get('type'),
-            serial_number= request.POST.get('serial_number'), 
-            estimated_value= request.POST.get('estimated_value')
+            loan = loan,
+            name = request.POST.get('name'),
+            type = request.POST.get('type'),
+            estimated_value = request.POST.get('estimated_value'), 
+            serial_number = request.POST.get('serial_number')
         )
-        #redirecting user to view loan page with loan id
         messages.success(request, 'Collateral added successfully.')
-        #return redirect('view-loan', pk=loan_id)
-        return redirect(url_with_anchor)
+        return redirect('view-loan', pk=loan.id)
  
     context= {'form':form}
     return render(request,'loan/loan-view.html', context)
@@ -616,3 +595,24 @@ def editCollateral(request,pk):
  
 #edit collateral view ends  
 
+#add repayment on a loanview view starts
+def addRepayment(request, pk):
+    loan = get_object_or_404(Loan, id=pk)
+    member = loan.member #retrieving the loan borrower
+    form = RepaymentForm()
+    #processing the data
+    if request.method == 'POST':
+        Repayment.objects.create(
+            transaction_id = request.POST.get('transaction_id'),
+            loan_id = loan,
+            member = member,
+            amount = request.POST.get('amount'),
+            date_paid = request.POST.get('date_paid')
+        )
+        messages.success(request, 'Repayment added successfully.')
+        return redirect('view-loan', pk=loan.id)
+ 
+    context= {'form':form, 'loan':loan}
+    return render(request,'loan/loan-view.html', context)
+#add repayment on a loanview view ends 
+  
