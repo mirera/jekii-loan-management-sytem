@@ -284,7 +284,7 @@ def listLoans(request):
 def viewLoan(request, pk):
     loan = Loan.objects.get(id=pk)
     loan_notes = loan.note_set.all().order_by('-created')
-    guarantors = Guarantor.objects.filter(loan=loan)
+    guarantors = Guarantor.objects.filter(loan=loan) #here loan=loan mean loan_obj=loan loan_obj in guarantor model and form
     collaterals = Collateral.objects.filter(loan=loan)
     repayments = Repayment.objects.filter(loan_id=loan)
     form = GuarantorForm()
@@ -522,39 +522,33 @@ def addGuarantor(request, pk):
 #remove guarantor view
 # delete Repayment  view starts 
 def removeGuarantor(request,pk):
-    guarantor = Guarantor.objects.get(id=pk)
-#include a functionality to limit any user from deleteng this objec unless they have admin previleges
+    guarantor = get_object_or_404(Guarantor, id=guarantor.id)
+    loan = get_object_or_404(Loan, id=pk)
     if request.method == 'POST':
         guarantor.delete()
-        return redirect('repayments')
-     #context is {'obj':branch}, in delete.html we are accessing room/message as 'obj'
-    context = {'obj':guarantor}
-    return render(request,'loan/delete-repayment.html', context)
+        messages.success(request, 'Guarantor deleted successfully.')
+        return redirect('view-loan', pk=loan.id)
+    context = {'obj':guarantor, 'loan':loan}
+    return render(request,'loan/loan-view.html', context)
 
 # delete Repayment  ends 
 
 
 #add guarontor view starts
 def addCollateral(request, pk):
-    loan = Loan.objects.get(pk=pk)
+    loan = get_object_or_404(Loan, id=pk)
     form = CollateralForm()
     #processing the data
     if request.method == 'POST':
-        form = CollateralForm(request.POST)
-        # Get the URL pattern for the 'view-loan' view
-        url = reverse('view-loan', args=[pk])
-
-        # Append the anchor to the end of the URL
-        url_with_anchor = f'{url}#tabItem18'
-
-        if form.is_valid():
-            collateral = form.save(commit=False)
-            collateral.loan = loan
-            collateral.save()
-            #redirecting user to view loan page with loan id
-            messages.success(request, 'Collateral added successfully.')
-            #return redirect('view-loan', pk=loan_id)
-            return redirect(url_with_anchor)
+        Collateral.objects.create(
+            loan = loan,
+            name = request.POST.get('name'),
+            type = request.POST.get('type'),
+            estimated_value = request.POST.get('estimated_value'), 
+            serial_number = request.POST.get('serial_number')
+        )
+        messages.success(request, 'Collateral added successfully.')
+        return redirect('view-loan', pk=loan.id)
  
     context= {'form':form}
     return render(request,'loan/loan-view.html', context)
