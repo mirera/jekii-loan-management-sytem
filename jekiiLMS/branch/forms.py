@@ -38,6 +38,7 @@ class ExpenseForm(forms.ModelForm):
     class Meta:
         model = Expense
         fields = '__all__'
+        exclude = ['created_by']
         
         
         widgets = {
@@ -45,7 +46,6 @@ class ExpenseForm(forms.ModelForm):
             'category': forms.Select(attrs={'class': 'form-select js-select2'}),
             'amount': forms.NumberInput(attrs={'class': 'form-control', 'id': 'pay-amount-1'}),
             'branch': forms.Select(attrs={'class': 'form-select js-select2'}),
-            'created_by': forms.Select(attrs={'class': 'form-select js-select2'}),
             'note': forms.Textarea(attrs={'class': 'form-control form-control-sm', 'id': 'cf-default-textarea' ,'placeholder':'Write your message'}),
             'attachement': forms.FileInput(attrs={'class': 'form-control'}),
         }

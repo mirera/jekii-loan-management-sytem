@@ -233,7 +233,7 @@ class Repayment(models.Model):
 
 #Guarantor Model starts
 class Guarantor(models.Model):
-    loan_no =models.ForeignKey(Loan, on_delete=models.CASCADE, related_name = 'loan_as_no')
+    loan =models.ForeignKey(Loan, on_delete=models.CASCADE, related_name = 'loan_as_no')
     name= models.ForeignKey(Member, on_delete=models.SET_NULL, null=True)
     amount= models.IntegerField()
     created = models.DateTimeField(auto_now_add=True)
@@ -255,7 +255,7 @@ TYPE = (
     ('others','OTHERS'),
 )
 class Collateral(models.Model):
-    loan_id = models.ForeignKey(Loan, on_delete= models.CASCADE)
+    loan = models.ForeignKey(Loan, on_delete= models.CASCADE)
     name =models.CharField(max_length=20)
     type= models.CharField(max_length=50, choices=TYPE, default='others')
     serial_number= models.CharField(max_length=20)
@@ -263,4 +263,4 @@ class Collateral(models.Model):
  
 
     def __str__(self):
-        return self.name
+        return self.name  

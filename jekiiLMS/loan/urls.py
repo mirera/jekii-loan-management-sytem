@@ -15,10 +15,10 @@ urlpatterns = [
     path('create-loan', views.createLoan, name='create-loan'),
     path('edit-loan/<str:pk>', views.editLoan, name='edit-loan'),
     path('view-loan/<str:pk>', views.viewLoan, name='view-loan'),
-    path('approve-loan/<str:pk>', views.approveLoan, name='approve-loan'),
     path('delete-loan/<str:pk>', views.deleteLoan, name='delete-loan'),
-    path('approve/<str:pk>', views.approveLoan, name='approve'),
-    path('reject/<str:pk>', views.rejectLoan, name='reject'),
+
+    path('view-loan/<str:pk>/approve', views.approveLoan, name='approve'),
+    path('view-loan/<str:pk>/reject', views.rejectLoan, name='reject'),
 
     #repayment urls
     path('repayments', views.listRepayments, name='repayments'),
@@ -27,11 +27,11 @@ urlpatterns = [
     path('delete-repayment/<str:pk>', views.deleteRepayment, name='delete-repayment'),
 
     #guarantor urls
-    path('add-guarantor', views.addGuarantor, name='add-guarantor'),
-    path('remove-guarantor/<str:pk>', views.removeGuarantor, name='remove-guarantor'),
+    path('view-loan/<str:pk>/add-guarantor', views.addGuarantor, name='add-guarantor'),
+    path('view-loan/<str:pk>/remove-guarantor', views.removeGuarantor, name='remove-guarantor'),
 
     #collateral urls
-    path('add-collateral', views.addCollateral, name='add-collateral'),
+    path('view-loan/<str:pk>/add-collateral', views.addCollateral, name='add-collateral'),
     path('edit-collateral/<str:pk>', views.editCollateral, name='edit-collateral'),
     #path('remove-collateral/<str:pk>', views.removeCollateral, name='remove-collateral'),
 

@@ -357,19 +357,9 @@
             <div class="modal-body modal-body-md">
                 <h5 class="modal-title">Add Guarantor </h5><br>
             
-                <form action="{% url 'add-guarantor' %}" class="form-validate" method="POST" enctype="multipart/form-data" >
+                <form action="{% url 'add-guarantor' pk=loan.id %}" class="form-validate" method="POST" enctype="multipart/form-data" >
                     {% csrf_token %}
                     <div class="row g-4">
-                        
-                        <div class="col-lg-6">
-                            <div class="form-group">
-                                <label class="form-label" for="full-name-1">Loan ID</label>
-                                <div class="form-control-wrap">
-                                    <!-- <input type="text" class="form-control" id="full-name-1" name="name"> -->
-                                    {{form.loan_no}}
-                                </div>
-                            </div>
-                        </div>
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label class="form-label" for="full-name-1">Guarantor</label>
@@ -445,7 +435,7 @@
                     </div>
                     <ul class="d-flex justify-content-center gx-4 mt-4">
                         
-                        <form action="{% url 'approve' loan.id %}" method="POST">
+                        <form action="{% url 'approve' pk=loan.id %}" method="POST">
                     
                             {% csrf_token %}
                         <li>
@@ -497,18 +487,17 @@
             <div class="modal-body modal-body-md">
                 <h5 class="modal-title">Add Collateral </h5><br>
             
-                <form action="{% url 'add-collateral' %}" class="form-validate" method="POST" enctype="multipart/form-data" >
+                <form action="{% url 'add-collateral' pk=loan.id %}" class="form-validate" method="POST" enctype="multipart/form-data" >
                     {% csrf_token %}
                     <div class="row g-4">
-                        <div class="col-lg-6">
+                       <!-- <div class="col-lg-6">
                             <div class="form-group">
                                 <label class="form-label" for="full-name-1">ID</label>
                                 <div class="form-control-wrap">
-                                    <!-- <input type="text" class="form-control" id="full-name-1" name="name"> -->
                                     {{form_collateral.loan_id}}
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label class="form-label" for="full-name-1">Name</label>

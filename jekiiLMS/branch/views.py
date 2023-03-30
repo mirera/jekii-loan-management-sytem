@@ -171,7 +171,7 @@ def createExpense(request):
     form = ExpenseForm()
     #processing the data
     if request.method == 'POST':
-
+        form = ExpenseForm(request.POST)
         # Get the selected category id from the form
         category_id = request.POST.get('category')
         
@@ -185,11 +185,17 @@ def createExpense(request):
         branch = Branch.objects.get(pk=branch_id)
 
         # Get the selected user id from the form
-        creator_id = request.POST.get('created_by')
+        #creator_id = request.POST.get('created_by')
         
         # Get the corresponding user object
-        created_by = User.objects.get(pk=creator_id)
-
+        #created_by = User.objects.get(pk=creator_id)
+        if form.is_valid():
+            expense = form.save(commit=False)
+            expense.created_by = request.user
+            expense.attachement = request.FILES.get('attachement')
+            expense.save()
+            return redirect('expenses')
+        '''
         Expense.objects.create(
             expense_date = request.POST.get('expense_date'),
             category = category,
@@ -199,8 +205,9 @@ def createExpense(request):
             note = request.POST.get('note'),
             attachement = request.FILES.get('attachement'),
         )
+        '''
         #redirecting user to branches page(url name) after submitting form
-        return redirect('expenses')
+        #return redirect('expenses')
     context= {'form':form}
     return render(request,'branch/create-expense.html', context)
 #create expense category view ends  
@@ -234,17 +241,11 @@ def editExpense(request,pk):
         # Get the corresponding Branch object
         branch = Branch.objects.get(pk=branch_id)
 
-        # Get the selected user id from the form
-        creator_id = request.POST.get('created_by')
-        
-        # Get the corresponding user object
-        created_by = User.objects.get(pk=creator_id)
         # update the branch with the submitted form data
         expense.expense_date = request.POST.get('expense_date')
         expense.category = category
         expense.amount = request.POST.get('amount')
         expense.branch = branch
-        expense.created_by = created_by
         expense.note = request.POST.get('note')
         expense.attachement = request.FILES.get('attachement')
         expense.save()
@@ -257,7 +258,6 @@ def editExpense(request,pk):
             'category': expense.category,
             'amount': expense.amount,
             'branch': expense.branch,
-            'created_by': expense.created_by,
             'note': expense.note,
             'attachement': expense.attachement,
         }
