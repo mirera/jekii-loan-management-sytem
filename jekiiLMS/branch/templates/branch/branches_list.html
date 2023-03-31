@@ -107,10 +107,10 @@
                                                                 <ul class="link-list-opt no-bdr">
                                                                     <li><a data-bs-toggle="modal" href="#editBranch"><em class="icon ni ni-edit-alt"></em><span>Edit Branch</span></a></li>
                                                                     <li><a href="{% url 'view' branch.id %}"><em class="icon ni ni-eye"></em><span>View Details</span></a></li>
-                                                                    <!-- <li><a href="#"><em class="icon ni ni-activity-round"></em><span>Activities</span></a></li> -->
                                                                     <li class="divider"></li>
-                                                                    <!-- <li><a href="#"><em class="icon ni ni-shield-star"></em><span>Reset Pass</span></a></li> -->
-                                                                    <li><a data-bs-toggle="modal" href="#deleteBranch"><em class="icon ni ni-trash"></em><span>Delete Branch</span></a></li>
+                                                                   <!-- <li><a data-bs-toggle="modal" href="#deleteBranch{{branch.id}}"><em class="icon ni ni-trash"></em><span>Delete Branch</span></a></li>
+                                                                    <li><a data-bs-toggle="modal" href="#deleteBranch" data-id="{{ branch.id }}"><em class="icon ni ni-trash"></em><span>Delete Branch</span></a></li> -->
+                                                                    <li><a href="{% url 'delete' pk=branch.id %}" class="confirm-delete" title="Delete" data-toggle="modal" data-target="#confirmDeleteBranch" id="deleteBranch{{branch.id}}"><em class="icon ni ni-trash"></em><span>Delete Branch</span></a></li>
                                                                 </ul>
                                                             </div>
                                                         </div>
@@ -118,7 +118,6 @@
                                                 </ul>
                                             </td>
                                         </tr>
-                            
                                         <!-- .nk-tb-item  -->
                                         {% endfor %}
                                         
@@ -134,7 +133,7 @@
 </div>
 <!-- content @e -->
 
-<div class="modal fade" id="deleteBranch">
+<div class="modal fade" id="confirmDeleteBranch" tabindex="-1" caller-id="" role="dialog" aria-labelledby="confirmDeleteBranchLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <a href="#" class="close" data-bs-dismiss="modal"><em class="icon ni ni-cross"></em></a>
@@ -146,23 +145,18 @@
                         <p class="text-soft">This Branch will be removed permanently.</p>
                     </div>
                     <ul class="d-flex justify-content-center gx-4 mt-4">
-                        {% for branch in branches %}
-                        <form action="{% url 'delete' branch.id %}" method="POST">
-                        {% endfor %}
-                            {% csrf_token %}
                         <li>
-                            <button type="submit" data-bs-dismiss="modal" id="deleteWH" class="btn btn-primary">Yes, Delete it</button>
+                           <button type="button" class="btn btn-danger" data-dismiss="modal" id="confirmDeleteBranchModal">Delete</button>
                         </li>
-                        </form>
                         <li>
-                            <button data-bs-dismiss="modal" data-toggle="modal" data-target="#editEventPopup" class="btn btn-danger btn-dim">Cancel</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                         </li>
                     </ul>
                 </div>
             </div>
         </div>
     </div>
-</div><!-- .Delete Branch Modal-content -->
+</div> <!--.Delete Branch Modal-content -->
 
 
 <div class="modal fade" id="addBranch">
@@ -378,5 +372,23 @@
         </div>
     </div>
 </div><!-- .Edit Branch Modal-Content -->
+
+<!--
+    rendering the modal dynamically using JavaScript/jQuery to add 
+    the branch.id to the form action URL when the user clicks on 
+    the "Delete Branch" button.
+-->
+<script>
+    $(document).on('click', '.confirm-delete', function () {
+  $("#confirmDeleteBranch").attr("caller-id", $(this).attr("id"));
+});
+
+$(document).on('click', '#confirmDeleteBranchModal', function () {
+  var caller = $("#confirmDeleteBranchModal").closest(".modal").attr("caller-id");
+  window.location = $("#".concat(caller)).attr("href");
+});
+</script>
+    
+    
 
 {% endblock content %}  

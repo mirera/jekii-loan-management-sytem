@@ -73,19 +73,14 @@ def list_branches(request):
 # list branches view ends
 
 # delete branch view starts 
+
 def deleteBranch(request,pk):
     branch = Branch.objects.get(id=pk)
-#include a functionality to limit any user from deleteng this objec unless they have admin previleges
-    if request.method == 'POST':
-        branch.delete()
-        return redirect('list')
+    branch.delete()
 
-        messages.success(request, 'Branch deleted successfully.')
-
-
-     #context is {'obj':branch}, in delete.html we are accessing room/message as 'obj' delete_branch.html
     context = {'branch':branch}
-    return render(request,'branch/branches_list.html', context)
+    messages.success(request, 'Branch deleted successfully.')
+    return redirect('list')
 
 # delete branch ends starts
 

@@ -165,7 +165,7 @@
                                                 <td>{{guarantor.member.phone_no}}</td>
                                                 <td>{{guarantor.amount}}</td>
                                                 {% if loan.status == 'pending' %}
-                                                <td><a data-bs-toggle="modal" href="{% url 'remove-guarantor' pk=loan.id guarantor_id=guarantor.id %}" class="btn btn-dim btn-danger">Remove</a></td>
+                                                <td><a data-bs-toggle="modal" href="#removeGuarantor{{guarantor.id}}" class="btn btn-dim btn-danger">Remove</a></td>
                                                 {% endif %}
                                               </tr>
                                               {% endfor %}
@@ -393,7 +393,27 @@
         </div>
     </div>
 </div><!-- .Add Guarantor Modal-Content -->
-<div class="modal fade" id="removeGuarantor">
+<!-- <div class="modal fade" id="removeGuarantor"> -->
+<div class="modal fade" id="removeGuarantor{{guarantor.id}}" tabindex="-1" aria-labelledby="removeGuarantor{{guarantor.id}}Label" aria-hidden="true">
+    <!-- Add modal for Remove Guarantor -->
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="removeGuarantor{{guarantor.id}}Label">Remove Guarantor</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to remove {{guarantor.name}} {{guarantor.last_name}} as a guarantor?</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <a href="{% url 'remove-guarantor' pk=loan.id guarantor_id=guarantor.id %}" class="btn btn-danger">Remove</a>
+        </div>
+        </div>
+    </div>
+
+      <!-- End of modal for Remove Guarantor -->
+    <!-- 
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <a href="#" class="close" data-bs-dismiss="modal"><em class="icon ni ni-cross"></em></a>
@@ -418,7 +438,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 </div><!-- .Remove Guarantor Modal-content -->
 <div class="modal fade" id="approveLoan">
     <div class="modal-dialog" role="document">
