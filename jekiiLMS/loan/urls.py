@@ -30,7 +30,7 @@ urlpatterns = [
 
     #guarantor urls
     path('view-loan/<str:pk>/add-guarantor', views.addGuarantor, name='add-guarantor'),
-    path('view-loan/<str:pk>/remove-guarantor', views.removeGuarantor, name='remove-guarantor'),
+    path('view-loan/<str:pk>/remove-guarantor/<str:guarantor_id>', views.removeGuarantor, name='remove-guarantor'),
 
     #collateral urls
     path('view-loan/<str:pk>/add-collateral', views.addCollateral, name='add-collateral'),
