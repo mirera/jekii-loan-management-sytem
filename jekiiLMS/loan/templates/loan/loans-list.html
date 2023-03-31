@@ -114,7 +114,7 @@
                                                         <div class="dropdown-menu dropdown-menu-end dropdown-menu-xs">
                                                             <ul class="link-list-plain">
                                                                 {% if loan.status == 'pending' %}
-                                                                <li><a href="{% url 'edit-loan' loan.id %}">Approve</a></li>
+                                                                <li><a href="{% url 'view-loan' loan.id %}">Approve</a></li>
                                                                 <li><a href="{% url 'delete-loan' loan.id %}">Delete</a></li>
                                                                 {% else %}
                                                                 <li><a href="{% url 'view-loan' loan.id %}">View Details</a></li>
@@ -183,7 +183,7 @@
                                                         <div class="dropdown-menu dropdown-menu-end dropdown-menu-xs">
                                                             <ul class="link-list-plain">
                                                                 {% if loan.status == 'pending' %}
-                                                                <li><a href="{% url 'edit-loan' loan.id %}">Approve</a></li>
+                                                                <li><a href="{% url 'view-loan' loan.id %}">Approve</a></li>
                                                                 <li><a href="{% url 'delete-loan' loan.id %}">Delete</a></li>
                                                                 {% else %}
                                                                 <li><a href="{% url 'view-loan' loan.id %}">View Details</a></li>
@@ -253,7 +253,7 @@
                                                         <div class="dropdown-menu dropdown-menu-end dropdown-menu-xs">
                                                             <ul class="link-list-plain">
                                                                 {% if loan.status == 'pending' %}
-                                                                <li><a href="{% url 'edit-loan' loan.id %}">Approve</a></li>
+                                                                <li><a href="{% url 'view-loan' loan.id %}">Approve</a></li>
                                                                 <li><a href="{% url 'delete-loan' loan.id %}">Delete</a></li>
                                                                 {% else %}
                                                                 <li><a href="{% url 'view-loan' loan.id %}">View Details</a></li>
@@ -323,7 +323,7 @@
                                                         <div class="dropdown-menu dropdown-menu-end dropdown-menu-xs">
                                                             <ul class="link-list-plain">
                                                                 {% if loan.status == 'pending' %}
-                                                                <li><a href="{% url 'edit-loan' loan.id %}">Approve</a></li>
+                                                                <li><a href="{% url 'view-loan' loan.id %}">Approve</a></li>
                                                                 <li><a href="{% url 'delete-loan' loan.id %}">Delete</a></li>
                                                                 {% else %}
                                                                 <li><a href="{% url 'view-loan' loan.id %}">View Details</a></li>
