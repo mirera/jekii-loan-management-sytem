@@ -165,7 +165,7 @@
                                                 <td>{{guarantor.member.phone_no}}</td>
                                                 <td>{{guarantor.amount}}</td>
                                                 {% if loan.status == 'pending' %}
-                                                <td><a data-bs-toggle="modal" href="#removeGuarantor" class="btn btn-dim btn-danger">Remove</a></td>
+                                                <td><a data-bs-toggle="modal" href="{% url 'remove-guarantor' pk=loan.id guarantor_id=guarantor.id %}" class="btn btn-dim btn-danger">Remove</a></td>
                                                 {% endif %}
                                               </tr>
                                               {% endfor %}
@@ -405,9 +405,7 @@
                         <p class="text-soft">This Guarantor will be removed permanently.</p>
                     </div>
                     <ul class="d-flex justify-content-center gx-4 mt-4">
-                        {% for guarantor in guarantors %}
-                        <form action="{% url 'remove-guarantor' guarantor.id %}" method="POST">
-                        {%endfor%}
+                        <form action="{% url 'remove-guarantor' pk=loan.id guarantor_id=guarantor.id %}" method="POST">
                             {% csrf_token %}
                         <li>
                             <button type="submit" data-bs-dismiss="modal" id="deleteWH" class="btn btn-primary">Yes, Delete </button>

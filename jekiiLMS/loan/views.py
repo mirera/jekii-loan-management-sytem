@@ -502,7 +502,8 @@ def addGuarantor(request, pk):
     loan = get_object_or_404(Loan, id=pk)
     form = GuarantorForm()
     guarantor_id = request.POST.get('name')
-    guarantor = Member.objects.get(id=guarantor_id)
+    guarantor = Member.objects.get(id=guarantor_id) #consider refining this guarantor = Member.objects.filter(id=guarantor_id, status='inactive')
+    
 
     if request.method == 'POST':
         form = GuarantorForm(request.POST)
@@ -521,8 +522,9 @@ def addGuarantor(request, pk):
 
 #remove guarantor view
 # delete Repayment  view starts 
-def removeGuarantor(request,pk):
-    guarantor = get_object_or_404(Guarantor, id=guarantor.id)
+def removeGuarantor(request, pk, guarantor_id):
+    guarantor = get_object_or_404(Guarantor, id=guarantor_id)
+    print("guarantor_id:", guarantor_id)
     loan = get_object_or_404(Loan, id=pk)
     if request.method == 'POST':
         guarantor.delete()
