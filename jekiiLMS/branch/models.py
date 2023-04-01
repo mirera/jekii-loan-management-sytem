@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.core.validators import MinValueValidator
 from decimal import Decimal
 from django.contrib.auth.models import User
+from company.models import Company
 
 #Branch model for a branch
 ACTIVE_CHOICES = (
@@ -11,6 +12,7 @@ ACTIVE_CHOICES = (
     ('inactive','INACTIVE'),
 )
 class Branch(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, default=1)
     name = models.CharField(max_length=500)
     phone = models.CharField(max_length=10)
     email= models.EmailField()

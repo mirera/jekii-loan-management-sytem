@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'member',
     'user',
     'branch',
+    'company',
 ]
 
 MIDDLEWARE = [

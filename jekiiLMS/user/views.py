@@ -60,6 +60,7 @@ def user_signup(request):
             # user.username = user.username.lower()
             user.save()
             login(request, user)
+            messages.success(request, 'User created successfully!')
             return redirect('home')
         else:
             #return error message
