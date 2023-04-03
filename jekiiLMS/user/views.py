@@ -13,10 +13,12 @@ from django.contrib import messages
 #---user login in logic starts here---
 
 def user_login(request):
-    #preventing logged in useres from logging in again
+    #preventing logged in users from logging in again
     if request.user.is_authenticated:
-        return redirect('home')
-
+        if request.user.is_superuser or request.user.is_staff: 
+            return redirect('superadmin_dashboard')
+        else:
+            return redirect('home')
     #extracting login credential from login form
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -28,12 +30,15 @@ def user_login(request):
         except:
             messages.error(request, 'This username does not exist on our database!')
 
-        # check if email and password match to autheticate
+        # check if username and password match to autheticate
         user = authenticate(username=username, password=password)
 
         if user is not None:
             login(request, user)
-            return redirect('home')
+            if request.user.is_superuser or request.user.is_staff: 
+                return redirect('superadmin_dashboard')
+            else:
+                return redirect('home')
         else:
             #return error message
             messages.error(request, 'The username or password is incorrect')
@@ -42,7 +47,7 @@ def user_login(request):
 
 #---user login in logic ends here---
 
-
+ 
 #---user register  logic starts here---
 
 def user_signup(request):

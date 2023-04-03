@@ -9,12 +9,14 @@ from company.models import Company
 #superadmin model
 class SuperAdmin(models.Model):
     user = models.OneToOneField(User, on_delete=models.SET_NULL, null=True, unique=True, related_name='super_admin')
+    email = models.EmailField()
     first_name = models.CharField(max_length=20)
     last_name = models.CharField(max_length=20)
     id_no = models.CharField(max_length=10, unique=True)
     phone_no = models.CharField(max_length=10, unique=True)
     profile_photo = models.ImageField(default='default.png', upload_to='profile_photos/')
- 
+    is_active = models.BooleanField(default=True)
+    is_superuser = models.BooleanField(default=True)
 
     def __str__(self):
         return self.first_name + ' ' + self.last_name
