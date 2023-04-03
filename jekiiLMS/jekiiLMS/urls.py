@@ -26,7 +26,13 @@ urlpatterns = [
     path('member/', include('member.urls')),
     path('user/', include('user.urls')),
     path('branch/', include('branch.urls')),
-    path('',views.homepage, name='home')
+    #path('company/', include('company.urls')),
+    path('',views.homepage, name='home'),  #path('companyadmin/dashboard/', views.companyadmin_dashboard, name='companyadmin_dashboard'),
+
+    #dashboards
+    path('superadmin/dashboard', views.superadmin_dashboard, name='superadmin_dashboard'),
+    #path('loginitstaff/dashboard/', views.loginitstaff_dashboard, name='loginitstaff_dashboard'),
+    #path('companyemployee/dashboard/', views.companyemployee_dashboard, name='companyemployee_dashboard'),
 ]
 #extend the url pattern to cater for media urls
 urlpatterns += static(settings.MEDIA_URL, document_root= settings.MEDIA_ROOT)
