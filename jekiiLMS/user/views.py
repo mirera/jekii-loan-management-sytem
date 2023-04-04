@@ -6,14 +6,16 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from .forms import CustomUserCreationForm
+from .forms import CustomUserCreationForm, CompanyStaffForm
 from django.contrib import messages
+from .models import CompanyStaff, Role
+from branch.models import Branch
 
 
 #---user login in logic starts here---
 
 def user_login(request):
-    #preventing logged in users from logging in again
+    #preventing logged in users from logging in again   
     if request.user.is_authenticated:
         if request.user.is_superuser or request.user.is_staff: 
             return redirect('superadmin_dashboard')
@@ -40,7 +42,6 @@ def user_login(request):
             else:
                 return redirect('home')
         else:
-            #return error message
             messages.error(request, 'The username or password is incorrect')
             
     return render (request, 'user/auth-login.html')
@@ -83,4 +84,54 @@ def password_reset(request):
 def user_logout(request):
     logout(request)
     return redirect('home')
+
+#-- list staffs view starts --
+def listStaff(request):
+    staffs = CompanyStaff.objects.all().order_by('date_added')
+    form = CompanyStaffForm()
+
+    context = {'staffs': staffs, 'form':form}
+    return render(request, 'user/users-list.html', context)
+
+# list staffs view ends 
+
+#-- adding a user as a staff --
+def addStaff(request):
+    form = CompanyStaffForm()
+    if request.method == 'POST':
+        branch_id = request.POST.get('branch')
+        branch = Branch.objects.get(pk=branch_id)
+
+        role_id = request.POST.get('staff_role')
+        role = Role.objects.get(pk=role_id)
+
+        CompanyStaff.objects.create(
+            username = request.POST.get('username'),
+            password = request.POST.get('password'),
+            first_name = request.POST.get('first_name'),
+            last_name= request.POST.get('last_name'),
+            email= request.POST.get('email'),
+            id_no= request.POST.get('id_no'),
+            phone_no = request.POST.get('phone_no'),
+            branch = branch,
+            user_type= request.POST.get('user_type'),
+            staff_role = role,
+            profile_photo=request.FILES.get('profile_photo')
+        )
+        #signing up the created user
+        User.objects.create(
+            username = request.POST.get('username'),
+            password = request.POST.get('password'),
+            first_name = request.POST.get('first_name'),
+            last_name= request.POST.get('last_name'),
+            email = request.POST.get('email'),
+        )
+        
+        return redirect('staffs') #users view
+
+    
+    context= {'form':form}
+    return render(request,'user/users-list.html', context)
+
+
  
