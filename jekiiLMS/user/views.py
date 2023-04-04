@@ -1,7 +1,6 @@
-# from email import message
-# import email
 
 from multiprocessing import context
+from django.contrib.auth.hashers import make_password
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
@@ -105,9 +104,11 @@ def addStaff(request):
         role_id = request.POST.get('staff_role')
         role = Role.objects.get(pk=role_id)
 
+        password = make_password(request.POST.get('password'))  # Hash the password
+
         CompanyStaff.objects.create(
             username = request.POST.get('username'),
-            password = request.POST.get('password'),
+            password = password, 
             first_name = request.POST.get('first_name'),
             last_name= request.POST.get('last_name'),
             email= request.POST.get('email'),
@@ -121,7 +122,7 @@ def addStaff(request):
         #signing up the created user
         User.objects.create(
             username = request.POST.get('username'),
-            password = request.POST.get('password'),
+            password = password,
             first_name = request.POST.get('first_name'),
             last_name= request.POST.get('last_name'),
             email = request.POST.get('email'),
