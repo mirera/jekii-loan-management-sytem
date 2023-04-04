@@ -1,8 +1,8 @@
 
 from django import forms
 from django.contrib.auth.models import User
-from django.core.exceptions import ValidationError 
-
+from django.core.exceptions import ValidationError  
+from .models import CompanyStaff
 
 
 class CustomUserCreationForm(forms.Form): #alternatively can inherit from ModelForm >> this way we avoid code redudancy.
@@ -42,4 +42,28 @@ class CustomUserCreationForm(forms.Form): #alternatively can inherit from ModelF
         )
         return user
 
+class CompanyStaffForm(forms.ModelForm):
+    class Meta:
+        model = CompanyStaff
+        fields = '__all__'
+
+
+  
+        widgets = {
+                'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder':'Write your first name'}),
+                'password': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder':'Enter password','type':'password', 'id':'password'}), #on edit make the password not visible
+                'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder':'Write your first name'}),
+                'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder':'Write your last name'}),
+                'email': forms.EmailInput(attrs={'class': 'form-control'}),
+                'id_no': forms.TextInput(attrs={'class': 'form-control'}),
+                'phone_no': forms.NumberInput(attrs={'class': 'form-control','id': 'fv-email', 'placeholder':'0712345678'}),
+                'branch': forms.Select(attrs={'class': 'form-select js-select2'}), 
+                'user_type': forms.Select(attrs={'class': 'form-select js-select2'}),
+                'staff_role': forms.Select(attrs={'class': 'form-select js-select2'}),
+                'status': forms.Select(attrs={'class': 'form-select js-select2'}),
+                #'date_added': forms.DateInput(attrs={'class': 'form-control  date-picker-range', 'data-date-format':'yyyy-mm-dd'}),
+                'profile_photo': forms.FileInput(attrs={'class': 'form-control'}),
+                
+            } 
         
+       
