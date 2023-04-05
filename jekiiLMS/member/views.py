@@ -2,11 +2,17 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import Member, Branch
 from .forms import MemberForm
+from company.forms import Organization
 
 #create member view starts
 def createMember(request):
     form = MemberForm()
-    #processing the data
+    #filter the Branch queryset to include only branches that belong to the logged in company 
+    company = request.user.organization
+    if request.user.is_authenticated and request.user.is_active:
+        user = request.user
+        company = Organization.objects.get(admin=user)
+
     if request.method == 'POST':
         # Get the selected branch id from the form
         branch_id = request.POST.get('branch')
@@ -16,6 +22,7 @@ def createMember(request):
         
         # Create the new Member instance with the retrieved Branch object
         Member.objects.create(
+            company = company,
             first_name = request.POST.get('first_name'),
             last_name= request.POST.get('last_name'),
             id_no= request.POST.get('id_no'),
@@ -38,7 +45,10 @@ def createMember(request):
 
 # list member view starts 
 def listMembers(request):
-    members = Member.objects.all().order_by('date_joined')
+    #filter the Branch queryset to include only branches that belong to the logged in company 
+    company = request.user.organization
+    members = Member.objects.filter(company=company).order_by('-date_joined')
+
     form = MemberForm()
 
     #later on add a loan context so as to utilize them on the member table.
@@ -49,7 +59,11 @@ def listMembers(request):
 
 # view member view starts 
 def viewMember(request, pk):
-    member = Member.objects.get(id=pk)
+    company = request.user.organization
+    if request.user.is_authenticated and request.user.is_active:
+        user = request.user
+        company = Organization.objects.get(admin=user)
+    member = Member.objects.filter(id=pk, company=company)
 
     context = {'member': member}
     return render(request, 'member/member-view.html', context)

@@ -32,7 +32,10 @@ def createBranch(request):
         )
         #redirecting user to branches page(url name) after submitting form
         return redirect('list')
-    context= {'form':form}
+    context= {
+        'form':form,
+        'branches' : branches,
+        }
     return render(request,'branch/branch-create-form.html', context)
 #create branch view ends
 
