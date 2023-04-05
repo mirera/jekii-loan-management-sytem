@@ -5,6 +5,7 @@ from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
 from branch.models import Branch
+from company.models import Organization
 
 #the member model-- this are the borrowers
 INDUSTRIES = (
@@ -20,8 +21,7 @@ STATUS = (
 )
 
 class Member(models.Model):
-
-
+    company = models.ForeignKey(Organization, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     id_no = models.CharField(max_length=10, unique=True)

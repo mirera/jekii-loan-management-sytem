@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from branch.models import Branch, Expense
 from loan.models import Loan, Repayment
 from member.models import Member
+from company.models import Organization
 
 
 
@@ -77,6 +78,7 @@ def staff_dashboard(request):
 @login_required(login_url='login')
 def homepage(request): 
 
+
     branches=Branch.objects.all()
     loans = Loan.objects.all()
     repayments = Repayment.objects.all()
@@ -103,4 +105,4 @@ def homepage(request):
         'expense':expense
         }
     return render(request, 'index.html', context)
-  #--- companyadmin dashboard logic ends here---
+  #--- companyadmin dashboard logic ends here--- 

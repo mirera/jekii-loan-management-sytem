@@ -10,8 +10,8 @@
         <div class="nk-sidebar-brand">
             <a href="{% url 'home' %}" class="logo-link nk-sidebar-logo">
                 <!--<img class="" src="{% static 'assets/images/logo.png' %}" alt="logo" style="width: auto 25%; height: 200%;"> -->
-                <img class="logo-light logo-img" src="{% static 'assets/images/logo.png' %}" srcset="{% static 'assets/images/logo.png' %} 2x" alt="logo">
-                <img class="logo-dark logo-img" src="{% static 'assets/images/logo.png' %}" srcset="{% static 'assets/images/logo.png' %} 2x" alt="logo-dark"> 
+                <img class="logo-light logo-img" src="{{ organization.logo.url }}" srcset="{{ organization.logo.url }} 2x" alt="logo">
+                <img class="logo-dark logo-img" src="{{ organization.logo.url }}" srcset="{{ organization.logo.url }} 2x" alt="logo-dark"> 
             </a>
         </div>
     </div><!-- .nk-sidebar-element -->
@@ -23,7 +23,7 @@
                         <a href=""> <h6 class="overline-title text-primary-alt">Dashboard</h6> </a> 
                     </li><!-- .nk-menu-item -->
                     <li class="nk-menu-item">
-                        <a href=" " class="nk-menu-link">
+                        <a href="{% url 'home' %}" class="nk-menu-link">
                             <span class="nk-menu-icon"><em class="icon ni ni-dashboard"></em></span>
                             <span class="nk-menu-text">Dashboard</span>
                         </a>
