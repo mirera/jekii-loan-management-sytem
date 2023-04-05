@@ -12,7 +12,7 @@ ACTIVE_CHOICES = (
     ('inactive','INACTIVE'),
 )
 class Branch(models.Model):
-    company = models.ForeignKey(Organization, on_delete=models.CASCADE, default=1)
+    company = models.ForeignKey(Organization, on_delete=models.CASCADE)
     name = models.CharField(max_length=500)
     phone = models.CharField(max_length=10)
     email= models.EmailField()
@@ -21,7 +21,7 @@ class Branch(models.Model):
     office = models.CharField(max_length=500)
     status = models.CharField(max_length=10, choices=ACTIVE_CHOICES, default='Inactive')
     notes = models.TextField(null=True, blank=True)
-
+ 
 
     def __str__(self):
         return self.name 

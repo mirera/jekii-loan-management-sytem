@@ -78,8 +78,7 @@ def staff_dashboard(request):
 @login_required(login_url='login')
 def homepage(request): 
 
-    user = request.user
-    organization = Organization.objects.get(admin=user)
+
     branches=Branch.objects.all()
     loans = Loan.objects.all()
     repayments = Repayment.objects.all()
@@ -96,7 +95,6 @@ def homepage(request):
     expense = total_expense.aggregate(Sum('amount'))['amount__sum'] or 0
 
     context= {
-        'organization':organization,
         'branches':branches, 
         'loans':loans, 
         'repayments':repayments,

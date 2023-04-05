@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from .models import Branch ,ExpenseCategory, Expense
 from .forms import BranchForm, ExpenseCategoryForm , ExpenseForm
+from company.models import Organization
 
 
 
@@ -10,9 +11,17 @@ from .forms import BranchForm, ExpenseCategoryForm , ExpenseForm
 #create branch view starts
 def createBranch(request):
     form = BranchForm()
+    #filter the Branch queryset to include only branches that belong to the logged in company 
+    company = request.user.organization
+    branches = Branch.objects.filter(company=company)
+
     #processing the data
+    if request.user.is_authenticated and request.user.is_active:
+        user = request.user
+        company = Organization.objects.get(admin=user)
     if request.method == 'POST':
         Branch.objects.create(
+            company = company,
             name = request.POST.get('name'),
             phone= request.POST.get('phone'),
             email = request.POST.get('email'),
@@ -63,7 +72,9 @@ def editBranch(request,pk):
 
 # list branches view starts 
 def list_branches(request):
-    branches = Branch.objects.all().order_by('-open_date')
+    #filter the Branch queryset to include only branches that belong to the logged in company 
+    company = request.user.organization
+    branches = Branch.objects.filter(company=company).order_by('-open_date')
     form = BranchForm()
     
 
