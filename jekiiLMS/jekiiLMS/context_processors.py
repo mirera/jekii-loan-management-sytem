@@ -1,8 +1,12 @@
 from company.models import Organization
 
+#-- custome context processor for login organization --
 def get_organization(request):
-  # you might need this line for unit tests
-  if request.user.is_authenticated and request.user.is_active:
-    user = request.user
-    organization = Organization.objects.get(admin=user)
-    return {"organization" :organization}
+    if request.user.is_authenticated and request.user.is_active:
+        user = request.user
+        try:
+            organization = Organization.objects.get(admin=user)
+            return {"organization" :organization}
+        except Organization.DoesNotExist:
+            pass
+    return {}
