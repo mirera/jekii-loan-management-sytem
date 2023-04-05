@@ -26,7 +26,7 @@ urlpatterns = [
     path('member/', include('member.urls')),
     path('user/', include('user.urls')),
     path('branch/', include('branch.urls')),
-    #path('company/', include('company.urls')),
+    path('company/', include('company.urls')),
     path('',views.homepage, name='home'),  #path('companyadmin/dashboard/', views.companyadmin_dashboard, name='companyadmin_dashboard'),
 
     #dashboards
