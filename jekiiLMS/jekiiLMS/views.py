@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from branch.models import Branch, Expense
 from loan.models import Loan, Repayment
 from member.models import Member
-from company.models import Company
+
 
 
  #--- superadmin dashboard  logic starts here---

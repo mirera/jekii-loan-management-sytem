@@ -3,7 +3,7 @@ from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
 from branch.models import Branch
-from company.models import Company
+from company.models import Organization
 
 
 #superadmin model
@@ -44,7 +44,7 @@ class CompanyAdmin(models.Model):
     last_name = models.CharField(max_length=20)
     id_no = models.CharField(max_length=10, unique=True)
     phone_no = models.CharField(max_length=10, unique=True)
-    company = models.OneToOneField(Company, on_delete=models.CASCADE)
+    company = models.OneToOneField(Organization, on_delete=models.CASCADE)
     branch = models.OneToOneField(Branch, on_delete=models.SET_NULL, null= True)#make it default admin when processing form
     profile_photo = models.ImageField(default='default.png', upload_to='profile_photos/')
     date_joined = models.DateTimeField(auto_now_add=True)
@@ -62,7 +62,7 @@ class BranchManager(models.Model):
     last_name = models.CharField(max_length=20)
     id_no = models.CharField(max_length=10, unique=True)
     phone_no = models.CharField(max_length=10, unique=True)
-    company = models.OneToOneField(Company, on_delete=models.CASCADE)
+    company = models.OneToOneField(Organization, on_delete=models.CASCADE)
     branch = models.OneToOneField(Branch, on_delete=models.SET_NULL, null= True)
     profile_photo = models.ImageField(default='default.png', upload_to='profile_photos/')
     date_joined = models.DateTimeField(auto_now_add=True)
@@ -81,7 +81,7 @@ class CreditOfficer(models.Model):
     last_name = models.CharField(max_length=20)
     id_no = models.CharField(max_length=10, unique=True)
     phone_no = models.CharField(max_length=10, unique=True)
-    company = models.OneToOneField(Company, on_delete=models.CASCADE)
+    company = models.OneToOneField(Organization, on_delete=models.CASCADE)
     branch = models.OneToOneField(Branch, on_delete=models.SET_NULL, null= True)
     profile_photo = models.ImageField(default='default.png', upload_to='profile_photos/')
     date_joined = models.DateTimeField(auto_now_add=True)

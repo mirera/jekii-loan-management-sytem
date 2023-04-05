@@ -136,16 +136,16 @@
                     </li><!-- .nk-menu-item -->
                  
                     <li class="nk-menu-heading">
-                        <h6 class="overline-title text-primary-alt">System Settings</h6>
+                        <h6 class="overline-title text-primary-alt">Settings</h6>
                     </li><!-- .nk-menu-heading -->
                     <li class="nk-menu-item has-sub">
-                        <a href="#" class="nk-menu-link nk-menu-toggle">
+                        <a href="{% url 'update-organization' pk=organization.id %}" class="nk-menu-link">
                             <span class="nk-menu-icon"><em class="icon ni ni-setting"></em></span>
                             <span class="nk-menu-text">General Settings</span>
                         </a>
-                        <ul class="nk-menu-sub">
+                        <!-- <ul class="nk-menu-sub">
                             <li class="nk-menu-item">
-                                <a href="html/pages/auths/auth-login.html" class="nk-menu-link" target="_blank"><span class="nk-menu-text">General Settings</span></a>
+                                <a href="" class="nk-menu-link" target="_blank"><span class="nk-menu-text">General Settings</span></a>
                             </li>
                             <li class="nk-menu-item">
                                 <a href="html/pages/auths/auth-register.html" class="nk-menu-link" target="_blank"><span class="nk-menu-text">System Settings</span></a>
@@ -177,7 +177,7 @@
                             <li class="nk-menu-item">
                                 <a href="#" class="nk-menu-link"><span class="nk-menu-text">Logo & Favicon</span></a>
                             </li>
-                        </ul><!-- .nk-menu-sub -->
+                        </ul> .nk-menu-sub -->
                     </li><!-- .nk-menu-item -->
                     <li class="nk-menu-item has-sub">
                         <a href="#" class="nk-menu-link">
@@ -278,7 +278,7 @@
                                     </div>
                                     <div class="user-info d-none d-md-block">
                                         <!-- this should state the role of the user whether admin or credit officer -->
-                                         <div class="user-status">{{request.user.username}}</div>
+                                         <div class="user-status">{{request.user.first_name}} {{request.user.last_name}}</div>
                                         <div class="user-name dropdown-indicator">@{{request.user.username}}</div>
                                     </div>
                                 </div>
@@ -287,11 +287,10 @@
                                 <div class="dropdown-inner user-card-wrap bg-lighter d-none d-md-block">
                                     <div class="user-card">
                                         <div class="user-avatar">
-                                            <span>AB</span>
-                                            <img src="#"> <!-- set up an abstract user with a custome fields-->
+                                            <img src="{{ request.user.companystaff.profile_photo.url }}"> <!-- set up an abstract user with a custome fields-->
                                         </div>
                                         <div class="user-info">
-                                            <span class="lead-text">{{request.user.username}}</span>
+                                            <span class="lead-text">{{request.user.first_name}} {{request.user.last_name}}</span>
                                             <span class="sub-text">{{request.user.email}}</span>
                                         </div>
                                     </div>

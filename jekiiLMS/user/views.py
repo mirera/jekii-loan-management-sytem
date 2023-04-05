@@ -9,6 +9,7 @@ from .forms import CustomUserCreationForm, CompanyStaffForm
 from django.contrib import messages
 from .models import CompanyStaff, Role
 from branch.models import Branch
+from company.models import Organization
 
 
 #---user login in logic starts here---
@@ -47,13 +48,13 @@ def user_login(request):
 
 #---user login in logic ends here---
 
- 
 #---user register  logic starts here---
-
 def user_signup(request):
     form = CustomUserCreationForm()
     if request.method == 'POST':
 
+        company_name = request.POST.get('company_name')
+        email = request.POST.get('email')
         #binding data from fields to the form
         form = CustomUserCreationForm(request.POST)
 
@@ -66,7 +67,15 @@ def user_signup(request):
             user.save()
             login(request, user)
             messages.success(request, 'User created successfully!')
-            return redirect('home')
+
+            #create a company object 
+            organization = Organization.objects.create(
+               name = company_name,
+               email = email,
+               admin = user
+            )
+            #redirect to update organization info
+            return redirect('update-organization', pk = organization.id )
         else:
             #return error message
             messages.error(request, 'An error occured during regetration, please try again!')
@@ -74,8 +83,7 @@ def user_signup(request):
     context= {form:'form'}
 
     return render (request, 'user/auth-register.html', context)
-
-#---user register  logic ends here---
+#--- ends---
 
 def password_reset(request):
     return render(request, 'user/auth-reset.html')
@@ -91,10 +99,9 @@ def listStaff(request):
 
     context = {'staffs': staffs, 'form':form}
     return render(request, 'user/users-list.html', context)
+#-- end -- 
 
-# list staffs view ends 
-
-#-- adding a user as a staff --
+#-- adding a staff then as a user --
 def addStaff(request):
     form = CompanyStaffForm()
     if request.method == 'POST':
@@ -133,6 +140,6 @@ def addStaff(request):
     
     context= {'form':form}
     return render(request,'user/users-list.html', context)
-
+#-- end --
 
  

@@ -6,6 +6,7 @@ from .models import CompanyStaff
 
 
 class CustomUserCreationForm(forms.Form): #alternatively can inherit from ModelForm >> this way we avoid code redudancy.
+    company_name = forms.CharField(label='Enter Company Name')
     username = forms.CharField(label='Enter Username', min_length=4, max_length=150)
     email = forms.EmailField(label='Enter email')
     password1 = forms.CharField(label='Enter password', widget=forms.PasswordInput)
