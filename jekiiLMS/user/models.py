@@ -115,6 +115,7 @@ STATUS = (
 )
 
 class CompanyStaff(models.Model):
+    company = models.ForeignKey(Organization, on_delete=models.CASCADE)
     username = models.CharField(max_length=10)
     password = models.CharField(max_length=50)
     email = models.EmailField()
@@ -122,7 +123,7 @@ class CompanyStaff(models.Model):
     last_name = models.CharField(max_length=20)
     id_no = models.CharField(max_length=10, unique=True)
     phone_no = models.CharField(max_length=10, unique=True)
-    branch = models.OneToOneField(Branch, on_delete=models.SET_NULL, null= True)
+    branch = models.ForeignKey(Branch, on_delete=models.SET_NULL, null= True)
     user_type = models.CharField(max_length=10, choices=USER_TYPE)
     staff_role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True, blank=True)
     profile_photo = models.ImageField(default='default.png', upload_to='profile_photos/')

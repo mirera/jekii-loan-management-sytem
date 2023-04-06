@@ -8,10 +8,10 @@ from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
 from decimal import Decimal
 from django.utils.timezone import now
-import uuid
 from django.db import transaction
 from member.models import Member
-
+from company.models import Organization
+from user.models import CompanyStaff
 
 
 #Loan Prouct model starts here
@@ -61,6 +61,7 @@ TERM_PERIOD = (
 )
 
 class LoanProduct(models.Model):
+    company = models.ForeignKey(Organization, on_delete=models.CASCADE)
     loan_product_name = models.CharField(max_length=300)
     minimum_amount = models.IntegerField(default=5000)
     maximum_amount = models.IntegerField(default=10000)
@@ -93,13 +94,14 @@ LOAN_STATUS = (
     ('cleared','CLEARED'),
 )
 class Loan(models.Model):
+    company = models.ForeignKey(Organization, on_delete=models.CASCADE)
     loan_id =models.CharField(max_length=50, null=True, unique=True, blank=True)
     loan_product = models.ForeignKey(LoanProduct, on_delete=models.SET_NULL, null=True)
     member = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True, related_name='loans_as_member')
     applied_amount = models.IntegerField()
     guarantor = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True, related_name='loans_as_guarantor', blank=True)
     application_date = models.DateField()
-    loan_officer = models.ForeignKey(User,on_delete=models.SET_NULL, null=True)
+    loan_officer = models.ForeignKey(CompanyStaff,on_delete=models.SET_NULL, null=True)
     loan_purpose = models.TextField()
     status = models.CharField(max_length=50, choices=LOAN_STATUS, default='pending')
     attachments = models.FileField(upload_to='loan_attachments/', null=True, blank=True)
@@ -187,6 +189,7 @@ class Note(models.Model):
 
 # Repayment models starts here   
 class Repayment(models.Model):
+    company = models.ForeignKey(Organization, on_delete=models.CASCADE)
     transaction_id = models.CharField(max_length=20)
     loan_id = models.ForeignKey(Loan, on_delete=models.SET_NULL, null=True)
     member = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True)

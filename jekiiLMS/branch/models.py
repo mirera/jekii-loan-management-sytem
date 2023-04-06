@@ -27,6 +27,7 @@ class Branch(models.Model):
         return self.name 
 
 class ExpenseCategory(models.Model):
+    company = models.ForeignKey(Organization, on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
     description = models.TextField(null=True, blank=True)
 
@@ -36,6 +37,7 @@ class ExpenseCategory(models.Model):
 
 
 class Expense(models.Model):
+    company = models.ForeignKey(Organization, on_delete=models.CASCADE)
     expense_date = models.DateField()
     category = models.ForeignKey(ExpenseCategory, on_delete=models.SET_NULL, null=True)
     amount= models.IntegerField()

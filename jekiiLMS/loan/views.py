@@ -7,18 +7,22 @@ from django.contrib.auth.models import User
 from .models import LoanProduct, Loan, Note, Repayment, Guarantor, Collateral
 from .forms import LoanProductForm, LoanForm, RepaymentForm, GuarantorForm, CollateralForm
 from member.models import Member
-
-
-
-
+from company.models import Organization
+from user.models import CompanyStaff
 
 
 #create Loan Product view starts
 def createLoanProduct(request):
     form = LoanProductForm()
-    #processing the data
+
+    company = request.user.organization
+    if request.user.is_authenticated and request.user.is_active:
+        user = request.user
+        company = Organization.objects.get(admin=user)
+
     if request.method == 'POST':
         LoanProduct.objects.create(
+            company = company,
             loan_product_name = request.POST.get('loan_product_name'),
             minimum_amount= request.POST.get('minimum_amount'),
             maximum_amount= request.POST.get('maximum_amount'),
@@ -45,7 +49,8 @@ def createLoanProduct(request):
 
 # list Loan Products view starts 
 def listLoanProducts(request):
-    loanproducts = LoanProduct.objects.all()
+    company = request.user.organization
+    loanproducts = LoanProduct.objects.filter(company=company)
     form = LoanProductForm()
 
     context = {'loanproducts': loanproducts, 'form':form}
@@ -55,7 +60,9 @@ def listLoanProducts(request):
 
 # detailview Loan Products view starts 
 def viewLoanProduct(request, pk):
-    loanproduct = LoanProduct.objects.get(id=pk)
+    company = request.user.organization
+    #loanproducts = LoanProduct.objects.filter(company=company)
+    loanproduct = LoanProduct.objects.get(id=pk, company=company)
 
     context = {'loanproduct': loanproduct}
     return render(request, 'loan/loan-product-view.html', context)
@@ -64,16 +71,12 @@ def viewLoanProduct(request, pk):
 
 # delete Loan Products view starts 
 def deleteLoanProduct(request,pk):
-    loanproduct = LoanProduct.objects.get(id=pk)
-#include a functionality to limit any user from deleteng this objec unless they have admin previleges
+    company = request.user.organization
+    loanproduct = LoanProduct.objects.get(id=pk, company=company)
     if request.method == 'POST':
         loanproduct.delete()
-        return redirect('loan-products')
-
         messages.success(request, 'Branch deleted successfully.')
-
-
-     #context is {'obj':branch}, in delete.html we are accessing room/message as 'obj'
+        return redirect('loan-products')
     context = {'obj':loanproduct}
     return render(request,'loan/delete-loan-product.html', context)
 
@@ -81,7 +84,8 @@ def deleteLoanProduct(request,pk):
 
 #edit Loan Products view starts
 def editLoanProduct(request,pk):
-    loanproduct = LoanProduct.objects.get(id=pk)
+    company = request.user.organization
+    loanproduct = LoanProduct.objects.get(id=pk, company=company)
     
     if request.method == 'POST':
         # update the branch with the submitted form data
@@ -128,13 +132,15 @@ def editLoanProduct(request,pk):
 #edit Loan Products view ends
 
 
-
- 
 #views for loan 
 
 #create Loan view starts
 def createLoan(request):
     form = LoanForm()
+    company = request.user.organization
+    if request.user.is_authenticated and request.user.is_active:
+        user = request.user
+        company = Organization.objects.get(admin=user)
     #processing the data
     if request.method == 'POST':
         # Get the selected loanproduct id from the form
@@ -153,7 +159,7 @@ def createLoan(request):
         loan_officer_id = request.POST.get('loan_officer')
         
         # Get the corresponding Member object
-        loan_officer = User.objects.get(pk=loan_officer_id)
+        loan_officer = CompanyStaff.objects.get(pk=loan_officer_id)
 
         if member.has_active_loan():
             # redirect to an error page or show an error message
@@ -161,6 +167,7 @@ def createLoan(request):
             return render(request, 'loan/error.html', {'message': 'You cannot apply for a new loan while you have an active loan.'})
 
         Loan.objects.create(
+            company = company,
              loan_product= loanproduct,
              member= member,
              applied_amount = request.POST.get('applied_amount'),
@@ -174,12 +181,13 @@ def createLoan(request):
         return redirect('loans')
  
     context= {'form':form}
-    return render(request,'loan/loan-create.html', context)
+    return render(request,'loan/loans-list.html', context)
 #create loan view ends
 
 #edit Loan  view starts
 def editLoan(request,pk):
-    loan = Loan.objects.get(id=pk)
+    company = request.user.organization
+    loan = Loan.objects.filter(id=pk, company=company)
     
     if request.method == 'POST':
         # Get the selected loanproduct id from the form
@@ -241,7 +249,8 @@ def editLoan(request,pk):
 #approve loan logic starts here
 def approveLoan(request,pk):
     if request.method == 'POST':
-        loan = Loan.objects.get(id=pk)
+        company = request.user.organization
+        loan = Loan.objects.filter(id=pk, company=company)
         # Get the URL pattern for the 'view-loan' view
         url = reverse('view-loan', args=[pk])
         # Append the anchor to the end of the URL
@@ -258,7 +267,8 @@ def approveLoan(request,pk):
 #approve loan logic starts here
 def rejectLoan(request,pk):
     if request.method == 'POST':
-        loan = Loan.objects.get(id=pk)
+        company = request.user.organization
+        loan = Loan.objects.filter(id=pk, company=company)
         url = reverse('view-loan', args=[pk])
         url_with_anchor = f'{url}'
         if loan.status == 'pending':
@@ -271,7 +281,8 @@ def rejectLoan(request,pk):
 
 # list Loan  view starts 
 def listLoans(request):
-    loans = Loan.objects.all()
+    company = request.user.organization
+    loans = Loan.objects.filter(company=company)
     form = LoanForm()
 
     context = {'loans': loans, 'form':form}
@@ -282,7 +293,9 @@ def listLoans(request):
 
 # detailview Loan  view starts 
 def viewLoan(request, pk):
-    loan = Loan.objects.get(id=pk)
+    company = request.user.organization
+    loan = Loan.objects.filter(id=pk, company=company)
+    
     loan_notes = loan.note_set.all().order_by('-created')
     guarantors = Guarantor.objects.filter(loan=loan) #here loan=loan mean loan_obj=loan loan_obj in guarantor model and form
     collaterals = Collateral.objects.filter(loan=loan)
@@ -330,7 +343,8 @@ def viewLoan(request, pk):
 
 # delete Loan  view starts 
 def deleteLoan(request,pk):
-    loan = Loan.objects.get(id=pk)
+    company = request.user.organization
+    loan = Loan.objects.filter(id=pk, company=company)
 #include a functionality to limit any user from deleteng this objec unless they have admin previleges
     if request.method == 'POST':
         loan.delete()
@@ -358,25 +372,32 @@ def createRepayment(request):
         # Get the selected loanproduct id from the form
         loan_id = request.POST.get('loan_id')
         
-        # Get the corresponding LoanProduct object
-        loan = Loan.objects.get(pk=loan_id)
-        Repayment.objects.create(
-            transaction_id= request.POST.get('transaction_id'),
-            loan_id = loan,
-            member = member,
-            amount= request.POST.get('amount'),
-            date_paid = request.POST.get('date_paid'),
-        )
-        #redirecting user to Repayments page(url name) after submitting form
-        return redirect('repayments')
- 
+        # Get the corresponding loan object
+        company = request.user.organization
+        loan = Loan.objects.filter(pk=loan_id, company=company)
+
+        if loan.status == 'approved' or loan.status == 'overdue':
+            Repayment.objects.create(
+                transaction_id= request.POST.get('transaction_id'),
+                loan_id = loan,
+                member = member,
+                amount= request.POST.get('amount'),
+                date_paid = request.POST.get('date_paid'),
+            )
+            #redirecting user to Repayments page(url name) after submitting form
+            messages.success(request,'The repayment was added succussesfully!')
+            return redirect('repayments')
+        else:
+            messages.error(request, 'You cannot add a repayment to a cleared or pending loan')
+            return redirect('repayments')
     context= {'form':form}
     return render(request,'loan/repayment-create.html', context)
 #create loan view ends
 
 # list Repayments  view starts 
 def listRepayments(request):
-    repayments = Repayment.objects.all()
+    company = request.user.organization
+    repayments = Repayment.objects.filter(company=company)
     form = RepaymentForm()
 
     context = {'repayments': repayments, 'form':form}
@@ -386,7 +407,8 @@ def listRepayments(request):
 
 # delete Repayment  view starts 
 def deleteRepayment(request,pk):
-    repayment = Repayment.objects.get(id=pk)
+    company = request.user.organization
+    repayment = Repayment.objects.filter(id=pk, company=company)
 #include a functionality to limit any user from deleteng this objec unless they have admin previleges
     if request.method == 'POST':
         repayment.delete()
@@ -401,7 +423,8 @@ def deleteRepayment(request,pk):
 
 #edit repayment  view starts
 def editRepayment(request,pk):
-    repayment = Repayment.objects.get(id=pk)
+    company = request.user.organization
+    repayment = Repayment.objects.filter(id=pk, company=company)
     
     if request.method == 'POST':
 

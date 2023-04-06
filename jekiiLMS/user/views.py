@@ -94,7 +94,8 @@ def user_logout(request):
 
 #-- list staffs view starts --
 def listStaff(request):
-    staffs = CompanyStaff.objects.all().order_by('date_added')
+    company = request.user.organization
+    staffs = CompanyStaff.objects.filter(company=company).order_by('date_added')
     form = CompanyStaffForm()
 
     context = {'staffs': staffs, 'form':form}
@@ -104,6 +105,11 @@ def listStaff(request):
 #-- adding a staff then as a user --
 def addStaff(request):
     form = CompanyStaffForm()
+    company = request.user.organization
+    if request.user.is_authenticated and request.user.is_active:
+        user = request.user
+        company = Organization.objects.get(admin=user)
+    #processing the data
     if request.method == 'POST':
         branch_id = request.POST.get('branch')
         branch = Branch.objects.get(pk=branch_id)
@@ -114,6 +120,7 @@ def addStaff(request):
         password = make_password(request.POST.get('password'))  # Hash the password
 
         CompanyStaff.objects.create(
+            company = company,
             username = request.POST.get('username'),
             password = password, 
             first_name = request.POST.get('first_name'),
