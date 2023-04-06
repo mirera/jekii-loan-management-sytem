@@ -41,7 +41,9 @@ def createBranch(request):
 
 #edit branch view starts
 def editBranch(request,pk):
-    branch = Branch.objects.get(id=pk)
+    #branch = Branch.objects.get(id=pk)
+    company = request.user.organization
+    branch = Branch.objects.get(id=pk, company=company)
     
     if request.method == 'POST':
         # update the branch with the submitted form data
@@ -112,9 +114,15 @@ def viewBranch(request, pk):
 #create expense category view starts
 def createExpenseCategory(request):
     form = ExpenseCategoryForm()
+    company = request.user.organization
+
+    if request.user.is_authenticated and request.user.is_active:
+        user = request.user
+        company = Organization.objects.get(admin=user)
     #processing the data
     if request.method == 'POST':
         ExpenseCategory.objects.create(
+            company = company,
             name = request.POST.get('name'),
             description = request.POST.get('description'),
         )
@@ -126,7 +134,13 @@ def createExpenseCategory(request):
 
 #edit expense category view starts
 def editCategory(request,pk):
-    category = ExpenseCategory.objects.get(id=pk)
+    company = request.user.organization
+
+    if request.user.is_authenticated and request.user.is_active:
+        user = request.user
+        company = Organization.objects.get(admin=user)
+
+    category = ExpenseCategory.objects.get(id=pk, company=company)
     
     if request.method == 'POST':
         # update the branch with the submitted form data
@@ -148,9 +162,15 @@ def editCategory(request,pk):
 
 # list expense Categories view starts 
 def list_categories(request):
-    categories = ExpenseCategory.objects.all()
-    form = ExpenseCategoryForm()
+    company = request.user.organization
 
+    if request.user.is_authenticated and request.user.is_active:
+        user = request.user
+        company = Organization.objects.get(admin=user)
+
+    categories = ExpenseCategory.objects.filter(company=company)
+    form = ExpenseCategoryForm()
+    
     context = {'categories': categories, 'form':form}
     return render(request, 'branch/categories_list.html', context)
 
@@ -158,18 +178,21 @@ def list_categories(request):
 
 # delete expense category view starts 
 def deleteExpenseCategory(request,pk):
-    category = ExpenseCategory.objects.get(id=pk)
-#include a functionality to limit any user from deleteng this objec unless they have admin previleges
+    company = request.user.organization
+
+    if request.user.is_authenticated and request.user.is_active:
+        user = request.user
+        company = Organization.objects.get(admin=user)
+
+    category = ExpenseCategory.objects.get(id=pk, company=company)
+
     if request.method == 'POST':
         category.delete()
+        messages.success(request, 'Branch deleted successfully.')
         return redirect('expense-categories')
 
-        messages.success(request, 'Branch deleted successfully.')
-
-
-     #context is {'obj':branch}, in delete.html we are accessing room/message as 'obj'
     context = {'obj':category}
-    return render(request,'branch/delete-category.html', context)
+    return render(request,'branch/categories_list.html', context)
 
 # delete expense category view ends 
 
@@ -178,34 +201,27 @@ def deleteExpenseCategory(request,pk):
 #create expense category view starts
 def createExpense(request):
     form = ExpenseForm()
-    #processing the data
+    company = request.user.organization
+
+    if request.user.is_authenticated and request.user.is_active:
+        user = request.user
+        company = Organization.objects.get(admin=user)
+
     if request.method == 'POST':
         form = ExpenseForm(request.POST)
         # Get the selected category id from the form
         category_id = request.POST.get('category')
-        
-        # Get the corresponding ExpenseCategory object
         category = ExpenseCategory.objects.get(pk=category_id)
 
         # Get the selected branch id from the form
         branch_id = request.POST.get('branch')
-        
-        # Get the corresponding Branch object
         branch = Branch.objects.get(pk=branch_id)
 
         # Get the selected user id from the form
-        #creator_id = request.POST.get('created_by')
-        
-        # Get the corresponding user object
-        #created_by = User.objects.get(pk=creator_id)
-        if form.is_valid():
-            expense = form.save(commit=False)
-            expense.created_by = request.user
-            expense.attachement = request.FILES.get('attachement')
-            expense.save()
-            return redirect('expenses')
-        '''
+        created_by = request.user
+
         Expense.objects.create(
+            company = company,
             expense_date = request.POST.get('expense_date'),
             category = category,
             amount = request.POST.get('amount'),
@@ -214,17 +230,23 @@ def createExpense(request):
             note = request.POST.get('note'),
             attachement = request.FILES.get('attachement'),
         )
-        '''
-        #redirecting user to branches page(url name) after submitting form
-        #return redirect('expenses')
+        messages.success(request, 'Expense added successfully!')
+        return redirect('expenses')
     context= {'form':form}
-    return render(request,'branch/create-expense.html', context)
+    return render(request,'branch/expenses_list.html', context)
 #create expense category view ends  
 
 
 # list expense Categories view starts 
 def list_expenses(request):
     expenses = Expense.objects.all()
+    company = request.user.organization
+
+    if request.user.is_authenticated and request.user.is_active:
+        user = request.user
+        company = Organization.objects.get(admin=user)
+
+    expenses = Expense.objects.filter(company=company)
     form = ExpenseForm()
 
     context = {'expenses': expenses, 'form':form}
@@ -235,7 +257,13 @@ def list_expenses(request):
 
 #edit expense category view starts
 def editExpense(request,pk):
-    expense = Expense.objects.get(id=pk)
+    company = request.user.organization
+
+    if request.user.is_authenticated and request.user.is_active:
+        user = request.user
+        company = Organization.objects.get(admin=user) 
+
+    expense = Expense.objects.get(id=pk, company=company)
     
     if request.method == 'POST':
         # Get the selected category id from the form
@@ -271,24 +299,27 @@ def editExpense(request,pk):
             'attachement': expense.attachement,
         }
         form = ExpenseForm(initial=form_data)
-        return render(request,'branch/expense-edit.html',{'form':form})
+        return render(request,'branch/expenses_list.html',{'form':form})
 
 #edit expense category view ends  
 
 
 # delete expense  view starts 
 def deleteExpense(request,pk):
-    expense = Expense.objects.get(id=pk)
-#include a functionality to limit any user from deleteng this objec unless they have admin previleges
+    company = request.user.organization
+
+    if request.user.is_authenticated and request.user.is_active:
+        user = request.user
+        company = Organization.objects.get(admin=user)
+
+    expense = Expense.objects.get(id=pk, company=company)
+
     if request.method == 'POST':
         expense.delete()
+        messages.success(request, 'Branch deleted successfully.')
         return redirect('expenses')
 
-        messages.success(request, 'Branch deleted successfully.')
-
-
-     #context is {'obj':branch}, in delete.html we are accessing room/message as 'obj'
     context = {'obj':expense}
-    return render(request,'branch/delete-expense.html', context)
+    return render(request,'branch/expenses_list.html', context)
 
 # delete expense  view ends 
