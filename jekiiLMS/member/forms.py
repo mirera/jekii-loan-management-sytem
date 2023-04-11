@@ -6,8 +6,9 @@ from company.models import Organization
 class MemberForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user')  # Get the user from kwargs
-        company = Organization.objects.get(admin=user)
+        #user = kwargs.pop('user')  # Get the user from kwargs
+        company = kwargs.pop('company')
+        #company = Organization.objects.get(admin=user)
         super(MemberForm, self).__init__(*args, **kwargs)
         # Filter the queryset of 'branch' field to include only branches belonging to the user's organization
         self.fields['branch'].queryset = Branch.objects.filter(company=company)

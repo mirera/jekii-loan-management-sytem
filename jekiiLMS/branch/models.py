@@ -14,14 +14,14 @@ ACTIVE_CHOICES = (
 class Branch(models.Model):
     company = models.ForeignKey(Organization, on_delete=models.CASCADE)
     name = models.CharField(max_length=500)
-    phone = models.CharField(max_length=10)
-    email= models.EmailField()
+    phone = models.CharField(max_length=10, blank=True, null=True)
+    email= models.EmailField(blank=True, null=True)
     open_date = models.DateTimeField(auto_now_add=False)
     capital = models.DecimalField(decimal_places=2, max_digits=12, validators=[MinValueValidator(Decimal('0.01'))])
     office = models.CharField(max_length=500)
     status = models.CharField(max_length=10, choices=ACTIVE_CHOICES, default='Inactive')
     notes = models.TextField(null=True, blank=True)
- 
+   
 
     def __str__(self):
         return self.name 
