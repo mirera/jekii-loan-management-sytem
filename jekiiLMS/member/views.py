@@ -94,6 +94,15 @@ def deleteMember(request,pk):
 #edit member view starts
 def editMember(request,pk):
     member = Member.objects.get(id=pk)
+
+    if request.user.is_authenticated and request.user.is_active:
+        try:
+            companystaff = CompanyStaff.objects.get(username=request.user.username)
+            company = companystaff.company
+        except CompanyStaff.DoesNotExist:
+            company = None
+    else:
+        company = None
     
     if request.method == 'POST':
 
@@ -137,7 +146,8 @@ def editMember(request,pk):
             'credit_score': member.credit_score,
             'passport_photo': member.passport_photo,
         }
-        form = MemberForm(initial=form_data, user=request.user )
+
+        form = MemberForm(initial=form_data, company=company )
         return render(request,'member/edit-member.html',{'form':form})
 
 #edit member view ends    

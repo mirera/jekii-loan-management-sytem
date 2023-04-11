@@ -4,6 +4,7 @@ from django import forms
 from datetime import datetime
 from .models import LoanProduct, Loan, Repayment, Guarantor, Collateral
 from member.models import Member
+from user.forms import CompanyStaff
 
 
 class LoanProductForm(forms.ModelForm):
@@ -32,6 +33,18 @@ class LoanProductForm(forms.ModelForm):
 
  
 class LoanForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        company = kwargs.pop('company', None)  # Get the company from kwargs, set default to None
+        super(LoanForm, self).__init__(*args, **kwargs)
+        self.fields['loan_product'].queryset = LoanProduct.objects.filter(company=company)
+        self.fields['member'].queryset = Member.objects.filter(company=company)
+        self.fields['loan_officer'].queryset = CompanyStaff.objects.filter(company=company)
+
+        # Disable the loan_id field in the edit form
+        var = self.fields['loan_id']
+        var.disabled = True
+
     class Meta:
         model = Loan
         fields = '__all__'
@@ -48,17 +61,14 @@ class LoanForm(forms.ModelForm):
             'attachments': forms.FileInput(attrs={'class': 'form-control'})
         }
 
-    #disabling the loan id field in the edit form
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        var = self.fields['loan_id']
-        var.disabled = True
-        
-    
-
-
 
 class RepaymentForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        company = kwargs.pop('company', None)  # Get the company from kwargs, set default to None
+        super(RepaymentForm, self).__init__(*args, **kwargs)
+        self.fields['loan_id'].queryset = Loan.objects.filter(company=company)
+        self.fields['member'].queryset = Member.objects.filter(company=company)
+
     class Meta:
         model = Repayment
         fields = '__all__'
@@ -75,13 +85,18 @@ class RepaymentForm(forms.ModelForm):
 
 
 class GuarantorForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        company = kwargs.pop('company', None)  # Get the company from kwargs, set default to None
+        super(GuarantorForm, self).__init__(*args, **kwargs)
+        self.fields['name'].queryset = Member.objects.filter(company=company)
+
 
     class Meta:
         model = Guarantor
         fields = '__all__'
         exclude = ['created']
         widgets = {
-            'loan': forms.Select(attrs={'class': 'form-select js-select2'}),
+            #'loan': forms.Select(attrs={'class': 'form-select js-select2'}),
             'name': forms.Select(attrs={'class': 'form-select js-select2'}),
             'amount': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '1000'})      
         }

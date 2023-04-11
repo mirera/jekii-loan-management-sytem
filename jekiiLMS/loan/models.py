@@ -76,7 +76,7 @@ class LoanProduct(models.Model):
     penalty_type = models.CharField(max_length=300, choices=PENALTY_FEE_TYPE_CHOICES, default='fixed_value')
     penalty_value = models.FloatField()
     penalty_frequency = models.CharField(max_length=300, choices=PENALTY_FREQUENCY_TYPE_CHOICES, default='fixed_value')
-    status = models.CharField(max_length=10, choices=ACTIVE_CHOICES, default='inactive')
+    status = models.CharField(max_length=10, choices=ACTIVE_CHOICES, default='active')
     loan_product_description = models.TextField(null=True, blank=True)
 
     def __str__(self):
@@ -104,7 +104,7 @@ class Loan(models.Model):
     loan_officer = models.ForeignKey(CompanyStaff,on_delete=models.SET_NULL, null=True)
     loan_purpose = models.TextField()
     status = models.CharField(max_length=50, choices=LOAN_STATUS, default='pending')
-    attachments = models.FileField(upload_to='loan_attachments/', null=True, blank=True)
+    attachments = models.FileField(upload_to='loan_attachments/', null=True, blank=True)  
    
 
 
@@ -173,7 +173,8 @@ class Loan(models.Model):
 
 # Note models starts here   
 class Note(models.Model):
-    loan =models.ForeignKey(Loan, on_delete=models.CASCADE)
+    company = models.ForeignKey(Organization, on_delete=models.CASCADE, null=True)
+    loan =models.ForeignKey(Loan, on_delete=models.CASCADE, null=True)
     body= models.TextField()
     author= models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     created = models.DateTimeField(auto_now_add= True)
@@ -229,6 +230,7 @@ class Repayment(models.Model):
 
 #Guarantor Model starts
 class Guarantor(models.Model):
+    company =models.ForeignKey(Organization, on_delete=models.CASCADE, null=True)
     loan =models.ForeignKey(Loan, on_delete=models.CASCADE, related_name = 'loan_as_no')
     name= models.ForeignKey(Member, on_delete=models.SET_NULL, null=True)
     amount= models.IntegerField()
@@ -251,7 +253,8 @@ TYPE = (
     ('others','OTHERS'),
 )
 class Collateral(models.Model):
-    loan = models.ForeignKey(Loan, on_delete= models.CASCADE)
+    company = models.ForeignKey(Organization, on_delete=models.CASCADE, null=True)
+    loan = models.ForeignKey(Loan, on_delete= models.CASCADE, null=True)
     name =models.CharField(max_length=20)
     type= models.CharField(max_length=50, choices=TYPE, default='others')
     serial_number= models.CharField(max_length=20)
