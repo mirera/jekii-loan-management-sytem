@@ -4,6 +4,7 @@ from django.contrib.auth.hashers import make_password
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
+from datetime import datetime
 from django.contrib.auth.models import User
 from .forms import CustomUserCreationForm, CompanyStaffForm
 from django.contrib import messages
@@ -67,12 +68,35 @@ def user_signup(request):
             user.save()
             login(request, user)
             messages.success(request, 'User created successfully!')
-
+ 
             #create a company object 
             organization = Organization.objects.create(
                name = company_name,
                email = email,
                admin = user
+            )
+            
+            #create default branch object 
+            today = datetime.today().strftime('%Y-%m-%d')
+            default_branch = Branch.objects.create(
+                company = organization,
+                name = 'Main Branch',
+                open_date = today,
+                capital = '2000000',
+                office = '123 HeadQuater Street'
+            )
+
+            #create a staff object of the admin
+            password = make_password(request.POST.get('password1'))
+            staff = CompanyStaff.objects.create(
+                company = organization,
+                username = request.POST.get('username'),
+                password = password,
+                email = email,
+                first_name = request.POST.get('username'),
+                last_name = request.POST.get('username'),
+                branch = default_branch,
+                user_type = 'admin',
             )
             #redirect to update organization info
             return redirect('update-organization', pk = organization.id )

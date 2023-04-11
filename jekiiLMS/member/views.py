@@ -3,19 +3,25 @@ from django.contrib import messages
 from .models import Member, Branch
 from .forms import MemberForm
 from company.forms import Organization
+from user.models import CompanyStaff
 
 
 #create member view starts
 def createMember(request):
-    form = MemberForm(request.POST, user=request.user)
-
     #filter the Branch queryset to include only branches that belong to the logged in company 
-    company = request.user.organization
     if request.user.is_authenticated and request.user.is_active:
-        user = request.user
-        company = Organization.objects.get(admin=user)
-        branch_id = request.POST.get('branch')
-        branch = Branch.objects.get(id=branch_id)
+        try:
+            companystaff = CompanyStaff.objects.get(username=request.user.username)
+            company = companystaff.company
+        except CompanyStaff.DoesNotExist:
+            company = None
+    else:
+        company = None
+    
+    form = MemberForm(request.POST, company=company) #instiated the two kwargs to be able to access them on the forms.py
+
+    branch_id = request.POST.get('branch')
+    branch = Branch.objects.get(id=branch_id)
 
     if request.method == 'POST':
         Member.objects.create(
@@ -32,10 +38,7 @@ def createMember(request):
             address = request.POST.get('address'),
             passport_photo=request.FILES.get('passport_photo')
         )
-        #redirecting user to branches page(url name) after submitting form
         return redirect('members')
-
-    
     context= {'form':form}
     return render(request,'member/create-member.html', context)
 #create member view ends
@@ -43,12 +46,19 @@ def createMember(request):
 # list member view starts 
 def listMembers(request):
     #filter the Branch queryset to include only branches that belong to the logged in company 
-    company = request.user.organization
+    if request.user.is_authenticated and request.user.is_active:
+        try:
+            companystaff = CompanyStaff.objects.get(username=request.user.username)
+            company = companystaff.company
+        except CompanyStaff.DoesNotExist:
+            company = None
+    else:
+        company = None
+    
+    form = MemberForm(request.POST, company=company) #instiated the two kwargs to be able to access them on the forms.py
+    #company = request.user.organization
     members = Member.objects.filter(company=company).order_by('-date_joined')
 
-    form = MemberForm(request.POST, user=request.user)
-
-    #later on add a loan context so as to utilize them on the member table.
     context = {'members': members, 'form':form}
     return render(request, 'member/members-list.html', context)
 
