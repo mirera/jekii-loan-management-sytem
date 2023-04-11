@@ -4,23 +4,20 @@ from .models import Member, Branch
 from .forms import MemberForm
 from company.forms import Organization
 
+
 #create member view starts
 def createMember(request):
-    form = MemberForm()
+    form = MemberForm(request.POST, user=request.user)
+
     #filter the Branch queryset to include only branches that belong to the logged in company 
     company = request.user.organization
     if request.user.is_authenticated and request.user.is_active:
         user = request.user
         company = Organization.objects.get(admin=user)
+        branch_id = request.POST.get('branch')
+        branch = Branch.objects.get(id=branch_id)
 
     if request.method == 'POST':
-        # Get the selected branch id from the form
-        branch_id = request.POST.get('branch')
-        
-        # Get the corresponding Branch object
-        branch = Branch.objects.get(pk=branch_id)
-        
-        # Create the new Member instance with the retrieved Branch object
         Member.objects.create(
             company = company,
             first_name = request.POST.get('first_name'),
@@ -49,7 +46,7 @@ def listMembers(request):
     company = request.user.organization
     members = Member.objects.filter(company=company).order_by('-date_joined')
 
-    form = MemberForm()
+    form = MemberForm(request.POST, user=request.user)
 
     #later on add a loan context so as to utilize them on the member table.
     context = {'members': members, 'form':form}
@@ -130,7 +127,7 @@ def editMember(request,pk):
             'credit_score': member.credit_score,
             'passport_photo': member.passport_photo,
         }
-        form = MemberForm(initial=form_data)
+        form = MemberForm(initial=form_data, user=request.user )
         return render(request,'member/edit-member.html',{'form':form})
 
 #edit member view ends    
