@@ -188,4 +188,42 @@ def addStaff(request):
     return render(request,'user/users-list.html', context)
 #-- end --
 
+# -- update userprofile
+def update_user_profile(request):
+        
+    if request.user.is_authenticated and request.user.is_active:
+        try:
+            companystaff = CompanyStaff.objects.get(username=request.user.username)
+            company = companystaff.company
+        except CompanyStaff.DoesNotExist:
+            company = None
+    else:
+        company = None
+
+    user = CompanyStaff.objects.get(username=request.user.username)
+    
+    if request.method == 'POST':
+
+        user.first_name = request.POST.get('first_name')
+        user.last_name = request.POST.get('last_name')
+        user.email = request.POST.get('email')
+        user.id_no = request.POST.get('id_no')
+        user.phone_no = request.POST.get('phone_no')
+        user.save()
+
+        return redirect('profile')
+    else:
+
+        form_data = {
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'id_no': user.id_no,
+            'phone_no': user.phone_no,
+            'email': user.email,
+        }
+
+        form = CompanyStaffForm(initial=form_data)
+        return render(request,'user/user-profile.html',{'form':form, 'user':user})
+# -- ends
+
  
