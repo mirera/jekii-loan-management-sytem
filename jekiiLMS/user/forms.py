@@ -3,6 +3,8 @@ from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError  
 from .models import CompanyStaff
+from branch.models import Branch
+from user.models import Role
 
 
 class CustomUserCreationForm(forms.Form): #alternatively can inherit from ModelForm >> this way we avoid code redudancy.
@@ -44,6 +46,13 @@ class CustomUserCreationForm(forms.Form): #alternatively can inherit from ModelF
         return user
 
 class CompanyStaffForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        company = kwargs.pop('company', None)  # Get the company from kwargs, set default to None
+        super(CompanyStaffForm, self).__init__(*args, **kwargs)
+        self.fields['branch'].queryset = Branch.objects.filter(company=company)
+        self.fields['staff_role'].queryset = Role.objects.filter(company=company)
+
     class Meta:
         model = CompanyStaff
         fields = '__all__'
@@ -62,7 +71,6 @@ class CompanyStaffForm(forms.ModelForm):
                 'user_type': forms.Select(attrs={'class': 'form-select js-select2'}),
                 'staff_role': forms.Select(attrs={'class': 'form-select js-select2'}),
                 'status': forms.Select(attrs={'class': 'form-select js-select2'}),
-                #'date_added': forms.DateInput(attrs={'class': 'form-control  date-picker-range', 'data-date-format':'yyyy-mm-dd'}),
                 'profile_photo': forms.FileInput(attrs={'class': 'form-control'}),
                 
             } 

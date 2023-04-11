@@ -118,9 +118,18 @@ def user_logout(request):
 
 #-- list staffs view starts --
 def listStaff(request):
-    company = request.user.organization
+    
+    if request.user.is_authenticated and request.user.is_active:
+        try:
+            companystaff = CompanyStaff.objects.get(username=request.user.username)
+            company = companystaff.company
+        except CompanyStaff.DoesNotExist:
+            company = None
+    else:
+        company = None
+        
     staffs = CompanyStaff.objects.filter(company=company).order_by('date_added')
-    form = CompanyStaffForm()
+    form = CompanyStaffForm(request.POST, company=company) 
 
     context = {'staffs': staffs, 'form':form}
     return render(request, 'user/users-list.html', context)
@@ -128,12 +137,18 @@ def listStaff(request):
 
 #-- adding a staff then as a user --
 def addStaff(request):
-    form = CompanyStaffForm()
-    company = request.user.organization
+
     if request.user.is_authenticated and request.user.is_active:
-        user = request.user
-        company = Organization.objects.get(admin=user)
-    #processing the data
+        try:
+            companystaff = CompanyStaff.objects.get(username=request.user.username)
+            company = companystaff.company
+        except CompanyStaff.DoesNotExist:
+            company = None
+    else:
+        company = None
+        
+    form = CompanyStaffForm(request.POST, company=company) 
+
     if request.method == 'POST':
         branch_id = request.POST.get('branch')
         branch = Branch.objects.get(pk=branch_id)
