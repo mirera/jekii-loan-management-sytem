@@ -93,8 +93,7 @@ def deleteMember(request,pk):
 
 #edit member view starts
 def editMember(request,pk):
-    member = Member.objects.get(id=pk)
-
+    
     if request.user.is_authenticated and request.user.is_active:
         try:
             companystaff = CompanyStaff.objects.get(username=request.user.username)
@@ -103,6 +102,9 @@ def editMember(request,pk):
             company = None
     else:
         company = None
+
+    member = Member.objects.get(id=pk, company=company)
+
     
     if request.method == 'POST':
 

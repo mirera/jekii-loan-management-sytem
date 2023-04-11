@@ -10,4 +10,5 @@ urlpatterns = [
     #adding user
     path('add-staff', views.addStaff, name='add-staff'),
     path('staffs', views.listStaff, name='staffs'),
+    path('user-profile', views.update_user_profile, name='profile'),
 ]
