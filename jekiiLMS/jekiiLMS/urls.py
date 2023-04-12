@@ -31,7 +31,7 @@ urlpatterns = [
 
     #dashboards
     path('superadmin/dashboard', views.superadmin_dashboard, name='superadmin_dashboard'),
-    path('staff/dashboard', views.staff_dashboard, name='staff_dashboard'),
+    #path('staff/dashboard', views.staff_dashboard, name='staff_dashboard'), --- moved to user urls
 ]
 #extend the url pattern to cater for media urls
 urlpatterns += static(settings.MEDIA_URL, document_root= settings.MEDIA_ROOT)
