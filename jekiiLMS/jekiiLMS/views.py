@@ -67,7 +67,7 @@ def staff_dashboard(request):
         'repayments':repayments,
         'members':members,
         'total_pending_loans':total_pending_loans,
-        'total_pending_amount':total_pending_amount,
+        'total_pending_amount':total_pending_amount, 
         'total_disbursed_amount':total_disbursed_amount,
         'expense':expense
         }

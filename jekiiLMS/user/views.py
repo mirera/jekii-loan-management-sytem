@@ -17,11 +17,20 @@ from company.models import Organization
 
 def user_login(request):
     #preventing logged in users from logging in again   
-    if request.user.is_authenticated:
+    if request.user.is_authenticated and request.user.is_active:
+        try:
+            user = CompanyStaff.objects.get(username=request.user.username)
+        except CompanyStaff.DoesNotExist:
+            pass
+
         if request.user.is_superuser or request.user.is_staff: 
             return redirect('superadmin_dashboard')
+        elif user.user_type == 'staff':
+            return redirect('dashboard')
         else:
             return redirect('home')
+
+
     #extracting login credential from login form
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -38,10 +47,18 @@ def user_login(request):
 
         if user is not None:
             login(request, user)
-            if request.user.is_superuser or request.user.is_staff: 
-                return redirect('superadmin_dashboard')
-            else:
-                return redirect('home')
+            if request.user.is_authenticated and request.user.is_active:
+                try:
+                    user = CompanyStaff.objects.get(username=request.user.username)
+                except CompanyStaff.DoesNotExist:
+                    pass
+                    
+                if request.user.is_superuser or request.user.is_staff: 
+                    return redirect('superadmin_dashboard')
+                elif user.user_type == 'staff':
+                    return redirect('dashboard')
+                else:
+                    return redirect('home')
         else:
             messages.error(request, 'The username or password is incorrect')
             
