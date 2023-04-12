@@ -31,6 +31,7 @@
                                                         </div>
                                                     </div>
                                                 </li>
+                                                {% if user.user_type == 'admin' %}
                                                 <li class="nk-block-tools-opt">
                                                     <li>
                                                         <div class="dropdown">
@@ -46,6 +47,7 @@
                                                         </div>
                                                     </li>
                                                 </li>
+                                                {% endif%}
                                             </ul>
                                         </div>
                                     </div>
@@ -246,6 +248,7 @@
                                         </div>
                                     </div><!-- .card -->
                                 </div><!-- .col -->
+                                {% if user.user_type == 'admin' %}
                                 <div class="col-xxl-5">
                                     <div class="card card-bordered h-100">
                                         <div class="card-inner">
@@ -287,6 +290,8 @@
                                         </div>
                                     </div><!-- .card -->
                                 </div><!-- .col -->
+                                {% endif %}
+                                {% if user.user_type == 'admin' %}
                                 <div class="col-xxl-4">
                                     <div class="card card-bordered card-full">
                                         <div class="card-inner d-flex flex-column h-100">
@@ -367,6 +372,7 @@
                                         </div>
                                     </div>
                                 </div><!-- .col -->
+                                {% endif %}
                                 <div class="col-md-6 col-xxl-3">
                                     <div class="card card-bordered card-full">
                                         <div class="card-inner-group">

@@ -16,6 +16,7 @@
                                     <h3 class="nk-block-title page-title">Members</h3>
                                     
                                 </div><!-- .nk-block-head-content -->
+                                {% if user.user_type == 'admin' %}
                                 <div class="nk-block-head-content">
                                     <ul class="nk-block-tools g-3">
                                         <li>
@@ -24,13 +25,13 @@
                                                 <div class="dropdown-menu dropdown-menu-end">
                                                     <ul class="link-list-opt no-bdr">
                                                         <li><a data-bs-toggle="modal"  href="#addMember"><span>Add Member</span></a></li>
-                                                        
                                                     </ul>
                                                 </div>
                                             </div>
                                         </li>
                                     </ul>
                                 </div><!-- .nk-block-head-content -->
+                                {% endif %}
                             </div><!-- .nk-block-between -->
                         </div><!-- .nk-block-head -->
                           
@@ -103,7 +104,9 @@
                                                                     <!-- <li><a href="#"><em class="icon ni ni-activity-round"></em><span>Activities</span></a></li> -->
                                                                     <li class="divider"></li>
                                                                     <!-- <li><a href="#"><em class="icon ni ni-shield-star"></em><span>Reset Pass</span></a></li> -->
+                                                                    {% if user.user_type == 'admin' %}
                                                                     <li><a data-bs-toggle="modal" data-member-id="{{ member.id }}" href="#deleteMember"><em class="icon ni ni-trash"></em><span>Delete Member</span></a></li>
+                                                                    {% endif %}
                                                                     
                                                                 </ul>
                                                             </div>

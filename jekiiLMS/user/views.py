@@ -16,7 +16,7 @@ from company.models import Organization
 #---user login in logic starts here---
 
 def user_login(request):
-    #preventing logged in users from logging in again   
+    #preventing logged in users from logging in again
     if request.user.is_authenticated and request.user.is_active:
         try:
             user = CompanyStaff.objects.get(username=request.user.username)
@@ -25,8 +25,8 @@ def user_login(request):
 
         if request.user.is_superuser or request.user.is_staff: 
             return redirect('superadmin_dashboard')
-        elif user.user_type == 'staff':
-            return redirect('dashboard')
+        #elif user.user_type == 'staff':
+            #return redirect('dashboard')
         else:
             return redirect('home')
 
@@ -55,8 +55,8 @@ def user_login(request):
                     
                 if request.user.is_superuser or request.user.is_staff: 
                     return redirect('superadmin_dashboard')
-                elif user.user_type == 'staff':
-                    return redirect('dashboard')
+               # elif user.user_type == 'staff':
+                   # return redirect('dashboard')
                 else:
                     return redirect('home')
         else:
