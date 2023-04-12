@@ -1,6 +1,5 @@
 from django.urls import path
 from . import views
-from jekiiLMS.views import staff_dashboard
 
 urlpatterns = [
     path('login', views.user_login, name='login'),
@@ -12,6 +11,4 @@ urlpatterns = [
     path('add-staff', views.addStaff, name='add-staff'),
     path('staffs', views.listStaff, name='staffs'),
     path('user-profile', views.update_user_profile, name='profile'),
-
-    path('dashboard', staff_dashboard, name='staff_dashboard'), #staff dash
 ]

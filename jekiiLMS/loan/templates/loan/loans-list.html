@@ -114,7 +114,13 @@
                                                         <div class="dropdown-menu dropdown-menu-end dropdown-menu-xs">
                                                             <ul class="link-list-plain">
                                                                 {% if loan.status == 'pending' %}
+
+                                                                {% if user.user_type == 'admin' %}
                                                                 <li><a href="{% url 'view-loan' loan.id %}">Approve</a></li>
+                                                                {% else %}
+                                                                <li><a href="{% url 'view-loan' loan.id %}">Update</a></li>
+                                                                {% endif %}
+
                                                                 <li><a href="{% url 'delete-loan' loan.id %}">Delete</a></li>
                                                                 {% else %}
                                                                 <li><a href="{% url 'view-loan' loan.id %}">View Details</a></li>
