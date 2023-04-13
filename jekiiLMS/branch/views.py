@@ -95,8 +95,7 @@ def deleteBranch(request,pk):
         messages.success(request, 'Branch deleted successfully.')
         return redirect('list')
 
-    context = {'obj': branch}
-    return render(request, 'branch/branches_list.html', context)
+    return render(request, 'branch/branches_list.html')
 
 # delete branch ends starts
 
