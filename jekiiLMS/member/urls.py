@@ -7,10 +7,8 @@ urlpatterns = [
     path('create-member', views.createMember, name='create-member'),
     path('edit-member/<str:pk>', views.editMember, name='edit-member'),
     path('view-member/<str:pk>', views.viewMember, name='view-member'),
-    path('delete-member/<str:pk>', views.deleteMember, name='delete-member'),
+    path('delete-member/<str:pk>', views.deleteMember, name='delete-member'),  
 
-   
-    #path('company/<str:pk>/member/create',views.kreateMember, name='kreate-member')
 ]
 
 

@@ -76,3 +76,13 @@ class CompanyStaffForm(forms.ModelForm):
             } 
         
        
+class RoleForm(forms.ModelForm):
+    class Meta:
+        model = Role
+        fields = ['name', 'description']
+        
+        
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control form-control-sm', 'id': 'cf-default-textarea' ,'placeholder':'Describe the category..'}),
+        }

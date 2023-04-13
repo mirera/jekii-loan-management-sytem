@@ -19,7 +19,7 @@ class Branch(models.Model):
     open_date = models.DateTimeField(auto_now_add=False)
     capital = models.DecimalField(decimal_places=2, max_digits=12, validators=[MinValueValidator(Decimal('0.01'))])
     office = models.CharField(max_length=500)
-    status = models.CharField(max_length=10, choices=ACTIVE_CHOICES, default='Inactive')
+    status = models.CharField(max_length=10, choices=ACTIVE_CHOICES, default='active')
     notes = models.TextField(null=True, blank=True)
    
 
