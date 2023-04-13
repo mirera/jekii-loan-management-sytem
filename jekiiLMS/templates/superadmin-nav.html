@@ -8,10 +8,10 @@
             <a href="#" class="nk-nav-compact nk-quick-nav-icon d-none d-xl-inline-flex" data-target="sidebarMenu"><em class="icon ni ni-menu"></em></a>
         </div>
         <div class="nk-sidebar-brand">
-            <a href="{% url 'home' %}" class="logo-link nk-sidebar-logo">
+            <a href="{% url 'superadmin_dashboard' %}" class="logo-link nk-sidebar-logo">
                 <!--<img class="" src="{% static 'assets/images/logo.png' %}" alt="logo" style="width: auto 25%; height: 200%;"> -->
-                <img class="logo-light logo-img" src="{{ user.company.logo.url }}" srcset="{{ user.company.logo.url }} 2x" alt="logo">
-                <img class="logo-dark logo-img" src="{{ user.company.logo.url }}" srcset="{{ user.company.logo.url }} 2x" alt="logo-dark"> 
+                <img class="logo-light logo-img" src="{% static 'assets/images/loginit.png' %}" srcset="{% static 'assets/images/loginit.png' %} 2x" alt="logo">
+                <img class="logo-dark logo-img" src="{% static 'assets/images/loginit.png' %}" srcset="{% static 'assets/images/loginit.png' %} 2x" alt="logo-dark"> 
             </a>
         </div>
     </div><!-- .nk-sidebar-element -->
@@ -23,7 +23,7 @@
                         <a href=""> <h6 class="overline-title text-primary-alt">Dashboard</h6> </a> 
                     </li><!-- .nk-menu-item -->
                     <li class="nk-menu-item">
-                        <a href="{% url 'home' %}" class="nk-menu-link">
+                        <a href="{% url 'superadmin_dashboard' %}" class="nk-menu-link">
                             <span class="nk-menu-icon"><em class="icon ni ni-dashboard"></em></span>
                             <span class="nk-menu-text">Dashboard</span>
                         </a>
@@ -32,45 +32,36 @@
                     <li class="nk-menu-heading">
                         <h6 class="overline-title text-primary-alt">Main</h6>
                     </li><!-- .nk-menu-heading -->
-                    {% if user.user_type == 'admin' %}
                     <li class="nk-menu-item has-sub">
-                        <a href="{% url 'list' %}" class="nk-menu-link">
+                        <a href="#" class="nk-menu-link">
                             <span class="nk-menu-icon"><em class="icon ni ni-home"></em></span>
-                            <span class="nk-menu-text">Branches</span>
+                            <span class="nk-menu-text">Packages</span>
                         </a>
                     </li><!-- .nk-menu-item -->
-                    {% endif %}
                     <li class="nk-menu-item has-sub">
-                        <a href="{% url 'members' %}" class="nk-menu-link">
+                        <a href="#" class="nk-menu-link">
                             <span class="nk-menu-icon"><em class="icon ni ni-users"></em></span>
-                            <span class="nk-menu-text">Members</span>
+                            <span class="nk-menu-text">Companies</span>
                         </a>   
                     </li><!-- .nk-menu-item -->
 
                     <li class="nk-menu-item has-sub">
                         <a href="#" class="nk-menu-link nk-menu-toggle">
                             <span class="nk-menu-icon"><em class="icon ni ni-wallet-in"></em></span>
-                            <span class="nk-menu-text">Loans</span>
+                            <span class="nk-menu-text">Invoices</span>
                         </a>
                         <ul class="nk-menu-sub">
                             <li class="nk-menu-item">
-                                <a href="{% url 'loans' %}" class="nk-menu-link"><span class="nk-menu-text">All Loans</span></a>
-                            </li>
-                            <li class="nk-menu-item">
-                                <a href="{% url 'loan-products' %}" class="nk-menu-link"><span class="nk-menu-text">Loan Products</span><span class="nk-menu-badge">{{loanproducts.count}}</span></a>
-                            </li>
-                            <li class="nk-menu-item">
-                                <a href="{% url 'loancalculator' %}" class="nk-menu-link"><span class="nk-menu-text">Loan Calculator</span></a>
+                                <a href="#" class="nk-menu-link"><span class="nk-menu-text">All Loans</span></a>
                             </li>
                         </ul><!-- .nk-menu-sub -->
                     </li><!-- .nk-menu-item -->
                     <li class="nk-menu-item has-sub">
-                        <a href="{% url 'repayments'%}" class="nk-menu-link ">
+                        <a href="#" class="nk-menu-link ">
                             <span class="nk-menu-icon"><em class="icon ni ni-wallet-out"></em></span>
-                            <span class="nk-menu-text">Repayments</span>
+                            <span class="nk-menu-text">Support Tickets</span>
                         </a>
                     </li><!-- .nk-menu-item -->
-                    {% if user.user_type == 'admin' %}
                     <li class="nk-menu-heading">
                         <h6 class="overline-title text-primary-alt">Staff Management</h6>
                     </li><!-- .nk-menu-heading -->
@@ -81,17 +72,16 @@
                         </a>
                         <ul class="nk-menu-sub">
                             <li class="nk-menu-item">
-                                <a href="{% url 'staffs' %}" class="nk-menu-link"><span class="nk-menu-text">All Users</span></a>
+                                <a href="#" class="nk-menu-link"><span class="nk-menu-text">All Users</span></a>
                             </li>
                             <li class="nk-menu-item">
-                                <a href="{% url 'roles-list' %}" class="nk-menu-link"><span class="nk-menu-text">User Roles</span></a>
+                                <a href="#" class="nk-menu-link"><span class="nk-menu-text">User Roles</span></a>
                             </li>
                             <li class="nk-menu-item">
-                                <a href="{% url 'expense-categories' %}" class="nk-menu-link"><span class="nk-menu-text">Access Control</span></a>
+                                <a href="#" class="nk-menu-link"><span class="nk-menu-text">Access Control</span></a>
                             </li>
                         </ul><!-- .nk-menu-sub -->
                     </li><!-- .nk-menu-item -->
-                    {% endif %}
                     <li class="nk-menu-heading">
                         <h6 class="overline-title text-primary-alt">Accounts</h6>
                     </li><!-- .nk-menu-heading -->
@@ -102,10 +92,10 @@
                         </a>
                         <ul class="nk-menu-sub">
                             <li class="nk-menu-item">
-                                <a href="{% url 'expenses' %}" class="nk-menu-link"><span class="nk-menu-text">All Expense</span></a>
+                                <a href="#" class="nk-menu-link"><span class="nk-menu-text">All Expense</span></a>
                             </li>
                             <li class="nk-menu-item">
-                                <a href="{% url 'expense-categories' %}" class="nk-menu-link"><span class="nk-menu-text">Expense Categories</span></a>
+                                <a href="#" class="nk-menu-link"><span class="nk-menu-text">Expense Categories</span></a>
                             </li>
                         </ul><!-- .nk-menu-sub -->
                     </li><!-- .nk-menu-item -->
@@ -120,28 +110,16 @@
                         </a>
                         <ul class="nk-menu-sub">
                             <li class="nk-menu-item">
-                                <a href="html/components/elements/alerts.html" class="nk-menu-link"><span class="nk-menu-text">Loan Report</span></a>
-                            </li>
-                            <li class="nk-menu-item">
-                                <a href="html/components/elements/accordions.html" class="nk-menu-link"><span class="nk-menu-text">Loan Due Report</span></a>
-                            </li>
-                            <li class="nk-menu-item">
-                                <a href="html/components/elements/avatar.html" class="nk-menu-link"><span class="nk-menu-text">Expense Report</span> <span class="nk-menu-badge">New</span></a>
-                            </li>
-                            <li class="nk-menu-item">
-                                <a href="html/components/elements/badges.html" class="nk-menu-link"><span class="nk-menu-text">Revenue Report</span></a>
-                            </li>
-                            <li class="nk-menu-item">
-                                <a href="html/components/elements/buttons.html" class="nk-menu-link"><span class="nk-menu-text">Members Report</span></a>
+                                <a href="html/components/elements/alerts.html" class="nk-menu-link"><span class="nk-menu-text">Some Report</span></a>
                             </li>
                         </ul><!-- .nk-menu-sub -->
                     </li><!-- .nk-menu-item -->
-                    {% if user.user_type == 'admin' %}
+
                     <li class="nk-menu-heading">
                         <h6 class="overline-title text-primary-alt">Settings</h6>
                     </li><!-- .nk-menu-heading -->
                     <li class="nk-menu-item has-sub">
-                        <a href="{% url 'update-organization' pk=organization.id %}" class="nk-menu-link">
+                        <a href="#" class="nk-menu-link">
                             <span class="nk-menu-icon"><em class="icon ni ni-setting"></em></span>
                             <span class="nk-menu-text">General Settings</span>
                         </a>
@@ -200,7 +178,6 @@
                         </a>
                         </ul><!-- .nk-menu-sub -->
                     </li><!-- .nk-menu-item -->
-                    {% endif %}
                 </ul><!-- .nk-menu -->
             </div><!-- .nk-sidebar-menu -->
         </div><!-- .nk-sidebar-content -->
@@ -390,5 +367,3 @@
         </div><!-- .container-fliud -->
     </div>
     <!-- main header @e -->
-
-    

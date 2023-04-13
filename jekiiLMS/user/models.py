@@ -91,9 +91,9 @@ class CreditOfficer(models.Model):
         return self.first_name + ' ' + self.last_name
 
 #-- role models start
-class Role(models.Model):
+class Role(models.Model): 
     company = models.ForeignKey(Organization, on_delete=models.CASCADE, null=True)
-    name = models.CharField(max_length=10)
+    name = models.CharField(max_length=50)
     description = models.TextField()
     date_added = models.DateTimeField(auto_now_add=True)
 

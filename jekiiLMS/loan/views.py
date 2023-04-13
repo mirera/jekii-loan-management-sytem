@@ -111,7 +111,7 @@ def deleteLoanProduct(request,pk):
     context = {'obj':loanproduct}
     return render(request,'loan/delete-loan-product.html', context)
 
-# delete Loan Products ends starts
+# delete Loan Products ends starts 
 
 #edit Loan Products view starts
 def editLoanProduct(request,pk):
@@ -375,7 +375,7 @@ def viewLoan(request, pk):
     guarantors = Guarantor.objects.filter(loan=loan) #here loan=loan mean loan_obj=loan loan_obj in guarantor model and form
     collaterals = Collateral.objects.filter(loan=loan)
     repayments = Repayment.objects.filter(loan_id=loan)
-    form = GuarantorForm(request.POST, company=company)
+    form = GuarantorForm(request.POST)
     form_collateral = CollateralForm()
     form_repayment = RepaymentForm()
 

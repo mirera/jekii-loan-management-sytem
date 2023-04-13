@@ -14,7 +14,7 @@ urlpatterns = [
     path('loans', views.listLoans, name='loans'),
     path('create-loan', views.createLoan, name='create-loan'),
     path('edit-loan/<str:pk>', views.editLoan, name='edit-loan'),
-    path('view-loan/<str:pk>', views.viewLoan, name='view-loan'),
+    path('view-loan/<str:pk>', views.viewLoan, name='view-loan'), 
     path('delete-loan/<str:pk>', views.deleteLoan, name='delete-loan'),
 
     path('view-loan/<str:pk>/approve', views.approveLoan, name='approve'),

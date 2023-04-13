@@ -6,7 +6,7 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
 from django.contrib.auth.models import User
-from .forms import CustomUserCreationForm, CompanyStaffForm
+from .forms import CustomUserCreationForm, CompanyStaffForm , RoleForm
 from django.contrib import messages
 from .models import CompanyStaff, Role
 from branch.models import Branch
@@ -243,4 +243,88 @@ def update_user_profile(request):
         return render(request,'user/user-profile.html',{'form':form, 'user':user})
 # -- ends
 
+# -- create role --
+def addRole(request):
+
+    if request.user.is_authenticated and request.user.is_active:
+        try:
+            companystaff = CompanyStaff.objects.get(username=request.user.username)
+            company = companystaff.company
+        except CompanyStaff.DoesNotExist:
+            company = None
+
+    if request.method == 'POST':
+        Role.objects.create(
+            company = company,
+            name = request.POST.get('name'),
+            description = request.POST.get('description'),
+        )
+        messages.success(request, 'Role successfully created!')
+        return redirect('roles-list')
+
+    context = {}    
+    return render(request,'user/users-list.html', context)
+# -- ends --
+
+# -- edit role --
+def editRole(request, pk):
+
+    if request.user.is_authenticated and request.user.is_active:
+        try:
+            companystaff = CompanyStaff.objects.get(username=request.user.username)
+            company = companystaff.company
+        except CompanyStaff.DoesNotExist:
+            company = None
+
+    role = Role.objects.get(id=pk, company=company)       
+
+    if request.method == 'POST':
+        form = RoleForm(request.POST)
+        if form.is_valid():
+            form.save()
+        messages.success(request, 'Role updated successfully!')
+        return redirect('roles-list')
+    else:
+        form = RoleForm(instance=role)
+
+    context = {'form':form}    
+    return render(request,'user/roles-list.html', context)
+# -- ends --
+
+# -- create role --
+def rolesList(request):
+
+    if request.user.is_authenticated and request.user.is_active:
+        try:
+            companystaff = CompanyStaff.objects.get(username=request.user.username)
+            company = companystaff.company
+        except CompanyStaff.DoesNotExist:
+            company = None
+
+  
+    roles = Role.objects.filter(company=company).order_by('date_added')
+    form = RoleForm(request.POST) 
+    context = {'roles': roles, 'form':form}
+    return render(request, 'user/roles-list.html', context)
+# -- ends --
+
+# -- create role --
+def deleteRole(request,pk):
+
+    if request.user.is_authenticated and request.user.is_active:
+        try:
+            companystaff = CompanyStaff.objects.get(username=request.user.username)
+            company = companystaff.company
+        except CompanyStaff.DoesNotExist:
+            company = None
+            
+    if request.method == 'POST':
+        role = Role.objects.get(id=pk, company=company)
+        role.delete()
+        messages.success(request, 'Role deleted successfully!')
+        return redirect('roles-list')
+
+    context = {'obj': role}
+    return render(request, 'user/roles-list.html', context)
+# -- ends --
  

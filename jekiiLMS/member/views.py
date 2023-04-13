@@ -15,9 +15,7 @@ def createMember(request):
             company = companystaff.company
         except CompanyStaff.DoesNotExist:
             company = None
-    else:
-        company = None
-    
+
     form = MemberForm(request.POST, company=company) #instiated the two kwargs to be able to access them on the forms.py
 
     branch_id = request.POST.get('branch')
@@ -52,8 +50,6 @@ def listMembers(request):
             company = companystaff.company
         except CompanyStaff.DoesNotExist:
             company = None
-    else:
-        company = None
     
     form = MemberForm(request.POST, company=company) #instiated the two kwargs to be able to access them on the forms.py
     #company = request.user.organization
@@ -66,10 +62,14 @@ def listMembers(request):
 
 # view member view starts 
 def viewMember(request, pk):
-    company = request.user.organization
+
     if request.user.is_authenticated and request.user.is_active:
-        user = request.user
-        company = Organization.objects.get(admin=user)
+        try:
+            companystaff = CompanyStaff.objects.get(username=request.user.username)
+            company = companystaff.company
+        except CompanyStaff.DoesNotExist:
+            company = None
+
     member = Member.objects.filter(id=pk, company=company)
 
     context = {'member': member}

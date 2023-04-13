@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from .models import Branch ,ExpenseCategory, Expense
 from .forms import BranchForm, ExpenseCategoryForm , ExpenseForm
 from company.models import Organization
+from user.forms import CompanyStaff
 
 
 
@@ -41,37 +42,25 @@ def createBranch(request):
 
 #edit branch view starts
 def editBranch(request,pk):
-    #branch = Branch.objects.get(id=pk)
-    company = request.user.organization
-    branch = Branch.objects.get(id=pk, company=company)
+    if request.user.is_authenticated and request.user.is_active:
+        try:
+            companystaff = CompanyStaff.objects.get(username=request.user.username)
+            company = companystaff.company
+        except CompanyStaff.DoesNotExist:
+            company = None
+
+    branch = Branch.objects.get(id=pk)
     
     if request.method == 'POST':
-        # update the branch with the submitted form data
-        branch.name = request.POST.get('name')
-        branch.office = request.POST.get('office')
-        branch.phone = request.POST.get('phone')
-        branch.email = request.POST.get('email')
-        branch.open_date = request.POST.get('open_date')
-        branch.capital = request.POST.get('capital')
-        branch.status = request.POST.get('status')
-        branch.notes = request.POST.get('notes')
-        branch.save()
-
-        return redirect('list')
+        form = BranchForm(request.POST, instance=branch)
+        if form.is_valid():
+            form.save()
+            return redirect('list')
     else:
         # prepopulate the form with existing data
-        form_data = {
-            'name': branch.name,
-            'office': branch.office,
-            'phone': branch.phone,
-            'email': branch.email,
-            'open_date': branch.open_date,
-            'capital': branch.capital,
-            'status': branch.status,
-            'notes': branch.notes
-        }
-        form = BranchForm(initial=form_data)
-        return render(request,'branch/branch_edit.html',{'form':form})
+        form = BranchForm(instance=branch)
+
+    return render(request, 'branch/branch_edit.html', {'form': form})
 
 #edit branch view ends
 
@@ -91,12 +80,23 @@ def list_branches(request):
 # delete branch view starts 
 
 def deleteBranch(request,pk):
-    branch = Branch.objects.get(id=pk)
-    branch.delete()
 
-    context = {'branch':branch}
-    messages.success(request, 'Branch deleted successfully.')
-    return redirect('list')
+    if request.user.is_authenticated and request.user.is_active:
+        try:
+            companystaff = CompanyStaff.objects.get(username=request.user.username)
+            company = companystaff.company
+        except CompanyStaff.DoesNotExist:
+            company = None
+
+    if request.method == 'POST':
+        branch = Branch.objects.get(id=pk, company=company)
+        branch.delete()
+
+        messages.success(request, 'Branch deleted successfully.')
+        return redirect('list')
+
+    context = {'obj': branch}
+    return render(request, 'branch/branches_list.html', context)
 
 # delete branch ends starts
 
@@ -114,7 +114,6 @@ def viewBranch(request, pk):
 #create expense category view starts
 def createExpenseCategory(request):
     form = ExpenseCategoryForm()
-    company = request.user.organization
 
     if request.user.is_authenticated and request.user.is_active:
         user = request.user
