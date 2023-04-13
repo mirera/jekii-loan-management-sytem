@@ -105,7 +105,7 @@
                                                                     <li class="divider"></li>
                                                                     <!-- <li><a href="#"><em class="icon ni ni-shield-star"></em><span>Reset Pass</span></a></li> -->
                                                                     {% if user.user_type == 'admin' %}
-                                                                    <li><a data-bs-toggle="modal" data-member-id="{{ member.id }}" href="#deleteMember"><em class="icon ni ni-trash"></em><span>Delete Member</span></a></li>
+                                                                    <li><a data-bs-toggle="modal" class="delete-button" href="#deleteMember" data-pk="{{ member.id }}"><em class="icon ni ni-trash"></em><span>Delete Member</span></a></li>
                                                                     {% endif %}
                                                                     
                                                                 </ul>
@@ -143,11 +143,10 @@
                         <p class="text-soft">This member will be removed permanently.</p>
                     </div>
                     <ul class="d-flex justify-content-center gx-4 mt-4">
-                        <form action="" method="POST">
-                        {% csrf_token %}
+                        <form id="delete-form" method="POST">
+                            {% csrf_token %}
                         <li>
-                            <button type="submit" data-bs-dismiss="modal" id="deleteWH" class="btn btn-primary">Yes, Delete.</button>
-
+                            <button type="submit" data-bs-dismiss="modal" id="deleteObj" class="btn btn-primary">Yes, Delete it</button>
                         </li>
                         </form>
                         <li>
@@ -158,7 +157,7 @@
             </div>
         </div>
     </div>
-</div><!-- .Delete Member Modal-content -->
+</div><!-- .Delete member Modal-content -->
 
 <div class="modal fade" id="addMember">
     <div class="modal-dialog modal-lg" role="document">
@@ -417,4 +416,50 @@
     </div>
 </div><!-- .Edit Member  Modal-Content -->
 
+<!--
+    rendering the modal dynamically using JavaScript/jQuery to add 
+    the branch.id to the form action URL when the user clicks on 
+    the "Delete Branch" button.
+-->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+//-- deleteRole modal script
+function showDeleteModalForm() {
+    // Implementation of showModalForm() to display the modal
+    $('#deleteMember').modal('show');
+}
+
+    $(document).ready(function() {
+    // Get all the delete buttons
+    var deleteButtons = document.getElementsByClassName('delete-button');
+
+    // Loop through each delete button
+    for (var i = 0; i < deleteButtons.length; i++) {
+        // Add click event listener
+        deleteButtons[i].addEventListener('click', function() {
+            // Get the pk from the data attribute
+            var pk = this.dataset.pk;
+
+            // Update the form's action with the correct URL
+            // Replace '0' with the actual value of pk from your Django template context
+            var form = document.getElementById('delete-form');
+            form.action = '{% url "delete-member" 0 %}'.replace('0', pk);
+
+            // Display the modal form
+            // Assuming you have code to display the modal form
+            showDeleteModalForm();
+
+            // You can add additional logic here if needed, e.g., pre-fill form fields, etc.
+
+            // Let the user manually click the submit button
+            // Assuming you have a submit button with id 'delete-submit-button'
+            document.getElementById('deleteObj').addEventListener('click', function() {
+                // Submit the form
+                form.submit();
+            });
+        });
+    }
+});
+//-- ends
+</script> 
 {% endblock content %}

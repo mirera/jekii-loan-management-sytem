@@ -205,6 +205,27 @@ def addStaff(request):
     return render(request,'user/users-list.html', context)
 #-- end --
 
+# -- delete staff --
+def deleteStaff(request,pk):
+
+    if request.user.is_authenticated and request.user.is_active:
+        try:
+            companystaff = CompanyStaff.objects.get(username=request.user.username)
+            company = companystaff.company
+        except CompanyStaff.DoesNotExist:
+            company = None
+            
+    if request.method == 'POST':
+        staff = CompanyStaff.objects.get(id=pk, company=company)
+        user = User.objects.get(username=staff.username)
+        staff.delete()
+        user.delete()
+        messages.success(request, 'Staff & User deleted successfully!')
+        return redirect('staffs')
+
+    return render(request, 'user/users-list.html')
+# -- ends --
+
 # -- update userprofile
 def update_user_profile(request):
         
@@ -291,7 +312,7 @@ def editRole(request, pk):
     return render(request,'user/roles-list.html', context)
 # -- ends --
 
-# -- create role --
+# --  roles list --
 def rolesList(request):
 
     if request.user.is_authenticated and request.user.is_active:
@@ -308,7 +329,7 @@ def rolesList(request):
     return render(request, 'user/roles-list.html', context)
 # -- ends --
 
-# -- create role --
+# -- delete role --
 def deleteRole(request,pk):
 
     if request.user.is_authenticated and request.user.is_active:

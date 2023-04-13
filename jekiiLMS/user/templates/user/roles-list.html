@@ -73,7 +73,7 @@
                     <em class="nk-modal-icon icon icon-circle icon-circle-xxl ni ni-cross bg-danger"></em>
                     <h4 class="nk-modal-title">Are You Sure ?</h4>
                     <div class="nk-modal-text mt-n2">
-                        <p class="text-soft">This '{{obj.name}}' role will be removed permanently.</p>
+                        <p class="text-soft">This role will be removed permanently.</p>
                     </div>
                     <ul class="d-flex justify-content-center gx-4 mt-4">
                         <form id="delete-form" method="POST">
@@ -90,7 +90,7 @@
             </div>
         </div>
     </div>
-</div><!-- .Delete Expense Category Modal-content -->
+</div><!-- .Delete role  Modal-content -->
 
 
 <div class="modal fade" id="addRole">
@@ -144,7 +144,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <button type="submit" class="btn btn-lg btn-primary">Save Role</button>
+                        <button type="submit" id="editObj" class="btn btn-lg btn-primary">Save Role</button>
                     </div>
                 </form>
             </div>
@@ -157,29 +157,46 @@
 <!-- Add this script at the end of the page or in a separate JavaScript file -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+
+  // editmodal script  
+    function showEditModalForm() {
+    // Implementation of showModalForm() to display the modal
+    $('#editRole').modal('show');
+}
+
     $(document).ready(function() {
-        // Get all the edit buttons
-        var editButtons = document.getElementsByClassName('edit-button');
-    
-        // Loop through each edit button
-        for (var i = 0; i < editButtons.length; i++) {
-            // Add click event listener
-            editButtons[i].addEventListener('click', function() {
-                // Get the pk from the data attribute
-                var pk = this.dataset.pk;
-    
-                // Update the form's action with the correct URL
-                // Replace '0' with the actual value of pk from your Django template context
-                var form = document.getElementById('edit-form');
-                form.action = '{% url "edit-role" 0 %}'.replace('0', pk);
-    
+    // Get all the delete buttons
+    var editButtons = document.getElementsByClassName('edit-button');
+
+    // Loop through each delete button
+    for (var i = 0; i < editButtons.length; i++) {
+        // Add click event listener
+        editButtons[i].addEventListener('click', function() {
+            // Get the pk from the data attribute
+            var pk = this.dataset.pk;
+
+            // Update the form's action with the correct URL
+            // Replace '0' with the actual value of pk from your Django template context
+            var form = document.getElementById('edit-form');
+            form.action = '{% url "edit-role" 0 %}'.replace('0', pk);
+
+            // Display the modal form
+            // Assuming you have code to display the modal form
+            showEditModalForm();
+
+            // You can add additional logic here if needed, e.g., pre-fill form fields, etc.
+
+            // Let the user manually click the submit button
+            // Assuming you have a submit button with id 'delete-submit-button'
+            document.getElementById('editObj').addEventListener('click', function() {
                 // Submit the form
                 form.submit();
             });
-        }
-    });
+        });
+    }
+});
 
-
+//-- deleteRole modal script
     function showDeleteModalForm() {
     // Implementation of showModalForm() to display the modal
     $('#deleteRole').modal('show');
@@ -216,7 +233,7 @@
         });
     }
 });
-
+//-- ends
     </script>
     
 
