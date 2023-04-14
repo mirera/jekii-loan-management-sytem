@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from jekiiLMS.decorators import role_required
 from django.contrib import messages
 from .models import Member, Branch
 from .forms import MemberForm
@@ -77,7 +78,8 @@ def viewMember(request, pk):
 
 # view member view ends
 
-# delete member view starts 
+# delete member view starts
+@role_required 
 def deleteMember(request,pk):
     #member = Member.objects.get(id=pk)
     member = get_object_or_404(Member, id=pk)

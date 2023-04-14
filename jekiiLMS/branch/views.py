@@ -5,21 +5,24 @@ from .models import Branch ,ExpenseCategory, Expense
 from .forms import BranchForm, ExpenseCategoryForm , ExpenseForm
 from company.models import Organization
 from user.forms import CompanyStaff
-
+from jekiiLMS.decorators import role_required
 
 
 
 #create branch view starts
+@role_required
 def createBranch(request):
     form = BranchForm()
     #filter the Branch queryset to include only branches that belong to the logged in company 
-    company = request.user.organization
+    if request.user.is_authenticated and request.user.is_active:
+        try:
+            companystaff = CompanyStaff.objects.get(username=request.user.username)
+            company = companystaff.company
+        except CompanyStaff.DoesNotExist:
+            company = None
+
     branches = Branch.objects.filter(company=company)
 
-    #processing the data
-    if request.user.is_authenticated and request.user.is_active:
-        user = request.user
-        company = Organization.objects.get(admin=user)
     if request.method == 'POST':
         Branch.objects.create(
             company = company,
@@ -37,10 +40,11 @@ def createBranch(request):
         'form':form,
         'branches' : branches,
         }
-    return render(request,'branch/branch-create-form.html', context)
+    return render(request,'branch/branches_list.html', context)
 #create branch view ends
 
 #edit branch view starts
+@role_required
 def editBranch(request,pk):
     if request.user.is_authenticated and request.user.is_active:
         try:
@@ -78,7 +82,7 @@ def list_branches(request):
 # list branches view ends
 
 # delete branch view starts 
-
+@role_required
 def deleteBranch(request,pk):
 
     if request.user.is_authenticated and request.user.is_active:
@@ -101,6 +105,7 @@ def deleteBranch(request,pk):
 
 
 # view branch view starts 
+@role_required
 def viewBranch(request, pk):
     branch = Branch.objects.get(id=pk)
 

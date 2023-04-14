@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.db.models import Sum
 from decimal import Decimal
 from django.contrib.auth.models import User
+from jekiiLMS.decorators import role_required
 from .models import LoanProduct, Loan, Note, Repayment, Guarantor, Collateral
 from .forms import LoanProductForm, LoanForm, RepaymentForm, GuarantorForm, CollateralForm
 from member.models import Member
@@ -12,6 +13,7 @@ from user.models import CompanyStaff
 
 
 #create Loan Product view starts
+@role_required
 def createLoanProduct(request):
     form = LoanProductForm()
 
@@ -92,6 +94,7 @@ def viewLoanProduct(request, pk):
 # detailview Loan Products view ends
 
 # delete Loan Products view starts 
+@role_required
 def deleteLoanProduct(request,pk):
     
     if request.user.is_authenticated and request.user.is_active:
@@ -114,6 +117,7 @@ def deleteLoanProduct(request,pk):
 # delete Loan Products ends starts 
 
 #edit Loan Products view starts
+@role_required
 def editLoanProduct(request,pk):
     
     if request.user.is_authenticated and request.user.is_active:
@@ -291,6 +295,7 @@ def editLoan(request,pk):
 #edit Loan view ends
 
 #approve loan logic starts here
+@role_required
 def approveLoan(request,pk):
     if request.method == 'POST':
         if request.user.is_authenticated and request.user.is_active:
@@ -316,6 +321,7 @@ def approveLoan(request,pk):
 #approve logic ends
 
 #approve loan logic starts here
+@role_required
 def rejectLoan(request,pk):
     if request.method == 'POST':
 
@@ -417,7 +423,8 @@ def viewLoan(request, pk):
 # detailview Loan  view ends
 
 
-# delete Loan  view starts 
+# delete Loan  view starts
+@role_required 
 def deleteLoan(request,pk):
 
     if request.user.is_authenticated and request.user.is_active:
@@ -668,7 +675,7 @@ def addGuarantor(request, pk):
     return render(request,'loan/loan-view.html', context)
 #dd guarontor view ends   
 
-#remove guarantor view
+
 # delete Repayment  view starts 
 def removeGuarantor(request, pk, guarantor_id):
     if request.user.is_authenticated and request.user.is_active:
@@ -689,9 +696,7 @@ def removeGuarantor(request, pk, guarantor_id):
         return redirect('view-loan', pk=loan.id)
     context = {'obj':guarantor, 'loan':loan}
     return render(request,'loan/loan-view.html', context)
-
 # delete Repayment  ends 
-
 
 #add guarontor view starts
 def addCollateral(request, pk):
