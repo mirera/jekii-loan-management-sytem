@@ -1,7 +1,7 @@
 from tkinter import CASCADE
 from django.db import models
 from django.urls import reverse
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Permission
 from branch.models import Branch
 from company.models import Organization
 
@@ -53,48 +53,13 @@ class CompanyAdmin(models.Model):
     def __str__(self):
         return self.first_name + ' ' + self.last_name
 
-#branch manager model
-class BranchManager(models.Model):
-    user = models.OneToOneField(User, on_delete=models.SET_NULL, null=True, unique=True, related_name='branch_manager')
-    email = models.EmailField(default="test@test.com")
-    is_employee = models.BooleanField(default=True)
-    first_name = models.CharField(max_length=20)
-    last_name = models.CharField(max_length=20)
-    id_no = models.CharField(max_length=10, unique=True)
-    phone_no = models.CharField(max_length=10, unique=True)
-    company = models.OneToOneField(Organization, on_delete=models.CASCADE)
-    branch = models.OneToOneField(Branch, on_delete=models.SET_NULL, null= True)
-    profile_photo = models.ImageField(default='default.png', upload_to='profile_photos/')
-    date_joined = models.DateTimeField(auto_now_add=True)
-    is_active = models.BooleanField(default=True)
-
-    def __str__(self):
-        return self.first_name + ' ' + self.last_name
-
-
-#credit officer model
-class CreditOfficer(models.Model):
-    user = models.OneToOneField(User, on_delete=models.SET_NULL, null=True, unique=True, related_name='credit_officer')
-    email = models.EmailField(default="test@test.com")
-    is_employee = models.BooleanField(default=True)
-    first_name = models.CharField(max_length=20)
-    last_name = models.CharField(max_length=20)
-    id_no = models.CharField(max_length=10, unique=True)
-    phone_no = models.CharField(max_length=10, unique=True)
-    company = models.OneToOneField(Organization, on_delete=models.CASCADE)
-    branch = models.OneToOneField(Branch, on_delete=models.SET_NULL, null= True)
-    profile_photo = models.ImageField(default='default.png', upload_to='profile_photos/')
-    date_joined = models.DateTimeField(auto_now_add=True)
-    is_active = models.BooleanField(default=True)
-
-    def __str__(self):
-        return self.first_name + ' ' + self.last_name
 
 #-- role models start
 class Role(models.Model): 
     company = models.ForeignKey(Organization, on_delete=models.CASCADE, null=True)
     name = models.CharField(max_length=50)
-    description = models.TextField()
+    permissions = models.ManyToManyField(Permission, related_name='roles', blank=True)
+    description = models.TextField(blank=True, null=True)
     date_added = models.DateTimeField(auto_now_add=True)
 
 
@@ -118,7 +83,7 @@ STATUS = (
 class CompanyStaff(models.Model):
     company = models.ForeignKey(Organization, on_delete=models.CASCADE)
     username = models.CharField(max_length=10)
-    password = models.CharField(max_length=50)
+    password = models.CharField(max_length=200)
     email = models.EmailField()
     first_name = models.CharField(max_length=20)
     last_name = models.CharField(max_length=20)

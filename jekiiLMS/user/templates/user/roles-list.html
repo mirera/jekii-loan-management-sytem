@@ -24,7 +24,7 @@
                                     <tr>
                                         <th class="tb-col-os"><span class="overline-title">Name <span class="d-sm-none">/ IP</span></span></th>
                                         <th class="tb-col-ip"><span class="overline-title">Description</span></th>
-                                        <th class="tb-col-time"><span class="overline-title">Total Expense</span></th>
+                                        <th class="tb-col-time"><span class="overline-title">Permissions</span></th>
                                         <th class="tb-col-action"><span class="overline-title">&nbsp;</span></th>
                                     </tr>
                                 </thead>
@@ -33,7 +33,11 @@
                                     <tr>
                                         <td class="tb-col-os">{{role.name}}</td>
                                         <td class="tb-col-ip"><span class="sub-text">{{role.description}}</span></td>
-                                        <td class="tb-col-time"><span class="sub-text">{{role.name}}</span></td>
+                                        <ul>
+                                        {% for permission in role.permissions.all %}
+                                        <li><td class="tb-col-time"><span class="sub-text">{{permission.name}}</span></td></li>
+                                        {% endfor %}
+                                        </ul>
                                         <td class="nk-tb-col nk-tb-col-tools">
                                             <ul class="nk-tb-actions gx-1">
                                                 <li>
@@ -107,6 +111,12 @@
                     <div class="form-group">
                         <label class="form-label" for="cf-full-name">Role Name</label>
                         {{form.name}}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Permissions</label> 
+                        <div class="  custom-control-group g-3 align-center  "> 
+                            {{form.permissions}}
+                        </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="cf-default-textarea">Description</label>

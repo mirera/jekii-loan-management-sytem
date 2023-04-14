@@ -1,10 +1,11 @@
 
 from django import forms
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Permission
 from django.core.exceptions import ValidationError  
 from .models import CompanyStaff
 from branch.models import Branch
 from user.models import Role
+from django.forms.widgets import CheckboxSelectMultiple
 
 
 class CustomUserCreationForm(forms.Form): #alternatively can inherit from ModelForm >> this way we avoid code redudancy.
@@ -75,14 +76,30 @@ class CompanyStaffForm(forms.ModelForm):
                 
             } 
         
-       
-class RoleForm(forms.ModelForm):
-    class Meta:
-        model = Role
-        fields = ['name', 'description']
-        
-        
-        widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control'}),
-            'description': forms.Textarea(attrs={'class': 'form-control form-control-sm', 'id': 'cf-default-textarea' ,'placeholder':'Describe the category..'}),
-        }
+class RoleForm(forms.Form):
+
+    name = forms.CharField(
+        label='Role Name',
+        max_length=100,
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+    )
+    permissions = forms.ModelMultipleChoiceField(
+        label='Permissions',
+        queryset=Permission.objects.filter(
+            content_type__model__in=['branch', 'expense category', 'expense',
+             'member','loanproduct', 'loan', 'repayment','collateral', 'guarantor',
+             'companyadmin', 'companystaff', 'role', 'note' ]  # Filter by models you want
+        ),
+        widget=CheckboxSelectMultiple(attrs={'class': 'custom-class d-inline'}),
+    )
+    description = forms.CharField(
+        label='Description',
+        widget=forms.Textarea(attrs={'class': 'form-control form-control-sm'}),
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(RoleForm, self).__init__(*args, **kwargs)
+        self.fields['permissions'].label_from_instance = self.label_from_permission
+
+    def label_from_permission(self, obj):
+        return obj.name
