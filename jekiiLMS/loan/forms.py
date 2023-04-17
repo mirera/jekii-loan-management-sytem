@@ -87,8 +87,9 @@ class RepaymentForm(forms.ModelForm):
 class GuarantorForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         company = kwargs.pop('company', None)  # Get the company from kwargs, set default to None
+        borrower = kwargs.pop('borrower', None)  # Get the borrower from kwargs, set default to None
         super(GuarantorForm, self).__init__(*args, **kwargs)
-        self.fields['name'].queryset = Member.objects.filter(company=company)
+        self.fields['name'].queryset = Member.objects.filter(company=company, status='inactive').exclude(id=borrower.id)
 
 
     class Meta:

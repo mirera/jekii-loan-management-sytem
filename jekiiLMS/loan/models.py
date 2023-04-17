@@ -12,7 +12,7 @@ from django.db import transaction
 from member.models import Member
 from company.models import Organization
 from user.models import CompanyStaff
-
+ 
 
 #Loan Prouct model starts here
 

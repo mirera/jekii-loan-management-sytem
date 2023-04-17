@@ -116,14 +116,16 @@
                                                                 {% if loan.status == 'pending' %}
 
                                                                 {% if user.user_type == 'admin' %}
-                                                                <li><a href="{% url 'view-loan' loan.id %}">Approve</a></li>
+                                                                <li><a href="{% url 'view-loan' loan.id %}"><em class="icon ni ni-layers"></em><span>Review</span></a></li>
                                                                 {% else %}
                                                                 <li><a href="{% url 'view-loan' loan.id %}">Update</a></li>
                                                                 {% endif %}
 
                                                                 <li><a data-bs-toggle="modal" class="delete-button" href="#deleteLoan" data-pk="{{ loan.id }}"><em class="icon ni ni-trash"></em><span>Delete</span></a></li>
                                                                 {% else %}
-                                                                <li><a href="{% url 'view-loan' loan.id %}">View Details</a></li>
+                                                                <li><a href="{% url 'view-loan' loan.id %}"><em class="icon ni ni-eye-alt"></em><span>View Details</span></a></li>
+                                                                <li><a href="{% url 'view-loan' loan.id %}"><em class="icon ni ni-repeat-v"></em><span>Roll Over</span></a></li> 
+                                                                <li><a href="{% url 'view-loan' loan.id %}"><em class="icon ni ni-done"></em><span>Clear</span></a></li> 
                                                                 {% endif %}
                                                             </ul>
                                                         </div>
@@ -189,10 +191,12 @@
                                                         <div class="dropdown-menu dropdown-menu-end dropdown-menu-xs">
                                                             <ul class="link-list-plain">
                                                                 {% if loan.status == 'pending' %}
-                                                                <li><a href="{% url 'view-loan' loan.id %}">Approve</a></li>
-                                                                <li><a href="{% url 'delete-loan' loan.id %}">Delete</a></li>
+                                                                <li><a href="{% url 'view-loan' loan.id %}"><em class="icon ni ni-layers"></em><span>Review</span></a></li>
+                                                                <li><a data-bs-toggle="modal" class="delete-button" href="#deleteLoan" data-pk="{{ loan.id }}"><em class="icon ni ni-trash"></em><span>Delete</span></a></li>
                                                                 {% else %}
-                                                                <li><a href="{% url 'view-loan' loan.id %}">View Details</a></li>
+                                                                <li><a href="{% url 'view-loan' loan.id %}"><em class="icon ni ni-eye-alt"></em><span>View Details</span></a></li>
+                                                                <li><a href="{% url 'view-loan' loan.id %}"><em class="icon ni ni-repeat-v"></em><span>Roll Over</span></a></li> 
+                                                                <li><a href="{% url 'view-loan' loan.id %}"><em class="icon ni ni-done"></em><span>Clear</span></a></li> 
                                                                 {% endif %}
                                                             </ul>
                                                         </div>
@@ -259,10 +263,12 @@
                                                         <div class="dropdown-menu dropdown-menu-end dropdown-menu-xs">
                                                             <ul class="link-list-plain">
                                                                 {% if loan.status == 'pending' %}
-                                                                <li><a href="{% url 'view-loan' loan.id %}">Approve</a></li>
+                                                                <li><a href="{% url 'view-loan' loan.id %}"><em class="icon ni ni-layers"></em><span>Review</span></a></li>
                                                                 <li><a data-bs-toggle="modal" class="delete-button" href="#deleteLoan" data-pk="{{ loan.id }}"><em class="icon ni ni-trash"></em><span>Delete</span></a></li>
                                                                 {% else %}
-                                                                <li><a href="{% url 'view-loan' loan.id %}">View Details</a></li>
+                                                                <li><a href="{% url 'view-loan' loan.id %}"><em class="icon ni ni-eye-alt"></em><span>View Details</span></a></li>
+                                                                <li><a href="{% url 'view-loan' loan.id %}"><em class="icon ni ni-repeat-v"></em><span>Roll Over</span></a></li> 
+                                                                <li><a href="{% url 'view-loan' loan.id %}"><em class="icon ni ni-done"></em><span>Clear</span></a></li> 
                                                                 {% endif %}
                                                             </ul>
                                                         </div>
@@ -329,10 +335,12 @@
                                                         <div class="dropdown-menu dropdown-menu-end dropdown-menu-xs">
                                                             <ul class="link-list-plain">
                                                                 {% if loan.status == 'pending' %}
-                                                                <li><a href="{% url 'view-loan' loan.id %}">Approve</a></li>
+                                                                <li><a href="{% url 'view-loan' loan.id %}"><em class="icon ni ni-layers"></em><span>Review</span></a></li>
                                                                 <li><a data-bs-toggle="modal" class="delete-button" href="#deleteLoan" data-pk="{{ loan.id }}"><em class="icon ni ni-trash"></em><span>Delete Loan</span></a></li>
                                                                 {% else %}
-                                                                <li><a href="{% url 'view-loan' loan.id %}">View Details</a></li>
+                                                                <li><a href="{% url 'view-loan' loan.id %}"><em class="icon ni ni-eye-alt"></em><span>View Details</span></a></li>
+                                                                <li><a href="{% url 'view-loan' loan.id %}"><em class="icon ni ni-repeat-v"></em><span>Roll Over</span></a></li> 
+                                                                <li><a href="{% url 'view-loan' loan.id %}"><em class="icon ni ni-done"></em><span>Clear</span></a></li>   
                                                                 {% endif %}
                                                             </ul>
                                                         </div>
