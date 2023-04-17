@@ -255,9 +255,9 @@ TYPE = (
 class Collateral(models.Model):
     company = models.ForeignKey(Organization, on_delete=models.CASCADE, null=True)
     loan = models.ForeignKey(Loan, on_delete= models.CASCADE, null=True)
-    name =models.CharField(max_length=20)
-    type= models.CharField(max_length=50, choices=TYPE, default='others')
-    serial_number= models.CharField(max_length=20)
+    name =models.CharField(max_length=200)
+    type= models.CharField(max_length=50, choices=TYPE, default='electronics')
+    serial_number= models.CharField(max_length=200)
     estimated_value = models.IntegerField()
  
 

@@ -28,5 +28,5 @@ def role_required(view_func):
             return view_func(request, *args, **kwargs)
         else:
             # User does not have the permission, restrict access and show appropriate message via HttpResponse
-            return HttpResponse("Access Denied")
+            return HttpResponse("Access Denied! You have no permissions. Contact your system admin")
     return _wrapped_view

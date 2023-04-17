@@ -69,13 +69,14 @@ def user_login(request):
 
 #---user register  logic starts here---
 def user_signup(request):
-    form = CustomUserCreationForm()
+    #binding data from fields to the form
+    form = CustomUserCreationForm(request.POST)
+
     if request.method == 'POST':
 
         company_name = request.POST.get('company_name')
         email = request.POST.get('email')
-        #binding data from fields to the form
-        form = CustomUserCreationForm(request.POST)
+        
 
         #performing validation
         if form.is_valid():
@@ -92,7 +93,7 @@ def user_signup(request):
                name = company_name,
                email = email,
                admin = user
-            )
+            ) 
             
             #create default branch object 
             today = datetime.today().strftime('%Y-%m-%d')
@@ -103,6 +104,23 @@ def user_signup(request):
                 capital = '2000000',
                 office = '123 HeadQuater Street'
             )
+
+            # Create default Role for Company admin, all permissions
+            permissions = Permission.objects.filter(
+                    content_type__model__in=['branch', 'expense category', 'expense',
+                                            'member', 'loanproduct', 'loan', 'repayment',
+                                            'collateral', 'guarantor', 'companyadmin',
+                                            'companystaff', 'role', 'note']
+                )
+
+            role = Role(
+                company=organization,
+                name=organization.name + '-admin',
+                description='This is the default role of the admin user. They have all the permissions'
+            )
+            role.save()
+            # Assign the retrieved permissions to the role using the set() method
+            role.permissions.set(permissions)
 
             #create a staff object of the admin
             password = make_password(request.POST.get('password1'))
@@ -115,6 +133,7 @@ def user_signup(request):
                 last_name = request.POST.get('username'),
                 branch = default_branch,
                 user_type = 'admin',
+                staff_role = role
             )
             #redirect to update organization info
             return redirect('update-organization', pk = organization.id )
@@ -122,8 +141,7 @@ def user_signup(request):
             #return error message
             messages.error(request, 'An error occured during regetration, please try again!')
 
-    context= {form:'form'}
-
+    context= {'form':form}
     return render (request, 'user/auth-register.html', context)
 #--- ends---
 
