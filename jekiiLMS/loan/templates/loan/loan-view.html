@@ -160,13 +160,12 @@
                                             <tbody>
                                                 {% for guarantor in guarantors %}
                                               <tr>
-                                                <th scope="row">{{guarantor.name}} {{guarantor.last_name}}</th>
-                                                <td>{{guarantor.id_no}}</td>
-                                                <td>{{guarantor.member.phone_no}}</td>
+                                                <th scope="row">{{guarantor.name.first_name}} {{guarantor.name.last_name}}</th>
+                                                <td>{{guarantor.name.id_no}}</td>
+                                                <td>{{guarantor.name.phone_no}}</td>
                                                 <td>{{guarantor.amount}}</td>
                                                 {% if loan.status == 'pending' %}
                                                 <td><a data-bs-toggle="modal" href="#removeGuarantor" data-pk="{{ guarantor.id }}" data-loan_id="{{ loan.id }}" class=" delete-button btn btn-dim btn-danger">Remove</a></td>
-                                                <li><a data-bs-toggle="modal" class="delete-button" href="#deleteLoan" data-pk="{{ loan.id }}"><em class="icon ni ni-trash"></em><span>Delete</span></a></li>
                                                 {% endif %}
                                               </tr>
                                               {% endfor %}
