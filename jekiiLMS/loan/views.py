@@ -375,13 +375,14 @@ def viewLoan(request, pk):
             company = None
     else:
         company = None
-    loan = Loan.objects.filter(id=pk, company=company)
+    loan = Loan.objects.get(id=pk, company=company)
+    borrower = loan.member
     
     loan_notes = loan.note_set.all().order_by('-created')
     guarantors = Guarantor.objects.filter(loan=loan) #here loan=loan mean loan_obj=loan loan_obj in guarantor model and form
     collaterals = Collateral.objects.filter(loan=loan)
     repayments = Repayment.objects.filter(loan_id=loan)
-    form = GuarantorForm(request.POST)
+    form = GuarantorForm(request.POST,company=company, borrower=borrower)
     form_collateral = CollateralForm()
     form_repayment = RepaymentForm()
 
@@ -655,12 +656,13 @@ def addGuarantor(request, pk):
         company = None
         
     loan = get_object_or_404(Loan, id=pk, company=company)
+    borrower = loan.member
 
     guarantor_id = request.POST.get('name')
     guarantor = Member.objects.get(id=guarantor_id)
     
     if request.method == 'POST':
-        form = GuarantorForm(request.POST, company=company) 
+        form = GuarantorForm(request.POST, company=company, borrower=borrower) 
 
         Guarantor.objects.create(
             company = company,
@@ -689,11 +691,12 @@ def removeGuarantor(request, pk, guarantor_id):
         
     loan = get_object_or_404(Loan, id=pk, company=company)
     guarantor = get_object_or_404(Guarantor, id=guarantor_id, loan=loan)
-    print("guarantor_id:", guarantor_id)
+
     if request.method == 'POST':
         guarantor.delete()
         messages.success(request, 'Guarantor deleted successfully.')
         return redirect('view-loan', pk=loan.id)
+
     context = {'obj':guarantor, 'loan':loan}
     return render(request,'loan/loan-view.html', context)
 # delete Repayment  ends 
