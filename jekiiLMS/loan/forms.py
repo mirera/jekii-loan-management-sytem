@@ -38,8 +38,8 @@ class LoanForm(forms.ModelForm):
         company = kwargs.pop('company', None)  # Get the company from kwargs, set default to None
         super(LoanForm, self).__init__(*args, **kwargs)
         self.fields['loan_product'].queryset = LoanProduct.objects.filter(company=company)
-        self.fields['member'].queryset = Member.objects.filter(company=company)
-        self.fields['loan_officer'].queryset = CompanyStaff.objects.filter(company=company)
+        self.fields['member'].queryset = Member.objects.filter(company=company, status='inactive')
+        self.fields['loan_officer'].queryset = CompanyStaff.objects.filter(company=company).exclude(user_type='admin')
 
         # Disable the loan_id field in the edit form
         var = self.fields['loan_id']
@@ -113,7 +113,7 @@ class CollateralForm(forms.ModelForm):
             'name': forms.TextInput(attrs={'class': 'form-control','placeholder':'Samsung 41 TV'}),
             'type': forms.Select(attrs={'class': 'form-select js-select2'}),
             'estimated_value': forms.NumberInput(attrs={'class': 'form-control','placeholder':'30000'}),
-            'serial_number': forms.NumberInput(attrs={'class': 'form-control','placeholder':'0123-239'})
+            'serial_number': forms.TextInput(attrs={'class': 'form-control','placeholder':'0123-W239'})
         } 
  
 

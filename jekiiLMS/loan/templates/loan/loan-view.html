@@ -207,7 +207,7 @@
                                                         <div class="dropdown-menu dropdown-menu-end dropdown-menu-auto mt-1">
                                                             <ul class="link-list-plain">
                                                                 <li><a data-bs-toggle="modal" href="#editCollateral" class="btn btn-sm btn-dim btn-secondary">Edit</a></li>
-                                                                <li><a data-bs-toggle="modal" href="#editCollateral" class="btn btn-sm btn-dim btn-danger">Remove</a></li>
+                                                                <li><a data-bs-toggle="modal" href="#removeCollateral" data-pk="{{ collateral.id }}" data-loan_id="{{ loan.id }}" class=" delete-button btn btn-dim btn-danger">Remove</a></li>
                                                             </ul>
                                                         </div>
                                                     </div>
@@ -669,6 +669,34 @@
     </div>
 </div><!-- .Delete member Modal-content -->
 
+<div class="modal fade" id="removeCollateral">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-bs-dismiss="modal"><em class="icon ni ni-cross"></em></a>
+            <div class="modal-body modal-body-sm text-center">
+                <div class="nk-modal py-4">
+                    <em class="nk-modal-icon icon icon-circle icon-circle-xxl ni ni-cross bg-danger"></em>
+                    <h4 class="nk-modal-title">Are You Sure ?</h4>
+                    <div class="nk-modal-text mt-n2">
+                        <p class="text-soft">This collateral will be removed permanently.</p>
+                    </div>
+                    <ul class="d-flex justify-content-center gx-4 mt-4">
+                        <form id="delete-form" method="POST">
+                            {% csrf_token %}
+                        <li>
+                            <button type="submit" data-bs-dismiss="modal" id="deleteObj" class="btn btn-primary">Yes, Delete it</button>
+                        </li>
+                        </form>
+                        <li>
+                            <button data-bs-dismiss="modal" data-toggle="modal" data-target="#editEventPopup" class="btn btn-danger btn-dim">Cancel</button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div><!-- .Delete member Modal-content -->
+
 <!--
     rendering the modal dynamically using JavaScript/jQuery to add 
     the branch.id to the form action URL when the user clicks on 
@@ -698,6 +726,46 @@ function showDeleteModalForm() {
             // Replace '0' with the actual value of pk from your Django template context
             var form = document.getElementById('delete-form');
             form.action = '{% url "remove-guarantor" 0 1 %}'.replace('0', loan_id).replace('1', guarantor_id);
+
+            // Display the modal form
+            // Assuming you have code to display the modal form
+            showDeleteModalForm();
+
+            // You can add additional logic here if needed, e.g., pre-fill form fields, etc.
+
+            // Let the user manually click the submit button
+            // Assuming you have a submit button with id 'delete-submit-button'
+            document.getElementById('deleteObj').addEventListener('click', function() {
+                // Submit the form
+                form.submit();
+            });
+        });
+    }
+});
+//-- ends
+
+//-- remove collateral 
+function showDeleteModalForm() {
+    // Implementation of showModalForm() to display the modal
+    $('#removeCollateral').modal('show');
+}
+
+    $(document).ready(function() {
+    // Get all the delete buttons
+    var deleteButtons = document.getElementsByClassName('delete-button');
+
+    // Loop through each delete button
+    for (var i = 0; i < deleteButtons.length; i++) {
+        // Add click event listener
+        deleteButtons[i].addEventListener('click', function() {
+            // Get the pk from the data attribute
+            var collateral_id = this.dataset.pk;
+            var loan_id = this.dataset.loan_id
+
+            // Update the form's action with the correct URL
+            // Replace '0' with the actual value of pk from your Django template context
+            var form = document.getElementById('delete-form');
+            form.action = '{% url "remove-collateral" 0 1 %}'.replace('0', loan_id).replace('1', collateral_id);
 
             // Display the modal form
             // Assuming you have code to display the modal form

@@ -306,7 +306,8 @@ def approveLoan(request,pk):
                 company = None
         else:
             company = None
-        loan = Loan.objects.filter(id=pk, company=company)
+        loan = Loan.objects.get(id=pk, company=company)
+        borrower = loan.member
         # Get the URL pattern for the 'view-loan' view
         url = reverse('view-loan', args=[pk])
         # Append the anchor to the end of the URL
@@ -314,7 +315,10 @@ def approveLoan(request,pk):
 
         if loan.status == 'pending':
             loan.status = 'approved'
+            borrower.status = 'active'
+            borrower.save()
             loan.save()
+
             messages.success(request,'The loan was approved succussesfully!')
             return redirect(url_with_anchor)
     return render(request,'loan/loans-list.html')
@@ -334,12 +338,13 @@ def rejectLoan(request,pk):
         else:
             company = None
 
-        loan = Loan.objects.filter(id=pk, company=company)
+        loan = Loan.objects.get(id=pk, company=company)
         url = reverse('view-loan', args=[pk])
         url_with_anchor = f'{url}'
         if loan.status == 'pending':
             loan.status = 'rejected'
             loan.save()
+
             messages.info(request,'The loan was rejected succussesfully!')
             return redirect(url_with_anchor)
     return render(request,'loan/loans-list.html')
@@ -398,7 +403,7 @@ def viewLoan(request, pk):
     else:
         loan_balance = total_payable
 
-    if request.method == 'POST':
+    if request.method == 'POST' and 'body' in request.POST:
         Note.objects.create(
             company = company,
             author = request.user,
@@ -678,7 +683,7 @@ def addGuarantor(request, pk):
 #dd guarontor view ends   
 
 
-# delete Repayment  view starts 
+# delete guarantor  view starts 
 def removeGuarantor(request, pk, guarantor_id):
     if request.user.is_authenticated and request.user.is_active:
         try:
@@ -699,7 +704,7 @@ def removeGuarantor(request, pk, guarantor_id):
 
     context = {'obj':guarantor, 'loan':loan}
     return render(request,'loan/loan-view.html', context)
-# delete Repayment  ends 
+# delete guarantor  ends 
 
 #add guarontor view starts
 def addCollateral(request, pk):
@@ -733,6 +738,28 @@ def addCollateral(request, pk):
     return render(request,'loan/loan-view.html', context)
 #dd guarontor view ends   
 
+# delete collateral  view starts 
+def removeCollateral(request, pk, collateral_id):
+    if request.user.is_authenticated and request.user.is_active:
+        try:
+            companystaff = CompanyStaff.objects.get(username=request.user.username)
+            company = companystaff.company
+        except CompanyStaff.DoesNotExist:
+            company = None
+    else:
+        company = None
+        
+    loan = get_object_or_404(Loan, id=pk, company=company)
+    collateral = get_object_or_404(Collateral, id=collateral_id, loan=loan)
+
+    if request.method == 'POST':
+        collateral.delete()
+        messages.success(request, 'Collateral deleted successfully.')
+        return redirect('view-loan', pk=loan.id)
+
+    context = {'obj':collateral, 'loan':loan}
+    return render(request,'loan/loan-view.html', context)
+# delete collateral  ends 
 
 
 #add guarontor view starts

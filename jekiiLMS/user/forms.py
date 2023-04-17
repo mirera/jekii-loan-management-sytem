@@ -8,7 +8,7 @@ from user.models import Role
 from django.forms.widgets import CheckboxSelectMultiple
 
 
-class CustomUserCreationForm(forms.Form): #alternatively can inherit from ModelForm >> this way we avoid code redudancy.
+class CustomUserCreationForm(forms.Form): 
     company_name = forms.CharField(label='Enter Company Name')
     username = forms.CharField(label='Enter Username', min_length=4, max_length=150)
     email = forms.EmailField(label='Enter email')

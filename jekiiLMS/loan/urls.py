@@ -35,7 +35,7 @@ urlpatterns = [
     #collateral urls
     path('view-loan/<str:pk>/add-collateral', views.addCollateral, name='add-collateral'),
     path('edit-collateral/<str:pk>', views.editCollateral, name='edit-collateral'),
-    #path('remove-collateral/<str:pk>', views.removeCollateral, name='remove-collateral'),
+    path('view-loan/<str:pk>/remove-collateral/<str:collateral_id>', views.removeCollateral, name='remove-collateral'),
 
     #loan calculator url
     path('loancalculator', views.loan_calculator, name='loancalculator'), 
