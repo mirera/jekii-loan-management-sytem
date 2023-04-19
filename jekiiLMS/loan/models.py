@@ -69,7 +69,6 @@ class LoanProduct(models.Model):
     loan_term_period= models.CharField(max_length=20, choices=TERM_PERIOD, default='month')
     repayment_frequency = models.CharField(max_length=8, choices=REPAYMENT_FREQUENCY_CHOICES, default='onetime')
     interest_type = models.CharField(max_length=30, choices=INTEREST_TYPE_CHOICES, default='flat_rate')
-    #interest_rate = models.FloatField(decimal_places=2, max_digits=12, validators=[MinValueValidator(Decimal('0.01'))])
     interest_rate = models.FloatField()
     service_fee_type = models.CharField(max_length=300, choices=SERVICE_FEE_TYPE_CHOICES, default='fixed_value')
     service_fee_value = models.FloatField()

@@ -27,6 +27,7 @@ class ExpenseCategoryForm(forms.ModelForm):
     class Meta:
         model = ExpenseCategory
         fields = '__all__'
+        exclude = ['company']
         
         
         widgets = {
@@ -36,10 +37,16 @@ class ExpenseCategoryForm(forms.ModelForm):
 
 
 class ExpenseForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        company = kwargs.pop('company')# Get the user from kwargs
+        super(ExpenseForm, self).__init__(*args, **kwargs)
+        self.fields['branch'].queryset = Branch.objects.filter(company=company)
+        self.fields['category'].queryset = ExpenseCategory.objects.filter(company=company)
+
     class Meta:
         model = Expense
         fields = '__all__'
-        exclude = ['created_by']
+        exclude = ['created_by', 'company']
         
         
         widgets = {

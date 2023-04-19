@@ -124,8 +124,11 @@ def createExpenseCategory(request):
     form = ExpenseCategoryForm()
 
     if request.user.is_authenticated and request.user.is_active:
-        user = request.user
-        company = Organization.objects.get(admin=user)
+        try:
+            companystaff = CompanyStaff.objects.get(username=request.user.username)
+            company = companystaff.company
+        except CompanyStaff.DoesNotExist:
+            company = None
     #processing the data
     if request.method == 'POST':
         ExpenseCategory.objects.create(
@@ -141,11 +144,13 @@ def createExpenseCategory(request):
 
 #edit expense category view starts
 def editCategory(request,pk):
-    company = request.user.organization
 
     if request.user.is_authenticated and request.user.is_active:
-        user = request.user
-        company = Organization.objects.get(admin=user)
+        try:
+            companystaff = CompanyStaff.objects.get(username=request.user.username)
+            company = companystaff.company
+        except CompanyStaff.DoesNotExist:
+            company = None
 
     category = ExpenseCategory.objects.get(id=pk, company=company)
     
@@ -169,11 +174,12 @@ def editCategory(request,pk):
 
 # list expense Categories view starts 
 def list_categories(request):
-    company = request.user.organization
-
     if request.user.is_authenticated and request.user.is_active:
-        user = request.user
-        company = Organization.objects.get(admin=user)
+        try:
+            companystaff = CompanyStaff.objects.get(username=request.user.username)
+            company = companystaff.company
+        except CompanyStaff.DoesNotExist:
+            company = None
 
     categories = ExpenseCategory.objects.filter(company=company)
     form = ExpenseCategoryForm()
@@ -185,11 +191,12 @@ def list_categories(request):
 
 # delete expense category view starts 
 def deleteExpenseCategory(request,pk):
-    company = request.user.organization
-
     if request.user.is_authenticated and request.user.is_active:
-        user = request.user
-        company = Organization.objects.get(admin=user)
+        try:
+            companystaff = CompanyStaff.objects.get(username=request.user.username)
+            company = companystaff.company
+        except CompanyStaff.DoesNotExist:
+            company = None
 
     category = ExpenseCategory.objects.get(id=pk, company=company)
 
@@ -207,15 +214,14 @@ def deleteExpenseCategory(request,pk):
 
 #create expense category view starts
 def createExpense(request):
-    form = ExpenseForm()
-    company = request.user.organization
-
     if request.user.is_authenticated and request.user.is_active:
-        user = request.user
-        company = Organization.objects.get(admin=user)
-
+        try:
+            companystaff = CompanyStaff.objects.get(username=request.user.username)
+            company = companystaff.company
+        except CompanyStaff.DoesNotExist:
+            company = None
+    form = ExpenseForm(request.POST, company=company)
     if request.method == 'POST':
-        form = ExpenseForm(request.POST)
         # Get the selected category id from the form
         category_id = request.POST.get('category')
         category = ExpenseCategory.objects.get(pk=category_id)
@@ -246,15 +252,16 @@ def createExpense(request):
 
 # list expense Categories view starts 
 def list_expenses(request):
-    expenses = Expense.objects.all()
-    company = request.user.organization
 
     if request.user.is_authenticated and request.user.is_active:
-        user = request.user
-        company = Organization.objects.get(admin=user)
+        try:
+            companystaff = CompanyStaff.objects.get(username=request.user.username)
+            company = companystaff.company
+        except CompanyStaff.DoesNotExist:
+            company = None
 
     expenses = Expense.objects.filter(company=company)
-    form = ExpenseForm()
+    form = ExpenseForm(company=company)
 
     context = {'expenses': expenses, 'form':form}
     return render(request, 'branch/expenses_list.html', context)
@@ -264,11 +271,12 @@ def list_expenses(request):
 
 #edit expense category view starts
 def editExpense(request,pk):
-    company = request.user.organization
-
     if request.user.is_authenticated and request.user.is_active:
-        user = request.user
-        company = Organization.objects.get(admin=user) 
+        try:
+            companystaff = CompanyStaff.objects.get(username=request.user.username)
+            company = companystaff.company
+        except CompanyStaff.DoesNotExist:
+            company = None
 
     expense = Expense.objects.get(id=pk, company=company)
     
@@ -313,11 +321,12 @@ def editExpense(request,pk):
 
 # delete expense  view starts 
 def deleteExpense(request,pk):
-    company = request.user.organization
-
     if request.user.is_authenticated and request.user.is_active:
-        user = request.user
-        company = Organization.objects.get(admin=user)
+        try:
+            companystaff = CompanyStaff.objects.get(username=request.user.username)
+            company = companystaff.company
+        except CompanyStaff.DoesNotExist:
+            company = None
 
     expense = Expense.objects.get(id=pk, company=company)
 
