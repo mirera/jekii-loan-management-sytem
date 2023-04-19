@@ -10,7 +10,7 @@ from jekiiLMS.decorators import role_required
 
 
 #create branch view starts
-@role_required
+#@role_required
 def createBranch(request):
     form = BranchForm()
     #filter the Branch queryset to include only branches that belong to the logged in company 
@@ -44,7 +44,7 @@ def createBranch(request):
 #create branch view ends
 
 #edit branch view starts
-@role_required
+#@role_required
 def editBranch(request,pk):
     if request.user.is_authenticated and request.user.is_active:
         try:
@@ -53,13 +53,17 @@ def editBranch(request,pk):
         except CompanyStaff.DoesNotExist:
             company = None
 
-    branch = Branch.objects.get(id=pk)
-    
+    branch = Branch.objects.get(id=pk, company=company)
+
     if request.method == 'POST':
         form = BranchForm(request.POST, instance=branch)
         if form.is_valid():
-            form.save()
+            branch = form.save(commit=False)
+            branch.company = company
+            branch.save()
             return redirect('list')
+        else:
+            messages.error(request, 'Fill the form as required')
     else:
         # prepopulate the form with existing data
         form = BranchForm(instance=branch)
@@ -82,7 +86,7 @@ def list_branches(request):
 # list branches view ends
 
 # delete branch view starts 
-@role_required
+#@role_required
 def deleteBranch(request,pk):
 
     if request.user.is_authenticated and request.user.is_active:
@@ -105,7 +109,7 @@ def deleteBranch(request,pk):
 
 
 # view branch view starts 
-@role_required
+#@role_required
 def viewBranch(request, pk):
     branch = Branch.objects.get(id=pk)
 

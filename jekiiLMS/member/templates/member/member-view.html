@@ -14,9 +14,6 @@
                                     <div class="nk-block-between">
                                         <div class="nk-block-head-content">
                                             <h4 class="nk-block-title">{{member.first_name}} {{member.last_name}}</h4>
-                                            <div class="nk-block-des">
-                                                <p>Basic info, like your name and address, that you use on Nio Platform.</p>
-                                            </div>
                                         </div>
                                         <div class="nk-block-head-content align-self-start d-lg-none">
                                             <a href="#" class="toggle btn btn-icon btn-trigger mt-n1" data-target="userAside"><em class="icon ni ni-menu-alt-r"></em></a>
@@ -104,16 +101,16 @@
                                                 <img src="{{member.passport_photo.url}}">
                                             </div>
                                             <div class="user-info">
-                                                <span class="lead-text">{{member.first_name}}</span>
-                                                <span class="sub-text">{{member.email}}</span>
+                                                <span class="lead-text">{{member.first_name}} {{member.last_name}}</span>
+                                                <span class="sub-text"> {{member.email}}</span>
                                             </div>
                                             <div class="user-action">
                                                 <div class="dropdown">
                                                     <a class="btn btn-icon btn-trigger me-n2" data-bs-toggle="dropdown" href="#"><em class="icon ni ni-more-v"></em></a>
                                                     <div class="dropdown-menu dropdown-menu-end">
                                                         <ul class="link-list-opt no-bdr">
-                                                            <li><a href="#"><em class="icon ni ni-camera-fill"></em><span>Change Photo</span></a></li>
-                                                            <li><a href="#"><em class="icon ni ni-edit-fill"></em><span>Update Details </span></a></li>
+                                                            <li><a href="{% url 'edit-member' member.id %}"><em class="icon ni ni-camera-fill"></em><span>Change Photo</span></a></li>
+                                                            <li><a href="{% url 'edit-member' member.id %}"><em class="icon ni ni-edit-fill"></em><span>Update Details </span></a></li>
                                                         </ul>
                                                     </div>
                                                 </div>
@@ -129,11 +126,10 @@
                                     </div><!-- .card-inner -->
                                     <div class="card-inner p-0">
                                         <ul class="link-list-menu"> 
-                                            <li><a class="active" href="{% url 'view-member' member.id %}"><em class="icon ni ni-user-fill-c"></em><span>Member Details</span></a></li>
+                                            <li><a class="active" href="#"><em class="icon ni ni-user-fill-c"></em><span>Member Details</span></a></li>  
                                             <li><a href="html/user-profile-notification.html"><em class="icon ni ni-bell-fill"></em><span>Account Overview</span></a></li>
                                             <li><a href="html/user-profile-activity.html"><em class="icon ni ni-activity-round-fill"></em><span>Loans</span></a></li>
                                             <li><a href="html/user-profile-setting.html"><em class="icon ni ni-lock-alt-fill"></em><span>Repayments</span></a></li>
-                                            <li><a href="html/user-profile-social.html"><em class="icon ni ni-grid-add-fill-c"></em><span>Send Message</span></a></li>
                                         </ul>
                                     </div><!-- .card-inner -->
                                 </div><!-- .card-inner-group -->

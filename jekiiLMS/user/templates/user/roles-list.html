@@ -24,7 +24,6 @@
                                     <tr>
                                         <th class="tb-col-os"><span class="overline-title">Name <span class="d-sm-none">/ IP</span></span></th>
                                         <th class="tb-col-ip"><span class="overline-title">Description</span></th>
-                                        <th class="tb-col-time"><span class="overline-title">Permissions</span></th>
                                         <th class="tb-col-action"><span class="overline-title">&nbsp;</span></th>
                                     </tr>
                                 </thead>
@@ -33,11 +32,6 @@
                                     <tr>
                                         <td class="tb-col-os">{{role.name}}</td>
                                         <td class="tb-col-ip"><span class="sub-text">{{role.description}}</span></td>
-                                        <ul>
-                                        {% for permission in role.permissions.all %}
-                                        <li><td class="tb-col-time"><span class="sub-text">{{permission.name}}</span></td></li>
-                                        {% endfor %}
-                                        </ul>
                                         <td class="nk-tb-col nk-tb-col-tools">
                                             <ul class="nk-tb-actions gx-1">
                                                 <li>
@@ -45,7 +39,7 @@
                                                         <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
                                                         <div class="dropdown-menu dropdown-menu-end">
                                                             <ul class="link-list-opt no-bdr">
-                                                                <li><a data-bs-toggle="modal" class="edit-button" href="#editRole" data-pk="{{ role.id }}" ><em class="icon ni ni-edit-alt"></em><span>Edit Role</span></a></li>
+                                                                <li><a  href="{% url 'edit-role' role.id %}"  ><em class="icon ni ni-edit-alt"></em><span>Edit Role</span></a></li>
                                                                 <li class="divider"></li>
                                                                 <li><a data-bs-toggle="modal" class="delete-button" href="#deleteRole" data-pk="{{ role.id }}"><em class="icon ni ni-trash"></em><span>Delete Role</span></a></li>
                                                             </ul>

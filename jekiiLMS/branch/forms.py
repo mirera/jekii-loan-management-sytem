@@ -8,6 +8,7 @@ class BranchForm(forms.ModelForm):
     class Meta:
         model = Branch
         fields = '__all__'
+        exclude = ['status', 'company']
         
         
         widgets = {
@@ -17,7 +18,7 @@ class BranchForm(forms.ModelForm):
             'email': forms.EmailInput(attrs={'class': 'form-control','id': 'fv-email'}),
             'open_date': forms.DateTimeInput(attrs={'class': 'form-control date-picker-range', 'data-date-format':'yyyy-mm-dd'}),
             'capital': forms.NumberInput(attrs={'class': 'form-control', 'id': 'pay-amount-1'}),
-            'status': forms.Select(attrs={'class': 'custom-control-input'}),
+            #'status': forms.Select(attrs={'class': 'custom-control-input'}),
             'notes': forms.Textarea(attrs={'class': 'form-control form-control-sm', 'id': 'cf-default-textarea' ,'placeholder':'Write your message'}),
         }
 

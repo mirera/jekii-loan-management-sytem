@@ -71,15 +71,14 @@ def viewMember(request, pk):
         except CompanyStaff.DoesNotExist:
             company = None
 
-    member = Member.objects.filter(id=pk, company=company)
-
+    member = Member.objects.get(id=pk, company=company)
+    print(member)
     context = {'member': member}
-    return render(request, 'member/member-view.html', context)
+    return render(request, 'member/member-view.html', context) 
 
 # view member view ends
 
 # delete member view starts
-@role_required 
 def deleteMember(request,pk):
     #member = Member.objects.get(id=pk)
     member = get_object_or_404(Member, id=pk)
