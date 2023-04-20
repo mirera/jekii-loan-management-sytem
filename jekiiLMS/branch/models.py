@@ -5,6 +5,7 @@ from django.core.validators import MinValueValidator
 from decimal import Decimal
 from django.contrib.auth.models import User
 from company.models import Organization
+#from user.models import CompanyStaff
 
 #Branch model for a branch
 ACTIVE_CHOICES = (
@@ -27,7 +28,7 @@ class Branch(models.Model):
         return self.name 
 
 class ExpenseCategory(models.Model):
-    company = models.ForeignKey(Organization, on_delete=models.CASCADE)
+    company = models.ForeignKey(Organization, on_delete=models.CASCADE) 
     name = models.CharField(max_length=50)
     description = models.TextField(null=True, blank=True)
 

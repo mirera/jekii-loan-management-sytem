@@ -153,7 +153,7 @@ def user_logout(request):
     return redirect('home')
 
 #-- list staffs view starts --
-@role_required
+#@role_required
 def listStaff(request):
     
     if request.user.is_authenticated and request.user.is_active:
@@ -173,7 +173,7 @@ def listStaff(request):
 #-- end -- 
 
 #-- adding a staff then as a user --
-@role_required
+#@role_required
 def addStaff(request):
 
     if request.user.is_authenticated and request.user.is_active:
@@ -323,7 +323,7 @@ def update_user_profile(request):
 # -- ends '''
 
 # -- create role --
-@role_required
+#@role_required
 def addRole(request):
     # Get all available permissions
     permissions = Permission.objects.filter(
@@ -359,9 +359,8 @@ def addRole(request):
 # -- ends --
 
 # -- edit role --
-@role_required
+#@role_required
 def editRole(request, pk):
-
     if request.user.is_authenticated and request.user.is_active:
         try:
             companystaff = CompanyStaff.objects.get(username=request.user.username)
@@ -369,19 +368,32 @@ def editRole(request, pk):
         except CompanyStaff.DoesNotExist:
             company = None
 
-    role = Role.objects.get(id=pk, company=company)       
+    role = Role.objects.get(id=pk, company=company)
 
     if request.method == 'POST':
-        form = RoleForm(request.POST)
-        if form.is_valid():
-            form.save()
+        # update the role with the submitted form data
+        role.company = company
+        role.name = request.POST.get('name')
+        role.description = request.POST.get('description')
+        role.save()
+
+        selected_permissions = request.POST.getlist('permissions')
+        role.permissions.set(selected_permissions)
+
         messages.success(request, 'Role updated successfully!')
         return redirect('roles-list')
-    else:
-        form = RoleForm(instance=role)
 
-    context = {'form':form}    
-    return render(request,'user/roles-list.html', context)
+    else:
+        # prepopulate the form with existing data
+        form_data = {
+            'name': role.name,
+            'description': role.description,
+            'permissions':role.permissions.all()
+        }
+        form = RoleForm(initial=form_data)
+
+        context = {'form':form, 'role':role}    
+        return render(request,'user/edit-role.html', context)
 # -- ends --
 
 # --  roles list --
@@ -406,7 +418,7 @@ def rolesList(request):
 # -- ends --
 
 # -- delete role --
-@role_required
+#@role_required
 def deleteRole(request,pk):
 
     if request.user.is_authenticated and request.user.is_active:
@@ -415,9 +427,8 @@ def deleteRole(request,pk):
             company = companystaff.company
         except CompanyStaff.DoesNotExist:
             company = None
-            
+        role = Role.objects.get(id=pk, company=company)    
     if request.method == 'POST':
-        role = Role.objects.get(id=pk, company=company)
         role.delete()
         messages.success(request, 'Role deleted successfully!')
         return redirect('roles-list')

@@ -13,7 +13,7 @@ from user.models import CompanyStaff
 
 
 #create Loan Product view starts
-@role_required
+#@role_required
 def createLoanProduct(request):
     form = LoanProductForm()
 
@@ -94,7 +94,7 @@ def viewLoanProduct(request, pk):
 # detailview Loan Products view ends
 
 # delete Loan Products view starts 
-@role_required
+#@role_required
 def deleteLoanProduct(request,pk):
     
     if request.user.is_authenticated and request.user.is_active:
@@ -117,7 +117,7 @@ def deleteLoanProduct(request,pk):
 # delete Loan Products ends starts 
 
 #edit Loan Products view starts
-@role_required
+#@role_required
 def editLoanProduct(request,pk):
     
     if request.user.is_authenticated and request.user.is_active:
@@ -295,7 +295,7 @@ def editLoan(request,pk):
 #edit Loan view ends
 
 #approve loan logic starts here
-@role_required
+#@role_required
 def approveLoan(request,pk):
     if request.method == 'POST':
         if request.user.is_authenticated and request.user.is_active:
@@ -325,7 +325,7 @@ def approveLoan(request,pk):
 #approve logic ends
 
 #approve loan logic starts here
-@role_required
+#@role_required
 def rejectLoan(request,pk):
     if request.method == 'POST':
 
@@ -472,11 +472,12 @@ def createRepayment(request):
     #processing the data
     if request.method == 'POST':
         member_id = request.POST.get('member')
-        member = Member.objects.get(pk=member_id)
-        loan_id = request.POST.get('loan_id')
-        loan = Loan.objects.filter(pk=loan_id, company=company)
+        member = Member.objects.get(pk=member_id, company=company)
 
-        if loan.status == 'approved' or loan.status == 'overdue':
+        # Get the approved or overdue Loan object associated with the member
+        loan = member.loans_as_member.get(status=('approved' or 'overdue'))
+
+        if loan:
             Repayment.objects.create(
                 company = company,
                 transaction_id= request.POST.get('transaction_id'),
@@ -485,7 +486,6 @@ def createRepayment(request):
                 amount= request.POST.get('amount'),
                 date_paid = request.POST.get('date_paid'),
             )
-            #redirecting user to Repayments page(url name) after submitting form
             messages.success(request,'The repayment was added succussesfully!')
             return redirect('repayments')
         else:
@@ -552,47 +552,33 @@ def editRepayment(request,pk):
     else:
         company = None
         
-    repayment = Repayment.objects.filter(id=pk, company=company)
+    repayment = Repayment.objects.get(id=pk, company=company)
     
     if request.method == 'POST':
+        form = RepaymentForm(request.POST, instance=repayment, company=company)
 
-        # Get the selected member id from the form
         member_id = request.POST.get('member')
-        
-        # Get the corresponding Member object
-        member = Member.objects.get(pk=member_id)
+        member = Member.objects.get(pk=member_id, company=company)
 
-        # Get the selected loanproduct id from the form
-        loan_id = request.POST.get('loan_id')
-        
-        # Get the corresponding LoanProduct object
-        loan = Loan.objects.get(pk=loan_id)
+        loan = member.loans_as_member.get(status=('approved' or 'overdue'))
 
-        # update the branch with the submitted form data
-        repayment.loan_id = loan
-        repayment.transaction_id = request.POST.get('transaction_id')
-        repayment.member = member
-        repayment.amount = request.POST.get('amount')
-        repayment.date_paid = request.POST.get('date_paid')
-        repayment.save()
+        if form.is_valid():
+            repayment= form.save(commit=False)
+            repayment.loan_id = loan
+            repayment.company = company
+            repayment.save()
+            return redirect('repayments')
+        else:
+            print(form.errors)
+            messages.error(request, 'Fill the form as required')
 
-        return redirect('repayments')
-    else:
-        # prepopulate the form with existing data
-        form_data = {
-            'loan_id': repayment.loan_id,
-            'member': repayment.member,
-            'amount': repayment.amount,
-            'transaction_id': repayment.transaction_id,
-            'date_paid': repayment.date_paid
-        }
-        form = RepaymentForm(initial=form_data, company=company)
-        return render(request,'loan/edit-repayment.html',{'form':form})
+    # prepopulate the form with existing data
+    form = RepaymentForm(instance=repayment, company=company)
 
+    return render(request,'loan/edit-repayment.html',{'form':form}) 
 #edit repayment view ends
  
 #loan cacl view start
-
 def loan_calculator(request):
     if request.method == "POST":
         loan_product_id = request.POST.get("loan_product")

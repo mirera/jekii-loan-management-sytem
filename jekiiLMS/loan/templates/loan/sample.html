@@ -1,6 +1,3 @@
-{% extends 'main.html' %}
-
-{% block content %} 
 <!-- content @s -->
 <div class="nk-content ">
     <div class="container-fluid"> 
@@ -15,7 +12,7 @@
                     </div><!-- .nk-block-head -->
                     <div class="nk-block nk-block-lg">
                         <div class="card card-bordered">
-                            <form action="{% url 'create-loan-product' %}" method="POST" class="nk-stepper stepper-init is-alter nk-stepper-s1"  id="stepper-create-project" >
+                            <form action=" " method="POST" class="nk-stepper stepper-init is-alter nk-stepper-s1"  id="stepper-create-project" >
                                 {% csrf_token %}
                                 <div class="row g-0 col-sep col-sep-md col-sep-xl">
                                     <div class="col-md-4 col-xl-4">
@@ -1006,9 +1003,8 @@
                                                 <ul class="nk-stepper-pagination pt-4 gx-4 gy-2 stepper-pagination">
                                                     <li class="step-prev"><button class="btn btn-dim btn-primary">Prev</button></li>
                                                     <li class="step-next"><button class="btn btn-primary">Next</button></li>
-                                                    <li class="step-submit"><button type="submit" class="btn btn-primary">Submit</button></li>
+                                                    <li class="step-submit"><button class="btn btn-primary">Submit</button></li>
                                                 </ul> 
-                                                <button type="submit" class="btn btn-primary step-submit">Submit</button>
                                             </div>
                                         </div>
                                     </div>
@@ -1022,6 +1018,3 @@
     </div>
 </div>
 <!-- content @e -->
-{% endblock content %}
-
-    

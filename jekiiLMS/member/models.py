@@ -20,7 +20,7 @@ STATUS = (
     ('inactive', 'INACTIVE')
 )
 
-class Member(models.Model):
+class Member(models.Model): 
     company = models.ForeignKey(Organization, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
@@ -41,17 +41,9 @@ class Member(models.Model):
         active_loans = self.loans_as_member.filter(status__in=['pending', 'approved', 'overdue'])
         return bool(active_loans)
 
-    #assign member active status if they have active loan
-    #def update_status(self):
-        #if self.has_active_loan():
-            #self.status = 'active'
-            #self.save()
-
-  
 
     class Meta:
         ordering = ['-date_joined']
 
     def __str__(self):
-        return self.first_name
-    
+        return self.first_name + ' ' + self.last_name

@@ -15,7 +15,7 @@
                                         <div class="nk-block-head-content">
                                             <h4 class="nk-block-title">Branch Information</h4>
                                             <div class="nk-block-des">
-                                                <p>Basic info, like your name and address, that you use on Nio Platform.</p>
+                                                <p>This is an overview Infomation about your {{branch.name}} branch.</p>
                                             </div>
                                         </div>
                                         <div class="nk-block-head-content align-self-start d-lg-none">
@@ -71,41 +71,12 @@
                                             <div class="data-col data-col-end"><span class="data-more"></span></div>
                                         </div><!-- data-item -->
                                     </div><!-- data-list -->
-                                    <div class="nk-data data-list">
-                                        <div class="data-head">
-                                            <h6 class="overline-title">Preferences</h6>
-                                        </div>
-                                        <div class="data-item">
-                                            <div class="data-col">
-                                                <span class="data-label">Language</span>
-                                                <span class="data-value">English (United State)</span>
-                                            </div>
-                                            <div class="data-col data-col-end"><a href="#" class="link link-primary">Change Language</a></div>
-                                        </div><!-- data-item -->
-                                        <div class="data-item">
-                                            <div class="data-col">
-                                                <span class="data-label">Date Format</span>
-                                                <span class="data-value">M d, YYYY</span>
-                                            </div>
-                                            <div class="data-col data-col-end"><a href="#" class="link link-primary">Change</a></div>
-                                        </div><!-- data-item -->
-                                        <div class="data-item">
-                                            <div class="data-col">
-                                                <span class="data-label">Timezone</span>
-                                                <span class="data-value">Bangladesh (GMT +6)</span>
-                                            </div>
-                                            <div class="data-col data-col-end"><a href="#" class="link link-primary">Change</a></div>
-                                        </div><!-- data-item -->
-                                    </div><!-- data-list -->
                                 </div><!-- .nk-block -->
                             </div>
                             <div class="card-aside card-aside-left user-aside toggle-slide toggle-slide-left toggle-break-lg" data-toggle-body="true" data-content="userAside" data-toggle-screen="lg" data-toggle-overlay="true">
                                 <div class="card-inner-group" data-simplebar>
                                     <div class="card-inner">
                                         <div class="user-card">
-                                            <div class="user-avatar bg-primary">
-                                                <span>AB</span>
-                                            </div>
                                             <div class="user-info">
                                                 <span class="lead-text">{{branch.name}}</span>
                                                 <span class="sub-text">{{branch.email}}</span>
@@ -115,8 +86,11 @@
                                                     <a class="btn btn-icon btn-trigger me-n2" data-bs-toggle="dropdown" href="#"><em class="icon ni ni-more-v"></em></a>
                                                     <div class="dropdown-menu dropdown-menu-end">
                                                         <ul class="link-list-opt no-bdr">
-                                                            <li><a href="#"><em class="icon ni ni-camera-fill"></em><span>Change Photo</span></a></li>
-                                                            <li><a href="#"><em class="icon ni ni-edit-fill"></em><span>Update Branch </span></a></li>
+                                                            {% if branhc.status == 'inactive' %}
+                                                            <li><a href="#"><em class="icon ni ni-camera-fill"></em><span>Change to Active</span></a></li>
+                                                            {% else %}
+                                                            <li><a href="#"><em class="icon ni ni-edit-fill"></em><span>Change to Inactive </span></a></li>
+                                                            {% endif %}
                                                         </ul>
                                                     </div>
                                                 </div>
@@ -132,11 +106,10 @@
                                     </div><!-- .card-inner -->
                                     <div class="card-inner p-0">
                                         <ul class="link-list-menu">
-                                            <li><a class="active" href="html/user-profile-regular.html"><em class="icon ni ni-user-fill-c"></em><span>Branch Infomation</span></a></li>
-                                            <li><a href="html/user-profile-notification.html"><em class="icon ni ni-bell-fill"></em><span>Branch Officers</span></a></li>
-                                            <li><a href="html/user-profile-activity.html"><em class="icon ni ni-activity-round-fill"></em><span>Loans Activity</span></a></li>
-                                            <li><a href="html/user-profile-setting.html"><em class="icon ni ni-lock-alt-fill"></em><span>Branch Members</span></a></li>
-                                            <li><a href="html/user-profile-social.html"><em class="icon ni ni-grid-add-fill-c"></em><span>Connected with Social</span></a></li>
+                                            <li><a class="active" href="#"><em class="icon ni ni-home"></em><span>Branch Infomation</span></a></li>
+                                            <li><a href="#branchOfficers"><em class="icon ni ni-users"></em><span>Branch Officers</span></a></li>
+                                            <li><a href="#loanActivity"><em class="icon ni ni-activity-round-fill"></em><span>Loans Activity</span></a></li>
+                                            <li><a href="#branchMembers"><em class="icon ni ni-users-fill"></em><span>Branch Members</span></a></li>
                                         </ul>
                                     </div><!-- .card-inner -->
                                 </div><!-- .card-inner-group -->

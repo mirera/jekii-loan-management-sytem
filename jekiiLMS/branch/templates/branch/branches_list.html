@@ -67,9 +67,6 @@
                                             </td>
                                             <td class="nk-tb-col">
                                                 <div class="user-card">
-                                                    <div class="user-avatar bg-dim-primary d-none d-sm-flex">
-                                                        <span>AB</span>
-                                                    </div>
                                                     <div class="user-info">
                                                         <span class="tb-lead">{{branch.name}} <span class="dot dot-success d-md-none ms-1"></span></span>
                                                         <span>{{branch.email}}</span>
@@ -104,7 +101,7 @@
                                                             <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
                                                             <div class="dropdown-menu dropdown-menu-end">
                                                                 <ul class="link-list-opt no-bdr">
-                                                                    <li><a data-bs-toggle="modal" href="#editBranch"><em class="icon ni ni-edit-alt"></em><span>Edit Branch</span></a></li>
+                                                                    <li><a  href="{% url 'edit' branch.id %}"><em class="icon ni ni-edit-alt"></em><span>Edit Branch</span></a></li>
                                                                     <li><a href="{% url 'view' branch.id %}"><em class="icon ni ni-eye"></em><span>View Details</span></a></li>
                                                                     <li class="divider"></li>
                                                                     <li><a data-bs-toggle="modal" class="delete-button" href="#deleteBranch" data-pk="{{ branch.id }}"><em class="icon ni ni-trash"></em><span>Delete Branch</span></a></li>
@@ -341,7 +338,7 @@
                         </div>
                         <div class="col-12">
                             <div class="form-group">
-                                <button type="submit" class="btn btn-lg btn-primary">Create Branch</button>
+                                <button type="submit" class="btn btn-lg btn-primary">Save</button>
                             </div>
                         </div>
                     </div>
