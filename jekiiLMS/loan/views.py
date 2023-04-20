@@ -10,9 +10,11 @@ from .forms import LoanProductForm, LoanForm, RepaymentForm, GuarantorForm, Coll
 from member.models import Member
 from company.models import Organization
 from user.models import CompanyStaff
+from jekiiLMS.process_loan import is_sufficient_collateral, get_approved_amount, get_amount_to_disburse
+from jekiiLMS.credit_score import member_credit_score
 
 
-#create Loan Product view starts
+#create Loan Product view starts 
 #@role_required
 def createLoanProduct(request):
     form = LoanProductForm()
@@ -306,21 +308,33 @@ def approveLoan(request,pk):
                 company = None
         else:
             company = None
+
         loan = Loan.objects.get(id=pk, company=company)
         borrower = loan.member
-        # Get the URL pattern for the 'view-loan' view
-        url = reverse('view-loan', args=[pk])
-        # Append the anchor to the end of the URL
-        url_with_anchor = f'{url}'
+        guarantor = loan.guarantor
+        
+        guarantor_credit_score = member_credit_score(guarantor)
+        member_credit_score = member_credit_score(borrower)
+        recommended_amount = get_approved_amount(loan)
+        amount_to_disburse = get_amount_to_disburse
 
-        if loan.status == 'pending':
-            loan.status = 'approved'
-            borrower.status = 'active'
-            borrower.save()
-            loan.save()
+        if member_credit_score > 'minimal-value' and guarantor_credit_score > 'minimal-value':
+            if is_sufficient_collateral(loan):
+                if loan.status == 'pending':
+                    loan.status = 'approved'
+                    loan.applied_amount = recommended_amount
+                    loan.disbursed_amount = amount_to_disburse
+                    borrower.status = 'active'
+                    borrower.save()
+                    loan.save()
 
-            messages.success(request,'The loan was approved succussesfully!')
-            return redirect(url_with_anchor)
+                    messages.success(request,'The loan was approved succussesfully!')
+                    return redirect('view-loan', loan.id)
+            else:
+                messages.error(request, 'The collateral value is too low!')
+        else:
+            messages.error(request, 'Approval failed!, borrower/guarantor flagged')
+
     return render(request,'loan/loans-list.html')
 #approve logic ends
 

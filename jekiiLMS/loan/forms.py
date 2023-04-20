@@ -48,6 +48,7 @@ class LoanForm(forms.ModelForm):
     class Meta:
         model = Loan
         fields = '__all__'
+        exclude = ['approved_amount', 'disbursed_amount','disbursed_date','cleared_date']
 
         widgets = {
             'loan_id': forms.TextInput(attrs={'class': 'form-control' }),

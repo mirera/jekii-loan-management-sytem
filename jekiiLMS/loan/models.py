@@ -12,7 +12,7 @@ from django.db import transaction
 from member.models import Member
 from company.models import Organization
 from user.models import CompanyStaff
- 
+   
 
 #Loan Prouct model starts here
 
@@ -30,7 +30,7 @@ INTEREST_TYPE_CHOICES = (
 
 SERVICE_FEE_TYPE_CHOICES = (
     ('fixed value','FIXED VALUE'),
-    ('percentage of principal', 'p.c of Principal'),
+    ('percentage', 'PERCENTAGE'),
 )
 
 PENALTY_FEE_TYPE_CHOICES = (
@@ -98,8 +98,12 @@ class Loan(models.Model):
     loan_product = models.ForeignKey(LoanProduct, on_delete=models.SET_NULL, null=True)
     member = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True, related_name='loans_as_member')
     applied_amount = models.IntegerField()
+    approved_amount = models.IntegerField(blank=True, null=True)
+    disbursed_amount = models.IntegerField(blank=True, null=True)
     guarantor = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True, related_name='loans_as_guarantor', blank=True)
     application_date = models.DateField()
+    disbursed_date = models.DateField()
+    cleared_date = models.DateField()
     loan_officer = models.ForeignKey(CompanyStaff,on_delete=models.SET_NULL, null=True)
     loan_purpose = models.TextField()
     status = models.CharField(max_length=50, choices=LOAN_STATUS, default='pending')
