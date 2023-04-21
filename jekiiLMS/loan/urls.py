@@ -12,7 +12,7 @@ urlpatterns = [
 
     #loan urls
     path('loans', views.listLoans, name='loans'),
-    path('create-loan', views.createLoan, name='create-loan'),
+    path('create-loan', views.createLoan, name='create-loan'), 
     path('edit-loan/<str:pk>', views.editLoan, name='edit-loan'),
     path('view-loan/<str:pk>', views.viewLoan, name='view-loan'), 
     path('delete-loan/<str:pk>', views.deleteLoan, name='delete-loan'), 
