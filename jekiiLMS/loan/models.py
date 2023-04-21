@@ -148,7 +148,7 @@ class Loan(models.Model):
         pass 
 
     #method to calculte the last payment date/due date
-    def last_payment_date(self):
+    def due_date(self):
         pass
     
     # method to calculate total_payable

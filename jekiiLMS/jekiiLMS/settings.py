@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'user',
     'branch',
     'company',
+    'celery',
 ]
 
 MIDDLEWARE = [
@@ -152,3 +153,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = '/media/'
 
 MEDIA_ROOT =  os.path.join(BASE_DIR, 'static/media')
+
+#Configure Celery to use Redis as the message broker
+CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
