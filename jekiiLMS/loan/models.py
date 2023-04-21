@@ -102,9 +102,11 @@ class Loan(models.Model):
     disbursed_amount = models.IntegerField(blank=True, null=True)
     guarantor = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True, related_name='loans_as_guarantor', blank=True)
     application_date = models.DateField()
-    disbursed_date = models.DateField()
-    cleared_date = models.DateField()
-    loan_officer = models.ForeignKey(CompanyStaff,on_delete=models.SET_NULL, null=True)
+    approved_date = models.DateField(blank=True, null=True)
+    disbursed_date = models.DateField(blank=True, null=True)
+    cleared_date = models.DateField(blank=True, null=True)
+    loan_officer = models.ForeignKey(CompanyStaff,on_delete=models.SET_NULL, null=True, related_name='loans_as_officer')
+    approved_by = models.ForeignKey(CompanyStaff,on_delete=models.SET_NULL, null=True, related_name='loans_as_manager')
     loan_purpose = models.TextField()
     status = models.CharField(max_length=50, choices=LOAN_STATUS, default='pending')
     attachments = models.FileField(upload_to='loan_attachments/', null=True, blank=True)  
@@ -141,6 +143,13 @@ class Loan(models.Model):
         else:
             return self.application_date  # for daily repayment frequency
 
+    #method to calculte the last payment date/due date
+    def next_payment_date(self):
+        pass 
+
+    #method to calculte the last payment date/due date
+    def last_payment_date(self):
+        pass
     
     # method to calculate total_payable
     def total_payable(self):
@@ -166,7 +175,10 @@ class Loan(models.Model):
 
         return total_payable
             
-
+    #method to calculte the loan balance
+    def loan_balance(self):
+        pass
+    
     class Meta:
         ordering = ['-application_date']
 

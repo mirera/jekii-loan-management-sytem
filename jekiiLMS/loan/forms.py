@@ -48,7 +48,9 @@ class LoanForm(forms.ModelForm):
     class Meta:
         model = Loan
         fields = '__all__'
-        exclude = ['approved_amount', 'disbursed_amount','disbursed_date','cleared_date']
+        exclude = ['approved_amount', 'disbursed_amount','disbursed_date',
+                    'cleared_date', 'approved_date', 'approved_by',
+                    ]
 
         widgets = {
             'loan_id': forms.TextInput(attrs={'class': 'form-control' }),
@@ -58,7 +60,8 @@ class LoanForm(forms.ModelForm):
             'application_date': forms.DateInput(attrs={'class': 'form-control  date-picker-range', 'data-date-format':'yyyy-mm-dd'}),
             'loan_officer': forms.Select(attrs={'class': 'form-select js-select2'}),
             'status': forms.Select(attrs={'class': 'form-select js-select2'}),
-            'loan_purpose': forms.Textarea(attrs={'class': 'form-control form-control-sm', 'id': 'cf-default-textarea' ,'placeholder':'Write loan purpose'}),
+            'loan_purpose': forms.Textarea(attrs={'class': 'form-control form-control-sm',
+                                                 'id': 'cf-default-textarea' ,'placeholder':'Write loan purpose'}),
             'attachments': forms.FileInput(attrs={'class': 'form-control'})
         }
 

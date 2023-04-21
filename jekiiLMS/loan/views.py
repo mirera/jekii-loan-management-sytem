@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib import messages
 from django.db.models import Sum
-from decimal import Decimal
+from datetime import datetime
 from django.contrib.auth.models import User
 from jekiiLMS.decorators import role_required
 from .models import LoanProduct, Loan, Note, Repayment, Guarantor, Collateral
@@ -10,7 +10,7 @@ from .forms import LoanProductForm, LoanForm, RepaymentForm, GuarantorForm, Coll
 from member.models import Member
 from company.models import Organization
 from user.models import CompanyStaff
-from jekiiLMS.process_loan import is_sufficient_collateral, get_approved_amount, get_amount_to_disburse
+from jekiiLMS.process_loan import is_sufficient_collateral, calculate_loan_amount, get_amount_to_disburse, clear_loan, update_member_data
 from jekiiLMS.credit_score import member_credit_score
 
 
@@ -311,29 +311,38 @@ def approveLoan(request,pk):
 
         loan = Loan.objects.get(id=pk, company=company)
         borrower = loan.member
-        guarantor = loan.guarantor
-        
-        guarantor_credit_score = member_credit_score(guarantor)
-        member_credit_score = member_credit_score(borrower)
-        recommended_amount = get_approved_amount(loan)
-        amount_to_disburse = get_amount_to_disburse
+        guarantors = Guarantor.objects.filter(loan=loan)
+        today = datetime.today().strftime('%Y-%m-%d')
 
-        if member_credit_score > 'minimal-value' and guarantor_credit_score > 'minimal-value':
+        guarantors_score = 0
+        for guarantor in guarantors:
+            guarantors_score += guarantor.name.credit_score
+
+        member_score = borrower.credit_score
+        recommended_amount = calculate_loan_amount(loan)
+        amount_to_disburse = get_amount_to_disburse(loan)
+
+        print(guarantors)
+        if member_score >= 5 and guarantors_score >= 7:
+            print(recommended_amount,amount_to_disburse,member_score,guarantors_score )
             if is_sufficient_collateral(loan):
                 if loan.status == 'pending':
                     loan.status = 'approved'
-                    loan.applied_amount = recommended_amount
+                    loan.approved_amount = recommended_amount
                     loan.disbursed_amount = amount_to_disburse
+                    loan.approved_date = today
+                    loan.approved_by = companystaff
                     borrower.status = 'active'
                     borrower.save()
                     loan.save()
 
-                    messages.success(request,'The loan was approved succussesfully!')
+                    messages.success(request,'The loan was approved successfully!')
                     return redirect('view-loan', loan.id)
             else:
                 messages.error(request, 'The collateral value is too low!')
         else:
             messages.error(request, 'Approval failed!, borrower/guarantor flagged')
+            return redirect('home') #render some error page
 
     return render(request,'loan/loans-list.html')
 #approve logic ends
@@ -466,9 +475,7 @@ def deleteLoan(request,pk):
      #context is {'obj':branch}, in delete.html we are accessing room/message as 'obj'
     context = {'obj':loan}
     return render(request,'loan/delete-loan.html', context)
-
 # delete Loan  ends starts
-
 
 #create repayment view starts
 def createRepayment(request):
@@ -487,10 +494,8 @@ def createRepayment(request):
     if request.method == 'POST':
         member_id = request.POST.get('member')
         member = Member.objects.get(pk=member_id, company=company)
-
         # Get the approved or overdue Loan object associated with the member
         loan = member.loans_as_member.get(status=('approved' or 'overdue'))
-
         if loan:
             Repayment.objects.create(
                 company = company,
@@ -500,6 +505,9 @@ def createRepayment(request):
                 amount= request.POST.get('amount'),
                 date_paid = request.POST.get('date_paid'),
             )
+            
+            clear_loan(loan) #clear a loan
+            update_member_data(loan) #update member/borrower data
             messages.success(request,'The repayment was added succussesfully!')
             return redirect('repayments')
         else:
@@ -507,7 +515,7 @@ def createRepayment(request):
             return redirect('repayments')
     context= {'form':form}
     return render(request,'loan/repayment-create.html', context)
-#create loan view ends
+#-- ends --
 
 # list Repayments  view starts 
 def listRepayments(request):
@@ -581,14 +589,15 @@ def editRepayment(request,pk):
             repayment.loan_id = loan
             repayment.company = company
             repayment.save()
+
+            clear_loan(loan) #clear a loan
+            update_member_data(loan) #update member/borrower data
+            messages.success(request,'The repayment was edited succussesfully!')
             return redirect('repayments')
         else:
-            print(form.errors)
             messages.error(request, 'Fill the form as required')
-
     # prepopulate the form with existing data
     form = RepaymentForm(instance=repayment, company=company)
-
     return render(request,'loan/edit-repayment.html',{'form':form}) 
 #edit repayment view ends
  
@@ -838,6 +847,8 @@ def addRepayment(request, pk):
             amount = request.POST.get('amount'),
             date_paid = request.POST.get('date_paid')
         )
+        clear_loan(loan) #clear a loan
+        update_member_data(loan) #update member/borrower data
         messages.success(request, 'Repayment added successfully.')
         return redirect('view-loan', pk=loan.id)
  
