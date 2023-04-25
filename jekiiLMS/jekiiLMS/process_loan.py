@@ -1,6 +1,5 @@
-from datetime import datetime, date
-from django.contrib import messages
-from loan.models import Collateral, Loan, Repayment
+from datetime import datetime
+from loan.models import Collateral
 from .credit_score import member_credit_score
 
 
@@ -70,24 +69,10 @@ def clear_loan(loan):
 
 #update member details after loan cleared               
 def update_member_data(loan):
-    member = loan.member
-    member.credit_score = member_credit_score(member)
-    member.status = 'inactive'
-    member.save()
+    if loan.status == 'cleared':
+        member = loan.member
+        member.previous_credit_score = member.credit_score
+        member.credit_score = member_credit_score(member)
+        member.status = 'inactive'
+        member.save() 
 
-#change loan status to overdue
-def mark_loans_as_overdue(loan):
-    today = date.today()
-    overdue_loans = []
-    loans = Loan.objects.filter(due_date__lt=today).exclude(status__in=['cleared', 'overdue'])
-    # Find all loans that are due but not yet cleared or marked as overdue
-    for loan in loans:
-        # Check if there are any repayments made by the borrower for the loan
-        repayments = Repayment.objects.filter(loan_id=loan.id, member=loan.member)
-        total_repayments = sum(repayment.amount for repayment in repayments)
-        total_payable = loan.total_payable
-        if total_repayments < total_payable:
-            # Loan is overdue
-            loan.status = 'overdue'
-            loan.save()
-            overdue_loans.append(loan)

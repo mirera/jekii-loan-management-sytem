@@ -11,7 +11,6 @@ from member.models import Member
 from company.models import Organization
 from user.models import CompanyStaff
 from jekiiLMS.process_loan import is_sufficient_collateral, calculate_loan_amount, get_amount_to_disburse, clear_loan, update_member_data
-from jekiiLMS.credit_score import member_credit_score
 
 
 #create Loan Product view starts 
@@ -322,27 +321,29 @@ def approveLoan(request,pk):
         recommended_amount = calculate_loan_amount(loan)
         amount_to_disburse = get_amount_to_disburse(loan)
 
-        print(guarantors)
         if member_score >= 5 and guarantors_score >= 7:
-            print(recommended_amount,amount_to_disburse,member_score,guarantors_score )
+
             if is_sufficient_collateral(loan):
                 if loan.status == 'pending':
-                    loan.status = 'approved'
+                    #update loan details
                     loan.approved_amount = recommended_amount
                     loan.disbursed_amount = amount_to_disburse
                     loan.approved_date = today
                     loan.approved_by = companystaff
+                    loan.status = 'approved'
+
+                    #update borrower details
                     borrower.status = 'active'
                     borrower.save()
                     loan.save()
-
                     messages.success(request,'The loan was approved successfully!')
                     return redirect('view-loan', loan.id)
             else:
                 messages.error(request, 'The collateral value is too low!')
+                return render(request, 'loan/suff-coll.html')
         else:
             messages.error(request, 'Approval failed!, borrower/guarantor flagged')
-            return redirect('home') #render some error page
+            return render(request, 'loan/guarantor-error.html')
 
     return render(request,'loan/loans-list.html')
 #approve logic ends

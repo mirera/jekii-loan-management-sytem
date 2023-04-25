@@ -13,6 +13,7 @@ class MemberForm(forms.ModelForm):
     class Meta:
         model = Member
         fields = '__all__'
+        exclude =['previous_credit_score']
 
         widgets = {
                 'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder':'Write your first name'}),

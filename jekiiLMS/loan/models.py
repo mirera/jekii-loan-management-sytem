@@ -2,7 +2,8 @@ from tkinter import CASCADE
 from django.db import models
 from django.urls import reverse
 from django.db.models import Sum
-from datetime import timedelta
+from datetime import timedelta, datetime
+from dateutil.relativedelta import relativedelta
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
@@ -12,6 +13,7 @@ from django.db import transaction
 from member.models import Member
 from company.models import Organization
 from user.models import CompanyStaff
+
    
 
 #Loan Prouct model starts here
@@ -80,6 +82,7 @@ class LoanProduct(models.Model):
 
     def __str__(self):
         return self.loan_product_name
+#-- ends
 
 
 
@@ -101,10 +104,10 @@ class Loan(models.Model):
     approved_amount = models.IntegerField(blank=True, null=True)
     disbursed_amount = models.IntegerField(blank=True, null=True)
     guarantor = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True, related_name='loans_as_guarantor', blank=True)
-    application_date = models.DateField()
-    approved_date = models.DateField(blank=True, null=True)
-    disbursed_date = models.DateField(blank=True, null=True)
-    cleared_date = models.DateField(blank=True, null=True)
+    application_date = models.DateTimeField()
+    approved_date = models.DateTimeField(blank=True, null=True)
+    disbursed_date = models.DateTimeField(blank=True, null=True)
+    cleared_date = models.DateTimeField(blank=True, null=True)
     loan_officer = models.ForeignKey(CompanyStaff,on_delete=models.SET_NULL, null=True, related_name='loans_as_officer')
     approved_by = models.ForeignKey(CompanyStaff,on_delete=models.SET_NULL, null=True, related_name='loans_as_manager')
     loan_purpose = models.TextField()
@@ -144,18 +147,54 @@ class Loan(models.Model):
             return self.application_date  # for daily repayment frequency
 
     #method to calculte the last payment date/due date
-    def next_payment_date(self):
-        pass 
-
-    #method to calculte the last payment date/due date
     def due_date(self):
-        pass
-    
+        if self.loan_product.repayment_frequency == 'onetime':
+            # For one-time payments, the due date is simply the application date plus the loan product term
+            return self.approved_date + timedelta(days=self.loan_product.loan_product_term) #change to disbursement date after MPESA api
+        elif self.loan_product.repayment_frequency == 'daily':
+            # For daily payments, the due date is calculated as the application date plus the loan product term in days
+            return self.approved_date + timedelta(days=self.loan_product.loan_product_term)
+        elif self.loan_product.repayment_frequency == 'weekly':
+            # For weekly payments, the due date is calculated as the application date plus the loan product term in weeks
+            return self.approved_date + timedelta(weeks=self.loan_product.loan_product_term)
+        elif self.loan_product.repayment_frequency == 'monthly':
+            # For monthly payments, the due date is calculated as the application date plus the loan product term in months
+            return self.approved_date + relativedelta(months=self.loan_product.loan_product_term)
+
+    #method to calculte the next payment date
+    def next_payment_date(self):
+        start_date = self.approved_date
+        elapsed_days = (datetime.now().date() - start_date.date()).days 
+
+        if self.loan_product.repayment_frequency == 'onetime':
+            return self.date_due
+        else:
+            # Calculate the next payment date based on the loan's repayment frequency
+            if self.loan_product.repayment_frequency == 'daily':
+                interval_duration = timedelta(days=1)
+            elif self.loan_product.repayment_frequency == 'weekly':
+                interval_duration = timedelta(weeks=1)
+            elif self.loan_product.repayment_frequency == 'monthly':
+                interval_duration = relativedelta(months=1)
+            else:
+                # Handle unsupported repayment frequencies
+                raise ValueError('Unsupported repayment frequency')
+
+            # Calculate the number of intervals that have elapsed since the loan was disbursed
+            intervals_elapsed = elapsed_days // interval_duration.days
+
+            # Calculate the number of the next interval (e.g. the next month if the repayment frequency is monthly)
+            next_interval = intervals_elapsed + 1
+
+            # Calculate the date of the next payment by adding the duration of the next interval to the start date
+            next_payment_date = start_date + (next_interval * interval_duration)
+            return next_payment_date
+
     # method to calculate total_payable
     def total_payable(self):
-        principal = self.applied_amount
-        interest_rate = self.loan_product.interest_rate
-        penalty_value = self.loan_product.penalty_value
+        principal = self.approved_amount or 0
+        interest_rate = self.loan_product.interest_rate or 0
+        penalty_value = self.loan_product.penalty_value or 0
 
         interest = 0
 
@@ -177,7 +216,25 @@ class Loan(models.Model):
             
     #method to calculte the loan balance
     def loan_balance(self):
-        pass
+        # Get the loan object and its total payable
+        loan_object = Loan.objects.get(id=self.id)
+        total_payable = loan_object.total_payable()
+
+        # Get the sum of all loan repayments
+        loan_repayments_sum = Repayment.objects.filter(loan_id=self).aggregate(Sum('amount'))['amount__sum']
+        
+        # If there are no loan repayments yet, set the sum to 0
+        if loan_repayments_sum is None:
+            loan_repayments_sum = 0
+        
+        # Calculate the loan balance
+        loan_balance = total_payable - loan_repayments_sum
+        
+        # If the loan balance is negative, return 0 instead
+        if loan_balance < 0:
+            loan_balance = 0
+        
+        return loan_balance
     
     class Meta:
         ordering = ['-application_date']

@@ -31,6 +31,7 @@ class Member(models.Model):
     business_name = models.CharField(max_length=500, null=True)
     industry = models.CharField(max_length=500, choices=INDUSTRIES, null=True)
     address = models.CharField(max_length=500)
+    previous_credit_score = models.IntegerField(default=0)
     credit_score = models.IntegerField(default=0)
     date_joined = models.DateField()
     passport_photo = models.ImageField( default='default.png', upload_to='member_passports/')
