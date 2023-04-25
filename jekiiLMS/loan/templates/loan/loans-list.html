@@ -66,8 +66,10 @@
                                             <div class="nk-tb-item nk-tb-head">
                                                 <div class="nk-tb-col"><span>Loan No.</span></div>
                                                 <div class="nk-tb-col tb-col-sm"><span>Customer</span></div>
-                                                <div class="nk-tb-col tb-col-md"><span>Date Issued</span></div>
-                                                <div class="nk-tb-col tb-col-md"><span>Date Due</span></div>
+                                                <div class="nk-tb-col tb-col-lg"><span>Amount</span></div>
+                                                <div class="nk-tb-col tb-col-md"><span>Date Disbursed</span></div>
+                                                <div class="nk-tb-col tb-col-md"><span>Next Payment Date</span></div>
+                                                <div class="nk-tb-col tb-col-lg"><span>Total Payable</span></div>
                                                 <div class="nk-tb-col tb-col-lg"><span>Loan Balance</span></div>
                                                 <div class="nk-tb-col"><span>Status</span></div>
                                                 <div class="nk-tb-col"><span class="d-none d-sm-inline">Action</span></div>
@@ -80,23 +82,28 @@
                                                 </div>
                                                 <div class="nk-tb-col tb-col-sm">
                                                     <div class="user-card">
-                                                        <div class="user-avatar user-avatar-sm bg-purple">
-                                                            <img src="{{loan.member.passport_photo.url}}">
-                                                        </div>
                                                         <div class="user-name">
                                                             <span class="tb-lead">{{loan.member.first_name}} {{loan.member.last_name}}</span>
                                                         </div>
                                                     </div>
                                                 </div>
+                                                {% if loan.status == 'approved' %}
                                                 <div class="nk-tb-col tb-col-md">
-                                                    <span class="tb-sub">{{loan.application_date}}</span>
+                                                    <span class="tb-sub">{{loan.approved_amount}}</span>
+                                                </div>
+                                                <div class="nk-tb-col tb-col-md">
+                                                    <span class="tb-sub">{{loan.approved_date}}</span>
                                                 </div>
                                                 <div class="nk-tb-col tb-col-lg">
-                                                    <span class="tb-sub text-primary">{{loan.application_date}}</span>
+                                                    <span class="tb-sub text-primary">{{loan.next_payment_date}}</span>
                                                 </div>
                                                 <div class="nk-tb-col">
-                                                    <span class="tb-sub tb-amount">{{loan.applied_amount}} <span>Ksh</span></span>
+                                                    <span class="tb-sub tb-amount">{{loan.total_payable}}</span>
                                                 </div>
+                                                <div class="nk-tb-col">
+                                                    <span class="tb-sub tb-amount">{{loan.loan_balance}} </span>
+                                                </div>
+                                                {% endif %}
                                                 <div class="nk-tb-col">
                                                     {% if loan.status == 'pending' %}
                                                         <span class="badge badge-dot bg-warning">{{loan.status}}</span>

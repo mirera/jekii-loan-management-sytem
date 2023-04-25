@@ -90,31 +90,36 @@
                                                 {% elif loan.status == 'cleared' %}
                                                 <td class="profile-ud-value text-success">{{loan.status.upper}}</td>
                                                 {% elif loan.status == 'approved' %}
-                                                <td class="profile-ud-value text-primary">{{loan.status.upper}}</td>
+                                                <td class="profile-ud-value text-primary ">{{loan.status.upper}}</td>
                                                 {% else %}
                                                 <td class="profile-ud-value text-danger">{{loan.status.upper}}</td>
                                                 {% endif %}
                                             </tr>
                                             <tr>
-                                                <td class="profile-ud-label">First Payment Date:</td>
-                                                <td class="profile-ud-value">{{loan.first_repayment_date}}</td>
+                                                <td class="profile-ud-label">Date Approved:</td>
+                                                <td class="profile-ud-value">{{loan.approved_date}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="profile-ud-label">Approved By:</td>
+                                                <td class="profile-ud-value">{{loan.approved_by}}</td>
                                             </tr>
                                             <tr>
                                                 <td class="profile-ud-label">Disbursement Date:</td>
                                                 <td class="profile-ud-value">{{loan.application_date}}</td>
                                             </tr>
                                             <tr>
-                                                <td class="profile-ud-label">Applied Amount	:</td>
-                                                <td class="profile-ud-value">{{loan.applied_amount}} Kes</td>
+                                                <td class="profile-ud-label">Next Payment Date:</td>
+                                                <td class="profile-ud-value">{{loan.first_repayment_date}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="profile-ud-label">Approved Amount	:</td>
+                                                <td class="profile-ud-value">{{loan.approved_amount}} Kes</td>
                                             </tr>
                                             <tr>
                                                 <td class="profile-ud-label">Total Payable:</td>
                                                 <td class="profile-ud-value">{{loan.total_payable}} Kes</td>
                                             </tr>
-                                            <tr>
-                                                <td class="profile-ud-label">Total Paid:</td>
-                                                <td class="profile-ud-value">{{loan_repayments}} Kes</td>
-                                            </tr>
+                                            
                                             <tr>
                                                 <td class="profile-ud-label">Due Amount:</td>
                                                 <td class="profile-ud-value">{{loan.applied_amount}} Kes</td>

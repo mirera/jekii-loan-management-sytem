@@ -3,8 +3,7 @@ from django.utils import timezone
 
 def member_credit_score(member):
     # Get the last cleared loan for the member
-    last_loan = member.loan_set.filter(status='cleared').order_by('-cleared_date').first()
-
+    last_loan = member.loans_as_member.filter(status='cleared').order_by('-cleared_date').first()
     # If the member has no cleared loans, return the default credit score
     if last_loan is None:
         return member.credit_score

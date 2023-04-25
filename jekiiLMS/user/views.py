@@ -100,9 +100,11 @@ def user_signup(request):
             default_branch = Branch.objects.create(
                 company = organization,
                 name = 'Main Branch',
+                email = email,
                 open_date = today,
                 capital = '2000000',
-                office = '123 HeadQuater Street'
+                office = '123 HeadQuater Street',
+                notes = 'This is the default branch. Do not delete'
             )
 
             # Create default Role for Company admin, all permissions
