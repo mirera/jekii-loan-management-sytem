@@ -2,7 +2,7 @@ from dataclasses import fields
 from django.forms import ModelForm
 from django import forms
 from datetime import datetime
-from .models import LoanProduct, Loan, Repayment, Guarantor, Collateral
+from .models import LoanProduct, Loan, Repayment, Guarantor, Collateral, MpesaStatement
 from member.models import Member
 from user.forms import CompanyStaff
 
@@ -119,6 +119,16 @@ class CollateralForm(forms.ModelForm):
             'estimated_value': forms.NumberInput(attrs={'class': 'form-control','placeholder':'30000'}),
             'serial_number': forms.TextInput(attrs={'class': 'form-control','placeholder':'0123-W239'})
         } 
- 
-
+  
+class MpesaStatementForm(forms.ModelForm):
+    class Meta:
+        model = MpesaStatement
+        fields = ['statements', 'code']
+        
+        
+        widgets = {
+            'code': forms.TextInput(attrs={'class': 'form-control','placeholder':'1234'}),
+            'statements': forms.FileInput(attrs={'class': 'form-control'})
+        } 
+  
  

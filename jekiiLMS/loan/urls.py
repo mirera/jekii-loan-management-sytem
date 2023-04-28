@@ -37,6 +37,10 @@ urlpatterns = [
     path('edit-collateral/<str:pk>', views.editCollateral, name='edit-collateral'),
     path('view-loan/<str:pk>/remove-collateral/<str:collateral_id>', views.removeCollateral, name='remove-collateral'),
 
+    #mpesa Statment urls
+    path('view-loan/<str:pk>/add-statement', views.addStatement, name='add-statement'),
+    path('view-loan/<str:pk>/analyse-statement', views.analyseStatement, name='analyse-statement'),
+
     #loan calculator url
     path('loancalculator', views.loan_calculator, name='loancalculator'), 
 

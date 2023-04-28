@@ -1,16 +1,19 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+from django.conf import settings
+import os
 from django.contrib import messages
 from django.db.models import Sum
 from datetime import datetime
 from django.contrib.auth.models import User
 from jekiiLMS.decorators import role_required
-from .models import LoanProduct, Loan, Note, Repayment, Guarantor, Collateral
-from .forms import LoanProductForm, LoanForm, RepaymentForm, GuarantorForm, CollateralForm
+from .models import LoanProduct, Loan, Note, Repayment, Guarantor, Collateral, MpesaStatement
+from .forms import LoanProductForm, LoanForm, RepaymentForm, GuarantorForm, CollateralForm, MpesaStatementForm
 from member.models import Member
 from company.models import Organization
 from user.models import CompanyStaff
 from jekiiLMS.process_loan import is_sufficient_collateral, calculate_loan_amount, get_amount_to_disburse, clear_loan, update_member_data
+from jekiiLMS.mpesa_statement import get_loans_table
 
 
 #create Loan Product view starts 
@@ -411,9 +414,12 @@ def viewLoan(request, pk):
     guarantors = Guarantor.objects.filter(loan=loan) #here loan=loan mean loan_obj=loan loan_obj in guarantor model and form
     collaterals = Collateral.objects.filter(loan=loan)
     repayments = Repayment.objects.filter(loan_id=loan)
+    statements = MpesaStatement.objects.filter(loan_id=loan)
+
     form = GuarantorForm(request.POST,company=company, borrower=borrower)
     form_collateral = CollateralForm()
     form_repayment = RepaymentForm()
+    form_statement = MpesaStatementForm()
 
     #a sum of all repayments made toward a specifi loan 
     loan_repayments = Repayment.objects.filter(loan_id=loan.id).aggregate(Sum('amount'))['amount__sum']
@@ -445,8 +451,10 @@ def viewLoan(request, pk):
         'guarantors':guarantors,
         'repayments':repayments,
         'collaterals':collaterals,
+        'statements':statements,
         'form_collateral':form_collateral,
-        'form_repayment':form_repayment
+        'form_repayment':form_repayment,
+        'form_statement' : form_statement
         }
     return render(request, 'loan/loan-view.html', context)
 
@@ -857,3 +865,61 @@ def addRepayment(request, pk):
     return render(request,'loan/loan-view.html', context)
 #add repayment on a loanview view ends 
   
+#add statement view starts
+def addStatement(request, pk):
+
+    if request.user.is_authenticated and request.user.is_active:
+        try:
+            companystaff = CompanyStaff.objects.get(username=request.user.username)
+            company = companystaff.company
+        except CompanyStaff.DoesNotExist:
+            company = None
+    else:
+        company = None
+        
+    loan = get_object_or_404(Loan, id=pk, company=company)
+    borrower = loan.member
+    form = MpesaStatementForm(request.POST) 
+
+    if request.method == 'POST':
+        form = MpesaStatementForm(request.POST) 
+
+        MpesaStatement.objects.create(
+            company = company,
+            loan = loan,
+            owner = borrower, 
+            code = request.POST.get('code'),
+            statements = request.FILES.get('statements')
+        )
+        messages.success(request, 'Statement loaded added successfully.')
+        return redirect('view-loan', pk=loan.id)
+       
+    context= {'form':form, 'loan':loan}
+    return render(request,'loan/loan-view.html', context)
+# view ends   
+
+#analyse statement view starts
+def analyseStatement(request, pk):
+
+    if request.user.is_authenticated and request.user.is_active:
+        try:
+            companystaff = CompanyStaff.objects.get(username=request.user.username)
+            company = companystaff.company
+        except CompanyStaff.DoesNotExist:
+            company = None
+    else:
+        company = None
+        
+    loan = get_object_or_404(Loan, id=pk, company=company)
+    statement_id = request.POST.get('statement_id')
+    statement = get_object_or_404(MpesaStatement, id=statement_id, company=company)
+    
+    file_path= str(statement.statements)
+    file_path = os.path.join(settings.BASE_DIR, 'static', 'media', file_path) #absolute path for the file
+
+    file_password= statement.code
+    loan_table = get_loans_table(file_path, file_password)
+       
+    context= {'loan':loan,'file_path':file_path, 'loan_table':loan_table}
+    return render(request,'loan/analysis.html', context)
+#dd  view ends  
