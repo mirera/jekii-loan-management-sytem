@@ -4,6 +4,8 @@ from django.urls import reverse
 from django.db.models import Sum
 from datetime import timedelta, datetime
 from dateutil.relativedelta import relativedelta
+import math
+from dateutil.relativedelta import relativedelta
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
@@ -136,7 +138,6 @@ class Loan(models.Model):
         if self.application_date > now().date():
             raise ValidationError('Application date cannot be in the future.')
 
-
     #method to calculate first_repayment_date
     def first_repayment_date(self):
         if self.loan_product.repayment_frequency == 'weekly':
@@ -145,6 +146,45 @@ class Loan(models.Model):
             return self.application_date + timedelta(days=30)
         else:
             return self.application_date  # for daily repayment frequency
+    
+    #get the number of installment
+    def num_installments(self):
+        payment_frequency = self.loan_product.repayment_frequency
+        loan_term = self.loan_product.loan_product_term
+        term_period = self.loan_product.loan_term_period
+
+        if payment_frequency == 'onetime':
+            return 1
+        elif payment_frequency == 'daily':
+            interval_duration = timedelta(days=1)
+        elif payment_frequency == 'weekly':
+            interval_duration = timedelta(weeks=1)
+        elif payment_frequency == 'monthly':
+            interval_duration = relativedelta(months=1)
+        else:
+            # Handle unsupported repayment frequencies
+            raise ValueError('Unsupported repayment frequency')
+
+        # Convert loan term to timedelta object
+        if term_period == 'day':
+            loan_term = timedelta(days=loan_term)
+        elif term_period == 'week':
+            loan_term = timedelta(weeks=loan_term)
+        elif term_period == 'month':
+            loan_term = relativedelta(months=loan_term)
+        elif term_period == 'year':
+            loan_term = relativedelta(years=loan_term)
+        else:
+            # Handle unsupported loan term periods
+            raise ValueError('Unsupported loan term period')
+
+        # Calculate the number of payment intervals within the loan term
+        num_intervals = loan_term / interval_duration
+
+        # Round up to the nearest whole number of intervals
+        num_installments = math.ceil(num_intervals)
+
+        return num_installments
 
     #method to calculte the last payment date/due date
     def due_date(self):
@@ -190,6 +230,41 @@ class Loan(models.Model):
             next_payment_date = start_date + (next_interval * interval_duration)
             return next_payment_date
 
+    #method to calculte the previous payment date
+    def previous_payment_date(self):
+        # Get the loan's payment frequency and number of installments
+        payment_frequency = self.loan_product.repayment_frequency
+        num_installments = self.num_installments()
+        
+        # Calculate the interval duration based on the payment frequency
+        if payment_frequency == 'daily':
+            interval_duration = timedelta(days=1)
+        elif payment_frequency == 'weekly':
+            interval_duration = timedelta(weeks=1)
+        elif payment_frequency == 'monthly':
+            interval_duration = relativedelta(months=1)
+        else:
+            # Handle unsupported repayment frequencies
+            raise ValueError('Unsupported repayment frequency')
+        
+        # Get the current next payment date
+        next_payment_date = self.next_payment_date()
+        
+        # Calculate the number of intervals that have elapsed since the start date
+        intervals_elapsed = (next_payment_date - self.approved_date) // interval_duration
+        
+        if intervals_elapsed < 1:
+            previous_payment_date = None
+
+     
+        # Calculate the number of the previous interval (e.g. the previous week if the repayment frequency is weekly)
+        previous_interval = intervals_elapsed - num_installments + 1
+        
+        # Calculate the date of the previous payment by subtracting the duration of the previous interval from the next payment date
+        previous_payment_date = next_payment_date - (previous_interval * interval_duration)
+        
+        return previous_payment_date
+
     # method to calculate total_payable
     def total_payable(self):
         principal = self.approved_amount or 0
@@ -213,7 +288,15 @@ class Loan(models.Model):
         total_payable = principal + interest + penalty_fee
 
         return total_payable
-            
+    
+    #method to find amount due per payment interval 
+    def amount_due_per_interval(self):
+        total_payable = self.total_payable()
+        num_installments = self.num_installments()
+        amount_per_interval = total_payable / num_installments
+
+        return amount_per_interval       
+    
     #method to calculte the loan balance
     def loan_balance(self):
         # Get the loan object and its total payable
@@ -264,7 +347,7 @@ class Note(models.Model):
 class Repayment(models.Model):
     company = models.ForeignKey(Organization, on_delete=models.CASCADE)
     transaction_id = models.CharField(max_length=20)
-    loan_id = models.ForeignKey(Loan, on_delete=models.SET_NULL, null=True)
+    loan_id = models.ForeignKey(Loan, on_delete=models.SET_NULL, null=True, related_name='repayments')
     member = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True)
     amount= models.IntegerField()
     date_paid = models.DateField() 

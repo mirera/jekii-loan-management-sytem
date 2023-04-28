@@ -20,4 +20,4 @@ app.conf.beat_schedule = {
         'task': 'jekiiLMS.tasks.mark_loans_as_overdue',
         'schedule': crontab(minute=0, hour=0),
     },
-}
+} 
