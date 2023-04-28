@@ -4,7 +4,7 @@
 <!-- content @s -->
 <div class="nk-content ">
     <div class="container-fluid">
-        <div class="nk-content-inner">
+        <div class="nk-content-inner">  
             
             <div class="nk-content-body">
                 <div class="nk-block-head nk-block-head-sm">
@@ -30,19 +30,22 @@
                             <div class="col-md-4">
                                 <ul class="nav link-list-menu border border-light round m-0">
                                     <li>
-                                        <a class="active" data-bs-toggle="tab" href="#tabItem17"><em class="icon ni ni-coin"></em><span>Loan Details</span></a>
+                                        <a class="active" data-bs-toggle="tab" href="#loanDetails"><em class="icon ni ni-coin"></em><span>Loan Details</span></a>
                                     </li>
                                     <li>
-                                        <a data-bs-toggle="tab" href="#tabItem18"><em class="icon ni ni-user-circle"></em><span>Guarantor</span></a>
+                                        <a data-bs-toggle="tab" href="#guarantorDetails"><em class="icon ni ni-user-circle"></em><span>Guarantor</span></a>
                                     </li>
                                     <li>
-                                        <a data-bs-toggle="tab" href="#tabItem19"><em class="icon ni ni-coins"></em><span>Collateral</span></a>
+                                        <a data-bs-toggle="tab" href="#collateralDetails"><em class="icon ni ni-coins"></em><span>Collateral</span></a>
                                     </li>
                                     <li>
-                                        <a data-bs-toggle="tab" href="#tabItem20"><em class="icon ni ni-tranx-fill"></em><span>Repayments</span></a>
+                                        <a data-bs-toggle="tab" href="#mpesaStatement"><em class="icon ni ni-coins"></em><span>Mpesa Statement</span></a>
                                     </li>
                                     <li>
-                                        <a data-bs-toggle="tab" href="#tabItem21"><em class="icon ni ni-wallet-in"></em><span>Schedule</span></a>
+                                        <a data-bs-toggle="tab" href="#repaymentDetails"><em class="icon ni ni-tranx-fill"></em><span>Repayments</span></a>
+                                    </li>
+                                    <li>
+                                        <a data-bs-toggle="tab" href="#analysis"><em class="icon ni ni-wallet-in"></em><span>Analysis</span></a>
                                     </li> 
                                 </ul>
                                 {% if loan.status == 'pending' %}
@@ -58,7 +61,7 @@
                             </div>
                             <div class="col-md-8">
                                 <div class="tab-content">
-                                    <div class="tab-pane active" id="tabItem17">
+                                    <div class="tab-pane active" id="loanDetails">
                                         <div class="nk-block-head">
                                             <h5 class="title">Loan Information</h5>
                                             <div class="alert-warning">
@@ -145,7 +148,7 @@
                                         </div>                                          
                                         {% endif %}
                                     </div>
-                                    <div class="tab-pane" id="tabItem18">
+                                    <div class="tab-pane" id="guarantorDetails">
                                         <div class="nk-block-head d-flex justify-content-between align-items-center">
                                             <h5 class="title">Guarantor Information</h5> 
                                             {% if loan.status == 'pending' %}
@@ -181,7 +184,7 @@
                                         </table>
                                           
                                     </div>
-                                    <div class="tab-pane" id="tabItem19">
+                                    <div class="tab-pane" id="collateralDetails">
                                         <div class="nk-block-head d-flex justify-content-between align-items-center">
                                             <h5 class="title">Collateral Information</h5> 
                                             {% if loan.status == 'pending' %}
@@ -226,7 +229,30 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                    <div class="tab-pane" id="tabItem20">
+                                    <div class="tab-pane" id="mpesaStatement">
+                                        {% if loan.status == 'pending' %}
+                                        <div class="nk-block-head d-flex justify-content-between align-items-center">
+                                            <h5 class="title">Mpesa Statement</h5> 
+                                            <a data-bs-toggle="modal" href="#addStatement" class="btn btn-primary ml-auto ">+ Add</a>
+                                        </div><!-- .nk-block-head -->
+                                        {% endif %}
+                                        <div class="nk-divider divider md"></div>
+                                        {% for statement in statements %}
+                                        <form action="{% url 'analyse-statement' loan.id %}" method="post">
+                                            {% csrf_token %}
+                                            <div class="form-control-wrap">
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" placeholder="Add a statement" value="{{statement.statements}}" readonly>
+                                                    <input type="text" class="form-control" name="statement_id" value="{{statement.id}}" hidden>
+                                                    <div class="input-group-append">
+                                                        <button type="submit" class="btn btn-outline-primary btn-dim">Analyse Statement</button>
+                                                    </div>
+                                                </div>
+                                            </div> 
+                                        </form> 
+                                        {% endfor %}                                       
+                                    </div>
+                                    <div class="tab-pane" id="repaymentDetails">
                                         {% if loan.status != 'cleared' or 'pending' %}
                                         <div class="nk-block-head d-flex justify-content-between align-items-center">
                                             <h5 class="title">Repayments</h5> 
@@ -272,7 +298,7 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                    <div class="tab-pane" id="tabItem21">
+                                    <div class="tab-pane" id="analysis">
                                         {% if loan.status != 'cleared' or 'pending' %}
                                         <div class="nk-block-head d-flex justify-content-between align-items-center">
                                             <h5 class="title">Payment Schedule</h5> 
@@ -306,6 +332,7 @@
                                             </tbody>
                                         </table>
                                     </div>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -356,6 +383,49 @@
 <!-- content @e -->
 
 <!-- modals -->
+<div class="modal fade" id="addStatement">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <em class="icon ni ni-cross-sm"></em>
+            </a>
+            <div class="modal-body modal-body-md">
+                <h5 class="modal-title">Add MPesa Statement </h5><br>
+            
+                <form action="{% url 'add-statement' pk=loan.id %}" class="form-validate" method="POST" enctype="multipart/form-data" >
+                    {% csrf_token %}
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="fv-phone">Mpesa Statement</label>
+                                <div class="form-control-wrap">
+                                    <div class="input-group">
+                                        {{form_statement.statements}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="fv-phone">Passcode</label>
+                                <div class="form-control-wrap">
+                                    <div class="input-group">
+                                        {{form_statement.code}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-lg btn-primary">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div><!-- .Add Guarantor Modal-Content -->
 <div class="modal fade" id="addGuarantor">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">

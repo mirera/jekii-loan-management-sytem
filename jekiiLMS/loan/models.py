@@ -324,7 +324,7 @@ class Loan(models.Model):
 
 
     def __str__(self):
-        return self.loan_id
+        return self.member.first_name + ' ' + self.member.first_name
 
 # Note models starts here   
 class Note(models.Model):
@@ -350,14 +350,15 @@ class Repayment(models.Model):
     loan_id = models.ForeignKey(Loan, on_delete=models.SET_NULL, null=True, related_name='repayments')
     member = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True)
     amount= models.IntegerField()
-    date_paid = models.DateField() 
+    date_paid = models.DateTimeField() 
 
 
     class Meta:
         ordering = ['-date_paid']
 
     def __str__(self):
-        return self.transaction_id
+        return self.member.first_name + ' ' + self.member.first_name
+ 
 
     
 
@@ -418,3 +419,13 @@ class Collateral(models.Model):
 
     def __str__(self):
         return self.name  
+
+class MpesaStatement(models.Model):
+    company = models.ForeignKey(Organization, on_delete=models.CASCADE, null=True)
+    loan = models.ForeignKey(Loan, on_delete= models.CASCADE, null=True, related_name='statements')
+    owner = models.ForeignKey(Member, on_delete= models.CASCADE, null=True)
+    code =models.CharField(max_length=20)
+    statements = models.FileField(upload_to='mpesa-statements/', null=True, blank=True) 
+
+    def __str__(self):
+        return self.owner.first_name + ' ' + self.owner.last_name
