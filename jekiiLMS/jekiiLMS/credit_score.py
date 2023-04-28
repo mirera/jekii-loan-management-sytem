@@ -1,47 +1,81 @@
-from datetime import timedelta
-from django.utils import timezone
+from datetime import datetime
+from django.db.models import Sum
+
 
 def member_credit_score(member):
-    # Get the last cleared loan for the member
-    last_loan = member.loans_as_member.filter(status='cleared').order_by('-cleared_date').first()
+    credit_score = member.credit_score
+    # Get the current member active loan
+    active_loan = member.loans_as_member.filter(status=('approved', 'overdue')).order_by('-approved_date').first()
+    # Get the current date
+    current_date = datetime.now().date()
+
     # If the member has no cleared loans, return the default credit score
-    if last_loan is None:
-        return member.credit_score
+    if active_loan is None:
+        return credit_score
+    
+    # Get the last repayment made by the member
+    last_repayment = active_loan.repayments.filter(date_paid__lte=active_loan.next_payment_date()).order_by('-date_paid').first()
 
-    # Get the loan product associated with the last cleared loan
-    loan_product = last_loan.loan_product
+    #get the due date of the active loan
+    next_payment_date = active_loan.next_payment_date()
+    previous_payment_date = active_loan.previous_payment_date()
+    due_date = next_payment_date if current_date <= next_payment_date else previous_payment_date
 
-    # Calculate the time since the last cleared loan
-    days_since_last_loan = (timezone.now() - last_loan.cleared_date).days
+    
+    # Get the amount due and due date for the last repayment made by the member
+    amount_due_per_interval = active_loan.amount_due_per_interval()
+    repayment_frequency = active_loan.loan_product.repayment_frequency
+    previous_payment_date = active_loan.previous_payment_date()
 
-    # Calculate the expected interval between repayments based on loan product's repayment frequency
-    if loan_product.repayment_frequency == 'onetime':
-        expected_interval = loan_product.loan_term
-    elif loan_product.repayment_frequency == 'daily':
-        expected_interval = 1
-    elif loan_product.repayment_frequency == 'weekly':
-        expected_interval = 7
-    elif loan_product.repayment_frequency == 'monthly':
-        expected_interval = loan_product.loan_term
+    # Get the total amount of loan repayments made
+    if active_loan.approved_date <= due_date:
+        total_repayments = active_loan.repayments.filter(date_paid__lte=due_date).aggregate(Sum('amount'))['amount__sum']
     else:
-        expected_interval = 1
+        total_repayments = active_loan.repayments.filter(date_paid__gt=previous_payment_date, date_paid__lte=due_date).aggregate(Sum('amount'))['amount__sum']
 
-    # Calculate the expected number of intervals since the last cleared loan
-    expected_intervals = days_since_last_loan // expected_interval
-
-    # If the member paid on time, increase their credit score by 0.5 points per interval
-    if expected_intervals > 0:
-        member.credit_score += 0.5 * expected_intervals
-    # If the member did not pay on time, deduct 0.5 points per interval late
+    if last_repayment is None and current_date > due_date :
+        loan_product_term = active_loan.loan_product.loan_product_term
+        # deduct the credit score change based on the repayment frequency
+        if repayment_frequency == 'onetime' or repayment_frequency == 'monthly':
+            credit_score -= 1
+        elif repayment_frequency == 'weekly':
+            credit_score -= 0.5
+        elif repayment_frequency == 'daily':
+            if active_loan.loan_product.loan_term_period == 'day':
+                loan_product_term = loan_product_term * 1 
+            elif active_loan.loan_product.loan_term_period == 'week':
+                loan_product_term = loan_product_term * 7 #change loan term to days
+            elif active_loan.loan_product.loan_term_period == 'month':
+                loan_product_term = loan_product_term * 30
+            elif active_loan.loan_product.loan_term_period == 'year':
+                loan_product_term = loan_product_term * 365
+                credit_score -= 4 / loan_product_term
     else:
-        expected_intervals = abs(expected_intervals)
-        member.credit_score -= 0.5 * expected_intervals
-
+        if repayment_frequency == 'onetime' or repayment_frequency == 'monthly':
+            if total_repayments >= amount_due_per_interval and last_repayment.date_paid <= due_date:
+                # add the credit score 
+                if repayment_frequency == 'onetime' or repayment_frequency == 'monthly':
+                    credit_score += 1
+                elif repayment_frequency == 'weekly':
+                    credit_score += 0.5
+                elif repayment_frequency == 'daily':
+                    if active_loan.loan_product.loan_term_period == 'day':
+                        loan_product_term = loan_product_term * 1 
+                    elif active_loan.loan_product.loan_term_period == 'week':
+                        loan_product_term = loan_product_term * 7 #change loan term to days
+                    elif active_loan.loan_product.loan_term_period == 'month':
+                        loan_product_term = loan_product_term * 30
+                    elif active_loan.loan_product.loan_term_period == 'year':
+                        loan_product_term = loan_product_term * 365
+                        credit_score += 4 / loan_product_term
     # Make sure the credit score stays within the valid range of 0 to 100
-    member.credit_score = max(0, min(100, member.credit_score))
-
-    # Save the updated credit score to the database
+    print(credit_score)
+    credit_score = max(0, min(100,credit_score))
+    print(credit_score)
     member.save()
+    return credit_score
 
-    # Return the updated credit score
-    return member.credit_score
+def update_credit_score(member):
+    credit_score = member.credit_score
+    credit_score += 2
+    return credit_score

@@ -1,6 +1,6 @@
 from datetime import datetime
 from loan.models import Collateral
-from .credit_score import member_credit_score
+from .credit_score import member_credit_score, update_credit_score
 
 
 
@@ -72,7 +72,8 @@ def update_member_data(loan):
     if loan.status == 'cleared':
         member = loan.member
         member.previous_credit_score = member.credit_score
-        member.credit_score = member_credit_score(member)
+        #member.credit_score = member_credit_score(member)
+        member.credit_score = update_credit_score(member)
         member.status = 'inactive'
         member.save() 
 

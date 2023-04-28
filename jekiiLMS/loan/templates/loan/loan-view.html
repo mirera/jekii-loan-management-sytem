@@ -119,18 +119,21 @@
                                                 <td class="profile-ud-label">Total Payable:</td>
                                                 <td class="profile-ud-value">{{loan.total_payable}} Kes</td>
                                             </tr>
-                                            
                                             <tr>
-                                                <td class="profile-ud-label">Due Amount:</td>
-                                                <td class="profile-ud-value">{{loan.applied_amount}} Kes</td>
+                                                <td class="profile-ud-label">No. of Installments:</td>
+                                                <td class="profile-ud-value">{{loan.num_installments}} </td>
                                             </tr>
                                             <tr>
-                                                <td class="profile-ud-label">Late Payment Penalties:</td>
-                                                <td class="profile-ud-value">{{loan.applied_amount}} Kes</td>
+                                                <td class="profile-ud-label">Amount per Installment:</td>
+                                                <td class="profile-ud-value">{{loan.amount_due_per_interval}} Kes</td>
                                             </tr>
                                             <tr>
-                                                <td class="profile-ud-label">Loan Purpose:</td>
-                                                <td class="profile-ud-value">{{loan.loan_purpose}}</td>
+                                                <td class="profile-ud-label">Loan Balance:</td>
+                                                <td class="profile-ud-value">{{loan.loan_balance}} Kes</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="profile-ud-label">Loan Previous Payment date:</td>
+                                                <td class="profile-ud-value">{{loan.loan_balance}}</td>
                                             </tr>
                                             </tbody>
                                         </table><br>
