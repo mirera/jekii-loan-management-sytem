@@ -34,8 +34,10 @@ def createBranch(request):
             open_date = request.POST.get('open_date'),
             notes = request.POST.get('notes'),
         )
+        messages.success(request, 'Branch added successfuly')
         #redirecting user to branches page(url name) after submitting form
         return redirect('list')
+
     context= {
         'form':form,
         'branches' : branches,
@@ -61,6 +63,7 @@ def editBranch(request,pk):
             branch = form.save(commit=False)
             branch.company = company
             branch.save()
+            messages.success(request, 'Branch edited successfully')
             return redirect('list')
         else:
             messages.error(request, 'Fill the form as required')

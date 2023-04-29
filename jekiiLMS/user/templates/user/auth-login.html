@@ -40,7 +40,7 @@
                                 </div>
                                 <!-- django error messages starts here -->
                                 {% if messages %}
-                                <div class=" error-messages" style="color: #a64452;">
+                                <div class=" error-messages" style="color: #a64452;"> 
                                     <ul class="messages">
                                         {% for message in messages %}
                                         <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
@@ -48,7 +48,6 @@
                                     </ul>
                                 </div>
                                 <br>
-
                                 {% endif %}
                                 <!-- django error messages ends here -->
 

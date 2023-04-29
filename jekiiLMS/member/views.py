@@ -131,7 +131,7 @@ def editMember(request,pk):
         
 
         member.save()
-
+        messages.success(request, 'Member edited successfully')
         return redirect('members')
     else:
         # prepopulate the form with existing data
