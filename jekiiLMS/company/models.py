@@ -12,6 +12,7 @@ class Package(models.Model):
     monthly_price = models.CharField(max_length=100)
     employees = models.CharField(max_length=100)
     storage = models.CharField(max_length=100)
+    #date_added = models.DateField(auto_now_add=True)
     #modules = models.ManyToManyField(Models)
 
     def __str__(self):

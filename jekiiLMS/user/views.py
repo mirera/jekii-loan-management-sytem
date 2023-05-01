@@ -11,7 +11,7 @@ from .forms import CustomUserCreationForm, CompanyStaffForm , RoleForm
 from django.contrib import messages
 from .models import CompanyStaff, Role
 from branch.models import Branch
-from company.models import Organization
+from company.models import Organization, Package
 
 
 #---user login in logic starts here---
@@ -87,12 +87,15 @@ def user_signup(request):
             user.save()
             login(request, user)
             messages.success(request, 'User created successfully!')
- 
+
+            package_name = 'Free Trial'
+            package = Package.objects.get(name=package_name)
             #create a company object 
             organization = Organization.objects.create(
                name = company_name,
                email = email,
-               admin = user
+               admin = user,
+               package = package
             ) 
             
             #create default branch object 
