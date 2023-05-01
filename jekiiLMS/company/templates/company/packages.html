@@ -1,0 +1,115 @@
+{% extends 'superadmin-main.html' %}
+
+{% block content %}
+<!-- content @s -->
+<div class="nk-content ">
+    <div class="container-fluid">
+        <div class="nk-content-inner">
+            <div class="nk-content-body">
+                <div class="components-preview wide-md mx-auto">
+                    
+                    <div class="nk-block nk-block-lg">
+                        <div class="nk-block-head nk-block-head-sm nk-block-between">
+                            <h2 class="nk-block-title fw-normal">Packages</h2>
+                            <a data-bs-toggle="modal" href="#addPackage" class="link link-sm">+ Add Package</a>
+                        </div><!-- .nk-block-head -->
+                        <div class="card card-bordered card-preview">
+                            <div class="card-inner">
+                                <table class="datatable-init nowrap table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Annual Price</th>
+                                            <th>Monthly Price</th>
+                                            <th>Employees</th>
+                                            <th>Storage</th>
+                                            <th>Date Added</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for package in packages %}
+                                        <tr>
+                                            <td>{{package.name}}</td>
+                                            <td>{{package.annual_price}}</td>
+                                            <td>{{package.monthly_price}}</td>
+                                            <td>{{package.employees}}</td>
+                                            <td>{{package.storage}}</td>
+                                            <td>{{package.storage}}</td>
+                                        </tr>
+                                        {% endfor %}
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div><!-- .card-preview -->
+                    </div> <!-- nk-block -->
+                </div><!-- .components-preview -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addPackage">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <em class="icon ni ni-cross-sm"></em>
+            </a>
+            <div class="modal-body modal-body-md">
+                <h5 class="modal-title">Add Package </h5><br>
+            
+                <form action="{% url 'create-package' %} " method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row g-4">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-label" for="full-name-1"> Package Name</label>
+                                <div class="form-control-wrap">
+                                    {{form.name}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-label" for="pay-amount-1">Annual Price</label>
+                                <div class="form-control-wrap">
+                                    {{form.annual_price}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-label" for="pay-amount-1">Monthly Price</label>
+                                <div class="form-control-wrap">
+                                    {{form.monthly_price}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-label" for="pay-amount-1"> Employees</label>
+                                <div class="form-control-wrap">
+                                    {{form.employees}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-label" for="pay-amount-1"> Storage</label>
+                                <div class="form-control-wrap">
+                                    {{form.storage}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-lg btn-primary">Save Package</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div><!-- .Add Package  Modal-Content -->
+{% endblock content %}  

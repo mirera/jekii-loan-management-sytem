@@ -5,4 +5,14 @@ from . import views
 urlpatterns = [
     #organization urls
     path('update/<str:pk>', views.updateOrganization, name='update-organization'),
+    #path('create-company', views.createCompany, name='create-company'),
+    #path('edit-package', views.editPackage, name='edit-package'),
+    #path('remove-package', views.removePackage, name='remove-package'),
+    path('companies', views.listCompanies, name='companies'),
+
+    #package urls
+    path('create-package', views.createPackage, name='create-package'),
+    #path('edit-package', views.editPackage, name='edit-package'),
+    #path('remove-package', views.removePackage, name='remove-package'),
+    path('packages', views.listPackages, name='packages'),
 ] 

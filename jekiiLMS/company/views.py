@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
-from .models import Organization
-from .forms import OrganizationForm 
+from django.contrib import messages
+from .models import Organization, Package
+from .forms import OrganizationForm, PackageForm
 
 #-- update organization details upon sign up view --
 def updateOrganization(request, pk):
@@ -32,3 +33,38 @@ def updateOrganization(request, pk):
             'organization':organization
         }
         return render(request,'company/update-company.html', context)
+
+# -- view to create package
+def createPackage(request):
+    if request.method == 'POST':
+        form = PackageForm(request.POST)
+        if form.is_valid():
+            package = form.save(commit=False)
+            package.save()
+            messages.success(request, 'Package created successfully')
+            return redirect('packages')
+        else:
+            messages.error(request, 'Form validation failed! Try again.')
+    context = {'form':form}        
+    return render(request,'company/packages.html', context)
+# -- ends
+
+# -- view to list all packages
+def listPackages(request):
+    packages = Package.objects.all()
+    form = PackageForm()
+    context = {'packages':packages, 
+                'form':form,
+            }        
+    return render(request,'company/packages.html', context)
+# -- ends
+
+# -- view to list all comapnies
+def listCompanies(request):
+    companies = Organization.objects.all()
+    form = OrganizationForm()
+    context = {'companies':companies, 
+                'form':form,
+            }        
+    return render(request,'company/companies.html', context)
+# -- ends
