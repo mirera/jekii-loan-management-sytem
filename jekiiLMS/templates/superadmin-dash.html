@@ -44,29 +44,25 @@
                                         <div class="card-inner">
                                             <div class="card-title-group align-start mb-0">
                                                 <div class="card-title">
-                                                    <h6 class="title">Total Companies</h6>
+                                                    <h6 class="title">Total Companies</h6> 
                                                 </div>
                                                 <div class="card-tools">
                                                     <em class="card-hint icon ni ni-help-fill" data-bs-toggle="tooltip" data-bs-placement="left" title="Total Booking"></em>
                                                 </div>
                                             </div>
                                             <div class="card-amount">
-                                                <span class="amount"> {{total_disbursed_amount}} <span class=" ">KES </span> </span>
-                                                <span class="change down text-danger"><em class="icon ni ni-arrow-long-down"></em>1.93%</span>
+                                                <span class="amount"> {{companies.count}} <span class=" "> </span> </span>
                                             </div>
                                             <div class="invest-data">
                                                 <div class="invest-data-amount g-2">
                                                     <div class="invest-data-history">
                                                         <div class="title">This Month</div>
-                                                        <div class="amount">1913</div>
+                                                        <div class="amount">{{companies.count}}</div>
                                                     </div>
                                                     <div class="invest-data-history">
                                                         <div class="title">This Week</div>
-                                                        <div class="amount">1125</div>
+                                                        <div class="amount">{{companies.count}}</div>
                                                     </div>
-                                                </div>
-                                                <div class="invest-data-ck">
-                                                    <canvas class="iv-data-chart" id="totalBooking"></canvas>
                                                 </div>
                                             </div>
                                         </div>
@@ -84,28 +80,18 @@
                                                 </div>
                                             </div>
                                             <div class="card-amount">
-                                                {% if total_pending_loans == 0 %}
-                                                <span class="amount" > {{ total_pending_loans }} </span>
-                                                {% else %}
-                                                <span class="amount text-warning" > {{ total_pending_loans }} </span>
-                                                {% endif %}
+                                                <span class="amount" > {{ active_companies.count }} </span>
                                             </div>
                                             <div class="invest-data">
                                                 <div class="invest-data-amount g-2">
                                                     <div class="invest-data-history">
-                                                        <div class="title">Amount</div>
-                                                        {% if total_pending_loans == 0 %}
-                                                        <div class="amount">{{total_pending_amount}}</div>
-                                                        {% else %}
-                                                        <div class="amount text-warning ">{{total_pending_amount}}</div>
-                                                        {% endif %}
+                                                        <div class="title">Active</div>
+                                                        <div class="amount">{{active_companies.count}}</div>
                                                     </div>
-                                                    {% if total_pending_loans > 0 %}
-                                                    <a href="{% url 'loans' %}" class="btn btn-dim btn-outline-primary">View</a>
-                                                    {% endif %}
-                                                </div>
-                                                <div class="invest-data-ck">
-                                                    <canvas class="iv-data-chart" id="totalRoom"></canvas>
+                                                    <div class="invest-data-history">
+                                                        <div class="title">Licence Expired</div>
+                                                        <div class="amount">{{license_expired_companies.count}}</div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -123,22 +109,19 @@
                                                 </div>
                                             </div>
                                             <div class="card-amount">
-                                                <span class="amount"> {{expense}} <span class="currency currency-usd">KES</span>
+                                                <span class="amount"> {{license_expired_companies.count}} <span class="currency currency-usd"></span>
                                                 </span>
                                             </div>
                                             <div class="invest-data">
                                                 <div class="invest-data-amount g-2">
                                                     <div class="invest-data-history">
-                                                        <div class="title">This Month</div>
-                                                        <div class="amount">3,540.59 <span class="currency currency-usd">KES</span></div>
+                                                        <div class="title">Active</div>
+                                                        <div class="amount">{{active_companies.count}}</div>
                                                     </div>
                                                     <div class="invest-data-history">
-                                                        <div class="title">This Week</div>
-                                                        <div class="amount">1,259.28 <span class="currency currency-usd">KES</span></div>
+                                                        <div class="title">Licence Expired</div>
+                                                        <div class="amount">{{license_expired_companies.count}}</div>
                                                     </div>
-                                                </div>
-                                                <div class="invest-data-ck">
-                                                    <canvas class="iv-data-chart" id="totalExpenses"></canvas>
                                                 </div>
                                             </div>
                                         </div>
@@ -146,315 +129,75 @@
                                 </div><!-- .col -->
                                 <div class="col-xxl-8">
                                     <div class="card card-bordered card-full">
-                                        <!-- loans table starts -->
-                                        <div class="nk-block nk-block-lg">
-                                            <div class="card card-bordered card-preview">
-                                                <div class="card-inner">
-                                                    <div class="card-title-group">
-                                                        <div class="card-title">
-                                                            <h6 class="title"><span class="me-2">RECENTLY REGISTERED COMPANIES </span>
-                                                        </div>
-                                                        <div class="card-tools">
-                                                            <ul class=" card-tools-nav nav nav-tabs ">
-                                                                <li class="nav-item">
-                                                                    <a class="nav-link active" data-bs-toggle="tab" href="#allLoans">All</a>
-                                                                </li>
-                                                                <li class="nav-item">
-                                                                    <a class="nav-link" data-bs-toggle="tab" href="#pending">Pending</a>
-                                                                </li>
-                                                                <li class="nav-item">
-                                                                    <a class="nav-link" data-bs-toggle="tab" href="#cleared">Cleared</a>
-                                                                </li>
-                                                                <li class="nav-item">
-                                                                    <a class="nav-link" data-bs-toggle="tab" href="#overDue">Overdue</a>
-                                                                </li>
-                                                            </ul>
+                                        <div class="card-inner">
+                                            <div class="card-title-group">
+                                                <div class="card-title">
+                                                    <h6 class="title"><span class="me-2">Recently Registered Companies</span> <a href="#" class="link d-none d-sm-inline">See History</a></h6>
+                                                </div>
+                                                <div class="card-tools">
+                                                    <ul class="card-tools-nav">
+                                                        <li class="active"><a href="#"><span>View All</span></a></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-inner p-0 border-top">
+                                            <div class="nk-tb-list nk-tb-orders">
+                                                <div class="nk-tb-item nk-tb-head">
+                                                    <div class="nk-tb-col"><span>ID.</span></div>
+                                                    <div class="nk-tb-col tb-col-sm"><span>Company Name</span></div>
+                                                    <div class="nk-tb-col tb-col-md"><span>Mobile No.</span></div>
+                                                    <div class="nk-tb-col tb-col-md"><span>Package</span></div>
+                                                    <div class="nk-tb-col tb-col-lg"><span>Date Joined</span></div>
+                                                    <div class="nk-tb-col"><span>Status</span></div>
+                                                    <div class="nk-tb-col"><span class="d-none d-sm-inline">Action</span></div>
+                                                    <div class="nk-tb-col"><span>&nbsp;</span></div>
+                                                </div>
+                                                {% for company in companies %}
+                                                <div class="nk-tb-item">
+                                                    <div class="nk-tb-col">
+                                                        <span class="tb-lead"><a href="#">#{{company.id}}</a></span>
+                                                    </div>
+                                                    <div class="nk-tb-col tb-col-sm">
+                                                        <div class="user-card">
+                                                            <div class="user-avatar user-avatar-sm bg-white">
+                                                                <img src="{{company.logo.url}}">
+                                                            </div>
+                                                            <div class="user-name">
+                                                                <span class="tb-lead">{{company.name}}</span>
+                                                                <span class="text-soft">{{company.email}}</span>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                    <div class="tab-content">
-                                                        <div class="tab-pane active" id="allLoans">
-                                                            <div class="card-inner p-0 border-top">
-                                                                <div class="nk-tb-list nk-tb-orders">
-                                                                    <div class="nk-tb-item nk-tb-head">
-                                                                        <div class="nk-tb-col"><span>Loan No.</span></div>
-                                                                        <div class="nk-tb-col tb-col-sm"><span>Customer</span></div>
-                                                                        <div class="nk-tb-col tb-col-md"><span>Date Issued</span></div>
-                                                                        <div class="nk-tb-col tb-col-md"><span>Date Due</span></div>
-                                                                        <div class="nk-tb-col tb-col-lg"><span>Loan Balance</span></div>
-                                                                        <div class="nk-tb-col"><span>Status</span></div>
-                                                                        <div class="nk-tb-col"><span class="d-none d-sm-inline">Action</span></div>
-                                                                        <div class="nk-tb-col"><span>&nbsp;</span></div>
-                                                                    </div>
-                                                                    {% for loan in loans %}
-                                                                    <div class="nk-tb-item">
-                                                                        <div class="nk-tb-col">
-                                                                            <span class="tb-lead"><a href="#">#{{loan.loan_id}}</a></span>
-                                                                        </div>
-                                                                        <div class="nk-tb-col tb-col-sm">
-                                                                            <div class="user-card">
-                                                                                <div class="user-avatar user-avatar-sm bg-purple">
-                                                                                    <img src="{{loan.member.passport_photo.url}}">
-                                                                                </div>
-                                                                                <div class="user-name">
-                                                                                    <span class="tb-lead">{{loan.member.first_name}} {{loan.member.last_name}}</span>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="nk-tb-col tb-col-md">
-                                                                            <span class="tb-sub">{{loan.application_date}}</span>
-                                                                        </div>
-                                                                        <div class="nk-tb-col tb-col-lg">
-                                                                            <span class="tb-sub text-primary">{{loan.application_date}}</span>
-                                                                        </div>
-                                                                        <div class="nk-tb-col">
-                                                                            <span class="tb-sub tb-amount">{{loan.applied_amount}} <span>Ksh</span></span>
-                                                                        </div>
-                                                                        <div class="nk-tb-col">
-                                                                            {% if loan.status == 'pending' %}
-                                                                                <span class="badge badge-dot bg-warning">{{loan.status}}</span>
-                                                                                {% elif loan.status == 'cleared' %}
-                                                                                <span class="badge badge-dot bg-success">{{loan.status}}</span>
-                                                                                {% elif loan.status == 'approved' %}
-                                                                                <span class="badge badge-dot bg-primary">{{loan.status}}</span>
-                                                                                {% else %}
-                                                                                <span class="badge badge-dot bg-danger">{{loan.status}}</span>
-                                                                            {% endif %}
-                                                                        </div>
-                                                                        <div class="nk-tb-col nk-tb-col-action">
-                                                                            <div class="dropdown">
-                                                                                <a class="text-soft dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
-                                                                                <div class="dropdown-menu dropdown-menu-end dropdown-menu-xs">
-                                                                                    <ul class="link-list-plain">
-                                                                                        {% if loan.status == 'pending' %}
-                                                                                        <li><a href="{% url 'edit-loan' loan.id %}">Approve</a></li>
-                                                                                        <li><a href="{% url 'delete-loan' loan.id %}">Delete</a></li>
-                                                                                        {% else %}
-                                                                                        <li><a href="{% url 'view-loan' loan.id %}">View Details</a></li>
-                                                                                        {% endif %}
-                                                                                    </ul>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    {% endfor %}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="tab-pane" id="pending">
-                                                            <div class="card-inner p-0 border-top">
-                                                                <div class="nk-tb-list nk-tb-orders">
-                                                                    <div class="nk-tb-item nk-tb-head">
-                                                                        <div class="nk-tb-col"><span>Loan No.</span></div>
-                                                                        <div class="nk-tb-col tb-col-sm"><span>Customer</span></div>
-                                                                        <div class="nk-tb-col tb-col-md"><span>Date Issued</span></div>
-                                                                        <div class="nk-tb-col tb-col-md"><span>Date Due</span></div>
-                                                                        <div class="nk-tb-col tb-col-lg"><span>Loan Balance</span></div>
-                                                                        <div class="nk-tb-col"><span>Status</span></div>
-                                                                        <div class="nk-tb-col"><span class="d-none d-sm-inline">Action</span></div>
-                                                                        <div class="nk-tb-col"><span>&nbsp;</span></div>
-                                                                    </div>
-                                                                    {% for loan in loans %}
-                                                                    {% if loan.status == 'pending' %}
-                                                                    <div class="nk-tb-item">
-                                                                        <div class="nk-tb-col">
-                                                                            <span class="tb-lead"><a href="#">#{{loan.loan_id}}</a></span>
-                                                                        </div>
-                                                                        <div class="nk-tb-col tb-col-sm">
-                                                                            <div class="user-card">
-                                                                                <div class="user-avatar user-avatar-sm bg-purple">
-                                                                                    <img src="{{loan.member.passport_photo.url}}">
-                                                                                </div>
-                                                                                <div class="user-name">
-                                                                                    <span class="tb-lead">{{loan.member.first_name}} {{loan.member.last_name}}</span>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="nk-tb-col tb-col-md">
-                                                                            <span class="tb-sub">{{loan.application_date}}</span>
-                                                                        </div>
-                                                                        <div class="nk-tb-col tb-col-lg">
-                                                                            <span class="tb-sub text-primary">{{loan.application_date}}</span>
-                                                                        </div>
-                                                                        <div class="nk-tb-col">
-                                                                            <span class="tb-sub tb-amount">{{loan.applied_amount}} <span>Ksh</span></span>
-                                                                        </div>
-                                                                        <div class="nk-tb-col">
-                                                                            {% if loan.status == 'pending' %}
-                                                                                <span class="badge badge-dot bg-warning">{{loan.status}}</span>
-                                                                                {% elif loan.status == 'cleared' %}
-                                                                                <span class="badge badge-dot bg-success">{{loan.status}}</span>
-                                                                                {% elif loan.status == 'approved' %}
-                                                                                <span class="badge badge-dot bg-primary">{{loan.status}}</span>
-                                                                                {% else %}
-                                                                                <span class="badge badge-dot bg-danger">{{loan.status}}</span>
-                                                                            {% endif %}
-                                                                        </div>
-                                                                        <div class="nk-tb-col nk-tb-col-action">
-                                                                            <div class="dropdown">
-                                                                                <a class="text-soft dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
-                                                                                <div class="dropdown-menu dropdown-menu-end dropdown-menu-xs">
-                                                                                    <ul class="link-list-plain">
-                                                                                        {% if loan.status == 'pending' %}
-                                                                                        <li><a href="{% url 'edit-loan' loan.id %}">Approve</a></li>
-                                                                                        <li><a href="{% url 'delete-loan' loan.id %}">Delete</a></li>
-                                                                                        {% else %}
-                                                                                        <li><a href="{% url 'view-loan' loan.id %}">View Details</a></li>
-                                                                                        {% endif %}
-                                                                                    </ul>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    {% endif %}
-                                                                    {% endfor %}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="tab-pane" id="cleared">
-                                                            <div class="card-inner p-0 border-top">
-                                                                <div class="nk-tb-list nk-tb-orders">
-                                                                    <div class="nk-tb-item nk-tb-head">
-                                                                        <div class="nk-tb-col"><span>Loan No.</span></div>
-                                                                        <div class="nk-tb-col tb-col-sm"><span>Customer</span></div>
-                                                                        <div class="nk-tb-col tb-col-md"><span>Date Issued</span></div>
-                                                                        <div class="nk-tb-col tb-col-md"><span>Date Due</span></div>
-                                                                        <div class="nk-tb-col tb-col-lg"><span>Loan Balance</span></div>
-                                                                        <div class="nk-tb-col"><span>Status</span></div>
-                                                                        <div class="nk-tb-col"><span class="d-none d-sm-inline">Action</span></div>
-                                                                        <div class="nk-tb-col"><span>&nbsp;</span></div>
-                                                                    </div>
-                                                                    {% for loan in loans %}
-                                                                    {% if loan.status == 'cleared' %}
-                                                                    <div class="nk-tb-item">
-                                                                        <div class="nk-tb-col">
-                                                                            <span class="tb-lead"><a href="#">#{{loan.loan_id}}</a></span>
-                                                                        </div>
-                                                                        <div class="nk-tb-col tb-col-sm">
-                                                                            <div class="user-card">
-                                                                                <div class="user-avatar user-avatar-sm bg-purple">
-                                                                                    <img src="{{loan.member.passport_photo.url}}">
-                                                                                </div>
-                                                                                <div class="user-name">
-                                                                                    <span class="tb-lead">{{loan.member.first_name}} {{loan.member.last_name}}</span>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="nk-tb-col tb-col-md">
-                                                                            <span class="tb-sub">{{loan.application_date}}</span>
-                                                                        </div>
-                                                                        <div class="nk-tb-col tb-col-lg">
-                                                                            <span class="tb-sub text-primary">{{loan.application_date}}</span>
-                                                                        </div>
-                                                                        <div class="nk-tb-col">
-                                                                            <span class="tb-sub tb-amount">{{loan.applied_amount}} <span>Ksh</span></span>
-                                                                        </div>
-                                                                        <div class="nk-tb-col">
-                                                                            {% if loan.status == 'pending' %}
-                                                                                <span class="badge badge-dot bg-warning">{{loan.status}}</span>
-                                                                                {% elif loan.status == 'cleared' %}
-                                                                                <span class="badge badge-dot bg-success">{{loan.status}}</span>
-                                                                                {% elif loan.status == 'approved' %}
-                                                                                <span class="badge badge-dot bg-primary">{{loan.status}}</span>
-                                                                                {% else %}
-                                                                                <span class="badge badge-dot bg-danger">{{loan.status}}</span>
-                                                                            {% endif %}
-                                                                        </div>
-                                                                        <div class="nk-tb-col nk-tb-col-action">
-                                                                            <div class="dropdown">
-                                                                                <a class="text-soft dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
-                                                                                <div class="dropdown-menu dropdown-menu-end dropdown-menu-xs">
-                                                                                    <ul class="link-list-plain">
-                                                                                        {% if loan.status == 'pending' %}
-                                                                                        <li><a href="{% url 'edit-loan' loan.id %}">Approve</a></li>
-                                                                                        <li><a href="{% url 'delete-loan' loan.id %}">Delete</a></li>
-                                                                                        {% else %}
-                                                                                        <li><a href="{% url 'view-loan' loan.id %}">View Details</a></li>
-                                                                                        {% endif %}
-                                                                                    </ul>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    {% endif %}
-                                                                    {% endfor %}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="tab-pane" id="overDue">
-                                                            <div class="card-inner p-0 border-top">
-                                                                <div class="nk-tb-list nk-tb-orders">
-                                                                    <div class="nk-tb-item nk-tb-head">
-                                                                        <div class="nk-tb-col"><span>Loan No.</span></div>
-                                                                        <div class="nk-tb-col tb-col-sm"><span>Customer</span></div>
-                                                                        <div class="nk-tb-col tb-col-md"><span>Date Issued</span></div>
-                                                                        <div class="nk-tb-col tb-col-md"><span>Date Due</span></div>
-                                                                        <div class="nk-tb-col tb-col-lg"><span>Loan Balance</span></div>
-                                                                        <div class="nk-tb-col"><span>Status</span></div>
-                                                                        <div class="nk-tb-col"><span class="d-none d-sm-inline">Action</span></div>
-                                                                        <div class="nk-tb-col"><span>&nbsp;</span></div>
-                                                                    </div>
-                                                                    {% for loan in loans %}
-                                                                    {% if loan.status == 'overdue' %}
-                                                                    <div class="nk-tb-item">
-                                                                        <div class="nk-tb-col">
-                                                                            <span class="tb-lead"><a href="#">#{{loan.loan_id}}</a></span>
-                                                                        </div>
-                                                                        <div class="nk-tb-col tb-col-sm">
-                                                                            <div class="user-card">
-                                                                                <div class="user-avatar user-avatar-sm bg-purple">
-                                                                                    <img src="{{loan.member.passport_photo.url}}">
-                                                                                </div>
-                                                                                <div class="user-name">
-                                                                                    <span class="tb-lead">{{loan.member.first_name}} {{loan.member.last_name}}</span>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="nk-tb-col tb-col-md">
-                                                                            <span class="tb-sub">{{loan.application_date}}</span>
-                                                                        </div>
-                                                                        <div class="nk-tb-col tb-col-lg">
-                                                                            <span class="tb-sub text-primary">{{loan.application_date}}</span>
-                                                                        </div>
-                                                                        <div class="nk-tb-col">
-                                                                            <span class="tb-sub tb-amount">{{loan.applied_amount}} <span>Ksh</span></span>
-                                                                        </div>
-                                                                        <div class="nk-tb-col">
-                                                                            {% if loan.status == 'pending' %}
-                                                                                <span class="badge badge-dot bg-warning">{{loan.status}}</span>
-                                                                                {% elif loan.status == 'cleared' %}
-                                                                                <span class="badge badge-dot bg-success">{{loan.status}}</span>
-                                                                                {% elif loan.status == 'approved' %}
-                                                                                <span class="badge badge-dot bg-primary">{{loan.status}}</span>
-                                                                                {% else %}
-                                                                                <span class="badge badge-dot bg-danger">{{loan.status}}</span>
-                                                                            {% endif %}
-                                                                        </div>
-                                                                        <div class="nk-tb-col nk-tb-col-action">
-                                                                            <div class="dropdown">
-                                                                                <a class="text-soft dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
-                                                                                <div class="dropdown-menu dropdown-menu-end dropdown-menu-xs">
-                                                                                    <ul class="link-list-plain">
-                                                                                        {% if loan.status == 'pending' %}
-                                                                                        <li><a href="{% url 'edit-loan' loan.id %}">Approve</a></li>
-                                                                                        <li><a href="{% url 'delete-loan' loan.id %}">Delete</a></li>
-                                                                                        {% else %}
-                                                                                        <li><a href="{% url 'view-loan' loan.id %}">View Details</a></li>
-                                                                                        {% endif %}
-                                                                                    </ul>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    {% endif %}
-                                                                    {% endfor %}
-                                                                </div>
+                                                    <div class="nk-tb-col tb-col-md">
+                                                        <span class="tb-sub">{{company.phone_no}}</span>
+                                                    </div>
+                                                    <div class="nk-tb-col tb-col-lg">
+                                                        <span class="tb-sub text-primary">{{company.package}}</span>
+                                                    </div>
+                                                    <div class="nk-tb-col">
+                                                        <span class="tb-sub tb-amount">{{company.date_joined}}</span>
+                                                    </div>
+                                                    <div class="nk-tb-col">
+                                                        <span class="badge badge-dot badge-dot-xs bg-success">{{company.status}}</span>
+                                                    </div>
+                                                    <div class="nk-tb-col nk-tb-col-action">
+                                                        <div class="dropdown">
+                                                            <a class="text-soft dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
+                                                            <div class="dropdown-menu dropdown-menu-end dropdown-menu-xs">
+                                                                <ul class="link-list-plain">
+                                                                    <li><a href="#">View</a></li>
+                                                                    <li><a href="#">Invoice</a></li>
+                                                                    <li><a href="#">Print</a></li>
+                                                                </ul>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div><!-- .card-preview -->
+                                               {% endfor %}
+                                            </div>
                                         </div>
-                                        <!-- loan table ends-->
+
                                     </div><!-- .card -->
                                 </div><!-- .col -->
                                 <div class="col-md-6 col-xxl-5">

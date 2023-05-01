@@ -11,14 +11,14 @@ class Migration(migrations.Migration):
         ('loan', '0012_alter_loan_options_and_more'),
     ]
 
-    operations = [
-        migrations.RemoveField(
-            model_name='loan',
-            name='credit_officer',
-        ),
+    operations = [ 
+       # migrations.RemoveField(
+        #    model_name='loan',
+        #    name='credit_officer',
+       # ), 
         migrations.AlterField(
             model_name='loan',
             name='guarantor',
             field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='loans_as_guarantor', to='member.member'),
-        ),
+        ), 
     ]

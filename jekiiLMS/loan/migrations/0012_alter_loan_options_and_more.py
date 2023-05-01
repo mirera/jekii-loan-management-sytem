@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
     dependencies = [
         ('member', '0006_member_email'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('user', '0002_alter_credit_officer_id_no_and_more'),
+        #('user', '0002_alter_credit_officer_id_no_and_more'),
         ('loan', '0011_alter_loanproduct_interest_type_and_more'),
     ]
 
@@ -82,9 +82,10 @@ class Migration(migrations.Migration):
             name='application_date',
             field=models.DateTimeField(),
         ),
-        migrations.AlterField(
-            model_name='loan',
-            name='credit_officer',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='loans_as_guarantor', to='user.credit_officer'),
-        ),
+        
+      #  migrations.AlterField(
+       #     model_name='loan',
+       #     name='credit_officer',
+       #     field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='loans_as_guarantor', to='user.credit_officer'), 
+       # ), 
     ]

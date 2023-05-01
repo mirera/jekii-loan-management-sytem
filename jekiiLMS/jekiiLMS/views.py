@@ -12,7 +12,9 @@ from company.models import Organization
 @login_required(login_url='login')
 def superadmin_dashboard(request): 
 
-    #companies=Company.objects.all()
+    companies=Organization.objects.all()
+    active_companies = Organization.objects.filter(status='active')
+    license_expired_companies = Organization.objects.filter(is_license_expired=True)
     branches=Branch.objects.all()
     loans = Loan.objects.all()
     repayments = Repayment.objects.all()
@@ -29,7 +31,9 @@ def superadmin_dashboard(request):
     expense = total_expense.aggregate(Sum('amount'))['amount__sum'] or 0
 
     context= {
-        'branches':branches, 
+        'companies':companies,
+        'active_companies':active_companies,
+        'license_expired_companies':license_expired_companies, 
         'loans':loans, 
         'repayments':repayments,
         'members':members,
