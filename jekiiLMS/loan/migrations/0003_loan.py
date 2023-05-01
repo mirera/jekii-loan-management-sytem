@@ -8,8 +8,8 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('member', '0002_alter_member_id_no_alter_member_phone_no'),
-        ('user', '0002_alter_credit_officer_id_no_and_more'),
-        ('loan', '0002_alter_loanproduct_penalty_type_and_more'),
+        #('user', '0002_alter_credit_officer_id_no_and_more'),
+        ('loan', '0002_alter_loanproduct_penalty_type_and_more'), 
     ]
 
     operations = [
@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
                 ('application_date', models.DateTimeField(auto_now_add=True)),
                 ('loan_purpose', models.TextField()),
                 ('updated', models.DateTimeField(auto_now=True)),
-                ('credit_officer', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='user.credit_officer')),
+                #('credit_officer', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='user.credit_officer')),
                 ('id_no', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='national_id_no', to='member.member')),
                 ('interest_rate', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='interest_rate_applied', to='loan.loanproduct')),
                 ('loan_term', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='loan_term_applied', to='loan.loanproduct')),

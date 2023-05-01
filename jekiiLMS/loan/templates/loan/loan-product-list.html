@@ -1,7 +1,13 @@
 {% extends 'main.html' %}
 
 {% block content %}
-  
+{% if messages %}
+            <ul class="alert alert-icon alert-primary">
+                {% for message in messages %}
+                <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+{% endif %}   
 <!-- content @s -->
 <div class="nk-content ">
     <div class="container-fluid">
@@ -214,5 +220,12 @@ function showDeleteModalForm() {
 });
 //-- ends
 </script> 
+<script>
+    setTimeout(function(){
+        if ($('#msg').length > 0) {
+            $('#msg').remove();
+        }
+    }, 6000)    // 2000 millisecond
+</script>
 
 {% endblock content %}

@@ -26,23 +26,20 @@
 
             <!-- including the navbar.htm template  on this template -->
             {% include 'navbar.html' %}
-            <!-- displaying flash messages -->
-            {% if messages %}
-            <ul class="alert alert-icon alert-primary">
-                {% for message in messages %}
-                <li>{{ message }}</li>
-                {% endfor %}
-            </ul>
-            {% endif %}
-
+           <!-- displaying flash messages -->
+     {% if messages %}
+     <ul class="alert alert-icon alert-primary" id="msg">
+         {% for message in messages %}
+         <li>{{ message }}</li>
+         {% endfor %}
+     </ul>
+     {% endif %}
             {% block content%}
+            
         </div>
         <!-- main @e -->
     </div>        
-
-  
-  
-
+     
     {% endblock %}
 
     {% include 'footer.html' %}
@@ -174,6 +171,13 @@
     <script src="{% static 'scripts/bundle.js' %}"></script>
     <script src="{% static 'scripts/scripts.js' %}"></script>
     <script src="{% static 'scripts/charts.js' %}"></script>
+    <script>
+        setTimeout(function(){
+            if ($('#msg').length > 0) {
+                $('#msg').remove();
+            }
+        }, 6000)    // 2000 millisecond
+    </script>
 
 </body>
 </html> 
