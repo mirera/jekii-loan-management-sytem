@@ -6,8 +6,9 @@ from member.models import Member
 
 @receiver(post_save, sender=Loan)
 def update_member_status(sender, instance, **kwargs):
-    if instance.status in ['pending', 'approved', 'overdue']:
+    if instance.status in ['approved', 'overdue']:
         member = instance.member
         if not member.has_active_loan():
             member.status = 'inactive'
             member.save()
+

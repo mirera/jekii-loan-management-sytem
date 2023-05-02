@@ -15,6 +15,7 @@ from django.db import transaction
 from member.models import Member
 from company.models import Organization
 from user.models import CompanyStaff
+from jekiiLMS.mpesa_statement import amount_based_cs, final_recommended_amount
 
    
 
@@ -104,6 +105,7 @@ class Loan(models.Model):
     member = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True, related_name='loans_as_member')
     applied_amount = models.IntegerField()
     approved_amount = models.IntegerField(blank=True, null=True)
+    amount_mpesa_s = models.IntegerField(blank=True, null=True)
     disbursed_amount = models.IntegerField(blank=True, null=True)
     guarantor = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True, related_name='loans_as_guarantor', blank=True)
     application_date = models.DateTimeField()
@@ -319,12 +321,21 @@ class Loan(models.Model):
         
         return loan_balance
     
+    #mehto to calculate amount based on borrower crdit score
+    def amount_based_cs(self):
+        amount = amount_based_cs(self)
+        return amount
+    #method to get final recomme principal amount
+    def final_reco_amount(self): 
+        amount = final_recommended_amount(self) 
+        return amount
+
     class Meta:
         ordering = ['-application_date']
 
 
     def __str__(self):
-        return self.member.first_name + ' ' + self.member.first_name
+        return self.member.first_name + ' ' + self.member.last_name
 
 # Note models starts here   
 class Note(models.Model):

@@ -206,24 +206,22 @@ def createLoan(request):
         loan_officer = CompanyStaff.objects.get(pk=loan_officer_id)
 
         if member.has_active_loan():
-            # redirect to an error page or show an error message
-            #messages.error(request, 'This Member has an active loan!')
             return render(request, 'loan/error.html', {'message': 'You cannot apply for a new loan while you have an active loan.'})
 
         Loan.objects.create(
-            company = company,
-             loan_product= loanproduct,
-             member= member,
-             applied_amount = request.POST.get('applied_amount'),
-             application_date = request.POST.get('application_date'),
-             loan_officer = loan_officer,
-             loan_purpose = request.POST.get('loan_purpose'),
-             attachments = request.FILES.get('attachments'),
-         )
+                company = company,
+                loan_product= loanproduct,
+                member= member,
+                applied_amount = request.POST.get('applied_amount'),
+                application_date = request.POST.get('application_date'),
+                loan_officer = loan_officer,
+                loan_purpose = request.POST.get('loan_purpose'),
+                attachments = request.FILES.get('attachments'),
+            )
+        
         #redirecting user to branches page(url name) after submitting form
         messages.success(request, 'Loan created successfully!')
         return redirect('loans')
- 
     context= {'form':form}
     return render(request,'loan/loans-list.html', context)
 #create loan view ends
@@ -239,7 +237,7 @@ def editLoan(request,pk):
     else:
         company = None
     
-    loan = Loan.objects.filter(id=pk, company=company)
+    loan = Loan.objects.get(id=pk, company=company)
     
     if request.method == 'POST':
         # Get the selected loanproduct id from the form
@@ -259,14 +257,8 @@ def editLoan(request,pk):
         except Member.DoesNotExist:
             member = None
 
-        # Get the selected member id from the form
         loan_officer_id = request.POST.get('loan_officer')
-        
-        # Get the corresponding Member object
-        try:
-            loan_officer = User.objects.get(pk=loan_officer_id)
-        except User.DoesNotExist:
-            loan_officer = None
+        loan_officer = CompanyStaff.objects.get(pk=loan_officer_id)
 
         # update the branch with the submitted form data
         loan.loan_id = request.POST.get('loan_id')
