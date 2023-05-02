@@ -302,7 +302,7 @@ def approveLoan(request,pk):
                 company = None
         else:
             company = None
-
+        
         loan = Loan.objects.get(id=pk, company=company)
         borrower = loan.member
         guarantors = Guarantor.objects.filter(loan=loan)
@@ -313,7 +313,7 @@ def approveLoan(request,pk):
             guarantors_score += guarantor.name.credit_score
 
         member_score = borrower.credit_score
-        recommended_amount = calculate_loan_amount(loan)
+        approved_amount = request.POST.get('approved_amount')
         amount_to_disburse = get_amount_to_disburse(loan)
 
         if member_score >= 5 and guarantors_score >= 7:
@@ -321,7 +321,7 @@ def approveLoan(request,pk):
             if is_sufficient_collateral(loan):
                 if loan.status == 'pending':
                     #update loan details
-                    loan.approved_amount = recommended_amount
+                    loan.approved_amount = approved_amount
                     loan.disbursed_amount = amount_to_disburse
                     loan.approved_date = today
                     loan.approved_by = companystaff
@@ -335,12 +335,12 @@ def approveLoan(request,pk):
                     return redirect('view-loan', loan.id)
             else:
                 messages.error(request, 'The collateral value is too low!')
-                return render(request, 'loan/suff-coll.html')
+                return redirect('view-loan', loan.id)
         else:
             messages.error(request, 'Approval failed!, borrower/guarantor flagged')
-            return render(request, 'loan/guarantor-error.html')
+            return redirect('view-loan', loan.id)
 
-    return render(request,'loan/loans-list.html')
+    return redirect('view-loan', loan.id)
 #approve logic ends
 
 #approve loan logic starts here

@@ -325,11 +325,27 @@ class Loan(models.Model):
     def amount_based_cs(self):
         amount = amount_based_cs(self)
         return amount
+    
     #method to get final recomme principal amount
     def final_reco_amount(self): 
         amount = final_recommended_amount(self) 
         return amount
 
+    #method to get final recomem amount times 3
+    def final_amount_thrice(self): 
+        amount = self.final_reco_amount() * 3
+        return amount
+
+    #method to check collateral value
+    def collateral_value(self):
+        # Loop through all collaterals of the loan object
+        collaterals = Collateral.objects.filter(loan=self)
+        value = 0
+        if collaterals:
+            for collateral in collaterals:
+                value += collateral.estimated_value
+            return value
+        
     class Meta:
         ordering = ['-application_date']
 
