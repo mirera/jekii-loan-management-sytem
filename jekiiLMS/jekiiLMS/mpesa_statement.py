@@ -38,3 +38,52 @@ def get_loans_table(file_path, file_password):
     df['Withdrawn'] = pd.to_numeric(df['Withdrawn'])
 
     return df # return the dataframe with columns Paid in and Withdrwarn having integer type or numeric
+
+
+#calculating loan amount based on credit score
+def amount_based_cs(loan):
+    member = loan.member
+    loan_product = loan.loan_product
+    credit_score = member.credit_score
+    
+    if credit_score < 5:
+        return 0  # Member is flagged and doesn't qualify for a loan
+
+    # Distribute the loan amount inside the credit score range
+    amount_range = loan_product.maximum_amount - loan_product.minimum_amount
+    amount_per_point = amount_range / 100
+    amount_to_approve = loan_product.minimum_amount + (amount_per_point * credit_score)
+
+    # Round the loan amount to the nearest hundred
+    amount_to_approve = round(amount_to_approve / 100) * 100
+
+    # Make sure the amount to approve is within the loan product's minimum and maximum amount
+    amount_to_approve = max(loan_product.minimum_amount, min(loan_product.maximum_amount, amount_to_approve))
+    
+    return amount_to_approve
+
+#calculating loan amount to disbursw
+def final_recommended_amount(loan):
+    member = loan.member
+    loan_product = loan.loan_product
+    credit_score = member.credit_score
+    
+    if credit_score < 5:
+        return 0  # Member is flagged and doesn't qualify for a loan
+
+    # Distribute the loan amount inside the credit score range
+    amount_range = loan_product.maximum_amount - loan_product.minimum_amount
+    amount_per_point = amount_range / 100
+    amount_to_approve = loan_product.minimum_amount + (amount_per_point * credit_score)
+
+    # Round the loan amount to the nearest hundred
+    amount_to_approve = round(amount_to_approve / 100) * 100
+
+    # Make sure the amount to approve is within the loan product's minimum and maximum amount
+    amount_to_approve = max(loan_product.minimum_amount, min(loan_product.maximum_amount, amount_to_approve))
+    if amount_to_approve > loan.applied_amount:
+        amount_to_approve = loan.applied_amount
+    else:
+        amount_to_approve = amount_to_approve
+
+    return amount_to_approve

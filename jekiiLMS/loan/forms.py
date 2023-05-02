@@ -50,6 +50,7 @@ class LoanForm(forms.ModelForm):
         fields = '__all__'
         exclude = ['approved_amount', 'disbursed_amount','disbursed_date',
                     'cleared_date', 'approved_date', 'approved_by',
+                     'amount_mpesa_s',
                     ]
 
         widgets = {

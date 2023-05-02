@@ -23,7 +23,11 @@ def calculate_loan_amount(loan):
 
     # Make sure the amount to approve is within the loan product's minimum and maximum amount
     amount_to_approve = max(loan_product.minimum_amount, min(loan_product.maximum_amount, amount_to_approve))
-    
+    if amount_to_approve > loan.applied_amount:
+        amount_to_approve = loan.applied_amount
+    else:
+        amount_to_approve = amount_to_approve
+
     return amount_to_approve
 
 #checking if collateral is sufficient

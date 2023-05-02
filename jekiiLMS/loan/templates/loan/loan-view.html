@@ -90,8 +90,16 @@
                                                 <td class="profile-ud-value">{{loan.member.first_name}} {{loan.member.last_name}}</td>
                                             </tr>
                                             <tr>
+                                                <td class="profile-ud-label">Amount:</td>
+                                                <td class="profile-ud-value">{{loan.applied_amount}} </td>
+                                            </tr>
+                                            <tr>
                                                 <td class="profile-ud-label">Member Tel:</td>
                                                 <td class="profile-ud-value">{{loan.member.phone_no}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="profile-ud-label">Loan Officer:</td>
+                                                <td class="profile-ud-value">{{loan.loan_officer}}</td>
                                             </tr>
                                             <tr>
                                                 <td class="profile-ud-label">Status:</td>
@@ -105,6 +113,7 @@
                                                 <td class="profile-ud-value text-danger">{{loan.status.upper}}</td>
                                                 {% endif %}
                                             </tr>
+                                            {% if loan.status != 'pending' %}
                                             <tr>
                                                 <td class="profile-ud-label">Date Approved:</td>
                                                 <td class="profile-ud-value">{{loan.approved_date}}</td>
@@ -145,12 +154,13 @@
                                                 <td class="profile-ud-label">Loan Previous Payment date:</td>
                                                 <td class="profile-ud-value">{{loan.loan_balance}}</td>
                                             </tr>
+                                            {% endif %}
                                             </tbody>
                                         </table><br>
                                         {% if loan.status == 'pending' %}
                                         <div class="row justify-content-center">
                                             <div class="col-md-4 text-center">
-                                              <a data-bs-toggle="modal" href="#editLoanDetails" class="btn btn-primary">Edit Details</a>
+                                              <a  href="{% url 'edit-loan' loan.id %}" class="btn btn-primary">Edit Details</a>
                                             </div>
                                         </div>                                          
                                         {% endif %}
@@ -306,38 +316,126 @@
                                         </table>
                                     </div>
                                     <div class="tab-pane" id="analysis">
-                                        {% if loan.status != 'cleared' or 'pending' %}
-                                        <div class="nk-block-head d-flex justify-content-between align-items-center">
-                                            <h5 class="title">Payment Schedule</h5> 
-                                            <a data-bs-toggle="modal" href="#addRepayment" class="btn btn-primary ml-auto ">Share</a>
-                                        </div><!-- .nk-block-head -->
-                                        {% endif %}
-                                        <div class="nk-divider divider md"></div>
-
-                                        <table class="table">
-                                            <thead class="thead-dark">
-                                              <tr>
-                                                <th scope="col">Principal</th>
-                                                <th scope="col">P.Per Term</th>
-                                                <th scope="col">I.Per Term</th>
-                                                <th scope="col">Amount</th>
-                                                <th scope="col">Balance</th>
-                                              </tr>
-                                            </thead>
-                                            <tbody>
-                                                {% for guarantor in guarantors %}
-                                              <tr>
-                                                <th scope="row">Mark Moriasi {{guarantor.member.first_name}} {{guarantor.member.last_name}}</th>
-                                                <td>{{guarantor.member.id_no}}</td>
-                                                <td>{{guarantor.member.phone_no}}</td>
-                                                <td>{{guarantor.amount}}</td>
-                                                {% if loan.status != 'cleared' %}
-                                                <td>20000</td>  
-                                                {% endif %}  
-                                              </tr>
-                                              {% endfor %}
-                                            </tbody>
-                                        </table>
+                                        <div class="nk-block nk-block-lg">
+                                            <div class="nk-block-head nk-block-head">
+                                                <div class="nk-block-head-content">
+                                                    <h4 class="nk-block-title">Loan Analysis</h4>
+                                                    <div class="nk-block-des">
+                                                        <p>This is the detailed loan analysis.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="card card-bordered card-preview">
+                                                <div class="card-inner">
+                                                    <table class="table table-bordered">
+                                                        <thead>
+                                                            <tr>
+                                                                <th scope="col">Module</th>
+                                                                <th scope="col">Value</th>
+                                                                <th scope="col">Status</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <th scope="row">Guarantor Credit Score</th>
+                                                                <td>7</td>
+                                                                {% if loan.member.credit_score < 8 %}
+                                                                <td> <span class="badge bg-outline-danger"><em class="icon ni ni-cross-circle-fill"></em>FAILED</span></td>
+                                                                {% else %}
+                                                                <td> <span class="badge bg-outline-success"><em class="icon ni ni-check-circle-fill"></em>OK</span></td>
+                                                                {% endif %}
+                                                            </tr>
+                                                            <tr>
+                                                                <th scope="row">Collateral Value</th>
+                                                                <td>400,000</td>
+                                                                {% if loan.member.credit_score < 5 %}
+                                                                <td> <span class="badge bg-outline-danger"><em class="icon ni ni-cross-circle-fill"></em>FAILED</span></td>
+                                                                {% else %}
+                                                                <td> <span class="badge bg-outline-success"><em class="icon ni ni-check-circle-fill"></em>OK</span></td>
+                                                                {% endif %}
+                                                            </tr>
+                                                            <tr>
+                                                                <th scope="row">Borrower Credit Score</th>
+                                                                <td>{{loan.member.credit_score}}</td>
+                                                                {% if loan.member.credit_score < 5 %}
+                                                                <td> <span class="badge bg-outline-danger"><em class="icon ni ni-cross-circle-fill"></em>FAILED</span></td>
+                                                                {% else %}
+                                                                <td> <span class="badge bg-outline-success"><em class="icon ni ni-check-circle-fill"></em>OK</span></td>
+                                                                {% endif %}
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div><!-- .card-preview -->
+                                            <div class="nk-block-head nk-block-head">
+                                                <div class="nk-block-head-content">
+                                                    <h5 class="nk-block-title">Recommended Principal Amount </h5>
+                                                    <div class="nk-block-des">
+                                                        <span>This data is generated from customer credit history, Mpesa statement analysis and loan form. This should give you good intel on how much you should approved.</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="card card-bordered card-preview"> 
+                                                <div class="card-inner">
+                                                    <table class="table table-bordered">
+                                                        <thead>
+                                                            <tr>
+                                                                <th scope="col">Module</th>
+                                                                <th scope="col">Value</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <th scope="row">Applied Amount</th>
+                                                                <td>{{loan.applied_amount}}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th scope="row">Recommended Amount Based on Member C.S</th>
+                                                                <td>{{loan.amount_based_cs}}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th scope="row">Recommended Amount Based on Mpesa Statement Analysis</th>
+                                                                <td>{{loan.amount_mpesa_s}}</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div><br>
+                                                <div class="card card-bordered">
+                                                    <div class="card-inner">
+                                                        <div class="card-head">
+                                                            <h6 class="card-title">Final Recommended Amount: <span>{{loan.final_reco_amount}}</span></h6>
+                                                        </div>
+                                                        <form action="#" class="gy-3" method="POST">
+                                                            <div class="row g-3 align-center">
+                                                                <div class="col-lg-5">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label" for="site-name">Amount</label>
+                                                                        <span class="form-note">Change amount or approve as it is.</span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-7">
+                                                                    <div class="form-group">
+                                                                        <div class="form-control-wrap">
+                                                                            <input type="text" name="approved_amount" class="form-control"  value="{{loan.final_reco_amount}}">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row g-3">
+                                                                <div class="col-lg-7 offset-lg-5">
+                                                                    <div class="form-group mt-2">
+                                                                        <button type="submit" class="btn btn-sm btn-primary">Approve</button>
+                                                                        <button type="submit" class="btn btn-sm btn-danger btn-dim">Reject</button>
+                                                                    </div>
+                                                                    
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                        
+                                                    </div>
+                                                </div><!-- card -->
+                                           <!-- </div> .card-preview -->
                                     </div>
                                     
                                 </div>
