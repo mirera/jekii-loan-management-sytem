@@ -20,8 +20,14 @@
                             <h3 class="nk-block-title page-title">{{loan.loan_id}} / <strong class="text-primary small">{{loan.member.first_name}} {{loan.member.last_name}}</strong></h3>
                             <div class="nk-block-des text-soft">
                                 <ul class="list-inline">
-                                    <li>Borrowe ID: <span class="text-base">{{loan.member.id_no}}</span></li>
-                                    <li>Last Repayment: <span class="text-base">15 Feb, 2019 01:02 PM</span></li>
+                                    {% if loan.status != 'pending' %}
+                                    <li>Total Payable: <span class="text-base">{{loan.total_payable}}</span></li>
+                                    <li>Loan Balance: <span class="text-base">{{loan.loan_balance}}</span></li>
+                                    {% endif %}
+                                    {% if loan.status == 'pending' %}
+                                    <li>Applied Amount: <span class="text-base">{{loan.applied_amount}}</span></li>
+                                    <li>Recommended Amount: <span class="text-base">{{loan.final_reco_amount}}</span></li>
+                                    {% endif %}
                                 </ul>
                             </div>
                         </div>
@@ -117,11 +123,15 @@
                                             </tr>
                                             <tr>
                                                 <td class="profile-ud-label">Disbursement Date:</td>
-                                                <td class="profile-ud-value">{{loan.application_date}}</td>
+                                                <td class="profile-ud-value">{{loan.approved_date}}</td>
                                             </tr>
                                             <tr>
                                                 <td class="profile-ud-label">Next Payment Date:</td>
-                                                <td class="profile-ud-value">{{loan.first_repayment_date}}</td>
+                                                <td class="profile-ud-value">{{loan.next_payment_date}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="profile-ud-label">Final Payment Date:</td>
+                                                <td class="profile-ud-value">{{loan.final_payment_date}}</td>
                                             </tr>
                                             <tr>
                                                 <td class="profile-ud-label">Approved Amount	:</td>
@@ -142,10 +152,6 @@
                                             <tr>
                                                 <td class="profile-ud-label">Loan Balance:</td>
                                                 <td class="profile-ud-value">{{loan.loan_balance}} Kes</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="profile-ud-label">Loan Previous Payment date:</td>
-                                                <td class="profile-ud-value">{{loan.loan_balance}}</td>
                                             </tr>
                                             {% endif %}
                                             </tbody>
@@ -177,7 +183,7 @@
                                                         <thead>
                                                             <tr>
                                                                 <th scope="col">Name</th>
-                                                                <th scope="col">Id No.</th>
+                                                                <th scope="col">C.Score</th>
                                                                 <th scope="col">Tel No.</th>
                                                                 <th scope="col">Amount</th>
                                                                 {% if loan.status == 'pending' %}
@@ -189,7 +195,7 @@
                                                             {% for guarantor in guarantors %}
                                                             <tr>
                                                               <th scope="row">{{guarantor.name.first_name}} {{guarantor.name.last_name}}</th>
-                                                              <td>{{guarantor.name.id_no}}</td>
+                                                              <td>{{guarantor.name.credit_score}}</td>
                                                               <td>{{guarantor.name.phone_no}}</td>
                                                               <td>{{guarantor.amount}}</td>
                                                               {% if loan.status == 'pending' %}
@@ -296,7 +302,7 @@
                                                     <h4 class="nk-block-title">Repaymemt Details</h4>
                                                     <div class="nk-block-des d-flex justify-content-between align-items-center">
                                                         <p>These are the repayments made since disbursement of this loan</p>
-                                                        {% if loan.status == 'pending' %}
+                                                        {% if loan.status != 'pending' %}
                                                             <a data-bs-toggle="modal" href="#addRepayment" class="btn btn-primary ml-auto btn-sm ">+ Add Repayment</a>
                                                         {% endif %}
                                                     </div>
@@ -364,8 +370,8 @@
                                                         <tbody>
                                                             <tr>
                                                                 <th scope="row">Guarantor(s) Credit Score</th>
-                                                                <td>7</td>
-                                                                {% if loan.member.credit_score < 8 %}
+                                                                <td>{{ loan.total_guarantor_score }}</td>
+                                                                {% if loan.total_guarantor_score < 8 %}
                                                                 <td> <span class="badge bg-outline-danger"><em class="icon ni ni-cross-circle-fill"></em>FAILED</span></td>
                                                                 {% else %}
                                                                 <td> <span class="badge bg-outline-success"><em class="icon ni ni-check-circle-fill"></em>OK</span></td>

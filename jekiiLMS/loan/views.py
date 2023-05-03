@@ -843,7 +843,7 @@ def addRepayment(request, pk):
         Repayment.objects.create(
             company = company,
             transaction_id = request.POST.get('transaction_id'),
-            loan = loan,
+            loan_id = loan,
             member = member,
             amount = request.POST.get('amount'),
             date_paid = request.POST.get('date_paid')
