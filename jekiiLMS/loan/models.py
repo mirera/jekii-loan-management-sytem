@@ -5,7 +5,6 @@ from django.db.models import Sum
 from datetime import timedelta, datetime
 from dateutil.relativedelta import relativedelta
 import math
-from dateutil.relativedelta import relativedelta
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
@@ -16,6 +15,7 @@ from member.models import Member
 from company.models import Organization
 from user.models import CompanyStaff
 from jekiiLMS.mpesa_statement import amount_based_cs, final_recommended_amount
+from jekiiLMS.loan_math import total_payable_amount
 
    
 
@@ -205,11 +205,11 @@ class Loan(models.Model):
 
     #method to calculte the next payment date
     def next_payment_date(self):
-        start_date = self.approved_date
+        start_date = self.approved_date #consider adding grace period
         elapsed_days = (datetime.now().date() - start_date.date()).days 
 
         if self.loan_product.repayment_frequency == 'onetime':
-            return self.date_due
+            return self.date_due()
         else:
             # Calculate the next payment date based on the loan's repayment frequency
             if self.loan_product.repayment_frequency == 'daily':
@@ -267,29 +267,28 @@ class Loan(models.Model):
         
         return previous_payment_date
 
+    #final payment date
+    def final_payment_date(self):
+        start_date = self.approved_date #consider adding grace period
+        loan_term = self.loan_product.loan_product_term
+        term_period = self.loan_product.loan_term_period
+        if term_period == 'day':
+            loan_term = timedelta(days=loan_term)
+        elif term_period == 'week':
+            loan_term = timedelta(weeks=loan_term)
+        elif term_period == 'month':
+            loan_term = relativedelta(months=loan_term)
+        elif term_period == 'year':
+            loan_term = relativedelta(years=loan_term)
+
+
+        final_date = start_date + loan_term 
+
+        return final_date
     # method to calculate total_payable
     def total_payable(self):
-        principal = self.approved_amount or 0
-        interest_rate = self.loan_product.interest_rate or 0
-        penalty_value = self.loan_product.penalty_value or 0
-
-        interest = 0
-
-        if self.loan_product.interest_type == 'flat_rate':
-            interest = principal * interest_rate
-        elif self.loan_product.interest_type == 'reducing_balance':
-            interest = (principal * interest_rate * self.loan_product.loan_product_term) / 100
-
-        if self.loan_product.penalty_type == 'fixed_value':
-            penalty_fee = penalty_value
-        elif self.loan_product.penalty_type == 'percentage of principal':
-            penalty_fee = (principal * penalty_value) / 100
-        elif self.loan_product.penalty_type == 'percentage of principal interest':
-            penalty_fee = (principal + interest) * penalty_value / 100
-
-        total_payable = principal + interest + penalty_fee
-
-        return total_payable
+        amount_payable = total_payable_amount(self)
+        return amount_payable
     
     #method to find amount due per payment interval 
     def amount_due_per_interval(self):
@@ -325,11 +324,37 @@ class Loan(models.Model):
     def amount_based_cs(self):
         amount = amount_based_cs(self)
         return amount
+    
     #method to get final recomme principal amount
     def final_reco_amount(self): 
         amount = final_recommended_amount(self) 
         return amount
 
+    #method to get final recomem amount times 3
+    def final_amount_thrice(self): 
+        amount = self.final_reco_amount() * 3
+        return amount
+
+    #method to check collateral value
+    def collateral_value(self):
+        # Loop through all collaterals of the loan object
+        collaterals = Collateral.objects.filter(loan=self)
+        value = 0
+        if collaterals:
+            for collateral in collaterals:
+                value += collateral.estimated_value
+            return value
+        else:
+            return value
+    #method to get total credit score of guarantors
+    def total_guarantor_score(self):
+        score = 0
+        guarantors = Guarantor.objects.filter(loan=self)
+        for guarantor in guarantors:
+            score += guarantor.name.credit_score
+        return score
+
+        
     class Meta:
         ordering = ['-application_date']
 
