@@ -107,10 +107,13 @@ class Loan(models.Model):
     approved_amount = models.IntegerField(blank=True, null=True)
     amount_mpesa_s = models.IntegerField(blank=True, null=True)
     disbursed_amount = models.IntegerField(blank=True, null=True)
+    due_amount = models.IntegerField(blank=True, null=True)
+    num_installments = models.IntegerField(blank=True, null=True)
     guarantor = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True, related_name='loans_as_guarantor', blank=True)
     application_date = models.DateTimeField()
     approved_date = models.DateTimeField(blank=True, null=True)
     disbursed_date = models.DateTimeField(blank=True, null=True)
+    due_date = models.DateTimeField(blank=True, null=True)
     cleared_date = models.DateTimeField(blank=True, null=True)
     loan_officer = models.ForeignKey(CompanyStaff,on_delete=models.SET_NULL, null=True, related_name='loans_as_officer')
     approved_by = models.ForeignKey(CompanyStaff,on_delete=models.SET_NULL, null=True, related_name='loans_as_manager')
@@ -136,10 +139,11 @@ class Loan(models.Model):
         super(Loan, self).save(*args, **kwargs)
 
     #method to limit the application date input to be today or earlier date
+    '''
     def clean(self):
         if self.application_date > now().date():
             raise ValidationError('Application date cannot be in the future.')
-
+    '''
     #method to calculate first_repayment_date
     def first_repayment_date(self):
         if self.loan_product.repayment_frequency == 'weekly':
@@ -149,67 +153,14 @@ class Loan(models.Model):
         else:
             return self.application_date  # for daily repayment frequency
     
-    #get the number of installment
-    def num_installments(self):
-        payment_frequency = self.loan_product.repayment_frequency
-        loan_term = self.loan_product.loan_product_term
-        term_period = self.loan_product.loan_term_period
-
-        if payment_frequency == 'onetime':
-            return 1
-        elif payment_frequency == 'daily':
-            interval_duration = timedelta(days=1)
-        elif payment_frequency == 'weekly':
-            interval_duration = timedelta(weeks=1)
-        elif payment_frequency == 'monthly':
-            interval_duration = relativedelta(months=1)
-        else:
-            # Handle unsupported repayment frequencies
-            raise ValueError('Unsupported repayment frequency')
-
-        # Convert loan term to timedelta object
-        if term_period == 'day':
-            loan_term = timedelta(days=loan_term)
-        elif term_period == 'week':
-            loan_term = timedelta(weeks=loan_term)
-        elif term_period == 'month':
-            loan_term = relativedelta(months=loan_term)
-        elif term_period == 'year':
-            loan_term = relativedelta(years=loan_term)
-        else:
-            # Handle unsupported loan term periods
-            raise ValueError('Unsupported loan term period')
-
-        # Calculate the number of payment intervals within the loan term
-        num_intervals = loan_term / interval_duration
-
-        # Round up to the nearest whole number of intervals
-        num_installments = math.ceil(num_intervals)
-
-        return num_installments
-
-    #method to calculte the last payment date/due date
-    def due_date(self):
-        if self.loan_product.repayment_frequency == 'onetime':
-            # For one-time payments, the due date is simply the application date plus the loan product term
-            return self.approved_date + timedelta(days=self.loan_product.loan_product_term) #change to disbursement date after MPESA api
-        elif self.loan_product.repayment_frequency == 'daily':
-            # For daily payments, the due date is calculated as the application date plus the loan product term in days
-            return self.approved_date + timedelta(days=self.loan_product.loan_product_term)
-        elif self.loan_product.repayment_frequency == 'weekly':
-            # For weekly payments, the due date is calculated as the application date plus the loan product term in weeks
-            return self.approved_date + timedelta(weeks=self.loan_product.loan_product_term)
-        elif self.loan_product.repayment_frequency == 'monthly':
-            # For monthly payments, the due date is calculated as the application date plus the loan product term in months
-            return self.approved_date + relativedelta(months=self.loan_product.loan_product_term)
-
+    
     #method to calculte the next payment date
     def next_payment_date(self):
         start_date = self.approved_date #consider adding grace period
         elapsed_days = (datetime.now().date() - start_date.date()).days 
 
         if self.loan_product.repayment_frequency == 'onetime':
-            return self.date_due()
+            return self.due_date
         else:
             # Calculate the next payment date based on the loan's repayment frequency
             if self.loan_product.repayment_frequency == 'daily':
@@ -236,7 +187,7 @@ class Loan(models.Model):
     def previous_payment_date(self):
         # Get the loan's payment frequency and number of installments
         payment_frequency = self.loan_product.repayment_frequency
-        num_installments = self.num_installments()
+        num_installments = self.num_installments
         
         # Calculate the interval duration based on the payment frequency
         if payment_frequency == 'daily':
@@ -292,11 +243,7 @@ class Loan(models.Model):
     
     #method to find amount due per payment interval 
     def amount_due_per_interval(self):
-        total_payable = self.total_payable()
-        num_installments = self.num_installments()
-        amount_per_interval = total_payable / num_installments
-
-        return amount_per_interval       
+        return self.due_amount       
     
     #method to calculte the loan balance
     def loan_balance(self):

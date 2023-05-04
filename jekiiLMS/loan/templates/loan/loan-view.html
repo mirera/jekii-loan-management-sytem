@@ -2,12 +2,12 @@
 
 {% block content %}
 {% if messages %}
-            <ul class="alert alert-icon alert-primary">
-                {% for message in messages %}
-                <li>{{ message }}</li>
-                {% endfor %}
-            </ul>
-{% endif %} 
+    {% for message in messages %}
+        <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% else %}alert-primary{% endif %}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
 <!-- content @s -->
 <div class="nk-content ">
     <div class="container-fluid">
@@ -54,7 +54,7 @@
                                     <li>
                                         <a data-bs-toggle="tab" href="#mpesaStatement"><em class="icon ni ni-coins"></em><span>Mpesa Statement</span></a>
                                     </li>
-                                    {% if loan.status != 'pending' %}
+                                    {% if loan.status != 'pending' and loan.status != 'rejected' %}
                                     <li>
                                         <a data-bs-toggle="tab" href="#repaymentDetails"><em class="icon ni ni-tranx-fill"></em><span>Repayments</span></a>
                                     </li>
@@ -112,7 +112,7 @@
                                                 <td class="profile-ud-value text-danger">{{loan.status.upper}}</td>
                                                 {% endif %}
                                             </tr>
-                                            {% if loan.status != 'pending' %}
+                                            {% if loan.status != 'pending' and loan.status != 'rejected' %}
                                             <tr>
                                                 <td class="profile-ud-label">Date Approved:</td>
                                                 <td class="profile-ud-value">{{loan.approved_date}}</td>
@@ -294,7 +294,7 @@
                                             {% endfor %} 
                                         </div>                                     
                                     </div>
-                                    {% if loan.status != 'pending' %}
+                                    {% if loan.status != 'pending' and loan.status != 'rejected' %}
                                     <div class="tab-pane" id="repaymentDetails">
                                         <div class="nk-block nk-block-lg">
                                             <div class="nk-block-head nk-block-head">
@@ -302,7 +302,7 @@
                                                     <h4 class="nk-block-title">Repaymemt Details</h4>
                                                     <div class="nk-block-des d-flex justify-content-between align-items-center">
                                                         <p>These are the repayments made since disbursement of this loan</p>
-                                                        {% if loan.status != 'pending' %}
+                                                        {% if loan.status != 'pending' and loan.status != 'rejected' %}
                                                             <a data-bs-toggle="modal" href="#addRepayment" class="btn btn-primary ml-auto btn-sm ">+ Add Repayment</a>
                                                         {% endif %}
                                                     </div>
@@ -460,7 +460,7 @@
                                                                 <div class="col-lg-7 offset-lg-5">
                                                                     <div class="form-group mt-2">
                                                                         <button type="submit" class="btn btn-sm btn-primary">Approve</button>
-                                                                        <button type="submit" class="btn btn-sm btn-danger btn-dim">Reject</button>
+                                                                        <a data-bs-toggle="modal" href="#rejectLoan" class="btn btn-sm btn-danger btn-dim">Reject</a>
                                                                     </div>
                                                                     
                                                                 </div>
@@ -1006,6 +1006,6 @@ function showDeleteModalForm() {
         if ($('#msg').length > 0) {
             $('#msg').remove();
         }
-    }, 6000)    // 2000 millisecond
+    }, 6000)    // 10000 millisecond
 </script>
 {% endblock content %}

@@ -1,12 +1,11 @@
-from celery import shared_task
+from celery import shared_task 
 from datetime import date
 from loan.models import Loan, Repayment
 
 @shared_task
 def mark_loans_as_overdue():
     today = date.today()
-    overdue_loans = []
-    loans = Loan.objects.filter(next_payment_date__lt=today).exclude(status__in=['cleared', 'overdue'])
+    loans = Loan.objects.filter(due_date__lt=today).exclude(status__in=['cleared', 'overdue'])
 
     # Find all loans that are due but not yet cleared or marked as overdue
     for loan in loans:
@@ -18,4 +17,8 @@ def mark_loans_as_overdue():
             # Loan is overdue
             loan.status = 'overdue'
             loan.save()
-            overdue_loans.append(loan)
+
+
+@shared_task
+def hello_engima():
+    print('I get printed after every minute')
