@@ -316,7 +316,6 @@ def approveLoan(request,pk):
         approved_amount = request.POST.get('approved_amount')
         amount_to_disburse = get_amount_to_disburse(loan)
         due_date = loan_due_date(loan)
-        due_amount = loan_due_amount(loan)
         installments = num_installments(loan)
 
         if member_score >= 5 and guarantors_score >= 7:
@@ -330,7 +329,6 @@ def approveLoan(request,pk):
                     loan.approved_by = companystaff
                     loan.status = 'approved'
                     loan.due_date = due_date
-                    loan.due_amount = due_amount
                     loan.num_installments = installments
 
                     #update borrower details

@@ -15,7 +15,7 @@ from member.models import Member
 from company.models import Organization
 from user.models import CompanyStaff
 from jekiiLMS.mpesa_statement import amount_based_cs, final_recommended_amount
-from jekiiLMS.loan_math import total_payable_amount
+from jekiiLMS.loan_math import total_payable_amount, num_installments
 
    
 
@@ -107,7 +107,6 @@ class Loan(models.Model):
     approved_amount = models.IntegerField(blank=True, null=True)
     amount_mpesa_s = models.IntegerField(blank=True, null=True)
     disbursed_amount = models.IntegerField(blank=True, null=True)
-    due_amount = models.IntegerField(blank=True, null=True)
     num_installments = models.IntegerField(blank=True, null=True)
     guarantor = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True, related_name='loans_as_guarantor', blank=True)
     application_date = models.DateTimeField()
@@ -139,11 +138,11 @@ class Loan(models.Model):
         super(Loan, self).save(*args, **kwargs)
 
     #method to limit the application date input to be today or earlier date
-    '''
+    
     def clean(self):
         if self.application_date > now().date():
             raise ValidationError('Application date cannot be in the future.')
-    '''
+            
     #method to calculate first_repayment_date
     def first_repayment_date(self):
         if self.loan_product.repayment_frequency == 'weekly':
@@ -242,8 +241,11 @@ class Loan(models.Model):
         return amount_payable
     
     #method to find amount due per payment interval 
-    def amount_due_per_interval(self):
-        return self.due_amount       
+    def amount_due(self):
+        payable = total_payable_amount(self)
+        installments = num_installments(self)
+        amount = payable / installments
+        return amount     
     
     #method to calculte the loan balance
     def loan_balance(self):

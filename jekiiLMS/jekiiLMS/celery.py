@@ -25,4 +25,8 @@ app.conf.beat_schedule = {
         'task': 'jekiiLMS.tasks.hello_engima',
         'schedule': crontab(minute='*'),
     },
+    'update_due_date': {
+        'task': 'jekiiLMS.tasks.update_due_date',
+        'schedule': crontab(minute='*'),
+    },
 } 
