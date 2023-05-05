@@ -89,8 +89,8 @@
                                                 <td class="profile-ud-value">{{loan.member.first_name}} {{loan.member.last_name}}</td>
                                             </tr>
                                             <tr>
-                                                <td class="profile-ud-label">Amount:</td>
-                                                <td class="profile-ud-value">{{loan.applied_amount}} </td>
+                                                <td class="profile-ud-label">Applied Amount:</td>
+                                                <td class="profile-ud-value text-soft">{{loan.applied_amount}} </td>
                                             </tr>
                                             <tr>
                                                 <td class="profile-ud-label">Member Tel:</td>
@@ -112,14 +112,51 @@
                                                 <td class="profile-ud-value text-danger">{{loan.status.upper}}</td>
                                                 {% endif %}
                                             </tr>
-                                            {% if loan.status != 'pending' and loan.status != 'rejected' %}
+                                        {% if loan.status != 'pending' and loan.status != 'rejected' %}
                                             <tr>
-                                                <td class="profile-ud-label">Date Approved:</td>
-                                                <td class="profile-ud-value">{{loan.approved_date}}</td>
+                                                <td class="profile-ud-label">Approved Amount:</td>
+                                                <td class="profile-ud-value">Ksh{{loan.approved_amount}}</td>
+                                            </tr>
+                                            {% if loan.status == 'overdue' %}
+                                            <tr>
+                                                <td class="profile-ud-label">Amount Due:</td>
+                                                <td class="profile-ud-value text-danger ">Ksh{{loan.amount_due}}</td>
+                                            </tr>
+                                            {% endif %}
+                                            <tr>
+                                                <td class="profile-ud-label">Total Payable:</td>
+                                                <td class="profile-ud-value">Ksh{{loan.total_payable}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="profile-ud-label">No. of Installments:</td>
+                                                <td class="profile-ud-value">{{loan.num_installments}} </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="profile-ud-label">Amount per Installment:</td>
+                                                <td class="profile-ud-value">Ksh{{loan.amount_due}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="profile-ud-label">Loan Balance:</td>
+                                                <td class="profile-ud-value">Ksh{{loan.loan_balance}}</td>
                                             </tr>
                                             <tr>
                                                 <td class="profile-ud-label">Approved By:</td>
                                                 <td class="profile-ud-value">{{loan.approved_by}}</td>
+                                            </tr>
+                                            {% if loan.status == 'overdue' %}
+                                            <tr>
+                                                <td class="profile-ud-label">Date Due:</td>
+                                                <td class="profile-ud-value text-danger">{{loan.due_date}}</td>
+                                            </tr>
+                                            {% elif loan.status == 'approved' %}
+                                            <tr>
+                                                <td class="profile-ud-label">Date Due:</td>
+                                                <td class="profile-ud-value ">{{loan.due_date}}</td>
+                                            </tr>
+                                            {% endif%}
+                                            <tr>
+                                                <td class="profile-ud-label">Date Approved:</td>
+                                                <td class="profile-ud-value">{{loan.approved_date}}</td>
                                             </tr>
                                             <tr>
                                                 <td class="profile-ud-label">Disbursement Date:</td>
@@ -133,27 +170,7 @@
                                                 <td class="profile-ud-label">Final Payment Date:</td>
                                                 <td class="profile-ud-value">{{loan.final_payment_date}}</td>
                                             </tr>
-                                            <tr>
-                                                <td class="profile-ud-label">Approved Amount	:</td>
-                                                <td class="profile-ud-value">{{loan.approved_amount}} Kes</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="profile-ud-label">Total Payable:</td>
-                                                <td class="profile-ud-value">{{loan.total_payable}} Kes</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="profile-ud-label">No. of Installments:</td>
-                                                <td class="profile-ud-value">{{loan.num_installments}} </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="profile-ud-label">Amount per Installment:</td>
-                                                <td class="profile-ud-value">{{loan.amount_due}} Kes</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="profile-ud-label">Loan Balance:</td>
-                                                <td class="profile-ud-value">{{loan.loan_balance}} Kes</td>
-                                            </tr>
-                                            {% endif %}
+                                        {% endif %}
                                             </tbody>
                                         </table><br>
                                         {% if loan.status == 'pending' %}
@@ -162,7 +179,7 @@
                                               <a  href="{% url 'edit-loan' loan.id %}" class="btn btn-primary">Edit Details</a>
                                             </div>
                                         </div>                                          
-                                        {% endif %}
+                                    {% endif %}
                                     </div>
                                     <div class="tab-pane" id="guarantorDetails">
                                         <div class="nk-block nk-block-lg">

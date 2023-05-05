@@ -107,7 +107,7 @@ def loan_due_date(loan):
     else:
         return today + timedelta(months=1)    
 
-#get due amount per install
+#function to fill due_amount field in Loan once loan is approved
 def save_due_amount(loan):
     payable = total_payable_amount(loan)
     installments = num_installments(loan)

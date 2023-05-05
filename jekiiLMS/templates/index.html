@@ -56,6 +56,7 @@
                         </div><!-- .nk-block-head -->
                         <div class="nk-block">
                             <div class="row g-gs">
+                                {% if staff.user_type == 'admin' %}
                                 <div class="col-md-3">
                                     <div class="card card-bordered card-full">
                                         <div class="card-inner">
@@ -193,6 +194,145 @@
                                         </div>
                                     </div><!-- .card -->
                                 </div><!-- .col -->
+                                {% else %}
+                                <div class="col-md-3">
+                                    <div class="card card-bordered card-full">
+                                        <div class="card-inner">
+                                            <div class="card-title-group align-start mb-0">
+                                                <div class="card-title">
+                                                    <h6 class="title">Disbursed Loans</h6>
+                                                </div>
+                                                <div class="card-tools">
+                                                    <em class="card-hint icon ni ni-help-fill" data-bs-toggle="tooltip" data-bs-placement="left" title="Your loans which have been approved"></em>
+                                                </div>
+                                            </div>
+                                            <div class="card-amount">
+                                                {% if staff_num_disbursed_loans == 0 %}
+                                                <span class="amount" > {{ staff_num_disbursed_loans }} </span>
+                                                {% else %}
+                                                <span class="amount text-soft" > {{ staff_num_disbursed_loans }} </span>
+                                                {% endif %}
+                                            </div>
+                                            <div class="invest-data">
+                                                <div class="invest-data-amount g-2">
+                                                    <div class="invest-data-history">
+                                                        <div class="title">Amount</div>
+                                                        {% if staff_num_disbursed_loans == 0 %}
+                                                        <div class="amount">Ksh{{staff_total_disbursed_amount}}</div>
+                                                        {% else %}
+                                                        <div class="amount text-soft ">Ksh{{staff_total_disbursed_amount}}</div>
+                                                        {% endif %}
+                                                    </div>
+                                                    {% if staff_num_disbursed_loans > 0 %}
+                                                    <a href="{% url 'loans' %}" class="btn btn-dim btn-outline-primary btn-sm">View</a>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div><!-- .card -->
+                                </div><!-- .col -->
+                                <div class="col-md-3">
+                                    <div class="card card-bordered card-full">
+                                        <div class="card-inner">
+                                            <div class="card-title-group align-start mb-0">
+                                                <div class="card-title">
+                                                    <h6 class="title">Pending Loans</h6>
+                                                </div>
+                                                <div class="card-tools">
+                                                    <em class="card-hint icon ni ni-help-fill" data-bs-toggle="tooltip" data-bs-placement="left" title="Loans which have not been approved/rejected"></em>
+                                                </div>
+                                            </div>
+                                            <div class="card-amount">
+                                                {% if staff_num_pending_loans == 0 %}
+                                                <span class="amount" > {{ staff_num_pending_loans }} </span>
+                                                {% else %}
+                                                <span class="amount text-warning" > {{ staff_num_pending_loans }} </span>
+                                                {% endif %}
+                                            </div>
+                                            <div class="invest-data">
+                                                <div class="invest-data-amount g-2">
+                                                    <div class="invest-data-history">
+                                                        <div class="title">Amount</div>
+                                                        {% if staff_num_pending_loans == 0 %}
+                                                        <div class="amount">Ksh{{staff_total_pending_amount}}</div>
+                                                        {% else %}
+                                                        <div class="amount text-warning ">Ksh{{staff_total_pending_amount}}</div>
+                                                        {% endif %}
+                                                    </div>
+                                                    {% if staff_num_pending_loans > 0 %}
+                                                    <a href="{% url 'loans' %}" class="btn btn-dim btn-outline-primary btn-sm">View</a>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div><!-- .card -->
+                                </div><!-- .col -->
+                                <div class="col-md-3">
+                                    <div class="card card-bordered card-full">
+                                        <div class="card-inner">
+                                            <div class="card-title-group align-start mb-0">
+                                                <div class="card-title">
+                                                    <h6 class="title">Overdue Loans</h6>
+                                                </div>
+                                                <div class="card-tools">
+                                                    <em class="card-hint icon ni ni-help-fill" data-bs-toggle="tooltip" data-bs-placement="left" title="Loans whose due date is past today"></em>
+                                                </div>
+                                            </div>
+                                            <div class="card-amount">
+                                                {% if staff_num_overdue_loans == 0 %}
+                                                <span class="amount" > {{ staff_num_overdue_loans }} </span>
+                                                {% else %}
+                                                <span class="amount text-danger" > {{ staff_num_overdue_loans }} </span>
+                                                {% endif %}
+                                            </div>
+                                            <div class="invest-data">
+                                                <div class="invest-data-amount g-2">
+                                                    <div class="invest-data-history">
+                                                        <div class="title">Amount</div>
+                                                        {% if staff_num_overdue_loans == 0 %}
+                                                        <div class="amount">Ksh{{staff_total_overdue_amount}}</div>
+                                                        {% else %}
+                                                        <div class="amount text-danger ">Ksh{{staff_total_overdue_amount}}</div>
+                                                        {% endif %}
+                                                    </div>
+                                                    {% if staff_num_overdue_loans > 0 %}
+                                                    <a href="{% url 'loans' %}" class="btn btn-dim btn-outline-primary btn-sm">View</a>
+                                                    {% endif %}
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div><!-- .card -->
+                                </div><!-- .col -->
+                                <div class="col-md-3">
+                                    <div class="card card-bordered  card-full">
+                                        <div class="card-inner">
+                                            <div class="card-title-group align-start mb-0">
+                                                <div class="card-title">
+                                                    <h6 class="title">Expenses</h6>
+                                                </div>
+                                                <div class="card-tools">
+                                                    <em class="card-hint icon ni ni-help-fill" data-bs-toggle="tooltip" data-bs-placement="left" title="Total operational Expenses"></em>
+                                                </div>
+                                            </div>
+                                            <div class="card-amount">
+                                                <span class="amount text-soft"> Ksh{{staff_expense}} </span>
+                                            </div>
+                                            <div class="invest-data">
+                                                <div class="invest-data-amount g-2">
+                                                    <div class="invest-data-history">
+                                                        <div class="title">This Month</div>
+                                                        <div class="amount">Ksh{{staff_expense}}</div>
+                                                    </div>
+                                                </div>
+                                                <div class="invest-data-ck">
+                                                    <canvas class="iv-data-chart" id="totalExpenses"></canvas>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div><!-- .card -->
+                                </div><!-- .col -->
+                                {% endif %}
                                 <div class="col-md-6 col-xxl-5">
                                     <div class="card card-bordered h-100">
                                         <div class="card-inner">

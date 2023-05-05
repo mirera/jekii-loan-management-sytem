@@ -245,7 +245,7 @@ class Loan(models.Model):
     def amount_due(self): #consider a scnerio where the borrower as defaulted more than once 
         payable = total_payable_amount(self)
         installments = num_installments(self)
-        amount = payable / installments
+        amount = payable / installments 
         return amount     
     
     #method to calculte the loan balance
