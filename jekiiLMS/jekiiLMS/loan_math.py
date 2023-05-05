@@ -106,3 +106,11 @@ def loan_due_date(loan):
         return today + timedelta(weeks=1)
     else:
         return today + timedelta(months=1)    
+
+#get due amount per install
+def save_due_amount(loan):
+    payable = total_payable_amount(loan)
+    installments = num_installments(loan)
+    amount = payable / installments
+    loan.due_amount = amount
+    loan.save()

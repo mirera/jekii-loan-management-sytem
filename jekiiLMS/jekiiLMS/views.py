@@ -60,8 +60,13 @@ def homepage(request):
     total_pending_loans = pending_loans.count()
     total_pending_amount = pending_loans.aggregate(Sum('applied_amount'))['applied_amount__sum'] or 0
 
-    disbursed_loans = Loan.objects.filter(status ='approved')
-    total_disbursed_amount = disbursed_loans.aggregate(Sum('applied_amount'))['applied_amount__sum'] or 0
+    disbursed_loans = Loan.objects.filter(status__in=['approved','cleared','overdue'])
+    num_disbursed_loans = disbursed_loans.count()
+    total_disbursed_amount = disbursed_loans.aggregate(Sum('approved_amount'))['approved_amount__sum'] or 0
+
+    overdue_loans = Loan.objects.filter(status ='overdue')
+    total_overdue_loans = overdue_loans.count()
+    total_overdue_amount = overdue_loans.aggregate(Sum('due_amount'))['due_amount__sum'] or 0
 
     total_expense = Expense.objects.all()
     expense = total_expense.aggregate(Sum('amount'))['amount__sum'] or 0
@@ -73,7 +78,10 @@ def homepage(request):
         'members':members,
         'total_pending_loans':total_pending_loans,
         'total_pending_amount':total_pending_amount,
+        'num_disbursed_loans':num_disbursed_loans,
         'total_disbursed_amount':total_disbursed_amount,
+        'total_overdue_loans':total_overdue_loans,
+        'total_overdue_amount':total_overdue_amount,
         'expense':expense
         }
     return render(request, 'index.html', context)

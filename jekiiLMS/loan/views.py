@@ -13,7 +13,7 @@ from member.models import Member
 from user.models import CompanyStaff
 from jekiiLMS.process_loan import is_sufficient_collateral, calculate_loan_amount, get_amount_to_disburse, clear_loan, update_member_data
 from jekiiLMS.mpesa_statement import get_loans_table
-from jekiiLMS.loan_math import loan_due_date, loan_due_amount, num_installments
+from jekiiLMS.loan_math import loan_due_date, save_due_amount, num_installments
 
 
 #create Loan Product view starts 
@@ -335,6 +335,8 @@ def approveLoan(request,pk):
                     borrower.status = 'active'
                     borrower.save()
                     loan.save()
+                    #call fill due_amount fun to fill due_amount on the Loan model 
+                    save_due_amount(loan)
                     messages.success(request,'The loan was approved successfully!')
                     return redirect('view-loan', loan.id)
             else:
