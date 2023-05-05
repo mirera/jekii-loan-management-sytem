@@ -95,7 +95,11 @@
                                                 <span>{{staff.staff_role}}</span>
                                             </td>
                                             <td class="nk-tb-col tb-col-md">
-                                                <span>{{staff.status}}</span>
+                                                {% if staff.status == 'active' %}
+                                                <span class="text-success">{{staff.status}}</span>
+                                                {% else %}
+                                                <span class="text-danger">{{staff.status}}</span>
+                                                {% endif %}
                                             </td>
                                             <td class="nk-tb-col nk-tb-col-tools">
                                                 <ul class="nk-tb-actions gx-1">
@@ -104,13 +108,16 @@
                                                             <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
                                                             <div class="dropdown-menu dropdown-menu-end">
                                                                 <ul class="link-list-opt no-bdr">
-                                                                    <li><a href="#"><em class="icon ni ni-edit-alt"></em><span>Update Staff </span></a></li>
-                                                                    <li><a href="#"><em class="icon ni ni-eye"></em><span>View Details</span></a></li>
+                                                                    <li><a href="{% url 'update-staff' staff.id %}"><em class="icon ni ni-edit-alt"></em><span>Update Staff </span></a></li>
+                                                                    <li><a href="#"><em class="icon ni ni-eye"></em><span>View Profile</span></a></li>
                                                                     <!-- <li><a href="#"><em class="icon ni ni-activity-round"></em><span>Activities</span></a></li> -->
                                                                     <li class="divider"></li>
                                                                     <li><a href="#"><em class="icon ni ni-shield-star"></em><span>Reset Password</span></a></li>
-                                                                    <li><a href="#"><em class="icon ni ni-shield-star"></em><span>Deactivate</span></a></li>
-                                                                    <li><a href="#"><em class="icon ni ni-shield-star"></em><span>Activate</span></a></li>
+                                                                    {% if staff.status == 'active' %}
+                                                                    <li><a href="{% url 'deactivate-staff' staff.id %}"><em class="icon ni ni-shield-star"></em><span>Deactivate</span></a></li>
+                                                                    {% else %}
+                                                                    <li><a href="{% url 'activate-staff' staff.id %}"><em class="icon ni ni-shield-star"></em><span>Activate</span></a></li>
+                                                                    {% endif %}
                                                                     <li><a data-bs-toggle="modal" class="delete-button" href="#deleteStaff" data-pk="{{ staff.id }}"><em class="icon ni ni-trash"></em><span>Delete Staff</span></a></li>
                                                                     
                                                                 </ul>

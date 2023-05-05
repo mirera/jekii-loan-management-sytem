@@ -8,7 +8,7 @@ from django.contrib.auth.models import User, Permission
 from .forms import CustomUserCreationForm, CompanyStaffForm , RoleForm
 from django.contrib import messages
 from .models import CompanyStaff, Role
-from branch.models import Branch
+from branch.models import Branch 
 from company.models import Organization, Package
 
 
@@ -290,7 +290,7 @@ def update_user_profile(request):
 # -- ends
 
 # -- edit user/staff
-''' #def editStaff(request):
+def updateStaff(request, pk):
         
     if request.user.is_authenticated and request.user.is_active:
         try:
@@ -299,31 +299,57 @@ def update_user_profile(request):
         except CompanyStaff.DoesNotExist:
             company = None
 
-    user = CompanyStaff.objects.get(username=request.user.username)
+    staff = CompanyStaff.objects.get(id=pk, company=company)
     
     if request.method == 'POST':
+        staff.company= company
+        staff.username = request.POST.get('username')
+        staff.email = request.POST.get('email')
+        staff.first_name = request.POST.get('first_name')
+        staff.last_name = request.POST.get('last_name')
+        staff.id_no = request.POST.get('id_no')
+        staff.phone_no = request.POST.get('phone_no')
+        staff.branch = request.POST.get('branch')
+        staff.user_type = request.POST.get('user_type')
+        staff.staff_role = request.POST.get('staff_role')
+        staff.save()
 
-        user.first_name = request.POST.get('first_name')
-        user.last_name = request.POST.get('last_name')
-        user.email = request.POST.get('email')
-        user.id_no = request.POST.get('id_no')
-        user.phone_no = request.POST.get('phone_no')
-        user.save()
-
-        return redirect('profile')
+        return redirect('staffs')
     else:
 
         form_data = {
-            'first_name': user.first_name,
-            'last_name': user.last_name,
-            'id_no': user.id_no,
-            'phone_no': user.phone_no,
-            'email': user.email,
+            'username':staff.username,
+            'email':staff.email,
+            'first_name': staff.first_name,
+            'last_name': staff.last_name,
+            'id_no': staff.id_no,
+            'phone_no': staff.phone_no,
+            'branch':staff.branch,
+            'user_type':staff.user_type,
+            'staff_role':staff.staff_role,
+            'email': staff.email,
         }
 
         form = CompanyStaffForm(initial=form_data)
-        return render(request,'user/user-profile.html',{'form':form, 'user':user})
-# -- ends '''
+        return render(request,'user/update-staff.html',{'form':form, 'staff':staff})
+# -- ends 
+# -- view to deactivate a staff
+def deactivateStaff(request, pk):
+    staff = CompanyStaff.objects.get(id=pk)
+    staff.status = 'inactive'
+    staff.save()
+    messages.info(request, 'Staff deactivated!')
+    return redirect('staffs')
+# -- ends
+
+# -- view to activate staff
+def activateStaff(request, pk):
+    staff = CompanyStaff.objects.get(id=pk)
+    staff.status = 'active'
+    staff.save()
+    messages.info(request, 'Staff activated!')
+    return redirect('staffs')
+# -- ends
 
 # -- create role --
 #@role_required
