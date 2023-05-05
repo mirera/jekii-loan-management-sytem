@@ -39,15 +39,11 @@
                                 </div>
                                 <!-- django error messages starts here -->
                                 {% if messages %}
-                                <div class=" error-messages" style="color: #a64452;">
-                                    <ul class="messages">
-                                        {% for message in messages %}
-                                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                                        {% endfor %}
-                                    </ul>
-                                </div>
-                                <br>
-
+                                    {% for message in messages %}
+                                        <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% else %}alert-primary{% endif %}">
+                                            {{ message }}
+                                        </div>
+                                    {% endfor %}
                                 {% endif %}
                                 <!-- django error messages ends here -->
 

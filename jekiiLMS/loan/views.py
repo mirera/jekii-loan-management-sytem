@@ -10,10 +10,10 @@ from jekiiLMS.decorators import role_required
 from .models import LoanProduct, Loan, Note, Repayment, Guarantor, Collateral, MpesaStatement
 from .forms import LoanProductForm, LoanForm, RepaymentForm, GuarantorForm, CollateralForm, MpesaStatementForm
 from member.models import Member
-from company.models import Organization
 from user.models import CompanyStaff
 from jekiiLMS.process_loan import is_sufficient_collateral, calculate_loan_amount, get_amount_to_disburse, clear_loan, update_member_data
 from jekiiLMS.mpesa_statement import get_loans_table
+from jekiiLMS.loan_math import loan_due_date, loan_due_amount, num_installments
 
 
 #create Loan Product view starts 
@@ -315,6 +315,8 @@ def approveLoan(request,pk):
         member_score = borrower.credit_score
         approved_amount = request.POST.get('approved_amount')
         amount_to_disburse = get_amount_to_disburse(loan)
+        due_date = loan_due_date(loan)
+        installments = num_installments(loan)
 
         if member_score >= 5 and guarantors_score >= 7:
 
@@ -326,6 +328,8 @@ def approveLoan(request,pk):
                     loan.approved_date = today
                     loan.approved_by = companystaff
                     loan.status = 'approved'
+                    loan.due_date = due_date
+                    loan.num_installments = installments
 
                     #update borrower details
                     borrower.status = 'active'
@@ -337,7 +341,7 @@ def approveLoan(request,pk):
                 messages.error(request, 'The collateral value is too low!')
                 return redirect('view-loan', loan.id)
         else:
-            messages.error(request, 'Approval failed!, borrower/guarantor flagged')
+            messages.error(request, 'Approval failed!, guarantor or borrower credit score not enough')
             return redirect('view-loan', loan.id)
 
     return redirect('view-loan', loan.id)

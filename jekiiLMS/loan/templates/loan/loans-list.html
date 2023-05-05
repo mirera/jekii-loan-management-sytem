@@ -3,12 +3,12 @@
 
 {% block content %}
 {% if messages %}
-            <ul class="alert alert-icon alert-primary">
-                {% for message in messages %}
-                <li>{{ message }}</li>
-                {% endfor %}
-            </ul>
-{% endif %} 
+    {% for message in messages %}
+        <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% else %}alert-primary{% endif %}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
 <!-- content @s -->
 <div class="nk-content ">
     <div class="container-fluid">
@@ -114,8 +114,10 @@
                                                         <span class="badge badge-dot bg-success">{{loan.status}}</span>
                                                         {% elif loan.status == 'approved' %}
                                                         <span class="badge badge-dot bg-primary">{{loan.status}}</span>
-                                                        {% else %}
+                                                        {% elif loan.status == 'overdue' %}
                                                         <span class="badge badge-dot bg-danger">{{loan.status}}</span>
+                                                        {% else %}
+                                                        <span class="badge badge-dot bg-secondary">{{loan.status}}</span>
                                                     {% endif %}
                                                 </div>
                                                 <div class="nk-tb-col nk-tb-col-action">
@@ -224,7 +226,7 @@
                                                 <div class="nk-tb-col"><span>Loan No.</span></div>
                                                 <div class="nk-tb-col tb-col-sm"><span>Borrower</span></div>
                                                 <div class="nk-tb-col tb-col-md"><span>Date Approved</span></div>
-                                                <div class="nk-tb-col tb-col-md"><span>Next Payment Date</span></div>
+                                                <div class="nk-tb-col tb-col-md"><span>Due Date</span></div>
                                                 <div class="nk-tb-col tb-col-md"><span>Final Payment</span></div>
                                                 <div class="nk-tb-col tb-col-md"><span>Amount Applied</span></div>
                                                 <div class="nk-tb-col tb-col-md"><span>Amount Approved</span></div>
@@ -251,7 +253,7 @@
                                                     <span class="tb-sub">{{loan.approved_date}}</span>
                                                 </div>
                                                 <div class="nk-tb-col tb-col-md">
-                                                    <span class="tb-sub">{{loan.next_payment_date}}</span>
+                                                    <span class="tb-sub">{{loan.due_date}}</span>
                                                 </div>
                                                 <div class="nk-tb-col tb-col-md">
                                                     <span class="tb-sub">{{loan.final_payment_date}}</span>
