@@ -381,10 +381,14 @@
                                         <div class="nk-tb-list nk-tb-orders">
                                             <div class="nk-tb-item nk-tb-head">
                                                 <div class="nk-tb-col"><span>Loan No.</span></div>
-                                                <div class="nk-tb-col tb-col-sm"><span>Customer</span></div>
-                                                <div class="nk-tb-col tb-col-md"><span>Date Issued</span></div>
-                                                <div class="nk-tb-col tb-col-md"><span>Date Due</span></div>
-                                                <div class="nk-tb-col tb-col-lg"><span>Loan Balance</span></div>
+                                                <div class="nk-tb-col tb-col-sm"><span>Borrower</span></div>
+                                                <div class="nk-tb-col tb-col-md"><span>Date Approved</span></div>
+                                                <div class="nk-tb-col tb-col-md"><span>Due Date</span></div>
+                                                <div class="nk-tb-col tb-col-md"><span>Final Payment</span></div>
+                                                <div class="nk-tb-col tb-col-md"><span>Amount Approved</span></div>
+                                                <div class="nk-tb-col tb-col-md"><span>Amount Due</span></div>
+                                                <div class="nk-tb-col tb-col-md"><span>Total Payable</span></div>
+                                                <div class="nk-tb-col tb-col-lg"><span>Loan Officer</span></div>
                                                 <div class="nk-tb-col"><span>Status</span></div>
                                                 <div class="nk-tb-col"><span class="d-none d-sm-inline">Action</span></div>
                                                 <div class="nk-tb-col"><span>&nbsp;</span></div>
@@ -393,26 +397,35 @@
                                             {% if loan.status == 'overdue' %}
                                             <div class="nk-tb-item">
                                                 <div class="nk-tb-col">
-                                                    <span class="tb-lead"><a href="#">#{{loan.loan_id}}</a></span>
+                                                    <span class="tb-lead"><a href="{% url 'view-loan' loan.id %}">#{{loan.loan_id}}</a></span>
                                                 </div>
                                                 <div class="nk-tb-col tb-col-sm">
                                                     <div class="user-card">
-                                                        <div class="user-avatar user-avatar-sm bg-purple">
-                                                            <img src="{{loan.member.passport_photo.url}}">
-                                                        </div>
                                                         <div class="user-name">
-                                                            <span class="tb-lead">{{loan.member.first_name}} {{loan.member.last_name}}</span>
+                                                            <span class="tb-lead"><a href="{% url 'view-member' loan.member.id %}">{{loan.member.first_name}} {{loan.member.last_name}}</a></span>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="nk-tb-col tb-col-md">
-                                                    <span class="tb-sub">{{loan.application_date}}</span>
+                                                    <span class="tb-sub">{{loan.approved_date}}</span>
                                                 </div>
-                                                <div class="nk-tb-col tb-col-lg">
-                                                    <span class="tb-sub text-primary">{{loan.application_date}}</span>
+                                                <div class="nk-tb-col tb-col-md">
+                                                    <span class="tb-sub">{{loan.due_date}}</span>
+                                                </div>
+                                                <div class="nk-tb-col tb-col-md">
+                                                    <span class="tb-sub">{{loan.final_payment_date}}</span>
                                                 </div>
                                                 <div class="nk-tb-col">
-                                                    <span class="tb-sub tb-amount">{{loan.applied_amount}} <span>Ksh</span></span>
+                                                    <span class="tb-sub tb-amount">{{loan.approved_amount}} </span>
+                                                </div>
+                                                <div class="nk-tb-col tb-col-lg">
+                                                    <span class="tb-sub tb-amount">{{loan.amount_due}}</span>
+                                                </div>
+                                                <div class="nk-tb-col">
+                                                    <span class="tb-sub tb-amount">{{loan.total_payable}} </span>
+                                                </div>
+                                                <div class="nk-tb-col">
+                                                    <span class="tb-sub tb-amount">{{loan.loan_officer}} </span>
                                                 </div>
                                                 <div class="nk-tb-col">
                                                     {% if loan.status == 'pending' %}
@@ -432,11 +445,10 @@
                                                             <ul class="link-list-plain">
                                                                 {% if loan.status == 'pending' %}
                                                                 <li><a href="{% url 'view-loan' loan.id %}"><em class="icon ni ni-layers"></em><span>Review</span></a></li>
-                                                                <li><a data-bs-toggle="modal" class="delete-button" href="#deleteLoan" data-pk="{{ loan.id }}"><em class="icon ni ni-trash"></em><span>Delete Loan</span></a></li>
+                                                                <li><a data-bs-toggle="modal" class="delete-button" href="#deleteLoan" data-pk="{{ loan.id }}"><em class="icon ni ni-trash"></em><span>Delete</span></a></li>
                                                                 {% else %}
                                                                 <li><a href="{% url 'view-loan' loan.id %}"><em class="icon ni ni-eye-alt"></em><span>View Details</span></a></li>
                                                                 <li><a href="{% url 'view-loan' loan.id %}"><em class="icon ni ni-repeat-v"></em><span>Roll Over</span></a></li> 
-                                                                <li><a href="{% url 'view-loan' loan.id %}"><em class="icon ni ni-done"></em><span>Clear</span></a></li>   
                                                                 {% endif %}
                                                             </ul>
                                                         </div>

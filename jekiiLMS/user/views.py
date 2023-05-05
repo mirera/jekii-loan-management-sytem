@@ -176,7 +176,7 @@ def listStaff(request):
 #-- end -- 
 
 #-- adding a staff then as a user --
-#@role_required
+#@role_required 
 def addStaff(request):
 
     if request.user.is_authenticated and request.user.is_active:

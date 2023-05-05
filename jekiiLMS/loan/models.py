@@ -112,6 +112,7 @@ class Loan(models.Model):
     application_date = models.DateTimeField()
     approved_date = models.DateTimeField(blank=True, null=True)
     disbursed_date = models.DateTimeField(blank=True, null=True)
+    due_amount = models.IntegerField(blank=True, null=True)
     due_date = models.DateTimeField(blank=True, null=True)
     cleared_date = models.DateTimeField(blank=True, null=True)
     loan_officer = models.ForeignKey(CompanyStaff,on_delete=models.SET_NULL, null=True, related_name='loans_as_officer')
@@ -140,7 +141,7 @@ class Loan(models.Model):
     #method to limit the application date input to be today or earlier date
     
     def clean(self):
-        if self.application_date > now().date():
+        if self.application_date.date() > now().date():
             raise ValidationError('Application date cannot be in the future.')
             
     #method to calculate first_repayment_date
@@ -241,10 +242,10 @@ class Loan(models.Model):
         return amount_payable
     
     #method to find amount due per payment interval 
-    def amount_due(self):
+    def amount_due(self): #consider a scnerio where the borrower as defaulted more than once 
         payable = total_payable_amount(self)
         installments = num_installments(self)
-        amount = payable / installments
+        amount = payable / installments 
         return amount     
     
     #method to calculte the loan balance
