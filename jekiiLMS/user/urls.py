@@ -12,6 +12,9 @@ urlpatterns = [
     path('staffs', views.listStaff, name='staffs'),
     path('user-profile', views.update_user_profile, name='profile'), 
     path('delete-staff/<str:pk>', views.deleteStaff, name='delete-staff'), 
+    path('update-staff/<str:pk>', views.updateStaff, name='update-staff'), 
+    path('deactivate-staff/<str:pk>', views.deactivateStaff, name='deactivate-staff'),
+    path('activate-staff/<str:pk>', views.activateStaff, name='activate-staff'),
 
     #-- roles url
     path('add-role', views.addRole, name='add-role'),
