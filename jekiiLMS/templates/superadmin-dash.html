@@ -90,7 +90,11 @@
                                                     </div>
                                                     <div class="invest-data-history">
                                                         <div class="title">Licence Expired</div>
+                                                        {% if license_expired_companies.count == 0 %}
+                                                        <div class="amount text-soft">{{license_expired_companies.count}}</div>
+                                                        {% else %}
                                                         <div class="amount text-danger">{{license_expired_companies.count}}</div>
+                                                        {% endif %}
                                                     </div>
                                                 </div>
                                             </div>
