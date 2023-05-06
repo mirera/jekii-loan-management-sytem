@@ -1,7 +1,13 @@
 {% extends 'main.html' %}
 
 {% block content %}
-
+{% if messages %}
+    {% for message in messages %}
+        <div id="msg" class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% else %}alert-primary{% endif %}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}  
 <!-- content @s -->
 <div class="nk-content ">
     <div class="container-fluid">
@@ -201,5 +207,12 @@
     </div>
 </div>
 <!-- content @e -->
+<script>
+    setTimeout(function(){
+        if ($('#msg').length > 0) {
+            $('#msg').remove();
+        }
+    }, 6000)    // 2000 millisecond
+</script>
 {% endblock content %}  
 

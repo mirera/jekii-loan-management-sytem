@@ -4,6 +4,9 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from jekiiLMS.decorators import role_required
 from datetime import datetime
+from django.core.mail import EmailMessage
+from django.conf import settings
+from django.template.loader import render_to_string
 from django.contrib.auth.models import User, Permission
 from .forms import CustomUserCreationForm, CompanyStaffForm , RoleForm
 from django.contrib import messages
@@ -138,7 +141,20 @@ def user_signup(request):
                 user_type = 'admin',
                 staff_role = role
             )
+            #send email to for email verification 
+            context = {'company_name':company_name}
+            template = render_to_string('user/company_welcome.html', context)
+            email = EmailMessage(
+                "Welcome to Loginit",
+                template,
+                settings.EMAIL_HOST_USER  ,
+                [email],
+                reply_to=[settings.EMAIL_HOST_USER],
+            )
+            email.send(fail_silently=False)
+
             #redirect to update organization info
+            messages.success(request, f'Account for {company_name} was created successfully. Check your {email} for verification instructions')
             return redirect('update-organization', pk = organization.id )
         else:
             #return error message
