@@ -157,3 +157,11 @@ MEDIA_ROOT =  os.path.join(BASE_DIR, 'static/media')
 #Configure Celery to use Redis as the message broker
 CELERY_BROKER_URL = 'redis://localhost:6379' 
 CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+
+#email configurations
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'mirera.moses@gmail.com'
+EMAIL_HOST_PASSWORD = 'ehwvqcdfvydltqka'
+EMAIL_USE_TLS = True
