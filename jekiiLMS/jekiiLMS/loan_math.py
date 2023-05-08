@@ -10,15 +10,14 @@ def total_interest(loan):
     rate = loan.loan_product.interest_rate
     time = loan.loan_product.loan_product_term
     interest = 0
-
+    
     if rate_type == 'flat rate':
-        interest = principal * time * rate / 100
+        interest = int(principal) * time * rate / 100
     else:
-        interest = principal * time * rate
-        (rate * principal) / (1 - (1 + rate)**(-time))
+        interest = (principal * time * rate) / (1 - (1 + rate)**(-time))
 
     return interest
-
+    
 #function to get total penalitis 
 def total_penalty(loan):
 
