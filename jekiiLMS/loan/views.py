@@ -387,11 +387,30 @@ def rejectLoan(request,pk):
             company = None
 
         loan = Loan.objects.get(id=pk, company=company)
+
+        #email variables
+        company_name = company.name
+        company_email =company.email
+        email = loan.member.email
+
         url = reverse('view-loan', args=[pk])
         url_with_anchor = f'{url}'
         if loan.status == 'pending':
             loan.status = 'rejected'
             loan.save()
+
+            #send mail and message to borrower.
+            context = {'loan':loan}
+            from_name_email = f'{company_name} <{settings.EMAIL_HOST_USER}>' 
+            template = render_to_string('loan/loan-rejected.html', context)
+            e_mail = EmailMessage(
+                'Loan Rejected',
+                template,
+                from_name_email, #'John Doe <john.doe@example.com>'
+                [email],
+                reply_to=[company_email],
+            )
+            e_mail.send(fail_silently=False)
 
             messages.info(request,'The loan was rejected succussesfully!')
             return redirect(url_with_anchor)
