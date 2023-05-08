@@ -1,0 +1,18 @@
+Dear {{loan.member.first_name}} {{loan.member.last_name}},
+
+We are pleased to inform you that your loan application has been approved. We have carefully reviewed your application and we are confident that this loan will help you achieve your financial goals.
+
+You have been approved for a loan of {{loan.approved_amount}} with a {{loan.loan_product.loan_product_term}} {{loan.loan_product.loan_term_period}}s term. The interest rate for this loan is {{loan.loan_product.interest_rate}}% per {{loan.loan_product.loan_term_period}}.
+Number of installments: {{loan.num_installments}} 
+Installment amount: {{loan.due_amount}}
+Next payment date: {{loan.due_date}}
+Final payment date: {{loan.final_payment_date}}
+Total payable: {{loan.total_payable}}
+You will receive the funds in your designated account shortly.
+
+
+If you have any questions or concerns, please do not hesitate to contact us. We look forward to helping you achieve your financial goals.
+
+Best regards,
+{{loan.loan_officer}}
+{{company_name}}

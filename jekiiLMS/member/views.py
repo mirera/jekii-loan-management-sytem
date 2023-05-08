@@ -37,6 +37,7 @@ def createMember(request):
             address = request.POST.get('address'),
             passport_photo=request.FILES.get('passport_photo')
         )
+        messages.success(request, 'Member added successfully.')
         return redirect('members')
     context= {'form':form}
     return render(request,'member/create-member.html', context)

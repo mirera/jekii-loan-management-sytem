@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+from django.core.mail import EmailMessage
 from django.conf import settings
+from django.template.loader import render_to_string
 import os
 from django.contrib import messages
 from django.db.models import Sum
@@ -308,6 +310,13 @@ def approveLoan(request,pk):
         guarantors = Guarantor.objects.filter(loan=loan)
         today = datetime.today().strftime('%Y-%m-%d')
 
+        #email variables & context
+        company_name = company.name
+        company_email = company.email
+        email = borrower.email
+        first_name = borrower.first_name
+        last_name = borrower.last_name
+
         guarantors_score = 0
         for guarantor in guarantors:
             guarantors_score += guarantor.name.credit_score
@@ -323,7 +332,7 @@ def approveLoan(request,pk):
             if is_sufficient_collateral(loan):
                 if loan.status == 'pending':
                     #update loan details
-                    loan.approved_amount = approved_amount
+                    loan.approved_amount = int(approved_amount)
                     loan.disbursed_amount = amount_to_disburse
                     loan.approved_date = today
                     loan.approved_by = companystaff
@@ -337,7 +346,20 @@ def approveLoan(request,pk):
                     loan.save()
                     #call fill due_amount fun to fill due_amount on the Loan model 
                     save_due_amount(loan)
+
                     #send mail and message to borrower.
+                    context = {'loan':loan}
+                    from_name_email = f'{company_name} <{settings.EMAIL_HOST_USER}>' 
+                    template = render_to_string('loan/loan-approved.html', context)
+                    e_mail = EmailMessage(
+                        'Loan Approved',
+                        template,
+                        from_name_email, #'John Doe <john.doe@example.com>'
+                        [email],
+                        reply_to=[company_email],
+                    )
+                    e_mail.send(fail_silently=False)
+
                     messages.success(request,'The loan was approved successfully!')
                     return redirect('view-loan', loan.id)
             else:
