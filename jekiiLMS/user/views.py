@@ -27,15 +27,13 @@ def user_login(request):
 
         if request.user.is_superuser or request.user.is_staff: 
             return redirect('superadmin_dashboard')
-        #elif user.user_type == 'staff':
-            #return redirect('dashboard')
         else:
             return redirect('home')
-
+       
 
     #extracting login credential from login form
     if request.method == 'POST':
-        username = request.POST.get('username')
+        username = request.POST.get('username').lower()
         password = request.POST.get('password')
 
         #raise username do not exist in our databse error
@@ -57,8 +55,6 @@ def user_login(request):
                     
                 if request.user.is_superuser or request.user.is_staff: 
                     return redirect('superadmin_dashboard')
-               # elif user.user_type == 'staff':
-                   # return redirect('dashboard')
                 else:
                     return redirect('home')
         else:
@@ -213,11 +209,12 @@ def addStaff(request):
         role_id = request.POST.get('staff_role')
         role = Role.objects.get(pk=role_id)
 
+        username = request.POST.get('username').lower()
         password = make_password(request.POST.get('password'))  # Hash the password
 
         CompanyStaff.objects.create(
             company = company,
-            username = request.POST.get('username'),
+            username = username,
             password = password, 
             first_name = request.POST.get('first_name'),
             last_name= request.POST.get('last_name'),
@@ -231,7 +228,7 @@ def addStaff(request):
         )
         #signing up the created user
         User.objects.create(
-            username = request.POST.get('username'),
+            username = username,
             password = password,
             first_name = request.POST.get('first_name'),
             last_name= request.POST.get('last_name'),
@@ -352,9 +349,12 @@ def updateStaff(request, pk):
 # -- view to deactivate a staff
 def deactivateStaff(request, pk):
     staff = CompanyStaff.objects.get(id=pk)
+    user = User.objects.get(username=staff.username)
     staff.status = 'inactive'
+    user.is_active= False
+    user.save()
     staff.save()
-    messages.info(request, 'Staff deactivated!')
+    messages.info(request, 'Staff deactivated! The user will not be able to login in unless activated.')
     return redirect('staffs')
 # -- ends
 
@@ -363,6 +363,10 @@ def activateStaff(request, pk):
     staff = CompanyStaff.objects.get(id=pk)
     staff.status = 'active'
     staff.save()
+
+    user = User.objects.get(username=staff.username)
+    user.is_active= True
+    user.save()
     messages.info(request, 'Staff activated!')
     return redirect('staffs')
 # -- ends

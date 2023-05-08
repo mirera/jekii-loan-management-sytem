@@ -15,7 +15,7 @@ from member.models import Member
 from company.models import Organization
 from user.models import CompanyStaff
 from jekiiLMS.mpesa_statement import amount_based_cs, final_recommended_amount
-from jekiiLMS.loan_math import total_payable_amount, num_installments
+from jekiiLMS.loan_math import total_payable_amount, num_installments, total_penalty
 
    
 
@@ -248,6 +248,10 @@ class Loan(models.Model):
         amount = payable / installments 
         return amount     
     
+    #penalty amount
+    def late_penality(self):
+        penality_amount = total_penalty(self)
+        return penality_amount
     #method to calculte the loan balance
     def loan_balance(self):
         # Get the loan object and its total payable

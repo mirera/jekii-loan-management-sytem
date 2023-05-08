@@ -65,7 +65,7 @@ def homepage(request):
     members= Member.objects.filter(company=company)
 
     #company staff context
-    staff = companystaff
+    staff = CompanyStaff.objects.get(username=request.user.username)
 
     #disbursed loans contexts
     disbursed_loans = Loan.objects.filter(status__in=['approved','cleared','overdue']).filter(company=company)

@@ -21,17 +21,28 @@ def total_interest(loan):
 
 #function to get total penalitis 
 def total_penalty(loan):
-    principal = loan.approved_amount
+
+    tz = pytz.timezone('UTC')
+    today = datetime.now(tz)
+    if loan.status in ['pending', 'rejected', 'cleared']:
+        time_overdue = 0
+    else:
+         time_overdue = (today - loan.due_date).days
+         
+    amount_due = loan.due_amount
     rate_or_value = loan.loan_product.penalty_value
     penalty_type = loan.loan_product.penalty_type
+    penalty_frequency = loan.loan_product.penalty_frequency
     penalty = 0
+
+
     if loan.status == 'overdue':
         if penalty_type == 'fixed_value':
                 penalty = rate_or_value
         elif penalty_type == 'percentage of principal':
-                penalty = (principal * rate_or_value) / 100
+                penalty = (amount_due * rate_or_value * time_overdue) / 100
         elif penalty_type == 'percentage of principal interest':
-                penalty = (principal + total_interest(loan) ) * rate_or_value / 100 
+                penalty = (amount_due * rate_or_value * time_overdue) / 100 
     else:
         penalty = 0
     return penalty
@@ -105,7 +116,7 @@ def loan_due_date(loan):
     elif loan.loan_product.repayment_frequency == 'weekly':
         return today + timedelta(weeks=1)
     else:
-        return today + timedelta(months=1)    
+        return today + relativedelta(months=1)    
 
 #function to fill due_amount field in Loan once loan is approved
 def save_due_amount(loan):

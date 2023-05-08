@@ -39,7 +39,7 @@ class LoanForm(forms.ModelForm):
         super(LoanForm, self).__init__(*args, **kwargs)
         self.fields['loan_product'].queryset = LoanProduct.objects.filter(company=company)
         self.fields['member'].queryset = Member.objects.filter(company=company, status='inactive')
-        self.fields['loan_officer'].queryset = CompanyStaff.objects.filter(company=company).exclude(user_type='admin')
+        self.fields['loan_officer'].queryset = CompanyStaff.objects.filter(company=company, status='active').exclude(user_type='admin')
 
         # Disable the loan_id field in the edit form
         var = self.fields['loan_id']
