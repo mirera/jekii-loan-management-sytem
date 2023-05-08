@@ -27,15 +27,13 @@ def user_login(request):
 
         if request.user.is_superuser or request.user.is_staff: 
             return redirect('superadmin_dashboard')
-        #elif user.user_type == 'staff':
-            #return redirect('dashboard')
         else:
             return redirect('home')
-
+       
 
     #extracting login credential from login form
     if request.method == 'POST':
-        username = request.POST.get('username')
+        username = request.POST.get('username').lower()
         password = request.POST.get('password')
 
         #raise username do not exist in our databse error
@@ -57,8 +55,6 @@ def user_login(request):
                     
                 if request.user.is_superuser or request.user.is_staff: 
                     return redirect('superadmin_dashboard')
-               # elif user.user_type == 'staff':
-                   # return redirect('dashboard')
                 else:
                     return redirect('home')
         else:
@@ -213,15 +209,21 @@ def addStaff(request):
         role_id = request.POST.get('staff_role')
         role = Role.objects.get(pk=role_id)
 
+        first_name = request.POST.get('first_name')
+        last_name= request.POST.get('last_name')
+        email= request.POST.get('email')
+
+        username = request.POST.get('username').lower()
+        passcode = request.POST.get('password')
         password = make_password(request.POST.get('password'))  # Hash the password
 
         CompanyStaff.objects.create(
             company = company,
-            username = request.POST.get('username'),
+            username = username,
             password = password, 
             first_name = request.POST.get('first_name'),
             last_name= request.POST.get('last_name'),
-            email= request.POST.get('email'),
+            email= email,
             id_no= request.POST.get('id_no'),
             phone_no = request.POST.get('phone_no'),
             branch = branch,
@@ -231,13 +233,34 @@ def addStaff(request):
         )
         #signing up the created user
         User.objects.create(
-            username = request.POST.get('username'),
+            username = username,
             password = password,
             first_name = request.POST.get('first_name'),
             last_name= request.POST.get('last_name'),
-            email = request.POST.get('email'),
+            email = email,
         )
-        
+        #send email to for email verification 
+        company_name = company.name
+        company_email = company.email
+        context = {
+            'first_name':first_name,
+            'last_name':last_name,
+            'username':username,
+            'passcode':passcode,
+            'company_name':company_name,
+            'role':role
+            }
+        from_name_email = f'{company_name} <{settings.EMAIL_HOST_USER}>' 
+        template = render_to_string('user/staff-welcome.html', context)
+        e_mail = EmailMessage(
+            f'Welcome to {company_name}',
+            template,
+            from_name_email, #'John Doe <john.doe@example.com>'
+            [email],
+            reply_to=[company_email],
+        )
+        e_mail.send(fail_silently=False)
+        messages.success(request, 'Staff added sucessfully.')
         return redirect('staffs') #users view
 
     
@@ -352,9 +375,14 @@ def updateStaff(request, pk):
 # -- view to deactivate a staff
 def deactivateStaff(request, pk):
     staff = CompanyStaff.objects.get(id=pk)
+    user = User.objects.get(username=staff.username)
     staff.status = 'inactive'
+    user.is_active= False
+    user.save()
     staff.save()
-    messages.info(request, 'Staff deactivated!')
+    #send mail
+
+    messages.info(request, 'Staff deactivated! The user will not be able to login in unless activated.')
     return redirect('staffs')
 # -- ends
 
@@ -363,6 +391,10 @@ def activateStaff(request, pk):
     staff = CompanyStaff.objects.get(id=pk)
     staff.status = 'active'
     staff.save()
+
+    user = User.objects.get(username=staff.username)
+    user.is_active= True
+    user.save()
     messages.info(request, 'Staff activated!')
     return redirect('staffs')
 # -- ends

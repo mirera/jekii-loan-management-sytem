@@ -337,6 +337,7 @@ def approveLoan(request,pk):
                     loan.save()
                     #call fill due_amount fun to fill due_amount on the Loan model 
                     save_due_amount(loan)
+                    #send mail and message to borrower.
                     messages.success(request,'The loan was approved successfully!')
                     return redirect('view-loan', loan.id)
             else:

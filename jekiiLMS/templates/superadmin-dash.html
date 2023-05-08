@@ -86,11 +86,15 @@
                                                 <div class="invest-data-amount g-2">
                                                     <div class="invest-data-history">
                                                         <div class="title">Active</div>
-                                                        <div class="amount">{{active_companies.count}}</div>
+                                                        <div class="amount text-success">{{active_companies.count}}</div>
                                                     </div>
                                                     <div class="invest-data-history">
                                                         <div class="title">Licence Expired</div>
-                                                        <div class="amount">{{license_expired_companies.count}}</div>
+                                                        {% if license_expired_companies.count == 0 %}
+                                                        <div class="amount text-soft">{{license_expired_companies.count}}</div>
+                                                        {% else %}
+                                                        <div class="amount text-danger">{{license_expired_companies.count}}</div>
+                                                        {% endif %}
                                                     </div>
                                                 </div>
                                             </div>

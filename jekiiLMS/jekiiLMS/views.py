@@ -50,49 +50,56 @@ def superadmin_dashboard(request):
 #--- companyadmin dashboard logic starts here---  
 @login_required(login_url='login')
 def homepage(request): 
-
-
-    branches=Branch.objects.all()
-    loans = Loan.objects.all()
-    repayments = Repayment.objects.all()
-    members= Member.objects.all()
+    if request.user.is_authenticated and request.user.is_active:
+              try:
+                  companystaff = CompanyStaff.objects.get(username=request.user.username)
+                  company = companystaff.company
+              except CompanyStaff.DoesNotExist:
+                  company = None
+    else:
+              company = None
+ 
+    branches=Branch.objects.filter(company=company)
+    loans = Loan.objects.filter(company=company)
+    repayments = Repayment.objects.filter(company=company)
+    members= Member.objects.filter(company=company)
 
     #company staff context
     staff = CompanyStaff.objects.get(username=request.user.username)
 
     #disbursed loans contexts
-    disbursed_loans = Loan.objects.filter(status__in=['approved','cleared','overdue'])
+    disbursed_loans = Loan.objects.filter(status__in=['approved','cleared','overdue']).filter(company=company)
     num_disbursed_loans = disbursed_loans.count()
     total_disbursed_amount = disbursed_loans.aggregate(Sum('approved_amount'))['approved_amount__sum'] or 0
     #disbursed loans contexts - staff specific
-    staff_disbursed_loans = Loan.objects.filter(status__in=['approved','cleared','overdue']).filter(loan_officer=staff)
+    staff_disbursed_loans = Loan.objects.filter(status__in=['approved','cleared','overdue']).filter(loan_officer=staff, company=company)
     staff_num_disbursed_loans = staff_disbursed_loans.count()
     staff_total_disbursed_amount = staff_disbursed_loans.aggregate(Sum('approved_amount'))['approved_amount__sum'] or 0
 
     #pending loans contexts
-    pending_loans = Loan.objects.filter(status ='pending')
+    pending_loans = Loan.objects.filter(status ='pending', company=company)
     total_pending_loans = pending_loans.count()
     total_pending_amount = pending_loans.aggregate(Sum('applied_amount'))['applied_amount__sum'] or 0
     #pending loans contexts - staff specific
-    staff_pending_loans = Loan.objects.filter(status ='pending', loan_officer=staff)
+    staff_pending_loans = Loan.objects.filter(status ='pending', loan_officer=staff, company=company)
     staff_num_pending_loans = staff_pending_loans.count()
     staff_total_pending_amount = staff_pending_loans.aggregate(Sum('approved_amount'))['approved_amount__sum'] or 0
 
 
     #overdue loans contexts
-    overdue_loans = Loan.objects.filter(status ='overdue')
+    overdue_loans = Loan.objects.filter(status ='overdue', company=company)
     total_overdue_loans = overdue_loans.count()
     total_overdue_amount = overdue_loans.aggregate(Sum('due_amount'))['due_amount__sum'] or 0
     #overdue loans contexts - staff specific
-    staff_overdue_loans = Loan.objects.filter(status ='overdue', loan_officer=staff)
+    staff_overdue_loans = Loan.objects.filter(status ='overdue', loan_officer=staff, company=company)
     staff_num_overdue_loans = staff_overdue_loans.count()
     staff_total_overdue_amount = staff_overdue_loans.aggregate(Sum('approved_amount'))['approved_amount__sum'] or 0
 
     #expenses contexts
-    total_expense = Expense.objects.all()
+    total_expense = Expense.objects.filter(company=company)
     expense = total_expense.aggregate(Sum('amount'))['amount__sum'] or 0
     #expenses contexts - staff specific
-    staff_total_expense = Expense.objects.filter(created_by=request.user)
+    staff_total_expense = Expense.objects.filter(created_by=request.user, company=company)
     staff_expense = staff_total_expense.aggregate(Sum('amount'))['amount__sum'] or 0
 
     context= {

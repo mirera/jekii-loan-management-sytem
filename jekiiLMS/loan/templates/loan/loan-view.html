@@ -70,9 +70,6 @@
                                     <div class="tab-pane active" id="loanDetails">
                                         <div class="nk-block-head">
                                             <h5 class="title">Loan Information</h5>
-                                            <div class="alert-warning">
-                                                <span> Check Member KYC status and score before approving loan request</span>
-                                            </div>
                                         </div><!-- .nk-block-head -->
                                         <table class="table table-hover">
                                             <tbody>
@@ -192,6 +189,12 @@
                                                             <a data-bs-toggle="modal" href="#addGuarantor" class="btn btn-primary ml-auto btn-sm ">+ Add Guarantor</a>
                                                         {% endif %}
                                                     </div>
+                                                    {% if loan.total_guarantor_score < 8 %}
+                                                    <div class="alert alert-icon alert-warning" role="alert">
+                                                        <em class="icon ni ni-alert-circle"></em> 
+                                                        <strong>No guarantor(s) added or their credit score is low.</strong>Add/Change guarantor.  
+                                                    </div>
+                                                    {% endif %}
                                                 </div>
                                             </div>
                                             <div class="card card-bordered card-preview">
@@ -237,6 +240,12 @@
                                                             <a data-bs-toggle="modal" href="#addCollateral" class="btn btn-primary ml-auto btn-sm ">+ Add collateral</a>
                                                         {% endif %}
                                                     </div>
+                                                    {% if loan.collateral_value < loan.final_amount_thrice or loan.collateral_value == 0 %}
+                                                    <div class="alert alert-icon alert-warning" role="alert">
+                                                        <em class="icon ni ni-alert-circle"></em> 
+                                                        <strong>No collateral(s) added or their value is insufficient.</strong>Add collateral.  
+                                                    </div>
+                                                    {% endif %}
                                                 </div>
                                             </div>
                                             <div class="card card-bordered card-preview">
@@ -397,7 +406,7 @@
                                                             <tr>
                                                                 <th scope="row">Collateral Value</th>
                                                                 <td>{{loan.collateral_value}}</td>
-                                                                {% if loan.collateral_value < loan.final_amount_thrice  %}
+                                                                {% if loan.collateral_value < loan.final_amount_thrice or loan.collateral_value == 0 %}
                                                                 <td> <span class="badge bg-outline-danger"><em class="icon ni ni-cross-circle-fill"></em>FAILED</span></td>
                                                                 {% else %}
                                                                 <td> <span class="badge bg-outline-success"><em class="icon ni ni-check-circle-fill"></em>OK</span></td>
@@ -455,6 +464,15 @@
                                                     <div class="card-inner">
                                                         <div class="card-head">
                                                             <h6 class="card-title">Final Recommended Amount: <span>{{loan.final_reco_amount}}</span></h6>
+                                                            {% if loan.final_reco_amount < loan.loan_product.minimum_amount %}
+                                                            <div class="alert alert-icon alert-warning" role="alert">
+                                                                <em class="icon ni ni-alert-circle"></em> 
+                                                                <strong>Recommended amount is less than loan minimum amount</strong>. We advice to ask the borrower to provide more business/financial data or reject the loan. 
+                                                            </div>
+                                                            <div class="form-group mt-2">
+                                                                <a data-bs-toggle="modal" href="#rejectLoan" class="btn btn-sm btn-danger btn-dim">Reject</a>
+                                                            </div>
+                                                            {% else %}
                                                         </div>
                                                         <form action="{% url 'approve' loan.id %}" class="gy-3" method="POST">
                                                             {% csrf_token %}
@@ -479,7 +497,7 @@
                                                                         <button type="submit" class="btn btn-sm btn-primary">Approve</button>
                                                                         <a data-bs-toggle="modal" href="#rejectLoan" class="btn btn-sm btn-danger btn-dim">Reject</a>
                                                                     </div>
-                                                                    
+                                                                 {% endif %}   
                                                                 </div>
                                                             </div>
                                                         </form>
