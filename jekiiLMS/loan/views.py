@@ -7,16 +7,17 @@ import os
 from django.contrib import messages
 from django.db.models import Sum
 from datetime import datetime
-from django.contrib.auth.models import User
 from jekiiLMS.decorators import role_required
 from .models import LoanProduct, Loan, Note, Repayment, Guarantor, Collateral, MpesaStatement
 from .forms import LoanProductForm, LoanForm, RepaymentForm, GuarantorForm, CollateralForm, MpesaStatementForm
 from member.models import Member
 from user.models import CompanyStaff
-from jekiiLMS.process_loan import is_sufficient_collateral, calculate_loan_amount, get_amount_to_disburse, clear_loan, update_member_data
+from jekiiLMS.process_loan import is_sufficient_collateral, get_amount_to_disburse, clear_loan, update_member_data
 from jekiiLMS.mpesa_statement import get_loans_table
 from jekiiLMS.loan_math import loan_due_date, save_due_amount, num_installments
 from jekiiLMS.sms_messages import send_sms
+from jekiiLMS.mpesa_api import disburse_loan
+
 
 
 #create Loan Product view starts 
@@ -343,29 +344,45 @@ def approveLoan(request,pk):
                     borrower.status = 'active'
                     borrower.save()
                     loan.save()
-                    #call fill due_amount fun to fill due_amount on the Loan model 
-                    save_due_amount(loan)
 
-                    #send mail and message to borrower.
-                    context = {'loan':loan}
-                    from_name_email = f'{company_name} <{settings.EMAIL_HOST_USER}>' 
-                    template = render_to_string('loan/loan-approved.html', context)
-                    e_mail = EmailMessage(
-                        'Loan Approved',
-                        template,
-                        from_name_email, #'John Doe <john.doe@example.com>'
-                        [email],
-                        reply_to=[company_email],
-                    )
-                    e_mail.send(fail_silently=False)
+                    #disburse loan
+                    try:
+                        disbursement_response = disburse_loan(loan)
+                        if disbursement_response['ResponseCode'] == '0':
+                            # call fill due_amount function to fill due_amount on the Loan model 
+                            save_due_amount(loan)
 
-                    #send sms
-                    date = loan.due_date.date().strftime('%Y-%m-%d')
-                    message = f"Dear {borrower.first_name}, Your loan request has been approved. The next payment date {date}, amount Ksh{loan.due_amount}. Acc. 5840988 Paybill 522522"
-                    send_sms(borrower.phone_no, message)
+                            #send mail and message to borrower.
+                            context = {'loan':loan}
+                            from_name_email = f'{company_name} <{settings.EMAIL_HOST_USER}>' 
+                            template = render_to_string('loan/loan-approved.html', context)
+                            e_mail = EmailMessage(
+                                'Loan Approved',
+                                template,
+                                from_name_email, #'John Doe <john.doe@example.com>'
+                                [email],
+                                reply_to=[company_email],
+                            )
+                            e_mail.send(fail_silently=False)
 
-                    messages.success(request,'The loan was approved successfully!')
-                    return redirect('view-loan', loan.id)
+                            #send sms
+                            date = loan.due_date.date().strftime('%Y-%m-%d')
+                            message = f"Dear {borrower.first_name}, Your loan request has been approved. The next payment date {date}, amount Ksh{loan.due_amount}. Acc. 5840988 Paybill 522522"
+                            send_sms(borrower.phone_no, message)
+
+                            messages.success(request, 'Loan approved & disbursed successfully!')
+                            return redirect('view-loan', loan.id)
+                        else:
+                            #undo loan and member status and save
+                            loan.status = 'pending'
+                            borrower.status = 'inactive'
+                            borrower.save()
+                            loan.save()
+                            messages.error(request, 'Loan disbursement failed!')
+                            return redirect('view-loan', loan.id)
+                    except Exception as errors:
+                        messages.error(request, f'Loan disbursement failed! {str(errors)}')
+                        return redirect('view-loan', loan.id)
             else:
                 messages.error(request, 'The collateral value is too low!')
                 return redirect('view-loan', loan.id)
