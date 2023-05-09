@@ -1,6 +1,7 @@
 from datetime import datetime
 from loan.models import Collateral
 from .credit_score import member_credit_score, update_credit_score
+from jekiiLMS.sms_messages import send_sms
 
 
 
@@ -70,6 +71,9 @@ def clear_loan(loan):
                 loan.status = 'cleared'
                 loan.cleared_date = today 
                 loan.save()
+                #send sms
+                message = f"Dear {loan.member.first_name}, You have successfully cleared your loan balance. Success in your business."
+                send_sms(loan.member.phone_no, message)
 
 #update member details after loan cleared               
 def update_member_data(loan):

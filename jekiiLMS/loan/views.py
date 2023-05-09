@@ -16,6 +16,7 @@ from user.models import CompanyStaff
 from jekiiLMS.process_loan import is_sufficient_collateral, calculate_loan_amount, get_amount_to_disburse, clear_loan, update_member_data
 from jekiiLMS.mpesa_statement import get_loans_table
 from jekiiLMS.loan_math import loan_due_date, save_due_amount, num_installments
+from jekiiLMS.sms_messages import send_sms
 
 
 #create Loan Product view starts 
@@ -314,8 +315,6 @@ def approveLoan(request,pk):
         company_name = company.name
         company_email = company.email
         email = borrower.email
-        first_name = borrower.first_name
-        last_name = borrower.last_name
 
         guarantors_score = 0
         for guarantor in guarantors:
@@ -360,6 +359,11 @@ def approveLoan(request,pk):
                     )
                     e_mail.send(fail_silently=False)
 
+                    #send sms
+                    date = loan.due_date.date().strftime('%Y-%m-%d')
+                    message = f"Dear {borrower.first_name}, Your loan request has been approved. The next payment date {date}, amount Ksh{loan.due_amount}. Acc. 5840988 Paybill 522522"
+                    send_sms(borrower.phone_no, message)
+
                     messages.success(request,'The loan was approved successfully!')
                     return redirect('view-loan', loan.id)
             else:
@@ -387,6 +391,7 @@ def rejectLoan(request,pk):
             company = None
 
         loan = Loan.objects.get(id=pk, company=company)
+        borrower = loan.member
 
         #email variables
         company_name = company.name
@@ -411,6 +416,10 @@ def rejectLoan(request,pk):
                 reply_to=[company_email],
             )
             e_mail.send(fail_silently=False)
+
+            #send sms
+            message = f"Dear {borrower.first_name}, we regret to inform you that we are unable to approve your loan request at this time."
+            send_sms(borrower.phone_no, message)
 
             messages.info(request,'The loan was rejected succussesfully!')
             return redirect(url_with_anchor)

@@ -4,7 +4,9 @@ from datetime import timedelta, datetime
 from dateutil.relativedelta import relativedelta
 from loan.models import Loan, Repayment
 from .loan_math import loan_due_date
+from jekiiLMS.sms_messages import send_sms
 
+#task to mark a loan as overdue
 @shared_task
 def mark_loans_as_overdue():
     today = date.today()
@@ -20,12 +22,16 @@ def mark_loans_as_overdue():
             # Loan is overdue
             loan.status = 'overdue'
             loan.save()
+            # send sms
+            message = f"Dear {loan.member.first_name}, your loan installment of Ksh{loan.due_amount} is overdue. Make payment to avoid further penalties. Acc. 5840988 Paybill 522522"
+            send_sms(loan.member.phone_no, message)
 
 
 @shared_task
 def hello_engima():
     print('I get printed after every minute')
 
+#task to update due date 
 @shared_task
 def update_due_date():
     #change today datetime to today midnight
@@ -49,3 +55,17 @@ def update_due_date():
             # Change due date
             loan.due_date = loan_due_date(loan) 
             loan.save()
+
+#task to send loan balances sms weekly
+@shared_task
+def send_loan_balance():
+    loans = Loan.objects.filter(status__in=['approved', 'overdue'])
+    
+    for loan in loans:
+        balance = loan.loan_balance()
+        final_date = loan.final_payment_date().date().strftime('%Y-%m-%d')
+        
+        # send sms of loan balance
+        message = f"Dear {loan.member.first_name}, Your current loan balance is Ksh{balance}. Final payment date is {final_date}. Wishing you success in your business."
+        send_sms(loan.member.phone_no, message)
+ 

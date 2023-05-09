@@ -19,7 +19,7 @@ app.autodiscover_tasks(['jekiiLMS'])
 app.conf.beat_schedule = {
     'mark_loans_as_overdue': {
         'task': 'jekiiLMS.tasks.mark_loans_as_overdue',
-        'schedule': crontab(minute='*'),
+        'schedule': crontab(minute=0, hour=0),
     },
     'hello_engima': {
         'task': 'jekiiLMS.tasks.hello_engima',
@@ -27,6 +27,10 @@ app.conf.beat_schedule = {
     },
     'update_due_date': {
         'task': 'jekiiLMS.tasks.update_due_date',
-        'schedule': crontab(minute='*'),
+        'schedule': crontab(minute=0, hour=0),
+    },
+    'send_loan_balance': {
+        'task': 'jekiiLMS.tasks.send_loan_balance',
+        'schedule': crontab(hour=9, minute=0, day_of_week=1), #every monday 9am
     },
 } 
