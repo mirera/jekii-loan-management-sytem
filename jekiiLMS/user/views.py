@@ -308,11 +308,11 @@ def update_user_profile(request):
         company = None
 
     user = CompanyStaff.objects.get(username=request.user.username)
-    phone_no = request.POST.get('phone_no')
-    formated_phone_no = format_phone_number(phone_no)
     
     if request.method == 'POST':
-
+        phone_no = request.POST.get('phone_no')
+        formated_phone_no = format_phone_number(phone_no)
+        
         user.first_name = request.POST.get('first_name')
         user.last_name = request.POST.get('last_name')
         user.email = request.POST.get('email')

@@ -24,22 +24,19 @@
                     <div class="card card-bordered card-stretch">
                         <ul class="nav nav-tabs nav-tabs-mb-icon nav-tabs-card">
                             <li class="nav-item">
-                                <a class="nav-link active" data-bs-toggle="tab" href="#site"><em class="icon ni ni-laptop"></em><span>General</span></a>
+                                <a class="nav-link active" data-bs-toggle="tab" href="#site"><em class="icon ni ni-laptop"></em><span>General settings</span></a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" data-bs-toggle="tab" href="#admin"><em class="icon ni ni-user-alt"></em><span>Admin </span></a>
+                                <a class="nav-link" data-bs-toggle="tab" href="#admin"><em class="icon ni ni-user-alt"></em><span>Admin Settings</span></a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" data-bs-toggle="tab" href="#email"><em class="icon ni ni-mail-fill"></em><span>Email</span> </a>
+                                <a class="nav-link" data-bs-toggle="tab" href="#theme"><em class="icon ni ni-color-palette-fill"></em><span>Theme setting </span></a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" data-bs-toggle="tab" href="#system"><em class="icon ni ni-setting-alt"></em><span>System</span></a>
+                                <a class="nav-link" data-bs-toggle="tab" href="#email"><em class="icon ni ni-mail-fill"></em><span>Email settings </span> </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" data-bs-toggle="tab" href="#mpesa"><em class="icon ni ni-wallet"></em><span>Mpesa</span></a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" data-bs-toggle="tab" href="#sms"><em class="icon ni ni-emails"></em><span>SMS</span></a>
+                                <a class="nav-link" data-bs-toggle="tab" href="#system"><em class="icon ni ni-color-palette-fill"></em><span>System setting </span></a>
                             </li>
                         </ul>
                         <div class="tab-content">
@@ -379,7 +376,6 @@
                                                             </div>
                                                         </div>
                                                     </div><!-- .nk-tb-item -->
-                                                    {% for admin in admins %}
                                                     <div class="nk-tb-item">
                                                         <div class="nk-tb-col nk-tb-col-check">
                                                             <div class="custom-control custom-control-sm custom-checkbox notext">
@@ -388,23 +384,23 @@
                                                             </div>
                                                         </div>
                                                         <div class="nk-tb-col tb-col-lg">
-                                                            <a href="#">{{admin.id}}</a>
+                                                            <a href="#">#456</a>
                                                         </div>
                                                         <div class="nk-tb-col">
                                                             <div class="user-card">
-                                                                <div class="user-avatar sm bg-white">
-                                                                    <img src="{{ admin.profile_photo.url }}" >
+                                                                <div class="user-avatar sm bg-primary">
+                                                                    <span>AB</span>
                                                                 </div>
                                                                 <div class="user-name">
-                                                                    <span class="tb-lead">{{admin.first_name}} {{admin.last_name}}</span>
+                                                                    <span class="tb-lead">Abu Bin Ishtiyak</span>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <div class="nk-tb-col">
-                                                            <span class="badge text-medium text-success">{{admin.staff_role}}</span>
+                                                            <span class="badge text-medium text-success">Admin</span>
                                                         </div>
                                                         <div class="nk-tb-col tb-col-sm">
-                                                            <span class="tb-status bg-success badge badge-dot">{{admin.status}}</span>
+                                                            <span class="tb-status bg-success badge badge-dot">Active</span>
                                                         </div>
                                                         <div class="nk-tb-col nk-tb-col-tools">
                                                             <ul class="nk-tb-actions gx-2">
@@ -433,8 +429,218 @@
                                                             </ul>
                                                         </div>
                                                     </div><!-- .nk-tb-item -->
-                                                    {% endfor %}
-                                                   
+                                                    <div class="nk-tb-item">
+                                                        <div class="nk-tb-col nk-tb-col-check">
+                                                            <div class="custom-control custom-control-sm custom-checkbox notext">
+                                                                <input type="checkbox" class="custom-control-input" id="uid2">
+                                                                <label class="custom-control-label" for="uid2"></label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="nk-tb-col tb-col-lg">
+                                                            <a href="#">#457</a>
+                                                        </div>
+                                                        <div class="nk-tb-col">
+                                                            <div class="user-card">
+                                                                <div class="user-avatar sm bg-dark">
+                                                                    <span>BW</span>
+                                                                </div>
+                                                                <div class="user-name">
+                                                                    <span class="tb-lead">Bruce Wayne</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="nk-tb-col">
+                                                            <span class="badge text-medium text-primary">Co-Admin</span>
+                                                        </div>
+                                                        <div class="nk-tb-col tb-col-sm">
+                                                            <span class="tb-status bg-success badge badge-dot">Active</span>
+                                                        </div>
+                                                        <div class="nk-tb-col nk-tb-col-tools">
+                                                            <ul class="nk-tb-actions gx-2">
+                                                                <li class="nk-tb-action-hidden">
+                                                                    <a href="#" class="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Send Email">
+                                                                        <em class="icon ni ni-mail-fill"></em>
+                                                                    </a>
+                                                                </li>
+                                                                <li class="nk-tb-action-hidden">
+                                                                    <a href="#" class="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Delete">
+                                                                        <em class="icon ni ni-user-cross-fill"></em>
+                                                                    </a>
+                                                                </li>
+                                                                <li>
+                                                                    <div class="drodown">
+                                                                        <a href="#" class="btn btn-sm btn-icon btn-trigger dropdown-toggle" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
+                                                                        <div class="dropdown-menu dropdown-menu-end">
+                                                                            <ul class="link-list-opt no-bdr">
+                                                                                <li><a href="#"><em class="icon ni ni-eye"></em><span>View Details</span></a></li>
+                                                                                <li><a data-bs-toggle="modal" href="#editAdmin"><em class="icon ni ni-edit"></em><span>Edit</span></a></li>
+                                                                                <li><a data-bs-toggle="modal" href="#removeAdmin"><em class="icon ni ni-delete"></em><span>Delete</span></a></li>
+                                                                            </ul>
+                                                                        </div>
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div><!-- .nk-tb-item -->
+                                                    <div class="nk-tb-item">
+                                                        <div class="nk-tb-col nk-tb-col-check">
+                                                            <div class="custom-control custom-control-sm custom-checkbox notext">
+                                                                <input type="checkbox" class="custom-control-input" id="uid3">
+                                                                <label class="custom-control-label" for="uid3"></label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="nk-tb-col tb-col-lg">
+                                                            <a href="#">#496</a>
+                                                        </div>
+                                                        <div class="nk-tb-col">
+                                                            <div class="user-card">
+                                                                <div class="user-avatar sm bg-success">
+                                                                    <span>TI</span>
+                                                                </div>
+                                                                <div class="user-name">
+                                                                    <span class="tb-lead">Iliash Hossain</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="nk-tb-col">
+                                                            <span class="badge text-medium text-info">Co-admin</span>
+                                                        </div>
+                                                        <div class="nk-tb-col tb-col-sm">
+                                                            <span class="tb-status bg-warning badge badge-dot">Inactive</span>
+                                                        </div>
+                                                        <div class="nk-tb-col nk-tb-col-tools">
+                                                            <ul class="nk-tb-actions gx-2">
+                                                                <li class="nk-tb-action-hidden">
+                                                                    <a href="#" class="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Send Email">
+                                                                        <em class="icon ni ni-mail-fill"></em>
+                                                                    </a>
+                                                                </li>
+                                                                <li class="nk-tb-action-hidden">
+                                                                    <a href="#" class="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Delete">
+                                                                        <em class="icon ni ni-user-cross-fill"></em>
+                                                                    </a>
+                                                                </li>
+                                                                <li>
+                                                                    <div class="drodown">
+                                                                        <a href="#" class="btn btn-sm btn-icon btn-trigger dropdown-toggle" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
+                                                                        <div class="dropdown-menu dropdown-menu-end">
+                                                                            <ul class="link-list-opt no-bdr">
+                                                                                <li><a href="#"><em class="icon ni ni-eye"></em><span>View Details</span></a></li>
+                                                                                <li><a data-bs-toggle="modal" href="#editAdmin"><em class="icon ni ni-edit"></em><span>Edit</span></a></li>
+                                                                                <li><a data-bs-toggle="modal" href="#removeAdmin"><em class="icon ni ni-delete"></em><span>Delete</span></a></li>
+                                                                            </ul>
+                                                                        </div>
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div><!-- .nk-tb-item -->
+                                                    <div class="nk-tb-item">
+                                                        <div class="nk-tb-col nk-tb-col-check">
+                                                            <div class="custom-control custom-control-sm custom-checkbox notext">
+                                                                <input type="checkbox" class="custom-control-input" id="uid4">
+                                                                <label class="custom-control-label" for="uid4"></label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="nk-tb-col tb-col-lg">
+                                                            <a href="#">#458</a>
+                                                        </div>
+                                                        <div class="nk-tb-col">
+                                                            <div class="user-card">
+                                                                <div class="user-avatar sm bg-info">
+                                                                    <span>JA</span>
+                                                                </div>
+                                                                <div class="user-name">
+                                                                    <span class="tb-lead">Jahangir Alom</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="nk-tb-col">
+                                                            <span class="badge text-medium text-warning">Moderator</span>
+                                                        </div>
+                                                        <div class="nk-tb-col tb-col-sm">
+                                                            <span class="tb-status bg-success badge badge-dot">Active</span>
+                                                        </div>
+                                                        <div class="nk-tb-col nk-tb-col-tools">
+                                                            <ul class="nk-tb-actions gx-2">
+                                                                <li class="nk-tb-action-hidden">
+                                                                    <a href="#" class="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Send Email">
+                                                                        <em class="icon ni ni-mail-fill"></em>
+                                                                    </a>
+                                                                </li>
+                                                                <li class="nk-tb-action-hidden">
+                                                                    <a href="#" class="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Delete">
+                                                                        <em class="icon ni ni-user-cross-fill"></em>
+                                                                    </a>
+                                                                </li>
+                                                                <li>
+                                                                    <div class="drodown">
+                                                                        <a href="#" class="btn btn-sm btn-icon btn-trigger dropdown-toggle" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
+                                                                        <div class="dropdown-menu dropdown-menu-end">
+                                                                            <ul class="link-list-opt no-bdr">
+                                                                                <li><a href="#"><em class="icon ni ni-eye"></em><span>View Details</span></a></li>
+                                                                                <li><a data-bs-toggle="modal" href="#editAdmin"><em class="icon ni ni-edit"></em><span>Edit</span></a></li>
+                                                                                <li><a data-bs-toggle="modal" href="#removeAdmin"><em class="icon ni ni-delete"></em><span>Delete</span></a></li>
+                                                                            </ul>
+                                                                        </div>
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div><!-- .nk-tb-item -->
+                                                    <div class="nk-tb-item">
+                                                        <div class="nk-tb-col nk-tb-col-check">
+                                                            <div class="custom-control custom-control-sm custom-checkbox notext">
+                                                                <input type="checkbox" class="custom-control-input" id="uid5">
+                                                                <label class="custom-control-label" for="uid5"></label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="nk-tb-col tb-col-lg">
+                                                            <a href="#">#459</a>
+                                                        </div>
+                                                        <div class="nk-tb-col">
+                                                            <div class="user-card">
+                                                                <div class="user-avatar sm bg-danger">
+                                                                    <span>FA</span>
+                                                                </div>
+                                                                <div class="user-name">
+                                                                    <span class="tb-lead">Fuad Alom</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="nk-tb-col">
+                                                            <span class="badge text-medium text-primary">Moderator</span>
+                                                        </div>
+                                                        <div class="nk-tb-col tb-col-sm">
+                                                            <span class="tb-status bg-danger badge badge-dot">Suspended</span>
+                                                        </div>
+                                                        <div class="nk-tb-col nk-tb-col-tools">
+                                                            <ul class="nk-tb-actions gx-2">
+                                                                <li class="nk-tb-action-hidden">
+                                                                    <a href="#" class="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Send Email">
+                                                                        <em class="icon ni ni-mail-fill"></em>
+                                                                    </a>
+                                                                </li>
+                                                                <li class="nk-tb-action-hidden">
+                                                                    <a href="#" class="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Delete">
+                                                                        <em class="icon ni ni-user-cross-fill"></em>
+                                                                    </a>
+                                                                </li>
+                                                                <li>
+                                                                    <div class="drodown">
+                                                                        <a href="#" class="btn btn-sm btn-icon btn-trigger dropdown-toggle" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
+                                                                        <div class="dropdown-menu dropdown-menu-end">
+                                                                            <ul class="link-list-opt no-bdr">
+                                                                                <li><a href="#"><em class="icon ni ni-eye"></em><span>View Details</span></a></li>
+                                                                                <li><a data-bs-toggle="modal" href="#editAdmin"><em class="icon ni ni-edit"></em><span>Edit</span></a></li>
+                                                                                <li><a data-bs-toggle="modal" href="#removeAdmin"><em class="icon ni ni-delete"></em><span>Delete</span></a></li>
+                                                                            </ul>
+                                                                        </div>
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div><!-- .nk-tb-item -->
                                                 </div><!-- .nk-tb-list -->
                                             </div><!-- .card-inner -->
                                             <div class="card-inner">
@@ -453,263 +659,139 @@
                                 </div>
                             </div>
                             <!--tab pan -->
+                            <div class="tab-pane" id="theme">
+                                <div class="card-inner pt-0">
+                                    <div class="nk-block-head">
+                                        <div class="nk-block-head-content">
+                                            <h4 class="title nk-block-title">Theme Installed</h4>
+                                            <p>Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet.</p>
+                                        </div>
+                                    </div>
+                                    <div class="row g-gs">
+                                        <div class="col-lg-4 col-xxl-3 col-sm-6">
+                                            <div class="card shadow-none">
+                                                <img src="./images/crm/theme/a.jpg" class="border border-light rounded" alt="">
+                                                <div class="card-inner pt-3 p-0">
+                                                    <p class="card-text">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Expedita, sapiente!</p>
+                                                    <a href="#" class="btn btn-primary"> Active Theme</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-xxl-3 col-sm-6">
+                                            <div class="card shadow-none">
+                                                <img src="./images/crm/theme/b.jpg" class="border border-light rounded" alt="">
+                                                <div class="card-inner pt-3 p-0">
+                                                    <p class="card-text">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Expedita, sapiente!</p>
+                                                    <a href="#" class="btn btn-primary disabled"> Current theme</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-xxl-3 col-sm-6">
+                                            <div class="card shadow-none">
+                                                <img src="./images/crm/theme/c.jpg" class="border border-light rounded" alt="">
+                                                <div class="card-inner pt-3 p-0">
+                                                    <p class="card-text">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Expedita, sapiente!</p>
+                                                    <a href="#" class="btn btn-primary"> Active theme</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> <!-- .tab-pane -->
                             <div class="tab-pane" id="email">
                                 <div class="card-inner pt-0">
                                     <div class="nk-block-head">
                                         <div class="nk-block-head-content">
                                             <h4 class="title nk-block-title">Email-Settings</h4>
-                                            <p>Follow each step and fill as needed to get mailing fully set up for your account.</p>
+                                            <p>Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet.</p>
                                         </div>
                                     </div>
                                     <div class="row g-gs">
-                                        <div class="row g-3 align-center">
-                                            <div class="col-lg-5">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="site-copyright">From Email</label>
-                                                    <span class="form-note">The email address that emails are sent from.</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-7">
-                                                <div class="form-group">
-                                                    <div class="form-control-wrap">
-                                                        <input type="email" class="form-control" name="from_email" placeholder="info@loginit.co.ke">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row g-3 align-center">
-                                            <div class="col-lg-5">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="site-copyright">From Name</label>
-                                                    <span class="form-note">The name that emails are sent from.</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-7">
-                                                <div class="form-group">
-                                                    <div class="form-control-wrap">
-                                                        <input type="text" class="form-control" name="from_name" placeholder="Loginit CyberSec">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row g-3 align-center">
-                                            <div class="col-lg-5">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="site-copyright">SMTP Host</label>
-                                                    <span class="form-note">This is your mail server.</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-7">
-                                                <div class="form-group">
-                                                    <div class="form-control-wrap">
-                                                        <input type="text" class="form-control" name="smtp_host" placeholder="loginit.co.ke">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row g-3 align-center">
-                                            <div class="col-lg-5">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="site-copyright">Encryption</label>
-                                                    <span class="form-note">For most servers TLS is the recommended option. If your SMTP provider offers both SSL and TLS options, we recommend using TLS.</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-7">
-                                                <ul class="custom-control-group g-3 align-center flex-wrap">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label class="form-label">E-mail to Lead</label>
+                                                <ul class="custom-control-group g-3 align-center">
                                                     <li>
-                                                        <div class="custom-control custom-radio">
-                                                            <input type="radio" class="custom-control-input" checked name="encry" id="ency-tls">
-                                                            <label class="custom-control-label" for="ency-tls">TLS</label>
+                                                        <div class="custom-control custom-control-sm custom-checkbox">
+                                                            <input type="checkbox" class="custom-control-input" id="lead-dis">
+                                                            <label class="custom-control-label" for="lead-dis">About Discount</label>
                                                         </div>
                                                     </li>
                                                     <li>
-                                                        <div class="custom-control custom-radio">
-                                                            <input type="radio" class="custom-control-input" name="encry" id="ency-ssl">
-                                                            <label class="custom-control-label" for="ency-ssl">SSL</label>
+                                                        <div class="custom-control custom-control-sm custom-checkbox">
+                                                            <input type="checkbox" class="custom-control-input" id="lead-pro">
+                                                            <label class="custom-control-label" for="lead-pro">About Product</label>
                                                         </div>
                                                     </li>
                                                     <li>
-                                                        <div class="custom-control custom-radio">
-                                                            <input type="radio" class="custom-control-input" name="encry" id="ency-none">
-                                                            <label class="custom-control-label" for="ency-none">None</label>
+                                                        <div class="custom-control custom-control-sm custom-checkbox">
+                                                            <input type="checkbox" class="custom-control-input" id="lead-det">
+                                                            <label class="custom-control-label" for="lead-det">Product Details</label>
                                                         </div>
                                                     </li>
                                                 </ul>
                                             </div>
-                                        </div>
-                                        <div class="row g-3 align-center">
-                                            <div class="col-lg-5">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="site-copyright">SMTP Port</label>
-                                                    <span class="form-note">This is your mail server.</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-7">
-                                                <div class="form-group">
-                                                    <div class="form-control-wrap">
-                                                        <input type="number" class="form-control" name="smtp_port" placeholder="587">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row g-3 align-center">
-                                            <div class="col-lg-5">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="site-copyright">SMTP Username</label>
-                                                    <span class="form-note">Usually the email of From Email</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-7">
-                                                <div class="form-group">
-                                                    <div class="form-control-wrap">
-                                                        <input type="email" class="form-control" name="from_email" placeholder="info@loginit.co.ke">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row g-3 align-center">
-                                            <div class="col-lg-5">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="site-copyright">SMTP Password</label>
-                                                    <span class="form-note">The password is encrypted in the database.</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-7">
-                                                <div class="form-group">
-                                                    <div class="form-control-wrap">
-                                                        <input type="password" class="form-control" name="smtp_password" >
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div> <!-- .row -->
-                                    <div class="row g-3">
-                                        <div class="col-lg-7">
-                                            <div class="form-group mt-2">
-                                                <button type="submit" class="btn btn-lg btn-primary">Update</button>
+                                        </div><!-- .col -->
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label class="form-label">E-mail to Customers</label>
+                                                <ul class="custom-control-group g-3 align-center">
+                                                    <li>
+                                                        <div class="custom-control custom-control-sm custom-checkbox">
+                                                            <input type="checkbox" class="custom-control-input" id="cus-dis">
+                                                            <label class="custom-control-label" for="cus-dis">About Discount</label>
+                                                        </div>
+                                                    </li>
+                                                    <li>
+                                                        <div class="custom-control custom-control-sm custom-checkbox">
+                                                            <input type="checkbox" class="custom-control-input" id="cus-pro">
+                                                            <label class="custom-control-label" for="cus-pro">About Product</label>
+                                                        </div>
+                                                    </li>
+                                                    <li>
+                                                        <div class="custom-control custom-control-sm custom-checkbox">
+                                                            <input type="checkbox" class="custom-control-input" id="cus-det">
+                                                            <label class="custom-control-label" for="cus-det">Product Details</label>
+                                                        </div>
+                                                    </li>
+                                                </ul>
                                             </div>
                                         </div><!-- .col -->
-                                    </div><!-- .row -->
-                                </div>
-                            </div><!-- .tab-pane -->
-                            <div class="tab-pane" id="mpesa">
-                                <div class="card-inner pt-0">
-                                    <div class="nk-block-head">
-                                        <div class="nk-block-head-content">
-                                            <h4 class="title nk-block-title">Mpesa B2C Settings</h4>
-                                            <p>Make sure your shortcode is for bulky payment B2C is enabled</p>
-                                        </div>
-                                    </div>
-                                    <div class="row g-gs">
-                                        <div class="row g-3 align-center">
-                                            <div class="col-lg-5">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="site-copyright">Business Shortcode</label>
-                                                    <span class="form-note">Your Mpesa business till/paybill number</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-7">
-                                                <div class="form-group">
-                                                    <div class="form-control-wrap">
-                                                        <input type="number" class="form-control" name="shortcode" placeholder="174379">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row g-3 align-center">
-                                            <div class="col-lg-5">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="site-copyright">App Consumer Key</label>
-                                                    <span class="form-note">Your app consumer key from Safaricom Daraja.</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-7">
-                                                <div class="form-group">
-                                                    <div class="form-control-wrap">
-                                                        <input type="text" class="form-control" name="consumer_key" placeholder="9v38Dtu5u2BpsITPmLcXNWGMsjZRWSTG">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row g-3 align-center">
-                                            <div class="col-lg-5">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="site-copyright">App Consumer Secret</label>
-                                                    <span class="form-note">Your app consumer secret from Safaricom Daraja.</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-7">
-                                                <div class="form-group">
-                                                    <div class="form-control-wrap">
-                                                        <input type="text" class="form-control" name="consumer_secret" placeholder="bclwIPkcRqw61yUt">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row g-3 align-center">
-                                            <div class="col-lg-5">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="site-copyright">Online Pass Key</label>
-                                                    <span class="form-note">Your app pass key from Safaricom Daraja</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-7">
-                                                <div class="form-group">
-                                                    <div class="form-control-wrap">
-                                                        <input type="text" class="form-control" name="pass_key" placeholder="bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div> <!-- .row -->
-                                    <div class="row g-3">
-                                        <div class="col-lg-7">
-                                            <div class="form-group mt-2">
-                                                <button type="submit" class="btn btn-lg btn-primary">Update</button>
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label class="form-label">E-mail to Employee</label>
+                                                <ul class="custom-control-group g-3 align-center">
+                                                    <li>
+                                                        <div class="custom-control custom-control-sm custom-checkbox">
+                                                            <input type="checkbox" class="custom-control-input" id="emp-holiday">
+                                                            <label class="custom-control-label" for="emp-holiday">Holiday</label>
+                                                        </div>
+                                                    </li>
+                                                    <li>
+                                                        <div class="custom-control custom-control-sm custom-checkbox">
+                                                            <input type="checkbox" class="custom-control-input" id="emp-policy">
+                                                            <label class="custom-control-label" for="emp-policy">Updated Policy</label>
+                                                        </div>
+                                                    </li>
+                                                    <li>
+                                                        <div class="custom-control custom-control-sm custom-checkbox">
+                                                            <input type="checkbox" class="custom-control-input" id="emp-salary">
+                                                            <label class="custom-control-label" for="emp-salary">About Salary</label>
+                                                        </div>
+                                                    </li>
+                                                </ul>
                                             </div>
                                         </div><!-- .col -->
-                                    </div><!-- .row -->
-                                </div>
-                            </div><!-- .tab-pane -->
-                            <div class="tab-pane" id="sms">
-                                <div class="card-inner pt-0">
-                                    <div class="nk-block-head">
-                                        <div class="nk-block-head-content">
-                                            <h4 class="title nk-block-title">SMS Gateway Settings</h4>
-                                            <p>The available service provider is Erranium</p>
-                                        </div>
-                                    </div>
-                                    <div class="row g-gs">
-                                        <div class="row g-3 align-center">
-                                            <div class="col-lg-5">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="site-copyright">Sender ID</label>
-                                                    <span class="form-note">Your sms sender ID</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-7">
-                                                <div class="form-group">
-                                                    <div class="form-control-wrap">
-                                                        <input type="text" class="form-control" name="sender_id" placeholder="loginit">
+                                        <div class="col-sm-6 col-lg-4">
+                                            <div class="form-group">
+                                                <div class="form-control-wrap">
+                                                    <div class="form-icon form-icon-right">
+                                                        <em class="icon ni ni-search"></em>
                                                     </div>
+                                                    <input type="text" class="form-control" id="default-04" placeholder="E-mail from a name">
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="row g-3 align-center">
-                                            <div class="col-lg-5">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="site-copyright">API Token</label>
-                                                    <span class="form-note">Your api token from Erranium.</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-7">
-                                                <div class="form-group">
-                                                    <div class="form-control-wrap">
-                                                        <input type="text" class="form-control" name="consumer_key" placeholder="9v38Dtu5u2BpsITPmLcXNWGMsjZRWSTG">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        </div><!-- .col -->
                                     </div> <!-- .row -->
                                     <div class="row g-3">
                                         <div class="col-lg-7">
@@ -738,4 +820,3 @@
     }, 6000)    // 2000 millisecond
 </script>
 {% endblock content %}  
-
