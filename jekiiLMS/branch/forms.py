@@ -14,7 +14,7 @@ class BranchForm(forms.ModelForm):
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'office': forms.TextInput(attrs={'class': 'form-control'}),
-            'phone': forms.TextInput(attrs={'class': 'form-control'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control', 'minlength':'10', 'placeholder':'0712345678'}),
             'email': forms.EmailInput(attrs={'class': 'form-control','id': 'fv-email'}),
             'open_date': forms.DateTimeInput(attrs={'class': 'form-control date-picker-range', 'data-date-format':'yyyy-mm-dd'}),
             'capital': forms.NumberInput(attrs={'class': 'form-control', 'id': 'pay-amount-1'}),

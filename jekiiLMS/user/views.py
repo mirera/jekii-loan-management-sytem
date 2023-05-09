@@ -14,6 +14,7 @@ from django.contrib import messages
 from .models import CompanyStaff, Role
 from branch.models import Branch 
 from company.models import Organization, Package
+from jekiiLMS.sms_messages import send_sms
 
 
 #---user login in logic starts here---
@@ -307,11 +308,11 @@ def update_user_profile(request):
         company = None
 
     user = CompanyStaff.objects.get(username=request.user.username)
-    phone_no = request.POST.get('phone_no')
-    formated_phone_no = format_phone_number(phone_no)
     
     if request.method == 'POST':
-
+        phone_no = request.POST.get('phone_no')
+        formated_phone_no = format_phone_number(phone_no)
+        
         user.first_name = request.POST.get('first_name')
         user.last_name = request.POST.get('last_name')
         user.email = request.POST.get('email')
@@ -384,11 +385,14 @@ def updateStaff(request, pk):
 def deactivateStaff(request, pk):
     staff = CompanyStaff.objects.get(id=pk)
     user = User.objects.get(username=staff.username)
+    company = staff.company
     staff.status = 'inactive'
     user.is_active= False
     user.save()
     staff.save()
-    #send mail
+    #send sms
+    message = f"Dear {staff.first_name}, Your {company.name} user account has been deactivated. Contact your system admin"
+    send_sms(staff.phone_no, message)
 
     messages.info(request, 'Staff deactivated! The user will not be able to login in unless activated.')
     return redirect('staffs')
@@ -400,9 +404,13 @@ def activateStaff(request, pk):
     staff.status = 'active'
     staff.save()
 
+    company = staff.company
     user = User.objects.get(username=staff.username)
     user.is_active= True
     user.save()
+    #send sms
+    message = f"Dear {staff.first_name}, Your {company.name} user account has been activated. You can now login"
+    send_sms(staff.phone_no, message)
     messages.info(request, 'Staff activated!')
     return redirect('staffs')
 # -- ends

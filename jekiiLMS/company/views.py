@@ -2,10 +2,12 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from .models import Organization, Package
 from .forms import OrganizationForm, PackageForm
+from user.models import CompanyStaff , CompanyAdmin
 
 #-- update organization details upon sign up view --
 def updateOrganization(request, pk):
     organization = Organization.objects.get(id=pk)
+    admins = CompanyStaff.objects.filter(company=organization, user_type='admin')
     
     if request.method == 'POST':
         organization.name = request.POST.get('name')
@@ -30,7 +32,8 @@ def updateOrganization(request, pk):
         form = OrganizationForm(initial=form_data)
         context = {
             'form':form,
-            'organization':organization
+            'organization':organization,
+            'admins':admins
         }
         return render(request,'company/update-company.html', context)
 
