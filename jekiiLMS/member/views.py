@@ -5,6 +5,7 @@ from .models import Member, Branch
 from .forms import MemberForm
 from company.forms import Organization
 from user.models import CompanyStaff
+from jekiiLMS.format_inputs import format_phone_number
 
 
 #create member view starts
@@ -21,6 +22,8 @@ def createMember(request):
 
     branch_id = request.POST.get('branch')
     branch = Branch.objects.get(id=branch_id)
+    phone_no = request.POST.get('phone_no')
+    formated_phone_no = format_phone_number(phone_no)
 
     if request.method == 'POST':
         Member.objects.create(
@@ -28,7 +31,7 @@ def createMember(request):
             first_name = request.POST.get('first_name'),
             last_name= request.POST.get('last_name'),
             id_no= request.POST.get('id_no'),
-            phone_no = request.POST.get('phone_no'),
+            phone_no = formated_phone_no,
             branch = branch,
             email= request.POST.get('email'),
             date_joined= request.POST.get('date_joined'),
@@ -106,6 +109,8 @@ def editMember(request,pk):
         company = None
 
     member = Member.objects.get(id=pk, company=company)
+    phone_no = request.POST.get('phone_no')
+    formated_phone_no = format_phone_number(phone_no)
 
     
     if request.method == 'POST':
@@ -119,7 +124,7 @@ def editMember(request,pk):
         member.first_name = request.POST.get('first_name')
         member.last_name = request.POST.get('last_name')
         member.id_no = request.POST.get('id_no')
-        member.phone_no = request.POST.get('phone_no')
+        member.phone_no = formated_phone_no
         member.email = request.POST.get('email')
         member.date_joined = request.POST.get('date_joined')
         member.branch = branch
