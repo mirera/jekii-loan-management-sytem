@@ -6,6 +6,7 @@ from .forms import BranchForm, ExpenseCategoryForm , ExpenseForm
 from company.models import Organization
 from user.forms import CompanyStaff
 from jekiiLMS.decorators import role_required
+from jekiiLMS.format_inputs import format_phone_number
 
 
 
@@ -22,12 +23,14 @@ def createBranch(request):
             company = None
 
     branches = Branch.objects.filter(company=company)
+    phone = phone= request.POST.get('phone')
+    formated_phone = format_phone_number(phone)
 
     if request.method == 'POST':
         Branch.objects.create(
             company = company,
             name = request.POST.get('name'),
-            phone= request.POST.get('phone'),
+            phone= formated_phone,
             email = request.POST.get('email'),
             capital = request.POST.get('capital'),
             office = request.POST.get('office'),
@@ -56,12 +59,15 @@ def editBranch(request,pk):
             company = None
 
     branch = Branch.objects.get(id=pk, company=company)
+    phone = phone= request.POST.get('phone')
+    formated_phone = format_phone_number(phone)
 
     if request.method == 'POST':
         form = BranchForm(request.POST, instance=branch)
         if form.is_valid():
             branch = form.save(commit=False)
             branch.company = company
+            branch.phone = formated_phone
             branch.save()
             messages.success(request, 'Branch edited successfully')
             return redirect('list')

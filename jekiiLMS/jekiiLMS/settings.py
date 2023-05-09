@@ -165,3 +165,7 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'mirera.moses@gmail.com'
 EMAIL_HOST_PASSWORD = 'ehwvqcdfvydltqka'
 EMAIL_USE_TLS = True
+
+#sms gateway 
+ERRANIUM_API_KEY = '10|lffNGpJXnByTfUS0ZPRE1047M3CreHmZbjAMzgGt'
+

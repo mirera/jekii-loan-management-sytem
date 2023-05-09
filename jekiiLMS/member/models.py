@@ -3,9 +3,10 @@ import os
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
-from django.contrib.auth.models import User
+from django.core.validators import MinValueValidator
 from branch.models import Branch
 from company.models import Organization
+
 
 #the member model-- this are the borrowers
 INDUSTRIES = (
@@ -24,8 +25,8 @@ class Member(models.Model):
     company = models.ForeignKey(Organization, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
-    id_no = models.CharField(max_length=10, unique=True)
-    phone_no = models.CharField(max_length=10, unique=True)
+    id_no = models.CharField(max_length=8, unique=True,)
+    phone_no = models.CharField(max_length=12, unique=True)
     email=models.EmailField(null=True, blank=True)
     branch = models.ForeignKey(Branch, on_delete=models.SET_NULL, null=True)
     business_name = models.CharField(max_length=500, null=True)
@@ -48,3 +49,5 @@ class Member(models.Model):
 
     def __str__(self):
         return self.first_name + ' ' + self.last_name
+
+    

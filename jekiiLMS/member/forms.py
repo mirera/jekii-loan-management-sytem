@@ -18,9 +18,9 @@ class MemberForm(forms.ModelForm):
         widgets = {
                 'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder':'Write your first name'}),
                 'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder':'Write your last name'}),
-                'id_no': forms.TextInput(attrs={'class': 'form-control'}),
+                'id_no': forms.TextInput(attrs={'class': 'form-control', 'minlength':'8'}),
                 'email': forms.EmailInput(attrs={'class': 'form-control'}),
-                'phone_no': forms.NumberInput(attrs={'class': 'form-control','id': 'fv-email', 'placeholder':'0712345678'}),
+                'phone_no': forms.NumberInput(attrs={'class': 'form-control','id': 'fv-email', 'placeholder':'0712345678', 'minlength':'10'}),
                 'branch': forms.Select(attrs={'class': 'form-select js-select2'}),
                 'business_name': forms.TextInput(attrs={'class': 'form-control'}),
                 'industry': forms.Select(attrs={'class': 'form-select js-select2'}),

@@ -8,6 +8,7 @@ from django.core.mail import EmailMessage
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.contrib.auth.models import User, Permission
+from jekiiLMS.format_inputs import format_phone_number
 from .forms import CustomUserCreationForm, CompanyStaffForm , RoleForm
 from django.contrib import messages
 from .models import CompanyStaff, Role
@@ -217,6 +218,9 @@ def addStaff(request):
         passcode = request.POST.get('password')
         password = make_password(request.POST.get('password'))  # Hash the password
 
+        phone_no = request.POST.get('phone_no')
+        formated_phone_no = format_phone_number(phone_no)
+
         CompanyStaff.objects.create(
             company = company,
             username = username,
@@ -225,7 +229,7 @@ def addStaff(request):
             last_name= request.POST.get('last_name'),
             email= email,
             id_no= request.POST.get('id_no'),
-            phone_no = request.POST.get('phone_no'),
+            phone_no = formated_phone_no,
             branch = branch,
             user_type= request.POST.get('user_type'),
             staff_role = role,
@@ -303,6 +307,8 @@ def update_user_profile(request):
         company = None
 
     user = CompanyStaff.objects.get(username=request.user.username)
+    phone_no = request.POST.get('phone_no')
+    formated_phone_no = format_phone_number(phone_no)
     
     if request.method == 'POST':
 
@@ -310,7 +316,7 @@ def update_user_profile(request):
         user.last_name = request.POST.get('last_name')
         user.email = request.POST.get('email')
         user.id_no = request.POST.get('id_no')
-        user.phone_no = request.POST.get('phone_no')
+        user.phone_no = formated_phone_no
         user.save()
 
         return redirect('profile')
@@ -339,6 +345,8 @@ def updateStaff(request, pk):
             company = None
 
     staff = CompanyStaff.objects.get(id=pk, company=company)
+    phone_no = request.POST.get('phone_no')
+    formated_phone_no = format_phone_number(phone_no)
     
     if request.method == 'POST':
         staff.company= company
@@ -347,7 +355,7 @@ def updateStaff(request, pk):
         staff.first_name = request.POST.get('first_name')
         staff.last_name = request.POST.get('last_name')
         staff.id_no = request.POST.get('id_no')
-        staff.phone_no = request.POST.get('phone_no')
+        staff.phone_no = formated_phone_no
         staff.branch = request.POST.get('branch')
         staff.user_type = request.POST.get('user_type')
         staff.staff_role = request.POST.get('staff_role')
