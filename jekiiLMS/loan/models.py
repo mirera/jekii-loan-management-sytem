@@ -98,6 +98,7 @@ LOAN_STATUS = (
     ('overdue','OVERDUE'),
     ('cleared','CLEARED'),
     ('written off','WRITTEN OFF'),
+    ('rolled over', 'ROLLED OVER')
 )
 class Loan(models.Model):
     company = models.ForeignKey(Organization, on_delete=models.CASCADE)

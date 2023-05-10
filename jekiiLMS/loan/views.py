@@ -16,9 +16,9 @@ from .forms import LoanProductForm, LoanForm, RepaymentForm, GuarantorForm, Coll
 from member.models import Member
 from user.models import CompanyStaff
 from company.models import Organization
-from jekiiLMS.process_loan import is_sufficient_collateral, get_amount_to_disburse, clear_loan, update_member_data, write_loan_off
+from jekiiLMS.process_loan import is_sufficient_collateral, get_amount_to_disburse, clear_loan, update_member_data, write_loan_off, roll_over
 from jekiiLMS.mpesa_statement import get_loans_table
-from jekiiLMS.loan_math import loan_due_date, save_due_amount, num_installments
+from jekiiLMS.loan_math import loan_due_date, save_due_amount, num_installments, total_interest
 from jekiiLMS.sms_messages import send_sms
 from jekiiLMS.mpesa_api import disburse_loan
 
@@ -1073,4 +1073,24 @@ def writeOff(request, pk):
 
     messages.success(request, f'{loan.member} loan has been written off. The loan can still receive repayments')
     return redirect('view-loan', loan.id)
+# -- ends
+
+# -- roll over loan view
+def rollOver(request, pk):
+    loan = Loan.objects.get(id=pk)
+    borrower = loan.member
+    repayments = loan.repayments.all()
+    total_repayments = repayments.aggregate(Sum('amount'))['amount__sum'] or 0
+    if total_repayments >= total_interest(loan): 
+        new_loan = roll_over(loan, request)
+        #send sms
+        date = new_loan.due_date.date().strftime('%Y-%m-%d')
+        message = f"Dear {borrower.first_name}, Your loan roll over request has been approved. The next payment date {date}, amount Ksh{new_loan.due_amount}. Acc. 5840988 Paybill 522522"
+        send_sms(borrower.phone_no, message)
+
+        messages.success(request, f'{loan.member} loan has been rolled over')
+        return redirect('view-loan', new_loan.id) #should be a new loan.id
+    else:
+        messages.error(request, f'{loan.member} loan can not be rolled over. Member should clear loan interest')
+        return redirect('view-loan', new_loan.id) #should be a new loan.id
 # -- ends

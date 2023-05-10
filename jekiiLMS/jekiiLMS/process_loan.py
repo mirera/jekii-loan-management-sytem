@@ -1,10 +1,14 @@
 from datetime import datetime
 from django.db.models import Sum
+from django.db import transaction
 from django.contrib.auth.models import User
 from loan.models import Collateral
 from branch.models import Expense, ExpenseCategory
+from loan.models import Loan
+from user.models import CompanyStaff
 from .credit_score import member_credit_score, update_credit_score
 from jekiiLMS.sms_messages import send_sms
+from jekiiLMS.loan_math import loan_due_date, save_due_amount, num_installments
 
 
 
@@ -120,7 +124,52 @@ def write_loan_off(loan):
         loan.write_off_date = datetime.today().strftime('%Y-%m-%d')
         loan.write_off_expense = amount
         loan.save()
+# -- ends
 
+# --roll over loan
+@transaction.atomic
+def roll_over(request, loan):
+    if request.user.is_authenticated and request.user.is_active:
+            try:
+                companystaff = CompanyStaff.objects.get(username=request.user.username)
+            except CompanyStaff.DoesNotExist:
+                company = None
+    else:
+        company = None
+
+    company = loan.company
+    loanproduct = loan.loan_product
+    member = loan.member
+    applied_amount = loan.loan_balance()
+    today = datetime.now()
+    loan_officer = loan.loan_officer
+    purpose = loan.loan_purpose
+
+
+    new_loan = Loan.objects.create(
+        company = company,
+        loan_product= loanproduct,
+        member= member,
+        applied_amount = applied_amount,
+        application_date = today,
+        loan_officer = loan_officer,
+        loan_purpose = purpose,
+        approved_amount = applied_amount,
+        amount_to_disburse = get_amount_to_disburse(loan, applied_amount),
+        
+        installments = num_installments(loan),
+    )
+    new_loan.disbursed_amount = get_amount_to_disburse(new_loan, applied_amount)
+    new_loan.num_installments = num_installments(new_loan)
+    new_loan.due_date = loan_due_date(new_loan)
+    new_loan.approved_date = today
+    new_loan.approved_by = companystaff
+    new_loan.status = 'approved'
+    new_loan.save()
+    #old loan update
+    loan.status = 'rolled over'
+
+    return new_loan
 # -- ends
 
 
