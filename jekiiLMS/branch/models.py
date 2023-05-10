@@ -30,7 +30,7 @@ class Branch(models.Model):
 class ExpenseCategory(models.Model):
     company = models.ForeignKey(Organization, on_delete=models.CASCADE) 
     name = models.CharField(max_length=50)
-    description = models.TextField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True) 
 
 
     def __str__(self):

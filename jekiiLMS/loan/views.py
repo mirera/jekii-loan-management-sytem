@@ -7,14 +7,18 @@ import os
 from django.contrib import messages
 from django.db.models import Sum
 from datetime import datetime
+import json
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 from jekiiLMS.decorators import role_required
 from .models import LoanProduct, Loan, Note, Repayment, Guarantor, Collateral, MpesaStatement
 from .forms import LoanProductForm, LoanForm, RepaymentForm, GuarantorForm, CollateralForm, MpesaStatementForm
 from member.models import Member
 from user.models import CompanyStaff
-from jekiiLMS.process_loan import is_sufficient_collateral, get_amount_to_disburse, clear_loan, update_member_data
+from company.models import Organization
+from jekiiLMS.process_loan import is_sufficient_collateral, get_amount_to_disburse, clear_loan, update_member_data, write_loan_off, roll_over
 from jekiiLMS.mpesa_statement import get_loans_table
-from jekiiLMS.loan_math import loan_due_date, save_due_amount, num_installments
+from jekiiLMS.loan_math import loan_due_date, save_due_amount, num_installments, total_interest
 from jekiiLMS.sms_messages import send_sms
 from jekiiLMS.mpesa_api import disburse_loan
 
@@ -183,7 +187,6 @@ def editLoanProduct(request,pk):
 
 #edit Loan Products view ends
 
-
 #views for loan 
 
 #create Loan view starts
@@ -323,7 +326,7 @@ def approveLoan(request,pk):
 
         member_score = borrower.credit_score
         approved_amount = request.POST.get('approved_amount')
-        amount_to_disburse = get_amount_to_disburse(loan)
+        amount_to_disburse = get_amount_to_disburse(loan, approved_amount)
         due_date = loan_due_date(loan)
         installments = num_installments(loan)
 
@@ -357,7 +360,7 @@ def approveLoan(request,pk):
                             from_name_email = f'{company_name} <{settings.EMAIL_HOST_USER}>' 
                             template = render_to_string('loan/loan-approved.html', context)
                             e_mail = EmailMessage(
-                                'Loan Approved',
+                                'Loan Approved and Disbursed',
                                 template,
                                 from_name_email, #'John Doe <john.doe@example.com>'
                                 [email],
@@ -367,7 +370,7 @@ def approveLoan(request,pk):
 
                             #send sms
                             date = loan.due_date.date().strftime('%Y-%m-%d')
-                            message = f"Dear {borrower.first_name}, Your loan request has been approved. The next payment date {date}, amount Ksh{loan.due_amount}. Acc. 5840988 Paybill 522522"
+                            message = f"Dear {borrower.first_name}, Your loan request has been approved and disbursed. The next payment date {date}, amount Ksh{loan.due_amount}. Acc. 5840988 Paybill 522522"
                             send_sms(borrower.phone_no, message)
 
                             messages.success(request, 'Loan approved & disbursed successfully!')
@@ -914,7 +917,7 @@ def addRepayment(request, pk):
     form = RepaymentForm(request.POST, company=company)
     #processing the data
     if request.method == 'POST':
-        Repayment.objects.create(
+        repayment = Repayment.objects.create(
             company = company,
             transaction_id = request.POST.get('transaction_id'),
             loan_id = loan,
@@ -922,6 +925,9 @@ def addRepayment(request, pk):
             amount = request.POST.get('amount'),
             date_paid = request.POST.get('date_paid')
         )
+        if loan.status == 'written off':
+            loan.write_off_expense = loan.write_off_expense - repayment.amount
+            loan.save()
         clear_loan(loan) #clear a loan
         update_member_data(loan) #update member/borrower data
         messages.success(request, 'Repayment added successfully.')
@@ -989,3 +995,102 @@ def analyseStatement(request, pk):
     context= {'loan':loan,'file_path':file_path, 'loan_table':loan_table}
     return render(request,'loan/analysis.html', context)
 #dd  view ends  
+
+# -- api b2c result url 
+@csrf_exempt
+def b2c_result(request):
+    if request.method == 'POST':
+        #parse the data display or store on database
+        response_data = json.loads(request.body)
+        transaction_reference = response_data.get('TransactionReference')
+        result_code = response_data.get('ResultCode')
+        result_description = response_data.get('ResultDesc')
+        # Process the response data and update your database or send a notification to the user
+        return HttpResponse(status=200)
+    else:
+        return HttpResponse(status=405)
+# -- ends 
+
+# -- api b2c timeout url 
+@csrf_exempt
+def b2c_timeout(request):
+    if request.method == 'POST':
+        response_data = json.loads(request.body)
+        transaction_reference = response_data.get('TransactionReference')
+        # Process the response data and update your database or send a notification to the user
+        messages.error(request, 'The request timeout. Try again!')
+        return HttpResponse(status=200)
+    else:
+        return HttpResponse(status=405)
+# -- ends 
+
+# -- repayments callback
+@csrf_exempt
+def repayment_callback(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        transaction_id = data.get('TransID')
+        phone_no = data.get('MSISDN')
+        amount = data.get('TransAmount')
+        transaction_time = data.get('TransTime')
+        mpesa_shortcode = data.get('shortcode') 
+
+        #get the company receiving repayment
+        company = Organization.objects.get(shortcode=mpesa_shortcode)
+
+        #get the member making repayment
+        member = Member.objects.get(phone_no=phone_no) 
+
+        #get the loan
+        loan = Loan.objects.get(member=member, status__in=['approved','overdue'])
+
+        # Convert transaction_time to datetime object
+        transaction_datetime = datetime.strptime(transaction_time, '%Y%m%d%H%M%S') #comsider checking this
+
+        # Create a new Repayment object
+        repayment = Repayment.objects.create(
+            company = company,
+            transaction_id=transaction_id,
+            amount=amount,
+            member = member,
+            loan_id = loan,
+            date_paid=transaction_datetime,
+        )
+        clear_loan(loan) #clear a loan
+        update_member_data(loan) #update member/borrower data
+        # Return a success response
+        return HttpResponse(status=200)
+
+    else:
+        # Return an error response if the request method is not POST
+        return HttpResponse(status=405)
+# -- ends
+
+# -- write off a loan view
+def writeOff(request, pk):
+    loan = Loan.objects.get(id=pk)
+    write_loan_off(loan)
+
+    messages.success(request, f'{loan.member} loan has been written off. The loan can still receive repayments')
+    return redirect('view-loan', loan.id)
+# -- ends
+
+# -- roll over loan view
+def rollOver(request, pk):
+    loan = Loan.objects.get(id=pk)
+    borrower = loan.member
+    repayments = loan.repayments.all()
+    total_repayments = repayments.aggregate(Sum('amount'))['amount__sum'] or 0
+    if total_repayments >= total_interest(loan): 
+        new_loan = roll_over(loan, request)
+        #send sms
+        date = new_loan.due_date.date().strftime('%Y-%m-%d')
+        message = f"Dear {borrower.first_name}, Your loan roll over request has been approved. The next payment date {date}, amount Ksh{new_loan.due_amount}. Acc. 5840988 Paybill 522522"
+        send_sms(borrower.phone_no, message)
+
+        messages.success(request, f'{loan.member} loan has been rolled over')
+        return redirect('view-loan', new_loan.id) #should be a new loan.id
+    else:
+        messages.error(request, f'{loan.member} loan can not be rolled over. Member should clear loan interest')
+        return redirect('view-loan', new_loan.id) #should be a new loan.id
+# -- ends

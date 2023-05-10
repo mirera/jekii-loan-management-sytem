@@ -124,3 +124,4 @@ def save_due_amount(loan):
     amount = payable / installments
     loan.due_amount = amount
     loan.save()
+

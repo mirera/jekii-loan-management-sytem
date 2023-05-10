@@ -19,6 +19,8 @@ urlpatterns = [
 
     path('view-loan/<str:pk>/approve', views.approveLoan, name='approve'),
     path('view-loan/<str:pk>/reject', views.rejectLoan, name='reject'),
+    path('view-loan/<str:pk>/write-off', views.writeOff, name='write-off'),
+    path('view-loan/<str:pk>/roll-over', views.rollOver, name='roll-over'),
 
     #repayment urls
     path('repayments', views.listRepayments, name='repayments'),
@@ -43,5 +45,12 @@ urlpatterns = [
 
     #loan calculator url
     path('loancalculator', views.loan_calculator, name='loancalculator'), 
+
+    # daraja  api url
+    path('api/b2c-result', views.b2c_result, name='b2c-result'),
+    path('api/b2c-timeout', views.b2c_timeout, name='b2c-timeout'), 
+    path('api/repayment-callback', views.repayment_callback, name='repayment-callback'),
+
+
 
 ] 

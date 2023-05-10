@@ -65,11 +65,11 @@ TERM_PERIOD = (
     ('year','YEAR'),
 )
 
-class LoanProduct(models.Model):
+class LoanProduct(models.Model): 
     company = models.ForeignKey(Organization, on_delete=models.CASCADE)
     loan_product_name = models.CharField(max_length=300)
-    minimum_amount = models.IntegerField(default=5000)
-    maximum_amount = models.IntegerField(default=10000)
+    minimum_amount = models.IntegerField()
+    maximum_amount = models.IntegerField()
     loan_product_term = models.IntegerField()
     loan_term_period= models.CharField(max_length=20, choices=TERM_PERIOD, default='month')
     repayment_frequency = models.CharField(max_length=8, choices=REPAYMENT_FREQUENCY_CHOICES, default='onetime')
@@ -97,6 +97,8 @@ LOAN_STATUS = (
     ('rejected','REJECTED'),
     ('overdue','OVERDUE'),
     ('cleared','CLEARED'),
+    ('written off','WRITTEN OFF'),
+    ('rolled over', 'ROLLED OVER')
 )
 class Loan(models.Model):
     company = models.ForeignKey(Organization, on_delete=models.CASCADE)
@@ -119,7 +121,10 @@ class Loan(models.Model):
     approved_by = models.ForeignKey(CompanyStaff,on_delete=models.SET_NULL, null=True, related_name='loans_as_manager')
     loan_purpose = models.TextField()
     status = models.CharField(max_length=50, choices=LOAN_STATUS, default='pending')
-    attachments = models.FileField(upload_to='loan_attachments/', null=True, blank=True)  
+    attachments = models.FileField(upload_to='loan_attachments/', null=True, blank=True) 
+    # extras for written off loans 
+    write_off_date = models.DateTimeField(blank=True, null=True)
+    write_off_expense = models.IntegerField(blank=True, null=True)
    
 
 
