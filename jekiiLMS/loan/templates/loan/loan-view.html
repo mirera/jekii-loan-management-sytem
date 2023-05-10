@@ -117,7 +117,7 @@
                                             {% if loan.status == 'overdue' %}
                                             <tr>
                                                 <td class="profile-ud-label">Amount Due:</td>
-                                                <td class="profile-ud-value text-danger ">Ksh{{loan.amount_due}}</td>
+                                                <td class="profile-ud-value text-danger ">Ksh{{loan.due_amount}}</td>
                                             </tr>
                                             {% endif %}
                                             <tr>
@@ -130,7 +130,7 @@
                                             </tr>
                                             <tr>
                                                 <td class="profile-ud-label">Amount per Installment:</td>
-                                                <td class="profile-ud-value">Ksh{{loan.amount_due}}</td>
+                                                <td class="profile-ud-value">Ksh{{loan.due_amount}}</td>
                                             </tr>
                                             <tr>
                                                 <td class="profile-ud-label">Loan Balance:</td>

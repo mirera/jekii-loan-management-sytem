@@ -14,21 +14,21 @@ class LoanProductForm(forms.ModelForm):
         
         
         widgets = {
-            'loan_product_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'loan_product_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder':'Product Name'}),
             'minimum_amount': forms.NumberInput(attrs={'class': 'form-control','placeholder':'Minimum Loan Amount e.g 10000'}),
             'maximum_amount': forms.NumberInput(attrs={'class': 'form-control','placeholder':'Maximum Loan Amount e.g 50000'}),
-            'loan_product_term': forms.NumberInput(attrs={'class': 'form-control','placeholder':'1,2,3..'}),
+            'loan_product_term': forms.NumberInput(attrs={'class': 'form-control','placeholder':'Enter the loan term e.g 3'}),
             'loan_term_period': forms.Select(attrs={'class': 'form-select js-select2'}),
-            'repayment_frequency': forms.Select(attrs={'class': 'form-select js-select2', 'data-placeholder':'Select Term Period'}),   
+            'repayment_frequency': forms.Select(attrs={'class': 'form-select js-select2'}),   
             'interest_type': forms.Select(attrs={'class': 'form-select js-select2'}),
-            'interest_rate': forms.NumberInput(attrs={'class': 'form-control', 'placeholder':'20'}),
+            'interest_rate': forms.NumberInput(attrs={'class': 'form-control', 'placeholder':'Interest rate e.g 3 without %'}),
             'service_fee_type': forms.Select(attrs={'class': 'form-select js-select2'}),
             'service_fee_value': forms.NumberInput(attrs={'class': 'form-control','placeholder':'10,20,30,...'}),
             'penalty_type': forms.Select(attrs={'class': 'form-select js-select2', 'id': 'pay-amount-1'}),
             'penalty_value': forms.NumberInput(attrs={'class': 'form-control','placeholder':'Enter penalty value/rate e.g 20'}),
             'penalty_frequency': forms.Select(attrs={'class': 'form-select js-select2'}),
             'status': forms.Select(attrs={'class': 'form-select js-select2'}),
-            'loan_product_description': forms.Textarea(attrs={'class': 'form-control form-control-sm','placeholder':'Describe your product....'}),
+            'loan_product_description': forms.Textarea(attrs={'class': 'form-control form-control-sm','placeholder':'Write a short description of your product.'}),
         }
 
  

@@ -1,5 +1,8 @@
 from datetime import datetime
+from django.db.models import Sum
+from django.contrib.auth.models import User
 from loan.models import Collateral
+from branch.models import Expense, ExpenseCategory
 from .credit_score import member_credit_score, update_credit_score
 from jekiiLMS.sms_messages import send_sms
 
@@ -48,26 +51,25 @@ def is_sufficient_collateral(loan):
         return False
 
 #calculate the amount to disburse 
-def get_amount_to_disburse(loan): 
-    recommended_amount = calculate_loan_amount(loan)
-    service_fee_type = loan.loan_product.service_fee_type
+def get_amount_to_disburse(loan, approved_amount): 
+    service_fee_type = loan.loan_product.service_fee_type 
     service_fee_value = loan.loan_product.service_fee_value
 
-    if recommended_amount > 0:
+    if approved_amount >= loan.loan_product.minimum_amount:
         if service_fee_type == 'fixed value':
-            service_fee = recommended_amount - service_fee_value
-        else:
-            fee = recommended_amount * service_fee_value * 0.01
-            service_fee = recommended_amount - fee
+            service_fee = approved_amount - service_fee_value
+        elif service_fee_type == 'percentage':
+            fee = approved_amount * service_fee_value * 0.01
+            service_fee = approved_amount - fee
         return service_fee
     else:
-        return 0
+        return 0 
 
 #clear loan
 def clear_loan(loan):
     loan_balance = loan.loan_balance()
     today = datetime.today().strftime('%Y-%m-%d')
-    if loan_balance <= 0 and loan.status == 'approved' or loan.status == 'overdue':
+    if loan_balance <= 0 and loan.status in ['approved', 'overdue', 'written off']:
                 loan.status = 'cleared'
                 loan.cleared_date = today 
                 loan.save()
@@ -84,4 +86,41 @@ def update_member_data(loan):
         member.credit_score = update_credit_score(member)
         member.status = 'inactive'
         member.save() 
+# -- ends
+
+# -- write off a loan
+def write_loan_off(loan):
+    repayments = loan.repayments.all()
+    total_repayments = repayments.aggregate(Sum('amount'))['amount__sum'] or 0
+    amount = loan.total_payable() - total_repayments
+    company = loan.company
+    branch = loan.member.branch
+    user_staff = User.objects.get(username=loan.loan_officer.username)
+    if loan.status == 'overdue':
+        # check if there is an expense category 'loan write offs'
+        expense_category, _ = ExpenseCategory.objects.get_or_create(
+            name='Loan Write Offs',
+            company = company,
+            defaults={'description': 'Expenses incurred due to loan write-offs.'}
+        )
+        
+        # create an expense object with the above category
+        expense = Expense.objects.create(
+            company=company,
+            amount=amount,
+            category=expense_category,
+            branch=branch,
+            note=f"Loan write off for {loan}",
+            expense_date=datetime.today().strftime('%Y-%m-%d'),
+            created_by=user_staff,
+        )
+        
+        # change loan status to written off and save loan
+        loan.status = 'written off'
+        loan.write_off_date = datetime.today().strftime('%Y-%m-%d')
+        loan.write_off_expense = amount
+        loan.save()
+
+# -- ends
+
 

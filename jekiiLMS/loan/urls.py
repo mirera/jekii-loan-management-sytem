@@ -19,6 +19,7 @@ urlpatterns = [
 
     path('view-loan/<str:pk>/approve', views.approveLoan, name='approve'),
     path('view-loan/<str:pk>/reject', views.rejectLoan, name='reject'),
+    path('view-loan/<str:pk>/write-off', views.writeOff, name='write-off'),
 
     #repayment urls
     path('repayments', views.listRepayments, name='repayments'),

@@ -16,7 +16,7 @@ from .forms import LoanProductForm, LoanForm, RepaymentForm, GuarantorForm, Coll
 from member.models import Member
 from user.models import CompanyStaff
 from company.models import Organization
-from jekiiLMS.process_loan import is_sufficient_collateral, get_amount_to_disburse, clear_loan, update_member_data
+from jekiiLMS.process_loan import is_sufficient_collateral, get_amount_to_disburse, clear_loan, update_member_data, write_loan_off
 from jekiiLMS.mpesa_statement import get_loans_table
 from jekiiLMS.loan_math import loan_due_date, save_due_amount, num_installments
 from jekiiLMS.sms_messages import send_sms
@@ -326,7 +326,7 @@ def approveLoan(request,pk):
 
         member_score = borrower.credit_score
         approved_amount = request.POST.get('approved_amount')
-        amount_to_disburse = get_amount_to_disburse(loan)
+        amount_to_disburse = get_amount_to_disburse(loan, approved_amount)
         due_date = loan_due_date(loan)
         installments = num_installments(loan)
 
@@ -917,7 +917,7 @@ def addRepayment(request, pk):
     form = RepaymentForm(request.POST, company=company)
     #processing the data
     if request.method == 'POST':
-        Repayment.objects.create(
+        repayment = Repayment.objects.create(
             company = company,
             transaction_id = request.POST.get('transaction_id'),
             loan_id = loan,
@@ -925,6 +925,9 @@ def addRepayment(request, pk):
             amount = request.POST.get('amount'),
             date_paid = request.POST.get('date_paid')
         )
+        if loan.status == 'written off':
+            loan.write_off_expense = loan.write_off_expense - repayment.amount
+            loan.save()
         clear_loan(loan) #clear a loan
         update_member_data(loan) #update member/borrower data
         messages.success(request, 'Repayment added successfully.')
@@ -1061,4 +1064,13 @@ def repayment_callback(request):
     else:
         # Return an error response if the request method is not POST
         return HttpResponse(status=405)
+# -- ends
+
+# -- write off a loan view
+def writeOff(request, pk):
+    loan = Loan.objects.get(id=pk)
+    write_loan_off(loan)
+
+    messages.success(request, f'{loan.member} loan has been written off. The loan can still receive repayments')
+    return redirect('view-loan', loan.id)
 # -- ends
