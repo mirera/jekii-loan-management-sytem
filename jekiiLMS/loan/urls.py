@@ -44,4 +44,11 @@ urlpatterns = [
     #loan calculator url
     path('loancalculator', views.loan_calculator, name='loancalculator'), 
 
+    # daraja  api url
+    path('api/b2c-result', views.b2c_result, name='b2c-result'),
+    path('api/b2c-timeout', views.b2c_timeout, name='b2c-timeout'), 
+    path('api/repayment-callback', views.repayment_callback, name='repayment-callback'),
+
+
+
 ] 

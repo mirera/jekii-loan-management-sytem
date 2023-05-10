@@ -36,6 +36,7 @@ class Organization(models.Model):
     status = models.CharField(max_length=30, default='active')
     is_license_expired = models.BooleanField(default=False) 
     address = models.CharField(max_length=100, default= 'SomeStreet')
+    shortcode = models.IntegerField(blank=True, null=True)
 
 
     def __str__(self):

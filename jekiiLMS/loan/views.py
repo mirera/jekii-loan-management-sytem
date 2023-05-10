@@ -7,11 +7,15 @@ import os
 from django.contrib import messages
 from django.db.models import Sum
 from datetime import datetime
+import json
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 from jekiiLMS.decorators import role_required
 from .models import LoanProduct, Loan, Note, Repayment, Guarantor, Collateral, MpesaStatement
 from .forms import LoanProductForm, LoanForm, RepaymentForm, GuarantorForm, CollateralForm, MpesaStatementForm
 from member.models import Member
 from user.models import CompanyStaff
+from company.models import Organization
 from jekiiLMS.process_loan import is_sufficient_collateral, get_amount_to_disburse, clear_loan, update_member_data
 from jekiiLMS.mpesa_statement import get_loans_table
 from jekiiLMS.loan_math import loan_due_date, save_due_amount, num_installments
@@ -182,7 +186,6 @@ def editLoanProduct(request,pk):
         return render(request,'loan/edit-loan-product.html',{'form':form})
 
 #edit Loan Products view ends
-
 
 #views for loan 
 
@@ -357,7 +360,7 @@ def approveLoan(request,pk):
                             from_name_email = f'{company_name} <{settings.EMAIL_HOST_USER}>' 
                             template = render_to_string('loan/loan-approved.html', context)
                             e_mail = EmailMessage(
-                                'Loan Approved',
+                                'Loan Approved and Disbursed',
                                 template,
                                 from_name_email, #'John Doe <john.doe@example.com>'
                                 [email],
@@ -367,7 +370,7 @@ def approveLoan(request,pk):
 
                             #send sms
                             date = loan.due_date.date().strftime('%Y-%m-%d')
-                            message = f"Dear {borrower.first_name}, Your loan request has been approved. The next payment date {date}, amount Ksh{loan.due_amount}. Acc. 5840988 Paybill 522522"
+                            message = f"Dear {borrower.first_name}, Your loan request has been approved and disbursed. The next payment date {date}, amount Ksh{loan.due_amount}. Acc. 5840988 Paybill 522522"
                             send_sms(borrower.phone_no, message)
 
                             messages.success(request, 'Loan approved & disbursed successfully!')
@@ -989,3 +992,73 @@ def analyseStatement(request, pk):
     context= {'loan':loan,'file_path':file_path, 'loan_table':loan_table}
     return render(request,'loan/analysis.html', context)
 #dd  view ends  
+
+# -- api b2c result url 
+@csrf_exempt
+def b2c_result(request):
+    if request.method == 'POST':
+        #parse the data display or store on database
+        response_data = json.loads(request.body)
+        transaction_reference = response_data.get('TransactionReference')
+        result_code = response_data.get('ResultCode')
+        result_description = response_data.get('ResultDesc')
+        # Process the response data and update your database or send a notification to the user
+        return HttpResponse(status=200)
+    else:
+        return HttpResponse(status=405)
+# -- ends 
+
+# -- api b2c timeout url 
+@csrf_exempt
+def b2c_timeout(request):
+    if request.method == 'POST':
+        response_data = json.loads(request.body)
+        transaction_reference = response_data.get('TransactionReference')
+        # Process the response data and update your database or send a notification to the user
+        messages.error(request, 'The request timeout. Try again!')
+        return HttpResponse(status=200)
+    else:
+        return HttpResponse(status=405)
+# -- ends 
+
+# -- repayments callback
+@csrf_exempt
+def repayment_callback(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        transaction_id = data.get('TransID')
+        phone_no = data.get('MSISDN')
+        amount = data.get('TransAmount')
+        transaction_time = data.get('TransTime')
+        mpesa_shortcode = data.get('shortcode') 
+
+        #get the company receiving repayment
+        company = Organization.objects.get(shortcode=mpesa_shortcode)
+
+        #get the member making repayment
+        member = Member.objects.get(phone_no=phone_no) 
+
+        #get the loan
+        loan = Loan.objects.get(member=member, status__in=['approved','overdue'])
+
+        # Convert transaction_time to datetime object
+        transaction_datetime = datetime.strptime(transaction_time, '%Y%m%d%H%M%S') #comsider checking this
+
+        # Create a new Repayment object
+        repayment = Repayment.objects.create(
+            company = company,
+            transaction_id=transaction_id,
+            amount=amount,
+            member = member,
+            loan_id = loan,
+            date_paid=transaction_datetime,
+        )
+        clear_loan(loan) #clear a loan
+        update_member_data(loan) #update member/borrower data
+        # Return a success response
+        return HttpResponse(status=200)
+
+    else:
+        # Return an error response if the request method is not POST
+        return HttpResponse(status=405)
+# -- ends
