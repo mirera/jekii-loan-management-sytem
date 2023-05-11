@@ -1082,7 +1082,7 @@ def rollOver(request, pk):
     repayments = loan.repayments.all()
     total_repayments = repayments.aggregate(Sum('amount'))['amount__sum'] or 0
     if total_repayments >= total_interest(loan): 
-        new_loan = roll_over(loan, request)
+        new_loan = roll_over(loan)
         #send sms
         date = new_loan.due_date.date().strftime('%Y-%m-%d')
         message = f"Dear {borrower.first_name}, Your loan roll over request has been approved. The next payment date {date}, amount Ksh{new_loan.due_amount}. Acc. 5840988 Paybill 522522"
@@ -1091,6 +1091,6 @@ def rollOver(request, pk):
         messages.success(request, f'{loan.member} loan has been rolled over')
         return redirect('view-loan', new_loan.id) #should be a new loan.id
     else:
-        messages.error(request, f'{loan.member} loan can not be rolled over. Member should clear loan interest')
-        return redirect('view-loan', new_loan.id) #should be a new loan.id
+        messages.error(request, f'{loan.member} loan can not be rolled over. Member should clear loan interest first, then try again.')
+        return redirect('view-loan', loan.id) #should be a new loan.id
 # -- ends

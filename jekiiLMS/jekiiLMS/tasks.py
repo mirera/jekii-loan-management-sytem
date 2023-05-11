@@ -10,7 +10,7 @@ from jekiiLMS.sms_messages import send_sms
 @shared_task
 def mark_loans_as_overdue():
     today = date.today()
-    loans = Loan.objects.filter(due_date__lt=today).exclude(status__in=['cleared', 'overdue'])
+    loans = Loan.objects.filter(due_date__lt=today).exclude(status__in=['cleared', 'overdue', 'written off', 'rolled over'])
 
     # Find all loans that are due but not yet cleared or marked as overdue
     for loan in loans:

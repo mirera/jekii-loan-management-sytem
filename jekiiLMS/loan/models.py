@@ -125,6 +125,8 @@ class Loan(models.Model):
     # extras for written off loans 
     write_off_date = models.DateTimeField(blank=True, null=True)
     write_off_expense = models.IntegerField(blank=True, null=True)
+    #parent loan
+    parent_loan = models.ForeignKey('self', on_delete=models.SET_NULL, blank=True, null=True)
    
 
 

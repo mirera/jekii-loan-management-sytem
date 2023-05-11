@@ -62,8 +62,24 @@
                                     <li>
                                         <a data-bs-toggle="tab" href="#analysis"><em class="icon ni ni-wallet-in"></em><span>Analysis</span></a>
                                     </li> 
+                                    {% if loan.parent_loan %}
+                                    <li>
+                                        <a  href="{% url 'view-loan' loan.parent_loan.id %}" class="btn btn-sm btn-primary btn-dim">View Parent Loan</a>
+                                    </li>
+                                    {% endif %}
+                                </ul> <br>
+                                <ul class="list-inline">
+                                    {% if loan.status == 'overdue' or loan.status == 'approved' %}
+                                    <li class="list-inline-item">
+                                        <a  href="{% url 'roll-over' loan.id %}" class="btn btn-sm btn-primary btn-dim">Roll Over Loan</a>
+                                    </li>
+                                    {% endif %}
+                                    {% if loan.status == 'overdue' %}
+                                    <li class="list-inline-item">
+                                        <a  href="{% url 'write-off' loan.id %}" class="btn btn-sm btn-secondary btn-dim">Write Off Loan</a>
+                                    </li>
+                                    {% endif %}
                                 </ul>
-                                
                             </div>
                             <div class="col-md-8">
                                 <div class="tab-content">
