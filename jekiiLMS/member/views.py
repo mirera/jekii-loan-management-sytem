@@ -109,12 +109,10 @@ def editMember(request,pk):
         company = None
 
     member = Member.objects.get(id=pk, company=company)
-    phone_no = request.POST.get('phone_no')
-    formated_phone_no = format_phone_number(phone_no)
 
-    
     if request.method == 'POST':
-
+        phone_no = request.POST.get('phone_no')
+        formated_phone_no = format_phone_number(phone_no)
         # Get the selected branch id from the form
         branch_id = request.POST.get('branch')
         

@@ -109,15 +109,19 @@
                                                 </div>
                                                 <div class="nk-tb-col">
                                                     {% if loan.status == 'pending' %}
-                                                        <span class="badge badge-dot bg-warning">{{loan.status}}</span>
+                                                        <span class="badge text-medium text-warning">{{loan.status}}</span>
                                                         {% elif loan.status == 'cleared' %}
-                                                        <span class="badge badge-dot bg-success">{{loan.status}}</span>
+                                                        <span class="badge text-medium text-success">{{loan.status}}</span>
                                                         {% elif loan.status == 'approved' %}
-                                                        <span class="badge badge-dot bg-primary">{{loan.status}}</span>
+                                                        <span class="badge text-medium text-primary">{{loan.status}}</span>
                                                         {% elif loan.status == 'overdue' %}
-                                                        <span class="badge badge-dot bg-danger">{{loan.status}}</span>
+                                                        <span class="badge text-medium text-danger">{{loan.status}}</span>
+                                                        {% elif loan.status == 'rolled over' %}
+                                                        <span class="badge text-medium text-info">{{loan.status}}</span>
+                                                        {% elif loan.status == 'written off' %}
+                                                        <span class="badge text-medium text-soft">{{loan.status}}</span>
                                                         {% else %}
-                                                        <span class="badge badge-dot bg-secondary">{{loan.status}}</span>
+                                                        <span class="badge text-medium text-secondary">{{loan.status}}</span>
                                                     {% endif %}
                                                 </div>
                                                 <div class="nk-tb-col nk-tb-col-action">
@@ -191,14 +195,7 @@
                                                 </div>
                                                 <div class="nk-tb-col">
                                                     {% if loan.status == 'pending' %}
-                                                        <span class="badge badge-dot bg-warning">{{loan.status}}</span>
-                                                        {% elif loan.status == 'cleared' %}
-                                                        <span class="badge badge-dot bg-success">{{loan.status}}</span>
-                                                        {% elif loan.status == 'approved' %}
-                                                        <span class="badge badge-dot bg-primary">{{loan.status}}</span>
-                                                        {% else %}
-                                                        <span class="badge badge-dot bg-danger">{{loan.status}}</span>
-                                                    {% endif %}
+                                                    <span class="badge text-medium text-warning">{{loan.status}}</span>                                                    {% endif %}
                                                 </div>
                                                 <div class="nk-tb-col nk-tb-col-action">
                                                     <div class="dropdown">
@@ -274,14 +271,8 @@
                                                     <span class="tb-sub tb-amount">{{loan.loan_officer}} </span>
                                                 </div>
                                                 <div class="nk-tb-col">
-                                                    {% if loan.status == 'pending' %}
-                                                        <span class="badge badge-dot bg-warning">{{loan.status}}</span>
-                                                        {% elif loan.status == 'cleared' %}
-                                                        <span class="badge badge-dot bg-success">{{loan.status}}</span>
-                                                        {% elif loan.status == 'approved' %}
-                                                        <span class="badge badge-dot bg-primary">{{loan.status}}</span>
-                                                        {% else %}
-                                                        <span class="badge badge-dot bg-danger">{{loan.status}}</span>
+                                                    {% if loan.status == 'approved' %}
+                                                    <span class="badge text-medium text-primary">{{loan.status}}</span>
                                                     {% endif %}
                                                 </div>
                                                 <div class="nk-tb-col nk-tb-col-action">
@@ -346,14 +337,8 @@
                                                     <span class="tb-sub tb-amount">{{loan.approved_by}}</span>
                                                 </div>
                                                 <div class="nk-tb-col">
-                                                    {% if loan.status == 'pending' %}
-                                                        <span class="badge badge-dot bg-warning">{{loan.status}}</span>
-                                                        {% elif loan.status == 'cleared' %}
-                                                        <span class="badge badge-dot bg-success">{{loan.status}}</span>
-                                                        {% elif loan.status == 'approved' %}
-                                                        <span class="badge badge-dot bg-primary">{{loan.status}}</span>
-                                                        {% else %}
-                                                        <span class="badge badge-dot bg-danger">{{loan.status}}</span>
+                                                    {% if loan.status == 'cleared' %}
+                                                    <span class="badge text-medium text-success">{{loan.status}}</span>
                                                     {% endif %}
                                                 </div>
                                                 <div class="nk-tb-col nk-tb-col-action">
@@ -435,14 +420,8 @@
                                                     <span class="tb-sub tb-amount">{{loan.loan_officer}} </span>
                                                 </div>
                                                 <div class="nk-tb-col">
-                                                    {% if loan.status == 'pending' %}
-                                                        <span class="badge badge-dot bg-warning">{{loan.status}}</span>
-                                                        {% elif loan.status == 'cleared' %}
-                                                        <span class="badge badge-dot bg-success">{{loan.status}}</span>
-                                                        {% elif loan.status == 'approved' %}
-                                                        <span class="badge badge-dot bg-primary">{{loan.status}}</span>
-                                                        {% else %}
-                                                        <span class="badge badge-dot bg-danger">{{loan.status}}</span>
+                                                    {% if loan.status == 'overdue' %}
+                                                    <span class="badge text-medium text-danger">{{loan.status}}</span>
                                                     {% endif %}
                                                 </div>
                                                 <div class="nk-tb-col nk-tb-col-action">

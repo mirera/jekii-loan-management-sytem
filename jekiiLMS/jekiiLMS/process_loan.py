@@ -128,22 +128,15 @@ def write_loan_off(loan):
 
 # --roll over loan
 @transaction.atomic
-def roll_over(request, loan):
-    if request.user.is_authenticated and request.user.is_active:
-            try:
-                companystaff = CompanyStaff.objects.get(username=request.user.username)
-            except CompanyStaff.DoesNotExist:
-                company = None
-    else:
-        company = None
-
+def roll_over(loan):
     company = loan.company
     loanproduct = loan.loan_product
     member = loan.member
     applied_amount = loan.loan_balance()
-    today = datetime.now()
+    final_payment_date = loan.final_payment_date()
     loan_officer = loan.loan_officer
     purpose = loan.loan_purpose
+    admin = loan.approved_by
 
 
     new_loan = Loan.objects.create(
@@ -151,23 +144,26 @@ def roll_over(request, loan):
         loan_product= loanproduct,
         member= member,
         applied_amount = applied_amount,
-        application_date = today,
+        application_date = final_payment_date,
         loan_officer = loan_officer,
         loan_purpose = purpose,
-        approved_amount = applied_amount,
-        amount_to_disburse = get_amount_to_disburse(loan, applied_amount),
-        
-        installments = num_installments(loan),
+        approved_amount = applied_amount
     )
     new_loan.disbursed_amount = get_amount_to_disburse(new_loan, applied_amount)
     new_loan.num_installments = num_installments(new_loan)
     new_loan.due_date = loan_due_date(new_loan)
-    new_loan.approved_date = today
-    new_loan.approved_by = companystaff
+    new_loan.disbursed_date = final_payment_date
+    new_loan.approved_date = final_payment_date
+    new_loan.approved_by = admin
     new_loan.status = 'approved'
+    new_loan.parent_loan = loan
     new_loan.save()
+
+    # call fill due_amount function to fill due_amount on the Loan model 
+    save_due_amount(new_loan)
     #old loan update
     loan.status = 'rolled over'
+    loan.save()
 
     return new_loan
 # -- ends
