@@ -3,9 +3,10 @@ from jekiiLMS.decorators import role_required
 from django.contrib import messages
 from .models import Member, Branch
 from .forms import MemberForm
-from company.forms import Organization
+from company.forms import SmsSetting
 from user.models import CompanyStaff
 from jekiiLMS.format_inputs import format_phone_number
+from jekiiLMS.sms_messages import send_sms
 
 
 #create member view starts
@@ -26,7 +27,7 @@ def createMember(request):
     formated_phone_no = format_phone_number(phone_no)
 
     if request.method == 'POST':
-        Member.objects.create(
+        member = Member.objects.create(
             company = company,
             first_name = request.POST.get('first_name'),
             last_name= request.POST.get('last_name'),
@@ -40,8 +41,10 @@ def createMember(request):
             address = request.POST.get('address'),
             passport_photo=request.FILES.get('passport_photo')
         )
+
         messages.success(request, 'Member added successfully.')
         return redirect('members')
+
     context= {'form':form}
     return render(request,'member/create-member.html', context)
 #create member view ends

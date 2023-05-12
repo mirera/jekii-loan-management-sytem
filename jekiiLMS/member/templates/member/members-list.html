@@ -7,7 +7,7 @@
             {{ message }}
         </div>
     {% endfor %}
-{% endif %}  
+{% endif %}   
 <!-- content @s -->
 <div class="nk-content ">
     <div class="container-fluid">
@@ -99,9 +99,9 @@
                                             </td>
                                             <td class="nk-tb-col tb-col-lg">
                                                 {% if status == 'active' %}
-                                                <span class="text-primary">{{member.status}}</span>
+                                                <span class="badge text-medium text-primary">{{member.status}}</span>
                                                 {% else %}
-                                                <span class="text-soft">{{member.status}}</span>
+                                                <span class="badge text-medium text-secondary">{{member.status}}</span>
                                                 {% endif %}
                                             </td>
                                             <td class="nk-tb-col tb-col-lg">

@@ -15,7 +15,7 @@ from .models import LoanProduct, Loan, Note, Repayment, Guarantor, Collateral, M
 from .forms import LoanProductForm, LoanForm, RepaymentForm, GuarantorForm, CollateralForm, MpesaStatementForm
 from member.models import Member
 from user.models import CompanyStaff
-from company.models import Organization
+from company.models import Organization, SmsSetting
 from jekiiLMS.process_loan import is_sufficient_collateral, get_amount_to_disburse, clear_loan, update_member_data, write_loan_off, roll_over
 from jekiiLMS.mpesa_statement import get_loans_table
 from jekiiLMS.loan_math import loan_due_date, save_due_amount, num_installments, total_interest
@@ -369,9 +369,16 @@ def approveLoan(request,pk):
                             e_mail.send(fail_silently=False)
 
                             #send sms
+                            sms_setting = SmsSetting.objects.get(company=company)
+                            sender_id = sms_setting.sender_id
+                            token = sms_setting.api_token 
                             date = loan.due_date.date().strftime('%Y-%m-%d')
                             message = f"Dear {borrower.first_name}, Your loan request has been approved and disbursed. The next payment date {date}, amount Ksh{loan.due_amount}. Acc. 5840988 Paybill 522522"
-                            send_sms(borrower.phone_no, message)
+                            send_sms(
+                                sender_id,
+                                token,
+                                borrower.phone_no,
+                                message)
 
                             messages.success(request, 'Loan approved & disbursed successfully!')
                             return redirect('view-loan', loan.id)
@@ -438,8 +445,15 @@ def rejectLoan(request,pk):
             e_mail.send(fail_silently=False)
 
             #send sms
+            sms_setting = SmsSetting.objects.get(company=company)
+            sender_id = sms_setting.sender_id
+            token = sms_setting.api_token 
             message = f"Dear {borrower.first_name}, we regret to inform you that we are unable to approve your loan request at this time."
-            send_sms(borrower.phone_no, message)
+            send_sms(
+                sender_id,
+                token,
+                borrower.phone_no,
+                message)
 
             messages.info(request,'The loan was rejected succussesfully!')
             return redirect(url_with_anchor)
@@ -1085,8 +1099,16 @@ def rollOver(request, pk):
         new_loan = roll_over(loan)
         #send sms
         date = new_loan.due_date.date().strftime('%Y-%m-%d')
+        sms_setting = SmsSetting.objects.get(company=loan.company)
+        sender_id = sms_setting.sender_id
+        token = sms_setting.api_token
         message = f"Dear {borrower.first_name}, Your loan roll over request has been approved. The next payment date {date}, amount Ksh{new_loan.due_amount}. Acc. 5840988 Paybill 522522"
-        send_sms(borrower.phone_no, message)
+        send_sms(
+            sender_id,
+            token,
+            borrower.phone_no, 
+            message
+        )
 
         messages.success(request, f'{loan.member} loan has been rolled over')
         return redirect('view-loan', new_loan.id) #should be a new loan.id

@@ -1,6 +1,6 @@
 from dataclasses import fields
 from django import forms
-from .models import Organization, Package
+from .models import Organization, Package, SmsSetting
 
 
 class OrganizationForm(forms.ModelForm):
@@ -30,4 +30,14 @@ class PackageForm(forms.ModelForm):
             'employees': forms.NumberInput(attrs={'class': 'form-control'}),
             #'date_added': forms.DateTimeInput(attrs={'class': 'form-control date-picker-range', 'data-date-format':'yyyy-mm-dd'}),
             'storage': forms.TextInput(attrs={'class': 'form-control', 'id': 'site-address'}),
+        }
+
+class SmsForm(forms.ModelForm):
+    class Meta:
+        model = SmsSetting
+        fields = ['sender_id', 'api_token']
+        
+        widgets = {
+            'sender_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'loginit'}),
+            'api_token': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': '9v38Dtu5u2BpsITPmLcXNWGMsjZRWSTG'})
         }

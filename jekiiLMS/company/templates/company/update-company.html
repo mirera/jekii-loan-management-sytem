@@ -672,53 +672,56 @@
                                 </div>
                             </div><!-- .tab-pane -->
                             <div class="tab-pane" id="sms">
-                                <div class="card-inner pt-0">
-                                    <div class="nk-block-head">
-                                        <div class="nk-block-head-content">
-                                            <h4 class="title nk-block-title">SMS Gateway Settings</h4>
-                                            <p>The available service provider is Erranium</p>
+                                <form action="{% url 'update-sms' organization.id %}" method="POST" >
+                                    {% csrf_token %}
+                                    <div class="card-inner pt-0">
+                                        <div class="nk-block-head">
+                                            <div class="nk-block-head-content">
+                                                <h4 class="title nk-block-title">SMS Gateway Settings</h4>
+                                                <p>The available service provider is Erranium</p>
+                                            </div>
                                         </div>
+                                        <div class="row g-gs">
+                                            <div class="row g-3 align-center">
+                                                <div class="col-lg-5">
+                                                    <div class="form-group">
+                                                        <label class="form-label" for="site-copyright">Sender ID</label>
+                                                        <span class="form-note">Your sms sender ID</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-7">
+                                                    <div class="form-group">
+                                                        <div class="form-control-wrap">
+                                                            {{form_sms.sender_id}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row g-3 align-center">
+                                                <div class="col-lg-5">
+                                                    <div class="form-group">
+                                                        <label class="form-label" for="site-copyright">API Token</label>
+                                                        <span class="form-note">Your api token from Erranium.</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-7">
+                                                    <div class="form-group">
+                                                        <div class="form-control-wrap">
+                                                            {{form_sms.api_token}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div> <!-- .row -->
+                                        <div class="row g-3">
+                                            <div class="col-lg-7">
+                                                <div class="form-group mt-2">
+                                                    <button type="submit" class="btn btn-lg btn-primary">Update</button>
+                                                </div>
+                                            </div><!-- .col -->
+                                        </div><!-- .row -->
                                     </div>
-                                    <div class="row g-gs">
-                                        <div class="row g-3 align-center">
-                                            <div class="col-lg-5">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="site-copyright">Sender ID</label>
-                                                    <span class="form-note">Your sms sender ID</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-7">
-                                                <div class="form-group">
-                                                    <div class="form-control-wrap">
-                                                        <input type="text" class="form-control" name="sender_id" placeholder="loginit">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row g-3 align-center">
-                                            <div class="col-lg-5">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="site-copyright">API Token</label>
-                                                    <span class="form-note">Your api token from Erranium.</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-7">
-                                                <div class="form-group">
-                                                    <div class="form-control-wrap">
-                                                        <input type="text" class="form-control" name="consumer_key" placeholder="9v38Dtu5u2BpsITPmLcXNWGMsjZRWSTG">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div> <!-- .row -->
-                                    <div class="row g-3">
-                                        <div class="col-lg-7">
-                                            <div class="form-group mt-2">
-                                                <button type="submit" class="btn btn-lg btn-primary">Update</button>
-                                            </div>
-                                        </div><!-- .col -->
-                                    </div><!-- .row -->
-                                </div>
+                                </form>
                             </div><!-- .tab-pane -->
                         </div><!-- .tab-content -->
                     </div>

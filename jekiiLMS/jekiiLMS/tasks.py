@@ -4,7 +4,7 @@ from datetime import timedelta, datetime
 from dateutil.relativedelta import relativedelta
 from loan.models import Loan, Repayment
 from .loan_math import loan_due_date
-from jekiiLMS.sms_messages import send_sms
+from jekiiLMS.sms_messages import send_sms 
 
 #task to mark a loan as overdue
 @shared_task
