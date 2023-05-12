@@ -36,9 +36,50 @@ class Organization(models.Model):
     status = models.CharField(max_length=30, default='active')
     is_license_expired = models.BooleanField(default=False) 
     address = models.CharField(max_length=100, default= 'SomeStreet')
-    shortcode = models.IntegerField(blank=True, null=True)
 
 
     def __str__(self):
         return self.name
 
+#sms setting model
+class SmsSetting(models.Model):
+    company = models.ForeignKey(Organization, on_delete=models.SET_NULL, blank=True, null=True, )
+    sender_id = models.CharField(max_length=15, blank=True, null=True)
+    api_token = models.CharField(max_length=200, blank=True, null=True)#encrypted 
+
+    def __str__(self):
+        return self.company.name
+# -- ends 
+
+#mpesa setting model
+class MpesaSetting(models.Model):
+    company = models.ForeignKey(Organization, on_delete=models.SET_NULL, blank=True, null=True)
+    shortcode = models.CharField(max_length=15, blank=True, null=True)
+    app_consumer_key = models.CharField(max_length=200, blank=True, null=True)#encrypted 
+    app_consumer_secret = models.CharField(max_length=200, blank=True, null=True)#encrypted 
+    online_passkey = models.CharField(max_length=200, blank=True, null=True)#encrypted
+    username = models.CharField(max_length=15, blank=True, null=True)
+
+    def __str__(self):
+        return self.company.name
+# -- ends 
+
+#email setting model
+HTTPS_ENCRYPTION = (
+    ('tls','TLS'),
+    ('ssl', 'SSL'),
+    ('none', 'NONE')
+)
+class EmailSetting(models.Model):
+    company = models.ForeignKey(Organization, on_delete=models.SET_NULL, blank=True, null=True)
+    from_name = models.CharField(max_length=15, blank=True, null=True)
+    from_email = models.EmailField(blank=True, null=True)
+    smtp_host = models.CharField(max_length=200, blank=True, null=True)
+    encryption = models.CharField(max_length=10, choices=HTTPS_ENCRYPTION, default='tls')
+    app_consumer_secret = models.CharField(max_length=200, blank=True, null=True)#encrypted 
+    smtp_username = models.EmailField(blank=True, null=True)
+    smtp_password = models.CharField(max_length=200, blank=True, null=True)#encrypted
+
+    def __str__(self):
+        return self.company.name
+# -- ends 

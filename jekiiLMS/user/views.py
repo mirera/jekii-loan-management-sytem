@@ -13,7 +13,7 @@ from .forms import CustomUserCreationForm, CompanyStaffForm , RoleForm
 from django.contrib import messages
 from .models import CompanyStaff, Role
 from branch.models import Branch 
-from company.models import Organization, Package
+from company.models import Organization, Package, SmsSetting
 from jekiiLMS.sms_messages import send_sms
 
 
@@ -390,9 +390,18 @@ def deactivateStaff(request, pk):
     user.is_active= False
     user.save()
     staff.save()
+
     #send sms
+    sms_setting = SmsSetting.objects.get(company=company)
+    sender_id = sms_setting.sender_id
+    token = sms_setting.api_token 
     message = f"Dear {staff.first_name}, Your {company.name} user account has been deactivated. Contact your system admin"
-    send_sms(staff.phone_no, message)
+    send_sms(
+        sender_id,
+        token,
+        staff.phone_no, 
+        message,
+        )
 
     messages.info(request, 'Staff deactivated! The user will not be able to login in unless activated.')
     return redirect('staffs')
@@ -409,8 +418,16 @@ def activateStaff(request, pk):
     user.is_active= True
     user.save()
     #send sms
+    sms_setting = SmsSetting.objects.get(company=company)
+    sender_id = sms_setting.sender_id
+    token = sms_setting.api_token 
     message = f"Dear {staff.first_name}, Your {company.name} user account has been activated. You can now login"
-    send_sms(staff.phone_no, message)
+    send_sms(
+            sender_id,
+            token,
+            staff.phone_no, 
+            message,
+        )
     messages.info(request, 'Staff activated!')
     return redirect('staffs')
 # -- ends
