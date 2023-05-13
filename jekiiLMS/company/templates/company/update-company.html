@@ -454,142 +454,186 @@
                             </div>
                             <!--tab pan -->
                             <div class="tab-pane" id="email">
-                                <div class="card-inner pt-0">
-                                    <div class="nk-block-head">
-                                        <div class="nk-block-head-content">
-                                            <h4 class="title nk-block-title">Email-Settings</h4>
-                                            <p>Follow each step and fill as needed to get mailing fully set up for your account.</p>
+                                <form action="{% url 'update-email' organization.id %}" method="POST" class="form-validate">
+                                    {% csrf_token %}
+                                    <div class="card-inner pt-0">
+                                        <div class="nk-block-head">
+                                            <div class="nk-block-head-content">
+                                                <h4 class="title nk-block-title">Email-Settings</h4>
+                                                <p>Follow each step and fill as needed to get mailing fully set up for your account.</p>
+                                            </div>
                                         </div>
+                                        <div class="row g-gs">
+                                            <div class="row g-3 align-center">
+                                                <div class="col-lg-5">
+                                                    <div class="form-group">
+                                                        <label class="form-label" for="site-copyright">From Email</label>
+                                                        <span class="form-note">The email address that emails are sent from.</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-7">
+                                                    <div class="form-group">
+                                                        <div class="form-control-wrap">
+                                                            {{ form_email.from_email }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row g-3 align-center">
+                                                <div class="col-lg-5">
+                                                    <div class="form-group">
+                                                        <label class="form-label" for="site-copyright">From Name</label>
+                                                        <span class="form-note">The name that emails are sent from.</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-7">
+                                                    <div class="form-group">
+                                                        <div class="form-control-wrap">
+                                                            {{ form_email.from_name }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row g-3 align-center">
+                                                <div class="col-lg-5">
+                                                    <div class="form-group">
+                                                        <label class="form-label" for="site-copyright">SMTP Host</label>
+                                                        <span class="form-note">This is your mail server.</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-7">
+                                                    <div class="form-group">
+                                                        <div class="form-control-wrap">
+                                                            {{ form_email.smtp_host }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row g-3 align-center">
+                                                <div class="col-lg-5">
+                                                    <div class="form-group">
+                                                        <label class="form-label" for="site-copyright">Encryption</label>
+                                                        <span class="form-note">For most servers TLS is the recommended option. If your SMTP provider offers both SSL and TLS options, we recommend using TLS.</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-7">
+                                                    <div class="form-group">
+                                                        <div class="form-control-wrap">
+                                                            <div class="input-group">
+                                                                <div class="form-icon form-icon-right">
+                                                                    <em class="icon ni ni-home"></em>
+                                                                </div>
+                                                                {{ form_email.encryption }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="row g-3 align-center">
+                                                <div class="col-lg-5">
+                                                    <div class="form-group">
+                                                        <label class="form-label" for="site-copyright">SMTP Port</label>
+                                                        <span class="form-note">This is your mail server.</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-7">
+                                                    <div class="form-group">
+                                                        <div class="form-control-wrap">
+                                                            {{ form_email.smtp_port }} 
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row g-3 align-center">
+                                                <div class="col-lg-5">
+                                                    <div class="form-group">
+                                                        <label class="form-label" for="site-copyright">SMTP Username</label>
+                                                        <span class="form-note">Usually the email of From Email</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-7">
+                                                    <div class="form-group">
+                                                        <div class="form-control-wrap">
+                                                            {{ form_email.smtp_username }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row g-3 align-center">
+                                                <div class="col-lg-5">
+                                                    <div class="form-group">
+                                                        <label class="form-label" for="site-copyright">SMTP Password</label>
+                                                        <span class="form-note">The password is encrypted in the database.</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-7">
+                                                    <div class="form-group">
+                                                        <div class="form-control-wrap">
+                                                            {{ form_email.smtp_password }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div> <!-- .row -->
+                                        <div class="row g-3">
+                                            <div class="col-lg-7">
+                                                <div class="form-group mt-2">
+                                                    <button type="submit" class="btn btn-lg btn-primary">Update</button>
+                                                </div>
+                                            </div><!-- .col -->
+                                        </div><!-- .row -->
                                     </div>
-                                    <div class="row g-gs">
-                                        <div class="row g-3 align-center">
-                                            <div class="col-lg-5">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="site-copyright">From Email</label>
-                                                    <span class="form-note">The email address that emails are sent from.</span>
+                                </form> <br>
+                                <div class="card">
+                                    <form action="{% url 'test-email' organization.id %}" method="POST" class="form-validate">
+                                        {% csrf_token %}
+                                        <div class="card-inner pt-0">
+                                            <div class="nk-block-head">
+                                                <div class="nk-block-head-content">
+                                                    <h5 class="title nk-block-title">Send Test Email</h5>
+                                                    <p>Confirm whether you email credentials are correct</p>
                                                 </div>
                                             </div>
-                                            <div class="col-lg-7">
-                                                <div class="form-group">
-                                                    <div class="form-control-wrap">
-                                                        <input type="email" class="form-control" name="from_email" placeholder="info@loginit.co.ke">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row g-3 align-center">
-                                            <div class="col-lg-5">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="site-copyright">From Name</label>
-                                                    <span class="form-note">The name that emails are sent from.</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-7">
-                                                <div class="form-group">
-                                                    <div class="form-control-wrap">
-                                                        <input type="text" class="form-control" name="from_name" placeholder="Loginit CyberSec">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row g-3 align-center">
-                                            <div class="col-lg-5">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="site-copyright">SMTP Host</label>
-                                                    <span class="form-note">This is your mail server.</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-7">
-                                                <div class="form-group">
-                                                    <div class="form-control-wrap">
-                                                        <input type="text" class="form-control" name="smtp_host" placeholder="loginit.co.ke">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row g-3 align-center">
-                                            <div class="col-lg-5">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="site-copyright">Encryption</label>
-                                                    <span class="form-note">For most servers TLS is the recommended option. If your SMTP provider offers both SSL and TLS options, we recommend using TLS.</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-7">
-                                                <ul class="custom-control-group g-3 align-center flex-wrap">
-                                                    <li>
-                                                        <div class="custom-control custom-radio">
-                                                            <input type="radio" class="custom-control-input" checked name="encry" id="ency-tls">
-                                                            <label class="custom-control-label" for="ency-tls">TLS</label>
+                                            <div class="row g-gs">
+                                                <div class="row g-3 align-center">
+                                                    <div class="col-lg-5">
+                                                        <div class="form-group">
+                                                            <label class="form-label" for="site-copyright">Email To</label>
                                                         </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="custom-control custom-radio">
-                                                            <input type="radio" class="custom-control-input" name="encry" id="ency-ssl">
-                                                            <label class="custom-control-label" for="ency-ssl">SSL</label>
+                                                    </div>
+                                                    <div class="col-lg-7">
+                                                        <div class="form-group">
+                                                            <div class="form-control-wrap">
+                                                                <input type="email" class="form-control form-control-outlined" name="email"  id="outlined" placeholder="recipient email" required>
+                                                            </div>
                                                         </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="custom-control custom-radio">
-                                                            <input type="radio" class="custom-control-input" name="encry" id="ency-none">
-                                                            <label class="custom-control-label" for="ency-none">None</label>
+                                                    </div>
+                                                </div>
+                                                <div class="row g-3 align-center">
+                                                    <div class="col-lg-5">
+                                                        <div class="form-group">
+                                                            <label class="form-label" for="site-copyright">Message</label>
                                                         </div>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <div class="row g-3 align-center">
-                                            <div class="col-lg-5">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="site-copyright">SMTP Port</label>
-                                                    <span class="form-note">This is your mail server.</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-7">
-                                                <div class="form-group">
-                                                    <div class="form-control-wrap">
-                                                        <input type="number" class="form-control" name="smtp_port" placeholder="587">
+                                                    </div>
+                                                    <div class="col-lg-7">
+                                                        <div class="form-group">
+                                                            <div class="form-control-wrap">
+                                                                <textarea class="form-control" id="default-textarea" name="message" placeholder="Test message" required></textarea>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                        <div class="row g-3 align-center">
-                                            <div class="col-lg-5">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="site-copyright">SMTP Username</label>
-                                                    <span class="form-note">Usually the email of From Email</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-7">
-                                                <div class="form-group">
-                                                    <div class="form-control-wrap">
-                                                        <input type="email" class="form-control" name="from_email" placeholder="info@loginit.co.ke">
+                                            </div> <!-- .row -->
+                                            <div class="row g-3">
+                                                <div class="col-lg-7">
+                                                    <div class="form-group mt-2">
+                                                        <button type="submit" class="btn btn-lg btn-primary">Send</button>
                                                     </div>
-                                                </div>
-                                            </div>
+                                                </div><!-- .col -->
+                                            </div><!-- .row -->
                                         </div>
-                                        <div class="row g-3 align-center">
-                                            <div class="col-lg-5">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="site-copyright">SMTP Password</label>
-                                                    <span class="form-note">The password is encrypted in the database.</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-7">
-                                                <div class="form-group">
-                                                    <div class="form-control-wrap">
-                                                        <input type="password" class="form-control" name="smtp_password" >
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div> <!-- .row -->
-                                    <div class="row g-3">
-                                        <div class="col-lg-7">
-                                            <div class="form-group mt-2">
-                                                <button type="submit" class="btn btn-lg btn-primary">Update</button>
-                                            </div>
-                                        </div><!-- .col -->
-                                    </div><!-- .row -->
+                                    </form>
                                 </div>
                             </div><!-- .tab-pane -->
                             <div class="tab-pane" id="mpesa">

@@ -15,7 +15,7 @@ from .models import LoanProduct, Loan, Note, Repayment, Guarantor, Collateral, M
 from .forms import LoanProductForm, LoanForm, RepaymentForm, GuarantorForm, CollateralForm, MpesaStatementForm
 from member.models import Member
 from user.models import CompanyStaff
-from company.models import Organization, SmsSetting, MpesaSetting
+from company.models import Organization, SmsSetting, MpesaSetting, EmailSetting
 from jekiiLMS.process_loan import is_sufficient_collateral, get_amount_to_disburse, clear_loan, update_member_data, write_loan_off, roll_over
 from jekiiLMS.mpesa_statement import get_loans_table
 from jekiiLMS.loan_math import loan_due_date, save_due_amount, num_installments, total_interest
@@ -316,7 +316,6 @@ def approveLoan(request,pk):
         today = datetime.today().strftime('%Y-%m-%d')
 
         #email variables & context
-        company_name = company.name
         company_email = company.email
         email = borrower.email
 
@@ -367,15 +366,16 @@ def approveLoan(request,pk):
                             save_due_amount(loan)
 
                             #send mail and message to borrower.
+                            email_setting = EmailSetting.objects.get(company=company)
                             context = {'loan':loan}
-                            from_name_email = f'{company_name} <{settings.EMAIL_HOST_USER}>' 
+                            from_name_email = f'{email_setting.from_name} <{email_setting.from_email}>' 
                             template = render_to_string('loan/loan-approved.html', context)
                             e_mail = EmailMessage(
                                 'Loan Approved and Disbursed',
                                 template,
                                 from_name_email, #'John Doe <john.doe@example.com>'
                                 [email],
-                                reply_to=[company_email],
+                                reply_to=[company_email, email_setting.from_email],
                             )
                             e_mail.send(fail_silently=False)
 
@@ -443,15 +443,16 @@ def rejectLoan(request,pk):
             loan.save()
 
             #send mail and message to borrower.
+            email_setting = EmailSetting.objects.get(company=company)
             context = {'loan':loan}
-            from_name_email = f'{company_name} <{settings.EMAIL_HOST_USER}>' 
+            from_name_email = f'{email_setting.from_name} <{email_setting.from_email}>' 
             template = render_to_string('loan/loan-rejected.html', context)
             e_mail = EmailMessage(
                 'Loan Rejected',
                 template,
                 from_name_email, #'John Doe <john.doe@example.com>'
                 [email],
-                reply_to=[company_email],
+                reply_to=[company_email, email_setting.from_email],
             )
             e_mail.send(fail_silently=False)
 
