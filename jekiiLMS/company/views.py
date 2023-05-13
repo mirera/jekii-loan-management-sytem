@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect
+from django.template.loader import render_to_string
+from django.core.mail import EmailMessage
 from django.contrib import messages
 from .models import Organization, Package
-from .forms import OrganizationForm, PackageForm, SmsForm, MpesaSettingForm
+from .forms import OrganizationForm, PackageForm, SmsForm, MpesaSettingForm, EmailSettingForm
 from user.models import CompanyStaff
-from company.models import SmsSetting, MpesaSetting
+from company.models import SmsSetting, MpesaSetting, EmailSetting
 from jekiiLMS.cred_process import encrypt_secret
 
 #-- update organization details upon sign up view --
@@ -24,6 +26,13 @@ def updateOrganization(request, pk):
     except MpesaSetting.DoesNotExist:
         # create 
         mpesa_setting = MpesaSetting.objects.create(company=organization)
+    
+    #if email_setting obj none, create
+    try:
+        email_setting = EmailSetting.objects.get(company=organization)
+    except EmailSetting.DoesNotExist:
+        # create 
+        email_setting = EmailSetting.objects.create(company=organization)
 
     
     if request.method == 'POST':
@@ -59,7 +68,17 @@ def updateOrganization(request, pk):
             'online_passkey': mpesa_setting.online_passkey,
             'username': mpesa_setting.username
         }
-
+        # prefill the email form 
+        form_data_email = {
+            'from_name': email_setting.from_name,
+            'from_email': email_setting.from_email,
+            'smtp_host': email_setting.smtp_host,
+            'encryption': email_setting.encryption,
+            'smtp_port': email_setting.smtp_port,
+            'smtp_username': email_setting.smtp_username,
+            'smtp_password': email_setting.smtp_password
+        }
+        form_email = EmailSettingForm(initial=form_data_email)
         form_mpesa = MpesaSettingForm(initial=form_data_mpesa)
         form_sms = SmsForm(initial=form_data_sms)
         form = OrganizationForm(initial=form_data)
@@ -67,6 +86,7 @@ def updateOrganization(request, pk):
             'form':form,
             'form_sms':form_sms,
             'form_mpesa':form_mpesa,
+            'form_email':form_email,
             'organization':organization,
             'admins':admins
         }
@@ -182,3 +202,81 @@ def updateMpesa(request, pk):
             'form_mpesa':form_mpesa
         }
     return render(request,'company/update-company.html', context)
+# -- ends
+
+# -- view to add mpesa setting
+def updateEmail(request, pk):
+    organization = Organization.objects.get(id=pk)
+    email_setting = EmailSetting.objects.get(company=organization)
+    form_email = EmailSettingForm()
+
+    if request.method == 'POST':
+        #raw creds
+        raw_smtp_password = request.POST.get('smtp_password')
+
+        #encrypt password 
+        encrypted_smtp_password= encrypt_secret(raw_smtp_password)
+
+        email_setting.company = organization
+        email_setting.from_name = request.POST.get('from_name')
+        email_setting.from_email = request.POST.get('from_email')
+        email_setting.smtp_host = request.POST.get('smtp_host')
+        email_setting.encryption = request.POST.get('smtp_host')
+        email_setting.smtp_port = request.POST.get('smtp_port')
+        email_setting.smtp_username = request.POST.get('smtp_username')
+        email_setting.smtp_password = encrypted_smtp_password
+        email_setting.save()
+
+        messages.success(request, 'Email credentials updated successfully. Send Test Email to confirm if they work as expected.')
+        return redirect('update-organization', organization.id)
+    else:
+        # prepopulate the form with existing data
+        form_data = {
+            'from_name': email_setting.from_name,
+            'from_email': email_setting.from_email,
+            'smtp_host': email_setting.smtp_host,
+            'encryption': email_setting.encryption,
+            'smtp_port': email_setting.smtp_port,
+            'smtp_username': email_setting.smtp_username,
+            'smtp_password': email_setting.smtp_password,
+        }
+        form_email = EmailSettingForm(initial=form_data)
+ 
+    context = {
+            'form_email':form_email
+        }
+    return render(request,'company/update-company.html', context)
+# -- ends
+
+# -- view to send test email
+def sendTestEmail(request, pk):
+    organization = Organization.objects.get(id=pk)
+    email_setting = EmailSetting.objects.get(company=organization)
+    if request.method == 'POST':
+        #from form
+        email = request.POST.get('email')
+        mail_message = request.POST.get('message')
+
+        #send mail .
+        context = {'mail_message':mail_message}
+        from_name_email = f'{email_setting.from_name} <{email_setting.from_email}>' 
+        template = render_to_string('company/test-email.html', context)
+
+        e_mail = EmailMessage(
+            'Email Successfully Sent',
+            template,
+            from_name_email,
+            [email],
+            reply_to=[email_setting.from_email],
+        )
+        try:
+            e_mail.send(fail_silently=False)
+        except:
+            messages.error(request, 'Failed to send email')
+            return redirect('update-organization', organization.id)
+        else:
+            messages.success(request, 'Email sent successfully')
+            return redirect('update-organization', organization.id)
+    return redirect('update-organization', organization.id)
+
+# -- ends

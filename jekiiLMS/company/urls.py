@@ -11,6 +11,8 @@ urlpatterns = [
     path('companies', views.listCompanies, name='companies'),
     path('sms/<str:pk>', views.updateSms, name='update-sms'),
     path('mpesa/<str:pk>', views.updateMpesa, name='update-mpesa'),
+    path('email/<str:pk>', views.updateEmail, name='update-email'),
+    path('test-email/<str:pk>', views.sendTestEmail, name='test-email'),
 
 
     #package urls

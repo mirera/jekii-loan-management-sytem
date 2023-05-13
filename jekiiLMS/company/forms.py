@@ -1,6 +1,6 @@
 from dataclasses import fields
 from django import forms
-from .models import Organization, Package, SmsSetting, MpesaSetting
+from .models import Organization, Package, SmsSetting, MpesaSetting, EmailSetting
 
 
 class OrganizationForm(forms.ModelForm):
@@ -53,4 +53,20 @@ class MpesaSettingForm(forms.ModelForm):
             'app_consumer_secret': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'e.g. 9v38Dtu5u2BpsITPmLcXNWGMsjZRWSTG', 'required':'True'}),
             'online_passkey': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'e.g 9v38Dtu5u2BpsITPmLcXNWGMsjZRWSTG', 'required':'True'}),
             'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'loginit', 'required':'True'}),
+        }
+
+class EmailSettingForm(forms.ModelForm):
+    class Meta:
+        model = EmailSetting
+        fields = '__all__'
+        exclude = ['company']
+        
+        widgets = {
+            'from_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Loginit CyberSec', 'required':'True'}),
+            'from_email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'e.g. info@loginit.co.ke', 'required':'True'}),
+            'smtp_host': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g. smtp.loginit.com', 'required':'True'}),
+            'encryption': forms.Select(attrs={'class': 'form-select js-select2'}),
+            'smtp_port': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'e.g. 587', 'required':'True'}),
+            'smtp_username': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'e.g info@loginit.com', 'required':'True'}),
+            'smtp_password': forms.PasswordInput(attrs={'class': 'form-control', 'required':'True'}),
         }

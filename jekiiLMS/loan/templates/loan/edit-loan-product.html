@@ -16,7 +16,7 @@ k{% extends 'main.html' %}
                     </div><!-- .nk-block-head -->
                     <div class="nk-block nk-block-lg">
                         <div class="card card-bordered">
-                            <form action=" " method="POST" class="nk-stepper stepper-init is-alter nk-stepper-s1"  id="stepper-create-project" >
+                            <form action=" " method="POST" class="nk-stepper stepper-init is-alter nk-stepper-s1"  id="stepper-create-project">
                                 {% csrf_token %}
                                 <div class="row g-0 col-sep col-sep-md col-sep-xl">
                                     <div class="col-md-4 col-xl-4">
@@ -110,9 +110,7 @@ k{% extends 'main.html' %}
                                                                         </ul>
                                                                     </div>
                                                                 </div>
-                                                            </div>
-                                    
-                                                            
+                                                            </div>                                    
                                                         </div>
                                                     </div>
                                                     <div class="nk-stepper-step">
@@ -1046,7 +1044,6 @@ k{% extends 'main.html' %}
                                                     <li class="step-prev"><button class="btn btn-dim btn-primary">Prev</button></li>
                                                     <li class="step-next"><button class="btn btn-primary">Next</button></li>
                                                     <li class="step-submit"><button type="submit" class="btn btn-primary">Submit</button></li>
-                                                    
                                                 </ul> <br>
                                                 <button type="submit" class="btn btn-primary">Update</button>
                                             </div>

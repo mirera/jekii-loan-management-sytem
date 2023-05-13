@@ -76,9 +76,9 @@ class EmailSetting(models.Model):
     from_email = models.EmailField(blank=True, null=True)
     smtp_host = models.CharField(max_length=200, blank=True, null=True)
     encryption = models.CharField(max_length=10, choices=HTTPS_ENCRYPTION, default='tls')
-    app_consumer_secret = models.CharField(max_length=200, blank=True, null=True)#encrypted 
+    smtp_port = models.IntegerField(blank=True, null=True)
     smtp_username = models.EmailField(blank=True, null=True)
-    smtp_password = models.CharField(max_length=200, blank=True, null=True)#encrypted
+    smtp_password = models.CharField(max_length=200, blank=True, null=True)
 
     def __str__(self):
         return self.company.name
