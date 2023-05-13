@@ -4,10 +4,8 @@ from django.http import HttpResponse
 import json
 from django.conf import settings 
 
-#function to generate access token for API consumptio
-def generate_access_token():
-    consumer_key = settings.CONSUMER_KEY
-    consumer_secret = settings.CONSUMER_SECRET
+#function to generate access token for API consumption
+def generate_access_token(consumer_key, consumer_secret):
     api_URL = "https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials"
     
     # Encode the consumer key and secret key in base64
@@ -26,8 +24,8 @@ def generate_access_token():
 
 
 # -- function to send post request to b2c api
-def disburse_loan(loan):
-    access_token = generate_access_token()
+def disburse_loan(consumer_key, consumer_secret, shortcode, username, loan):
+    access_token = generate_access_token(consumer_key, consumer_secret)
     api_url = "https://api.safaricom.co.ke/mpesa/b2c/v1/paymentrequest"
     headers = {
         "Authorization": "Bearer %s" % access_token,
@@ -37,11 +35,11 @@ def disburse_loan(loan):
     amount = loan.approved_amount
     transaction_reference = f"DISBURSEMENT_{loan.id}"
     command_id = "BusinessPayment"
-    short_code = settings.SHORT_CODE
+    short_code = shortcode
     timeout_url = 'http://127.0.0.1:8000/loan/api/b2c-timeout'
     result_url = 'http://127.0.0.1:8000/loan/api/b2c-result'
     payload = {
-        "InitiatorName": "<your initiator name>",
+        "InitiatorName": username,
         "SecurityCredential": "<your security credential>",
         "CommandID": command_id,
         "Amount": amount,

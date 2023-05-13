@@ -10,6 +10,7 @@ urlpatterns = [
     #path('remove-package', views.removePackage, name='remove-package'),
     path('companies', views.listCompanies, name='companies'),
     path('sms/<str:pk>', views.updateSms, name='update-sms'),
+    path('mpesa/<str:pk>', views.updateMpesa, name='update-mpesa'),
 
 
     #package urls

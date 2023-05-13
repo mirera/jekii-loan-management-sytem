@@ -593,83 +593,101 @@
                                 </div>
                             </div><!-- .tab-pane -->
                             <div class="tab-pane" id="mpesa">
-                                <div class="card-inner pt-0">
-                                    <div class="nk-block-head">
-                                        <div class="nk-block-head-content">
-                                            <h4 class="title nk-block-title">Mpesa B2C Settings</h4>
-                                            <p>Make sure your shortcode is for bulky payment B2C is enabled</p>
+                                <form action="{% url 'update-mpesa' organization.id %}" method="POST" class="form-validate">
+                                    {% csrf_token %}
+                                    <div class="card-inner pt-0">
+                                        <div class="nk-block-head">
+                                            <div class="nk-block-head-content">
+                                                <h4 class="title nk-block-title">Mpesa B2C Settings</h4>
+                                                <p>Make sure your shortcode is for bulky payment B2C is enabled</p>
+                                            </div>
                                         </div>
+                                        <div class="row g-gs">
+                                            <div class="row g-3 align-center">
+                                                <div class="col-lg-5">
+                                                    <div class="form-group">
+                                                        <label class="form-label" for="site-copyright">Business Shortcode</label>
+                                                        <span class="form-note">Your Mpesa business till/paybill number</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-7">
+                                                    <div class="form-group">
+                                                        <div class="form-control-wrap">
+                                                            {{form_mpesa.shortcode}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row g-3 align-center">
+                                                <div class="col-lg-5">
+                                                    <div class="form-group">
+                                                        <label class="form-label" for="site-copyright">App Consumer Key</label>
+                                                        <span class="form-note">Your app consumer key from Safaricom Daraja.</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-7">
+                                                    <div class="form-group">
+                                                        <div class="form-control-wrap">
+                                                            {{form_mpesa.app_consumer_key}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row g-3 align-center">
+                                                <div class="col-lg-5">
+                                                    <div class="form-group">
+                                                        <label class="form-label" for="site-copyright">App Consumer Secret</label>
+                                                        <span class="form-note">Your app consumer secret from Safaricom Daraja.</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-7">
+                                                    <div class="form-group">
+                                                        <div class="form-control-wrap">
+                                                            {{form_mpesa.app_consumer_secret}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row g-3 align-center">
+                                                <div class="col-lg-5">
+                                                    <div class="form-group">
+                                                        <label class="form-label" for="site-copyright">Online Pass Key</label>
+                                                        <span class="form-note">Your app pass key from Safaricom Daraja</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-7">
+                                                    <div class="form-group">
+                                                        <div class="form-control-wrap">
+                                                            {{form_mpesa.online_passkey}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row g-3 align-center">
+                                                <div class="col-lg-5">
+                                                    <div class="form-group">
+                                                        <label class="form-label" for="site-copyright">Username</label>
+                                                        <span class="form-note">Mpesa username with api acccess rights</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-7">
+                                                    <div class="form-group">
+                                                        <div class="form-control-wrap">
+                                                            {{form_mpesa.username}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div> <!-- .row -->
+                                        <div class="row g-3">
+                                            <div class="col-lg-7">
+                                                <div class="form-group mt-2">
+                                                    <button type="submit" class="btn btn-lg btn-primary">Update</button>
+                                                </div>
+                                            </div><!-- .col -->
+                                        </div><!-- .row -->
                                     </div>
-                                    <div class="row g-gs">
-                                        <div class="row g-3 align-center">
-                                            <div class="col-lg-5">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="site-copyright">Business Shortcode</label>
-                                                    <span class="form-note">Your Mpesa business till/paybill number</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-7">
-                                                <div class="form-group">
-                                                    <div class="form-control-wrap">
-                                                        <input type="number" class="form-control" name="shortcode" placeholder="174379">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row g-3 align-center">
-                                            <div class="col-lg-5">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="site-copyright">App Consumer Key</label>
-                                                    <span class="form-note">Your app consumer key from Safaricom Daraja.</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-7">
-                                                <div class="form-group">
-                                                    <div class="form-control-wrap">
-                                                        <input type="text" class="form-control" name="consumer_key" placeholder="9v38Dtu5u2BpsITPmLcXNWGMsjZRWSTG">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row g-3 align-center">
-                                            <div class="col-lg-5">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="site-copyright">App Consumer Secret</label>
-                                                    <span class="form-note">Your app consumer secret from Safaricom Daraja.</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-7">
-                                                <div class="form-group">
-                                                    <div class="form-control-wrap">
-                                                        <input type="text" class="form-control" name="consumer_secret" placeholder="bclwIPkcRqw61yUt">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row g-3 align-center">
-                                            <div class="col-lg-5">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="site-copyright">Online Pass Key</label>
-                                                    <span class="form-note">Your app pass key from Safaricom Daraja</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-7">
-                                                <div class="form-group">
-                                                    <div class="form-control-wrap">
-                                                        <input type="text" class="form-control" name="pass_key" placeholder="bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div> <!-- .row -->
-                                    <div class="row g-3">
-                                        <div class="col-lg-7">
-                                            <div class="form-group mt-2">
-                                                <button type="submit" class="btn btn-lg btn-primary">Update</button>
-                                            </div>
-                                        </div><!-- .col -->
-                                    </div><!-- .row -->
-                                </div>
+                                </form>
                             </div><!-- .tab-pane -->
                             <div class="tab-pane" id="sms">
                                 <form action="{% url 'update-sms' organization.id %}" method="POST" >

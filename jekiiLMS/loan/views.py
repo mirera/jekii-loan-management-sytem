@@ -15,7 +15,7 @@ from .models import LoanProduct, Loan, Note, Repayment, Guarantor, Collateral, M
 from .forms import LoanProductForm, LoanForm, RepaymentForm, GuarantorForm, CollateralForm, MpesaStatementForm
 from member.models import Member
 from user.models import CompanyStaff
-from company.models import Organization, SmsSetting
+from company.models import Organization, SmsSetting, MpesaSetting
 from jekiiLMS.process_loan import is_sufficient_collateral, get_amount_to_disburse, clear_loan, update_member_data, write_loan_off, roll_over
 from jekiiLMS.mpesa_statement import get_loans_table
 from jekiiLMS.loan_math import loan_due_date, save_due_amount, num_installments, total_interest
@@ -349,8 +349,19 @@ def approveLoan(request,pk):
                     loan.save()
 
                     #disburse loan
+                    mpesa_setting = MpesaSetting.objects.get(company=loan.company)
+                    consumer_key = mpesa_setting.app_consumer_key
+                    consumer_secret = mpesa_setting.app_consumer_secret
+                    shortcode = mpesa_setting.shortcode
+                    username = mpesa_setting.username
                     try:
-                        disbursement_response = disburse_loan(loan)
+                        disbursement_response = disburse_loan(
+                            consumer_key, 
+                            consumer_secret,
+                            shortcode,
+                            username,
+                            loan
+                        )
                         if disbursement_response['ResponseCode'] == '0':
                             # call fill due_amount function to fill due_amount on the Loan model 
                             save_due_amount(loan)

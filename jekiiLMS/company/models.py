@@ -54,7 +54,7 @@ class SmsSetting(models.Model):
 #mpesa setting model
 class MpesaSetting(models.Model):
     company = models.ForeignKey(Organization, on_delete=models.SET_NULL, blank=True, null=True)
-    shortcode = models.CharField(max_length=15, blank=True, null=True)
+    shortcode = models.IntegerField(blank=True, null=True)
     app_consumer_key = models.CharField(max_length=200, blank=True, null=True)#encrypted 
     app_consumer_secret = models.CharField(max_length=200, blank=True, null=True)#encrypted 
     online_passkey = models.CharField(max_length=200, blank=True, null=True)#encrypted
