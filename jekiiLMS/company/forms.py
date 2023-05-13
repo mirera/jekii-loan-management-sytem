@@ -1,6 +1,6 @@
 from dataclasses import fields
 from django import forms
-from .models import Organization, Package, SmsSetting
+from .models import Organization, Package, SmsSetting, MpesaSetting
 
 
 class OrganizationForm(forms.ModelForm):
@@ -24,12 +24,11 @@ class PackageForm(forms.ModelForm):
         fields = '__all__'
         
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control'}),
-            'annual_price': forms.NumberInput(attrs={'class': 'form-control'}),
-            'monthly_price': forms.NumberInput(attrs={'class': 'form-control'}),
-            'employees': forms.NumberInput(attrs={'class': 'form-control'}),
-            #'date_added': forms.DateTimeInput(attrs={'class': 'form-control date-picker-range', 'data-date-format':'yyyy-mm-dd'}),
-            'storage': forms.TextInput(attrs={'class': 'form-control', 'id': 'site-address'}),
+            'name': forms.TextInput(attrs={'class': 'form-control', 'required':'True'}),
+            'annual_price': forms.NumberInput(attrs={'class': 'form-control', 'required':'True'}),
+            'monthly_price': forms.NumberInput(attrs={'class': 'form-control', 'required':'True'}),
+            'employees': forms.NumberInput(attrs={'class': 'form-control', 'required':'True'}),
+            'storage': forms.TextInput(attrs={'class': 'form-control', 'id': 'site-address', 'required':'True'}),
         }
 
 class SmsForm(forms.ModelForm):
@@ -38,6 +37,20 @@ class SmsForm(forms.ModelForm):
         fields = ['sender_id', 'api_token']
         
         widgets = {
-            'sender_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'loginit'}),
-            'api_token': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': '9v38Dtu5u2BpsITPmLcXNWGMsjZRWSTG'})
+            'sender_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'loginit', 'required':'True'}),
+            'api_token': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': '9v38Dtu5u2BpsITPmLcXNWGMsjZRWSTG', 'required':'True'})
+        }
+
+class MpesaSettingForm(forms.ModelForm):
+    class Meta:
+        model = MpesaSetting
+        fields = '__all__'
+        exclude = ['company']
+        
+        widgets = {
+            'shortcode': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '174379', 'required':'True'}),
+            'app_consumer_key': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'e.g. 9v38Dtu5u2BpsITPmLcXNWGMsjZRWSTG', 'required':'True'}),
+            'app_consumer_secret': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'e.g. 9v38Dtu5u2BpsITPmLcXNWGMsjZRWSTG', 'required':'True'}),
+            'online_passkey': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'e.g 9v38Dtu5u2BpsITPmLcXNWGMsjZRWSTG', 'required':'True'}),
+            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'loginit', 'required':'True'}),
         }
