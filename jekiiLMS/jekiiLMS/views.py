@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.db.models import Sum
+from datetime import datetime
 from django.contrib.auth.decorators import login_required
 from branch.models import Branch, Expense
 from loan.models import Loan, Repayment
@@ -63,6 +64,7 @@ def homepage(request):
     loans = Loan.objects.filter(company=company)
     repayments = Repayment.objects.filter(company=company)
     members= Member.objects.filter(company=company)
+    today = datetime.now()
 
     #company staff context
     staff = CompanyStaff.objects.get(username=request.user.username)
@@ -102,6 +104,30 @@ def homepage(request):
     staff_total_expense = Expense.objects.filter(created_by=request.user, company=company)
     staff_expense = staff_total_expense.aggregate(Sum('amount'))['amount__sum'] or 0
 
+    #mature loan contexts
+    mature_loans = Loan.objects.filter(final_due_date__lt=today, company=company) 
+    amount_matured = mature_loans.aggregate(Sum('approved_amount'))['approved_amount__sum'] or 0
+    matured_pc = round(amount_matured * 100 / total_disbursed_amount, 2)
+    
+
+    # mature cleared contexts
+    mature_cleared_loans = mature_loans.filter(status='cleared', )
+    mature_cleared_amount = mature_cleared_loans.aggregate(Sum('approved_amount'))['approved_amount__sum'] or 0
+    mature_cleared_pc = round(mature_cleared_amount * 100 / total_disbursed_amount, 2)
+
+    #immature loans
+    immature_loan_amount = total_disbursed_amount - amount_matured
+    immature_pc = round(immature_loan_amount * 100 / total_disbursed_amount, 2)
+
+    #mature defaulted context
+    defaulted_amount =  amount_matured - mature_cleared_amount 
+    defaulted_pc = round(defaulted_amount * 100 / total_disbursed_amount, 2)
+
+    # income, service fees, penalties secured contexts
+    interest_secured = mature_cleared_loans.aggregate(Sum('interest_amount'))['interest_amount__sum'] or 0 
+    service_fee = mature_cleared_loans.aggregate(Sum('service_fee_amount'))['service_fee_amount__sum'] or 0 
+    total_income = interest_secured + service_fee #later add penalty secured 
+
     context= {
         'branches':branches, 
         'loans':loans, 
@@ -121,7 +147,16 @@ def homepage(request):
         'staff_num_overdue_loans':staff_num_overdue_loans,
         'staff_total_overdue_amount':staff_total_overdue_amount,
         'expense':expense,
-        'staff_expense':staff_expense
+        'staff_expense':staff_expense,
+        'amount_matured':amount_matured,
+        'immature_loan_amount':immature_loan_amount,
+        'mature_cleared_amount':mature_cleared_amount,
+        'defaulted_amount':defaulted_amount,
+        'total_income':total_income,
+        'mature_cleared_pc':mature_cleared_pc,
+        'matured_pc':matured_pc,
+        'immature_pc':immature_pc,
+        'defaulted_pc':defaulted_pc,
         }
     return render(request, 'index.html', context)
   #--- companyadmin dashboard logic ends here--- 

@@ -61,11 +61,11 @@ def get_amount_to_disburse(loan, approved_amount):
 
     if approved_amount >= loan.loan_product.minimum_amount:
         if service_fee_type == 'fixed value':
-            service_fee = approved_amount - service_fee_value
+            amount_to_disburse = approved_amount - service_fee_value
         elif service_fee_type == 'percentage':
             fee = approved_amount * service_fee_value * 0.01
-            service_fee = approved_amount - fee
-        return service_fee
+            amount_to_disburse = approved_amount - fee
+        return amount_to_disburse
     else:
         return 0 
 

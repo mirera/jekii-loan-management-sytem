@@ -117,11 +117,47 @@ def loan_due_date(loan):
     else:
         return today + relativedelta(months=1)    
 
-#function to fill due_amount field in Loan once loan is approved
+#final payment date
+def final_date(loan):
+    start_date = loan.approved_date #consider adding grace period
+    loan_term = loan.loan_product.loan_product_term
+    term_period = loan.loan_product.loan_term_period
+    if term_period == 'day':
+        loan_term = timedelta(days=loan_term)
+    elif term_period == 'week':
+        loan_term = timedelta(weeks=loan_term)
+    elif term_period == 'month':
+        loan_term = relativedelta(months=loan_term)
+    elif term_period == 'year':
+        loan_term = relativedelta(years=loan_term)
+
+
+    final_date = start_date + loan_term 
+
+    return final_date
+
+
+#calculate the service fee amount  
+def get_service_fee(loan): 
+    service_fee_type = loan.loan_product.service_fee_type 
+    service_fee_value = loan.loan_product.service_fee_value
+    approved_amount = int(loan.approved_amount)
+
+    if approved_amount >= loan.loan_product.minimum_amount:
+        if service_fee_type == 'fixed value':
+            service_fee = service_fee_value
+        elif service_fee_type == 'percentage':
+            service_fee = approved_amount * service_fee_value * 0.01
+        return service_fee
+  
+
+#function to fill due_amount field in Loan once loan is approved & final date
 def save_due_amount(loan):
     payable = total_payable_amount(loan)
     installments = num_installments(loan)
     amount = payable / installments
     loan.due_amount = amount
+    loan.interest_amount = total_interest(loan)
+    loan.service_fee_amount = get_service_fee(loan)
+    loan.final_date = final_date(loan) #fill final payment date
     loan.save()
-

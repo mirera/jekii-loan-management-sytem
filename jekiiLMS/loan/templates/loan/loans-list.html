@@ -384,7 +384,7 @@
                                             </div>
                                             {% for loan in loans %}
                                             {% if loan.status == 'overdue' %}
-                                            <div class="nk-tb-item">
+                                            <div class="nk-tb-item"> 
                                                 <div class="nk-tb-col">
                                                     <span class="tb-lead"><a href="{% url 'view-loan' loan.id %}">#{{loan.loan_id}}</a></span>
                                                 </div>

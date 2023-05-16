@@ -18,7 +18,7 @@ from user.models import CompanyStaff
 from company.models import Organization, SmsSetting, MpesaSetting, EmailSetting
 from jekiiLMS.process_loan import is_sufficient_collateral, get_amount_to_disburse, clear_loan, update_member_data, write_loan_off, roll_over
 from jekiiLMS.mpesa_statement import get_loans_table
-from jekiiLMS.loan_math import loan_due_date, save_due_amount, num_installments, total_interest
+from jekiiLMS.loan_math import loan_due_date, save_due_amount, num_installments, total_interest, final_date
 from jekiiLMS.sms_messages import send_sms
 from jekiiLMS.mpesa_api import disburse_loan
 
@@ -324,7 +324,7 @@ def approveLoan(request,pk):
             guarantors_score += guarantor.name.credit_score
 
         member_score = borrower.credit_score
-        approved_amount = request.POST.get('approved_amount')
+        approved_amount = int(request.POST.get('approved_amount'))
         amount_to_disburse = get_amount_to_disburse(loan, approved_amount)
         due_date = loan_due_date(loan)
         installments = num_installments(loan)
@@ -362,7 +362,7 @@ def approveLoan(request,pk):
                             loan
                         )
                         if disbursement_response['ResponseCode'] == '0':
-                            # call fill due_amount function to fill due_amount on the Loan model 
+                            # call fill due_amount function to fill due_amount & final payment date on the Loan model 
                             save_due_amount(loan)
 
                             #send mail and message to borrower.
