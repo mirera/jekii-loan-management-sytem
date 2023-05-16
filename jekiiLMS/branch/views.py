@@ -23,10 +23,11 @@ def createBranch(request):
             company = None
 
     branches = Branch.objects.filter(company=company)
-    phone = phone= request.POST.get('phone')
-    formated_phone = format_phone_number(phone)
 
     if request.method == 'POST':
+        phone = phone= request.POST.get('phone')
+        formated_phone = format_phone_number(phone)
+
         Branch.objects.create(
             company = company,
             name = request.POST.get('name'),
@@ -59,11 +60,12 @@ def editBranch(request,pk):
             company = None
 
     branch = Branch.objects.get(id=pk, company=company)
-    phone = phone= request.POST.get('phone')
-    formated_phone = format_phone_number(phone)
 
     if request.method == 'POST':
+        phone = phone= request.POST.get('phone')
+        formated_phone = format_phone_number(phone)
         form = BranchForm(request.POST, instance=branch)
+        
         if form.is_valid():
             branch = form.save(commit=False)
             branch.company = company
