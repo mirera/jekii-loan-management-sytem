@@ -107,16 +107,21 @@ def homepage(request):
     #mature loan contexts
     mature_loans = Loan.objects.filter(final_due_date__lt=today, company=company) 
     amount_matured = mature_loans.aggregate(Sum('approved_amount'))['approved_amount__sum'] or 0
+    matured_pc = round(amount_matured * 100 / total_disbursed_amount, 2)
+    
 
     # mature cleared contexts
     mature_cleared_loans = mature_loans.filter(status='cleared', )
     mature_cleared_amount = mature_cleared_loans.aggregate(Sum('approved_amount'))['approved_amount__sum'] or 0
+    mature_cleared_pc = round(mature_cleared_amount * 100 / total_disbursed_amount, 2)
 
     #immature loans
     immature_loan_amount = total_disbursed_amount - amount_matured
+    immature_pc = round(immature_loan_amount * 100 / total_disbursed_amount, 2)
 
     #mature defaulted context
     defaulted_amount =  amount_matured - mature_cleared_amount 
+    defaulted_pc = round(defaulted_amount * 100 / total_disbursed_amount, 2)
 
     # income, service fees, penalties secured contexts
     interest_secured = mature_cleared_loans.aggregate(Sum('interest_amount'))['interest_amount__sum'] or 0 
@@ -148,6 +153,10 @@ def homepage(request):
         'mature_cleared_amount':mature_cleared_amount,
         'defaulted_amount':defaulted_amount,
         'total_income':total_income,
+        'mature_cleared_pc':mature_cleared_pc,
+        'matured_pc':matured_pc,
+        'immature_pc':immature_pc,
+        'defaulted_pc':defaulted_pc,
         }
     return render(request, 'index.html', context)
   #--- companyadmin dashboard logic ends here--- 
