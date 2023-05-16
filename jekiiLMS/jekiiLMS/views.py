@@ -105,7 +105,7 @@ def homepage(request):
     staff_expense = staff_total_expense.aggregate(Sum('amount'))['amount__sum'] or 0
 
     #mature loan contexts
-    mature_loans = Loan.objects.filter(final_due_date__lt=today, company=company) #final_payment is a loan method
+    mature_loans = Loan.objects.filter(final_due_date__lt=today, company=company) 
     amount_matured = mature_loans.aggregate(Sum('approved_amount'))['approved_amount__sum'] or 0
 
     # mature cleared contexts
