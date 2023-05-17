@@ -1,5 +1,5 @@
 from rest_framework.response import Response
-from django.db.models import Sum
+from django.db.models import Sum, Count
 from datetime import datetime
 from rest_framework.decorators import api_view
 from member.models import Member
@@ -25,6 +25,7 @@ def apiEndpoints(request):
         'Get company expenses':'http://127.0.0.1:8000/api/expenses/1',
         'Get company income-income':'http://127.0.0.1:8000/api/income-expense/1',
         'Get company loan perfomance':'http://127.0.0.1:8000/api/loans-repayment/1',
+        'Get company loan dibursement':'http://127.0.0.1:8000/api/disbursement-data/1',
     }
     
     return Response(endpoints)
@@ -108,3 +109,22 @@ def getCompanyLoansRepayments(request, company_id):
     data = [amount_matured, mature_cleared_amount, defaulted_amount, immature_loan_amount]
 
     return Response(data)
+
+@api_view(['GET'])
+def getCompanyLoansDisbursement(request, company_id):
+
+    # Retrieve income data for the given company and aggregate monthly income data
+    disbursement_data = Loan.objects.filter(company=company_id, status__in=['approved','cleared','overdue', 'written off', 'rolled over']).values('approved_date__month').annotate(total_count=Count('id'))
+
+    # Prepare the response data
+    response_data = {
+        'disbursementData': [0] * 12,  # Initialize with 12 zeros
+    }
+
+    # Update the corresponding month's value in the response data
+
+    for item in disbursement_data:
+        month = item['approved_date__month']
+        response_data['disbursementData'][month - 1] = item['total_count']
+
+    return Response(response_data)

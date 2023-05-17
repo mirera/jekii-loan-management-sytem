@@ -8,124 +8,143 @@
   // dataUnit: string, (Used in tooltip or other section for display) 
   // datasets: [{label : string, color: string (color code with # or other format), data: array}]
 
-  var analyticAuData = {
-    labels: ["01 Jan", "02 Jan", "03 Jan", "04 Jan", "05 Jan", "06 Jan", "07 Jan", "08 Jan", "09 Jan", "10 Jan", "11 Jan", "12 Jan", "13 Jan", "14 Jan", "15 Jan", "16 Jan", "17 Jan", "18 Jan", "19 Jan", "20 Jan", "21 Jan", "22 Jan", "23 Jan", "24 Jan", "25 Jan", "26 Jan", "27 Jan", "28 Jan", "29 Jan", "30 Jan"],
-    dataUnit: 'Revenue',
-    lineTension: .1,
-    datasets: [{
-      label: "Revenue",
-      color: "#9cabff",
-      background: "#9cabff",
-      data: [1110, 1220, 1310, 980, 900, 770, 1060, 830, 690, 730, 790, 950, 1100, 800, 1250, 850, 950, 450, 900, 1000, 1200, 1250, 900, 950, 1300, 1200, 1250, 650, 950, 750]
-    }]
-  };
+//disbursement bar chart
+var disbursementData = {
+  labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"],
+  dataUnit: 'Loans',
+  lineTension: .1,
+  datasets: []
+};
 
-  function analyticsAu(selector, set_data) {
-    var $selector = selector ? $(selector) : $('.analytics-au-chart');
-    $selector.each(function () {
-      var $self = $(this),
-          _self_id = $self.attr('id'),
-          _get_data = typeof set_data === 'undefined' ? eval(_self_id) : set_data;
+function fetchDisbursementData() {
+  var companyId = $('#disbursementData').data('company-id');
+  // Make a GET request to your API endpoint
+  $.ajax({
+    url: 'http://127.0.0.1:8000/api/disbursement-data/' + companyId + '/', 
+    type: 'GET',
+    success: function(response) {
+      // Process the response and update the incomExpensData object
+      disbursementData.datasets = [{
+        label: "Loans",
+        color: "#9cabff",
+        background: "#9cabff",
+        data: response.disbursementData
+      }];
 
-      var selectCanvas = document.getElementById(_self_id).getContext("2d");
-      var chart_data = [];
+      // Call the chart initialization function
+      analyticsAu();
+    },
+    error: function(error) {
+      console.log(error);
+    }
+  });
+}
+function analyticsAu(selector, set_data) {
+  var $selector = selector ? $(selector) : $('.analytics-au-chart');
+  $selector.each(function () {
+    var $self = $(this),
+        _self_id = $self.attr('id'),
+        _get_data = typeof set_data === 'undefined' ? eval(_self_id) : set_data;
 
-      for (var i = 0; i < _get_data.datasets.length; i++) {
-        chart_data.push({
-          label: _get_data.datasets[i].label,
-          tension: _get_data.lineTension,
-          backgroundColor: _get_data.datasets[i].background,
-          borderWidth: 2,
-          borderColor: _get_data.datasets[i].color,
-          data: _get_data.datasets[i].data,
-          barPercentage: .7,
-          categoryPercentage: .7
-        });
-      }
+    var selectCanvas = document.getElementById(_self_id).getContext("2d");
+    var chart_data = [];
 
-      var chart = new Chart(selectCanvas, {
-        type: 'bar',
-        data: {
-          labels: _get_data.labels,
-          datasets: chart_data
+    for (var i = 0; i < _get_data.datasets.length; i++) {
+      chart_data.push({
+        label: _get_data.datasets[i].label,
+        tension: _get_data.lineTension,
+        backgroundColor: _get_data.datasets[i].background,
+        borderWidth: 2,
+        borderColor: _get_data.datasets[i].color,
+        data: _get_data.datasets[i].data,
+        barPercentage: .7,
+        categoryPercentage: .7
+      });
+    }
+
+    var chart = new Chart(selectCanvas, {
+      type: 'bar',
+      data: {
+        labels: _get_data.labels,
+        datasets: chart_data
+      },
+      options: {
+        legend: {
+          display: _get_data.legend ? _get_data.legend : false,
+          labels: {
+            boxWidth: 12,
+            padding: 20,
+            fontColor: '#6783b8'
+          }
         },
-        options: {
-          legend: {
-            display: _get_data.legend ? _get_data.legend : false,
-            labels: {
-              boxWidth: 12,
-              padding: 20,
-              fontColor: '#6783b8'
+        maintainAspectRatio: false,
+        tooltips: {
+          enabled: true,
+          rtl: NioApp.State.isRTL,
+          callbacks: {
+            title: function title(tooltipItem, data) {
+              return false; //data['labels'][tooltipItem[0]['index']];
+            },
+            label: function label(tooltipItem, data) {
+              return data.datasets[tooltipItem.datasetIndex]['data'][tooltipItem['index']];
             }
           },
-          maintainAspectRatio: false,
-          tooltips: {
-            enabled: true,
-            rtl: NioApp.State.isRTL,
-            callbacks: {
-              title: function title(tooltipItem, data) {
-                return false; //data['labels'][tooltipItem[0]['index']];
-              },
-              label: function label(tooltipItem, data) {
-                return data.datasets[tooltipItem.datasetIndex]['data'][tooltipItem['index']];
-              }
-            },
-            backgroundColor: '#eff6ff',
-            titleFontSize: 9,
-            titleFontColor: '#6783b8',
-            titleMarginBottom: 6,
-            bodyFontColor: '#9eaecf',
-            bodyFontSize: 9,
-            bodySpacing: 4,
-            yPadding: 6,
-            xPadding: 6,
-            footerMarginTop: 0,
-            displayColors: false
-          },
-          scales: {
-            yAxes: [{
-              display: true,
-              position: NioApp.State.isRTL ? "right" : "left",
-              ticks: {
-                beginAtZero: false,
-                fontSize: 12,
-                fontColor: '#9eaecf',
-                padding: 0,
-                display: false,
-                stepSize: 300
-              },
-              gridLines: {
-                color: NioApp.hexRGB("#526484", .2),
-                tickMarkLength: 0,
-                zeroLineColor: NioApp.hexRGB("#526484", .2)
-              }
-            }],
-            xAxes: [{
+          backgroundColor: '#eff6ff',
+          titleFontSize: 9,
+          titleFontColor: '#6783b8',
+          titleMarginBottom: 6,
+          bodyFontColor: '#9eaecf',
+          bodyFontSize: 9,
+          bodySpacing: 4,
+          yPadding: 6,
+          xPadding: 6,
+          footerMarginTop: 0,
+          displayColors: false
+        },
+        scales: {
+          yAxes: [{
+            display: true,
+            position: NioApp.State.isRTL ? "right" : "left",
+            ticks: {
+              beginAtZero: false,
+              fontSize: 12,
+              fontColor: '#9eaecf',
+              padding: 0,
               display: false,
-              ticks: {
-                fontSize: 12,
-                fontColor: '#9eaecf',
-                source: 'auto',
-                padding: 0,
-                reverse: NioApp.State.isRTL
-              },
-              gridLines: {
-                color: "transparent",
-                tickMarkLength: 0,
-                zeroLineColor: 'transparent',
-                offsetGridLines: true
-              }
-            }]
-          }
+              stepSize: 300
+            },
+            gridLines: {
+              color: NioApp.hexRGB("#526484", .2),
+              tickMarkLength: 0,
+              zeroLineColor: NioApp.hexRGB("#526484", .2)
+            }
+          }],
+          xAxes: [{
+            display: false,
+            ticks: {
+              fontSize: 12,
+              fontColor: '#9eaecf',
+              source: 'auto',
+              padding: 0,
+              reverse: NioApp.State.isRTL
+            },
+            gridLines: {
+              color: "transparent",
+              tickMarkLength: 0,
+              zeroLineColor: 'transparent',
+              offsetGridLines: true
+            }
+          }]
         }
-      });
+      }
     });
-  } // init chart
-
-
-  NioApp.coms.docReady.push(function () {
-    analyticsAu();
   });
+} // init chart
+
+NioApp.coms.docReady.push(function () {
+  fetchDisbursementData();
+});
+// ends
 
  //income vs expense starts
 var incomExpensData = {

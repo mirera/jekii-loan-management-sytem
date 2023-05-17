@@ -338,8 +338,8 @@
                                         <div class="card-inner">
                                             <div class="card-title-group align-start pb-3 g-2">
                                                 <div class="card-title">
-                                                    <h6 class="title">Matured Loans Overview</h6>
-                                                    <p>An overview of loan disbursemnt and repayment</p>
+                                                    <h6 class="title">Loans Disbursement Overview</h6>
+                                                    <p>An overview of loan disbursement</p>
                                                 </div>
                                                 <div class="card-tools">
                                                     <em class="card-hint icon ni ni-help" data-bs-toggle="tooltip" data-bs-placement="left" title="An overview of total amount of mature loans, cleared amount and amounted defaulted on a given period."></em>
@@ -348,27 +348,27 @@
                                             <div class="analytic-au">
                                                 <div class="analytic-data-group analytic-au-group g-3">
                                                     <div class="analytic-data analytic-au-data">
-                                                        <div class="title">Matured Loans</div>
-                                                        <div class="amount">{{amount_matured}}</div>
-                                                        <div class="change up"><em class="icon ni ni-arrow-long-up"></em>4.63%</div>
+                                                        <div class="title">Loans Disbursed</div>
+                                                        <div class="amount">{{num_disbursed_loans}}</div>
+                                                        <div class="change up"><span class="text-soft">{{pc_disbursed_loans}}% </span></div>
                                                     </div>
                                                     <div class="analytic-data analytic-au-data">
-                                                        <div class="title">Amount Cleared</div>
-                                                        <div class="amount">{{mature_cleared_amount}}</div>
-                                                        <div class="change down"><em class="icon ni ni-arrow-long-down"></em>1.92%</div>
+                                                        <div class="title">Loans Rolled Over</div>
+                                                        <div class="amount">{{num_rolledover_loans}}</div>
+                                                        <div class="change down"><span class="text-soft">{{pc_rolled_loans}}%</span></div>
                                                     </div>
                                                     <div class="analytic-data analytic-au-data">
-                                                        <div class="title">Amount Defaulted</div>
-                                                        <div class="amount text-danger">{{defaulted_amount}}</div>
-                                                        <div class="change up"><em class="icon ni ni-arrow-long-up"></em>3.45%</div>
+                                                        <div class="title">Loans Rejected</div>
+                                                        <div class="amount text-danger">{{num_rejected_loans}}</div>
+                                                        <div class="change up"><span class="text-soft">{{pc_rejected_loans}}%</span></div>
                                                     </div>
                                                 </div>
                                                 <div class="analytic-au-ck">
-                                                    <canvas class="analytics-au-chart" id="analyticAuData"></canvas>
+                                                    <canvas class="analytics-au-chart" id="disbursementData" data-company-id="{{ organization.id }}"></canvas>
                                                 </div>
                                                 <div class="chart-label-group">
-                                                    <div class="chart-label">01 Jan, 2020</div>
-                                                    <div class="chart-label">30 Jan, 2020</div>
+                                                    <div class="chart-label">01 Jan, 2023</div>
+                                                    <div class="chart-label">31 Dec, 2023</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -460,6 +460,7 @@
                                 </div><!-- .col -->
                                 {% endif %}
                                 {% if user.user_type == 'admin' %}
+                                <!--  to be done later    
                                 <div class="col-xxl-4">
                                     <div class="card card-bordered card-full">
                                         <div class="card-inner d-flex flex-column h-100">
@@ -527,7 +528,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div><!-- .col -->
+                                </div>.col -->
                                 {% endif %}
                                 <div class="col-md-6 col-xxl-3">
                                     <div class="card card-bordered card-full">
