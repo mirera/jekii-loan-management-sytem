@@ -23,7 +23,7 @@ def apiEndpoints(request):
         'Get company loans':'http://127.0.0.1:8000/api/loans/1',
         'Get company members':'http://127.0.0.1:8000/api/members/1',
         'Get company expenses':'http://127.0.0.1:8000/api/expenses/1',
-        'Get company income':'http://127.0.0.1:8000/api/income/1',
+        'Get company income-income':'http://127.0.0.1:8000/api/income-expense/1',
         'Get company loan perfomance':'http://127.0.0.1:8000/api/loans-repayment/1',
     }
     
@@ -64,13 +64,31 @@ def getCompanyExpense(request, company_id):
     expense = Expense.objects.filter(company=company_id)
     serializer = ExpenseSerializer(expense, many=True)
     return Response(serializer.data)
-'''
+
 @api_view(['GET'])
-def getCompanyIncome(request, company_id):
-    loans = Loan.objects.filter(company=company_id)
-    serializer = LoanSerializer(loans, many=True)
-    return Response(serializer.data)
-'''
+def getCompanyIncomExpense(request, company_id):
+    # Retrieve expenses for the given company and aggregate monthly expense data
+    expense_data = Expense.objects.filter(company=company_id).values('expense_date__month').annotate(total_expense=Sum('amount'))
+
+    # Retrieve income data for the given company and aggregate monthly income data
+    income_data = Loan.objects.filter(company=company_id, status__in=['cleared','rolled over']).values('approved_date__month').annotate(total_income=Sum('interest_amount'))
+
+    # Prepare the response data
+    response_data = {
+        'expenseData': [0] * 12,  # Initialize with 12 zeros
+        'incomeData': [0] * 12,   # Initialize with 12 zeros
+    }
+
+    # Update the corresponding month's value in the response data
+    for item in expense_data:
+        month = item['expense_date__month']
+        response_data['expenseData'][month - 1] = item['total_expense']
+
+    for item in income_data:
+        month = item['approved_date__month']
+        response_data['incomeData'][month - 1] = item['total_income']
+
+    return Response(response_data)
 
 @api_view(['GET']) 
 def getCompanyLoansRepayments(request, company_id):
