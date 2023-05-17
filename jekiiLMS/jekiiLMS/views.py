@@ -69,10 +69,23 @@ def homepage(request):
     #company staff context
     staff = CompanyStaff.objects.get(username=request.user.username)
 
+    all_loans = Loan.objects.all().count()
+    #rejected loans contexts
+    rejected_loans = Loan.objects.filter(status='rejected').filter(company=company)
+    num_rejected_loans = rejected_loans.count()
+    pc_rejected_loans = round(num_rejected_loans * 100 /all_loans , 2)
+
+    #rolledover loans contexts
+    rolledover_loans = Loan.objects.filter(status='rolled over').filter(company=company)
+    num_rolledover_loans = rolledover_loans.count()
+    pc_rolled_loans = round(num_rolledover_loans * 100 /all_loans , 2)
+
     #disbursed loans contexts
-    disbursed_loans = Loan.objects.filter(status__in=['approved','cleared','overdue']).filter(company=company)
+    disbursed_loans = Loan.objects.filter(status__in=['approved','cleared','overdue', 'written off', 'rolled over']).filter(company=company)
     num_disbursed_loans = disbursed_loans.count()
+    pc_disbursed_loans = round(num_disbursed_loans * 100 /all_loans , 2)
     total_disbursed_amount = disbursed_loans.aggregate(Sum('approved_amount'))['approved_amount__sum'] or 0
+
     #disbursed loans contexts - staff specific
     staff_disbursed_loans = Loan.objects.filter(status__in=['approved','cleared','overdue']).filter(loan_officer=staff, company=company)
     staff_num_disbursed_loans = staff_disbursed_loans.count()
@@ -92,6 +105,7 @@ def homepage(request):
     overdue_loans = Loan.objects.filter(status ='overdue', company=company)
     total_overdue_loans = overdue_loans.count()
     total_overdue_amount = overdue_loans.aggregate(Sum('due_amount'))['due_amount__sum'] or 0
+
     #overdue loans contexts - staff specific
     staff_overdue_loans = Loan.objects.filter(status ='overdue', loan_officer=staff, company=company)
     staff_num_overdue_loans = staff_overdue_loans.count()
@@ -157,6 +171,11 @@ def homepage(request):
         'matured_pc':matured_pc,
         'immature_pc':immature_pc,
         'defaulted_pc':defaulted_pc,
+        'num_rolledover_loans':num_rolledover_loans,
+        'num_rejected_loans':num_rejected_loans,
+        'pc_rejected_loans':pc_rejected_loans,
+        'pc_rolled_loans':pc_rolled_loans,
+        'pc_disbursed_loans':pc_disbursed_loans
         }
     return render(request, 'index.html', context)
   #--- companyadmin dashboard logic ends here--- 
