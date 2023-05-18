@@ -1,7 +1,5 @@
 from dataclasses import fields
-from django.forms import ModelForm
 from django import forms
-from datetime import datetime
 from .models import LoanProduct, Loan, Repayment, Guarantor, Collateral, MpesaStatement
 from member.models import Member
 from user.forms import CompanyStaff

@@ -7,8 +7,10 @@ from .forms import OrganizationForm, PackageForm, SmsForm, MpesaSettingForm, Ema
 from user.models import CompanyStaff
 from company.models import SmsSetting, MpesaSetting, EmailSetting
 from jekiiLMS.cred_process import encrypt_secret
+from jekiiLMS.decorators import permission_required
 
 #-- update organization details upon sign up view --
+@permission_required
 def updateOrganization(request, pk):
     organization = Organization.objects.get(id=pk)
     admins = CompanyStaff.objects.filter(company=organization, user_type='admin')
@@ -93,6 +95,7 @@ def updateOrganization(request, pk):
         return render(request,'company/update-company.html', context)
 
 # -- view to create package
+@permission_required
 def createPackage(request):
     if request.method == 'POST':
         form = PackageForm(request.POST)
@@ -108,6 +111,7 @@ def createPackage(request):
 # -- ends
 
 # -- view to list all packages
+@permission_required
 def listPackages(request):
     packages = Package.objects.all()
     form = PackageForm()
@@ -118,6 +122,7 @@ def listPackages(request):
 # -- ends
 
 # -- view to list all comapnies
+@permission_required
 def listCompanies(request):
     companies = Organization.objects.all()
     form = OrganizationForm()
@@ -128,6 +133,7 @@ def listCompanies(request):
 # -- ends
 
 # -- view to add sms setting
+@permission_required
 def updateSms(request, pk):
     organization = Organization.objects.get(id=pk)
     sms_setting = SmsSetting.objects.get(company=organization)
@@ -161,6 +167,7 @@ def updateSms(request, pk):
 # -- ends 
 
 # -- view to add mpesa setting
+@permission_required
 def updateMpesa(request, pk):
     organization = Organization.objects.get(id=pk)
     mpesa_setting = MpesaSetting.objects.get(company=organization)
@@ -205,6 +212,7 @@ def updateMpesa(request, pk):
 # -- ends
 
 # -- view to add mpesa setting
+@permission_required
 def updateEmail(request, pk):
     organization = Organization.objects.get(id=pk)
     email_setting = EmailSetting.objects.get(company=organization)

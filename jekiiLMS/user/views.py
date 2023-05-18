@@ -2,7 +2,7 @@ from django.contrib.auth.hashers import make_password
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
-from jekiiLMS.decorators import role_required
+from jekiiLMS.decorators import permission_required
 from datetime import datetime
 from django.core.mail import EmailMessage
 from django.conf import settings
@@ -14,7 +14,7 @@ from django.contrib import messages
 from .models import CompanyStaff, Role
 from branch.models import Branch 
 from company.models import Organization, Package, SmsSetting
-from jekiiLMS.sms_messages import send_sms
+from jekiiLMS.sms_messages import send_sms 
 
 
 #---user login in logic starts here---
@@ -172,7 +172,7 @@ def user_signup(request):
     context= {'form':form}
     return render (request, 'user/auth-register.html', context)
 #--- ends---
-
+@login_required
 def password_reset(request):
     return render(request, 'user/auth-reset.html')
 
@@ -181,7 +181,7 @@ def user_logout(request):
     return redirect('home')
 
 #-- list staffs view starts --
-#@role_required
+@permission_required
 def listStaff(request):
     
     if request.user.is_authenticated and request.user.is_active:
@@ -201,7 +201,7 @@ def listStaff(request):
 #-- end -- 
 
 #-- adding a staff then as a user --
-#@role_required 
+@permission_required
 def addStaff(request):
 
     if request.user.is_authenticated and request.user.is_active:
@@ -285,7 +285,7 @@ def addStaff(request):
 #-- end --
 
 # -- delete staff --
-@role_required
+@permission_required
 def deleteStaff(request,pk):
 
     if request.user.is_authenticated and request.user.is_active:
@@ -393,6 +393,7 @@ def updateStaff(request, pk):
         return render(request,'user/update-staff.html',{'form':form, 'staff':staff})
 # -- ends 
 # -- view to deactivate a staff
+@permission_required
 def deactivateStaff(request, pk):
     staff = CompanyStaff.objects.get(id=pk)
     user = User.objects.get(username=staff.username)
@@ -419,6 +420,7 @@ def deactivateStaff(request, pk):
 # -- ends
 
 # -- view to activate staff
+@permission_required
 def activateStaff(request, pk):
     staff = CompanyStaff.objects.get(id=pk)
     staff.status = 'active'
@@ -444,7 +446,7 @@ def activateStaff(request, pk):
 # -- ends
 
 # -- create role --
-#@role_required
+@permission_required
 def addRole(request):
     # Get all available permissions
     permissions = Permission.objects.filter(
@@ -480,7 +482,7 @@ def addRole(request):
 # -- ends --
 
 # -- edit role --
-#@role_required
+@permission_required
 def editRole(request, pk):
     if request.user.is_authenticated and request.user.is_active:
         try:
@@ -539,7 +541,7 @@ def rolesList(request):
 # -- ends --
 
 # -- delete role --
-#@role_required
+@permission_required
 def deleteRole(request,pk):
 
     if request.user.is_authenticated and request.user.is_active:

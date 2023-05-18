@@ -3,15 +3,14 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from .models import Branch ,ExpenseCategory, Expense
 from .forms import BranchForm, ExpenseCategoryForm , ExpenseForm
-from company.models import Organization
 from user.forms import CompanyStaff
-from jekiiLMS.decorators import role_required
+from jekiiLMS.decorators import permission_required
 from jekiiLMS.format_inputs import format_phone_number
 
 
 
 #create branch view starts
-@role_required
+@permission_required
 def createBranch(request):
     form = BranchForm()
     #filter the Branch queryset to include only branches that belong to the logged in company 
@@ -50,7 +49,7 @@ def createBranch(request):
 #create branch view ends
 
 #edit branch view starts
-@role_required
+@permission_required
 def editBranch(request,pk):
     if request.user.is_authenticated and request.user.is_active:
         try:
@@ -97,7 +96,7 @@ def list_branches(request):
 # list branches view ends
 
 # delete branch view starts 
-@role_required
+@permission_required
 def deleteBranch(request,pk):
 
     if request.user.is_authenticated and request.user.is_active:
@@ -120,7 +119,7 @@ def deleteBranch(request,pk):
 
 
 # view branch view starts 
-@role_required
+@permission_required
 def viewBranch(request, pk):
     branch = Branch.objects.get(id=pk)
 
