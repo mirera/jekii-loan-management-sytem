@@ -21,9 +21,8 @@
                                         <a href="#" class="dropdown-toggle btn btn-icon btn-primary" data-bs-toggle="dropdown"><em class="icon ni ni-plus"></em></a>
                                         <div class="dropdown-menu dropdown-menu-end">
                                             <ul class="link-list-opt no-bdr">
-                                                <li><a data-bs-toggle="modal" href="#addLoan"><span>Add Loan</span></a></li>
-                                                <li><a href="#"><span>Add Loan Repayment</span></a></li>
-                                                <li><a data-bs-toggle="modal" href="#loanCalc"><span>Loan Calculator</span></a></li>
+                                                <li><a href="{% url 'create-loan-product' %}"><span>Add Loan Product</span></a></li>
+                                                <li><a href="{% url 'create-loan' %}"><span>Add Loan</span></a></li>
                                             </ul>
                                         </div>
                                     </div>
@@ -32,7 +31,7 @@
                         </div><!-- .nk-block-head-content -->
                     </div><!-- .nk-block-between -->
                 </div><!-- .nk-block-head -->
-                <form action=" " class="form-validate" method="POST">
+                <form action=" " class="form-validate" method="POST"> 
                     {% csrf_token %}
                     <div class="row g-4">
                         <div class="col-lg-6">
@@ -42,7 +41,8 @@
                                 {% for loanproduct in loanproducts %}
                                 <div class="form-control-wrap">
                                     <!-- <input type="text" class="form-control" id="full-name-1" name="name" value="{{ loan_product.name }}"> -->
-                                     <option value="{{ loanproduct.id }}">{{ loanproduct.loan_product_name }}</option>
+                                     <option value="{{ loanproduct.id }}">{{ loanproduct.loan_product_name }}</option> 
+
                                 </div>
                                 {% endfor %}
                                 </select>
@@ -56,7 +56,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="fv-phone">Ksh</span>
                                         </div>
-                                        <input type="number" step="0.01" min="0" name="amount" class="form-control" id="amount" required>
+                                        <input type="number" step="0.01" min="0" name="amount" class="form-control" id="amount" required> 
                                     </div>
                                 </div>
                             </div>

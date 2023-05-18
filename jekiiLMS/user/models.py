@@ -74,7 +74,7 @@ USER_TYPE = (
     ('admin','ADMIN'),
     ('staff', 'STAFF')
 )
-
+ 
 STATUS = (
     ('active','ACTIVE'),
     ('inactive','INACTIVE'),

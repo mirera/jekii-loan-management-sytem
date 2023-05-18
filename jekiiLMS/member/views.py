@@ -1,15 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from jekiiLMS.decorators import role_required
 from django.contrib import messages
 from .models import Member, Branch
 from .forms import MemberForm
-from company.forms import SmsSetting
 from user.models import CompanyStaff
+from jekiiLMS.decorators import permission_required
 from jekiiLMS.format_inputs import format_phone_number
-from jekiiLMS.sms_messages import send_sms
 
 
 #create member view starts
+@permission_required
 def createMember(request):
     #filter the Branch queryset to include only branches that belong to the logged in company 
     if request.user.is_authenticated and request.user.is_active:
@@ -86,6 +85,7 @@ def viewMember(request, pk):
 # view member view ends
 
 # delete member view starts
+@permission_required
 def deleteMember(request,pk):
     #member = Member.objects.get(id=pk)
     member = get_object_or_404(Member, id=pk)
@@ -100,6 +100,7 @@ def deleteMember(request,pk):
 # delete member ends 
 
 #edit member view starts
+@permission_required
 def editMember(request,pk):
     
     if request.user.is_authenticated and request.user.is_active:
