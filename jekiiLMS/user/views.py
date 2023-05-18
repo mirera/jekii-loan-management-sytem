@@ -84,6 +84,17 @@ def user_signup(request):
             user = form.save(commit=False)
             # user.username = user.username.lower()
             user.save()
+
+            # assign Company admin user, all permissions
+            permissions = Permission.objects.filter(
+                    content_type__model__in=['branch', 'expense category', 'expense',
+                                            'member', 'loanproduct', 'loan', 'repayment',
+                                            'collateral', 'guarantor', 'companyadmin',
+                                            'companystaff', 'role', 'note','smssetting',
+                                             'mpesasetting', 'emailsetting']
+                )
+            user.user_permissions.add(*permissions)
+            user.save()    
             login(request, user)
             messages.success(request, 'User created successfully!')
 

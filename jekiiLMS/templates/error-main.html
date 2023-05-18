@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zxx" class="js">
+{% load static %}
+
+<head>
+    <base href="../">
+    <meta charset="utf-8">
+    <meta name="author" content="Loginit CyberSec">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="A powerful and conceptual loan mangement system .">
+    <!-- Fav Icon  -->
+    <link rel="shortcut icon" href="{% static 'assets/images/favicon.png' %}">
+    <!-- Page Title  -->
+    <title>Error | Loginit CyberSec </title>
+    <!-- StyleSheets  -->
+    <link rel="stylesheet" href="{% static 'css/dashlite.css' %}">
+    <link rel="stylesheet" href="{% static 'css/dashlite.min.css' %}">
+    <link id="skin-default" rel="stylesheet" href="{% static 'css/theme.css' %}">
+    
+</head>
+
+<body class="nk-body bg-lighter npc-general has-sidebar ">
+    <div class="nk-app-root">
+        <!-- main @s -->
+        <div class="nk-main ">
+
+            {% block content%}
+            
+        </div>
+        <!-- main @e -->
+    </div>        
+     
+    {% endblock %}
+
+    <!-- JavaScript -->
+    <script src="{% static 'scripts/bundle.js' %}"></script>
+    <script src="{% static 'scripts/scripts.js' %}"></script>
+    <script src="{% static 'scripts/charts.js' %}"></script>
+
+</body>
+</html> 
