@@ -7,3 +7,4 @@ class LoanConfig(AppConfig):
 
     def ready(self):
         import loan.signals
+     

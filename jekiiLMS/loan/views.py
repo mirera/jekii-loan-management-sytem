@@ -306,7 +306,7 @@ def editLoan(request,pk):
 
 #approve loan logic starts here
 @login_required(login_url='login')
-@permission_required('loan.change_loan')
+@permission_required('loan.approve_loan')
 def approveLoan(request,pk):
     if request.method == 'POST':
         if request.user.is_authenticated and request.user.is_active:
@@ -424,7 +424,7 @@ def approveLoan(request,pk):
 
 #approve loan logic starts here
 @login_required(login_url='login')
-@permission_required('loan.change_loan')
+@permission_required('loan.reject_loan')
 def rejectLoan(request,pk):
     if request.method == 'POST':
 
@@ -1133,7 +1133,7 @@ def repayment_callback(request):
 
 # -- write off a loan view
 @login_required(login_url='login')
-@permission_required('loan.change_loan')
+@permission_required('loan.write_off_loan')
 def writeOff(request, pk):
     loan = Loan.objects.get(id=pk)
     write_loan_off(loan)
@@ -1144,7 +1144,7 @@ def writeOff(request, pk):
 
 # -- roll over loan view
 @login_required(login_url='login')
-@permission_required('loan.change_loan')
+@permission_required('loan.rollover_loan')
 def rollOver(request, pk):
     loan = Loan.objects.get(id=pk)
     borrower = loan.member

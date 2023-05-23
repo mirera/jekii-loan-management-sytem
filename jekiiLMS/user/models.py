@@ -98,6 +98,10 @@ class CompanyStaff(models.Model):
 
     class Meta:
         ordering = ['-date_added']
+        permissions = [
+            ('deactivate_user', 'Can deactivate user'),
+            ('activate_user', 'Can activate user'),
+        ]
 
     def __str__(self):
         return self.first_name + ' ' + self.last_name

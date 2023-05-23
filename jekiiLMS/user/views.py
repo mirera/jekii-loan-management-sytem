@@ -410,7 +410,7 @@ def updateStaff(request, pk):
 
 # -- view to deactivate a staff
 @login_required(login_url='login')
-@permission_required('user.change_user')
+@permission_required('user.deactivate_user')
 def deactivateStaff(request, pk):
     staff = CompanyStaff.objects.get(id=pk)
     user = User.objects.get(username=staff.username)
@@ -438,7 +438,7 @@ def deactivateStaff(request, pk):
 
 # -- view to activate staff
 @login_required(login_url='login')
-@permission_required('user.change_user')
+@permission_required('user.activate_user')
 def activateStaff(request, pk):
     staff = CompanyStaff.objects.get(id=pk)
     staff.status = 'active'

@@ -4,11 +4,10 @@ from django.urls import reverse
 from django.db.models import Sum
 from datetime import timedelta, datetime
 from dateutil.relativedelta import relativedelta
-import math
+from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User
-from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
-from decimal import Decimal
 from django.utils.timezone import now
 from django.db import transaction
 from member.models import Member
@@ -321,10 +320,18 @@ class Loan(models.Model):
         
     class Meta:
         ordering = ['-application_date']
+        permissions = [
+            ('approve_loan', 'Can approve loan'),
+            ('reject_loan', 'Can reject loan'),
+            ('write_off_loan', 'Can write off loan'),
+            ('rollover_loan', 'Can roll over loan'),
+        ]
 
 
     def __str__(self):
         return self.member.first_name + ' ' + self.member.last_name
+
+
 
 # Note models starts here   
 class Note(models.Model):
