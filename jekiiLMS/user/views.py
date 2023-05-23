@@ -549,6 +549,7 @@ def editRole(request, pk):
 
         context = {'form':form, 'role':role}    
         return render(request,'user/edit-role.html', context)
+        
 # -- ends --
 
 # --  roles list --
