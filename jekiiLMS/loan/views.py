@@ -3,6 +3,7 @@ from django.urls import reverse
 from django.core.mail import EmailMessage
 from django.conf import settings
 from django.template.loader import render_to_string
+from django.contrib.auth.decorators import login_required 
 import os
 from django.contrib import messages
 from django.db.models import Sum
@@ -25,7 +26,8 @@ from jekiiLMS.mpesa_api import disburse_loan
 
 
 #create Loan Product view starts 
-@permission_required
+@login_required(login_url='login')
+@permission_required('loan.add_loanproduct')
 def createLoanProduct(request):
     form = LoanProductForm()
 
@@ -65,8 +67,9 @@ def createLoanProduct(request):
     return render(request,'loan/loan-product-create.html', context)
 #create loan Product view ends
 
-
-# list Loan Products view starts 
+# list Loan Products view starts
+@login_required(login_url='login')
+@permission_required('loan.view_loanproduct') 
 def listLoanProducts(request):
     
     if request.user.is_authenticated and request.user.is_active:
@@ -83,10 +86,11 @@ def listLoanProducts(request):
 
     context = {'loanproducts': loanproducts, 'form':form}
     return render(request, 'loan/loan-product-list.html', context)
-
 # list Loan Products view ends
 
-# detailview Loan Products view starts 
+# detailview Loan Products view starts
+@login_required(login_url='login')
+@permission_required('loan.view_loanproduct') 
 def viewLoanProduct(request, pk):
     
     if request.user.is_authenticated and request.user.is_active:
@@ -102,11 +106,11 @@ def viewLoanProduct(request, pk):
 
     context = {'loanproduct': loanproduct}
     return render(request, 'loan/loan-product-view.html', context)
-
 # detailview Loan Products view ends
 
 # delete Loan Products view starts 
-@permission_required
+@login_required(login_url='login')
+@permission_required('loan.delete_loanproduct')
 def deleteLoanProduct(request,pk):
     
     if request.user.is_authenticated and request.user.is_active:
@@ -125,11 +129,11 @@ def deleteLoanProduct(request,pk):
         return redirect('loan-products')
     context = {'obj':loanproduct}
     return render(request,'loan/delete-loan-product.html', context)
-
 # delete Loan Products ends starts 
 
 #edit Loan Products view starts
-@permission_required
+@login_required(login_url='login')
+@permission_required('loan.change_loanproduct')
 def editLoanProduct(request,pk):
     
     if request.user.is_authenticated and request.user.is_active:
@@ -184,12 +188,13 @@ def editLoanProduct(request,pk):
         }
         form = LoanProductForm(initial=form_data)
         return render(request,'loan/edit-loan-product.html',{'form':form})
-
 #edit Loan Products view ends
 
 #views for loan 
 
 #create Loan view starts
+@login_required(login_url='login')
+@permission_required('loan.add_loan')
 def createLoan(request):
     if request.user.is_authenticated and request.user.is_active:
         try:
@@ -234,6 +239,8 @@ def createLoan(request):
 #create loan view ends
 
 #edit Loan  view starts
+@login_required(login_url='login')
+@permission_required('loan.change_loan')
 def editLoan(request,pk):
     if request.user.is_authenticated and request.user.is_active:
         try:
@@ -298,7 +305,8 @@ def editLoan(request,pk):
 #edit Loan view ends
 
 #approve loan logic starts here
-@permission_required
+@login_required(login_url='login')
+@permission_required('loan.change_loan')
 def approveLoan(request,pk):
     if request.method == 'POST':
         if request.user.is_authenticated and request.user.is_active:
@@ -415,7 +423,8 @@ def approveLoan(request,pk):
 #approve logic ends
 
 #approve loan logic starts here
-@permission_required
+@login_required(login_url='login')
+@permission_required('loan.change_loan')
 def rejectLoan(request,pk):
     if request.method == 'POST':
 
@@ -473,6 +482,8 @@ def rejectLoan(request,pk):
 #approve logic ends
 
 # list Loan  view starts 
+@login_required(login_url='login')
+@permission_required('loan.view_loan')
 def listLoans(request):
     if request.user.is_authenticated and request.user.is_active:
         try:
@@ -488,11 +499,12 @@ def listLoans(request):
 
     context = {'loans': loans, 'form':form}
     return render(request, 'loan/loans-list.html', context)
-
 # list Loan  view ends
 
 
 # detailview Loan  view starts 
+@login_required(login_url='login')
+@permission_required('loan.view_loan')
 def viewLoan(request, pk):
     if request.user.is_authenticated and request.user.is_active:
         try:
@@ -552,12 +564,11 @@ def viewLoan(request, pk):
         'form_statement' : form_statement
         }
     return render(request, 'loan/loan-view.html', context)
-
 # detailview Loan  view ends
 
-
 # delete Loan  view starts
-@permission_required
+@login_required(login_url='login')
+@permission_required('loan.delete_loan')
 def deleteLoan(request,pk):
 
     if request.user.is_authenticated and request.user.is_active:
@@ -582,6 +593,8 @@ def deleteLoan(request,pk):
 # delete Loan  ends starts
 
 #create repayment view starts
+@login_required(login_url='login')
+@permission_required('loan.add_repayment')
 def createRepayment(request):
 
     if request.user.is_authenticated and request.user.is_active:
@@ -622,6 +635,8 @@ def createRepayment(request):
 #-- ends --
 
 # list Repayments  view starts 
+@login_required(login_url='login')
+@permission_required('loan.view_repayment')
 def listRepayments(request):
     
     if request.user.is_authenticated and request.user.is_active:
@@ -638,10 +653,11 @@ def listRepayments(request):
 
     context = {'repayments': repayments, 'form':form}
     return render(request, 'loan/repayment-list.html', context)
-
 # list Repayment  view ends
 
 # delete Repayment  view starts 
+@login_required(login_url='login')
+@permission_required('loan.delete_repayment')
 def deleteRepayment(request,pk):
     
     if request.user.is_authenticated and request.user.is_active:
@@ -663,11 +679,11 @@ def deleteRepayment(request,pk):
      #context is {'obj':branch}, in delete.html we are accessing room/message as 'obj'
     context = {'obj':repayment}
     return render(request,'loan/delete-repayment.html', context)
-
 # delete Repayment  ends 
 
 #edit repayment  view starts
-@permission_required
+@login_required(login_url='login')
+@permission_required('loan.change_repayment')
 def editRepayment(request,pk):
         
     if request.user.is_authenticated and request.user.is_active:
@@ -707,6 +723,7 @@ def editRepayment(request,pk):
 #edit repayment view ends
  
 #loan cacl view start
+@login_required(login_url='login')
 def loan_calculator(request):
     form =LoanForm()
     if request.method == "POST":
@@ -765,7 +782,8 @@ def loan_calculator(request):
 #loan cacl view ends
 
 #add guarontor view starts
-@permission_required
+@login_required(login_url='login')
+@permission_required('loan.add_guarantor')
 def addGuarantor(request, pk):
 
     if request.user.is_authenticated and request.user.is_active:
@@ -801,7 +819,8 @@ def addGuarantor(request, pk):
 
 
 # delete guarantor  view starts
-# @permission_required 
+@login_required(login_url='login')
+@permission_required('loan.delete_guarantor')
 def removeGuarantor(request, pk, guarantor_id):
     if request.user.is_authenticated and request.user.is_active:
         try:
@@ -825,7 +844,8 @@ def removeGuarantor(request, pk, guarantor_id):
 # delete guarantor  ends 
 
 #add guarontor view starts
-@permission_required
+@login_required(login_url='login')
+@permission_required('loan.add_collateral')
 def addCollateral(request, pk):
 
     if request.user.is_authenticated and request.user.is_active:
@@ -858,7 +878,8 @@ def addCollateral(request, pk):
 #dd guarontor view ends   
 
 # delete collateral  view starts 
-@permission_required
+@login_required(login_url='login')
+@permission_required('loan.delete_collateral')
 def removeCollateral(request, pk, collateral_id):
     if request.user.is_authenticated and request.user.is_active:
         try:
@@ -883,7 +904,8 @@ def removeCollateral(request, pk, collateral_id):
 
 
 #add guarontor view starts
-@permission_required
+@login_required(login_url='login')
+@permission_required('loan.change_collateral')
 def editCollateral(request,pk):
 
     if request.user.is_authenticated and request.user.is_active:
@@ -934,6 +956,8 @@ def editCollateral(request,pk):
 #edit collateral view ends  
 
 #add repayment on a loanview view starts
+@login_required(login_url='login')
+@permission_required('loan.add_repayment')
 def addRepayment(request, pk):
 
     if request.user.is_authenticated and request.user.is_active:
@@ -972,6 +996,8 @@ def addRepayment(request, pk):
 #add repayment on a loanview view ends 
   
 #add statement view starts
+@login_required(login_url='login')
+@permission_required('loan.add_mpesastatement')
 def addStatement(request, pk):
 
     if request.user.is_authenticated and request.user.is_active:
@@ -1005,6 +1031,8 @@ def addStatement(request, pk):
 # view ends   
 
 #analyse statement view starts
+@login_required(login_url='login')
+@permission_required('loan.view_loan')
 def analyseStatement(request, pk):
 
     if request.user.is_authenticated and request.user.is_active:
@@ -1031,6 +1059,7 @@ def analyseStatement(request, pk):
 #dd  view ends  
 
 # -- api b2c result url 
+@login_required(login_url='login')
 @csrf_exempt
 def b2c_result(request):
     if request.method == 'POST':
@@ -1046,6 +1075,7 @@ def b2c_result(request):
 # -- ends 
 
 # -- api b2c timeout url 
+@login_required(login_url='login')
 @csrf_exempt
 def b2c_timeout(request):
     if request.method == 'POST':
@@ -1059,6 +1089,7 @@ def b2c_timeout(request):
 # -- ends 
 
 # -- repayments callback
+@login_required(login_url='login')
 @csrf_exempt
 def repayment_callback(request):
     if request.method == 'POST':
@@ -1101,7 +1132,8 @@ def repayment_callback(request):
 # -- ends
 
 # -- write off a loan view
-@permission_required
+@login_required(login_url='login')
+@permission_required('loan.change_loan')
 def writeOff(request, pk):
     loan = Loan.objects.get(id=pk)
     write_loan_off(loan)
@@ -1111,7 +1143,8 @@ def writeOff(request, pk):
 # -- ends
 
 # -- roll over loan view
-@permission_required
+@login_required(login_url='login')
+@permission_required('loan.change_loan')
 def rollOver(request, pk):
     loan = Loan.objects.get(id=pk)
     borrower = loan.member

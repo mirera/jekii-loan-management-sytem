@@ -85,7 +85,7 @@ def user_signup(request):
             # user.username = user.username.lower()
             user.save()
 
-            # assign Company admin user, all permissions
+            # assign Company admin user, all permissions 
             permissions = Permission.objects.filter(
                     content_type__model__in=['branch', 'expense category', 'expense',
                                             'member', 'loanproduct', 'loan', 'repayment',
@@ -94,7 +94,7 @@ def user_signup(request):
                                              'mpesasetting', 'emailsetting']
                 )
             user.user_permissions.add(*permissions)
-            user.save()    
+            #user.save()    
             login(request, user)
             messages.success(request, 'User created successfully!')
 
@@ -172,7 +172,8 @@ def user_signup(request):
     context= {'form':form}
     return render (request, 'user/auth-register.html', context)
 #--- ends---
-@login_required
+
+@login_required(login_url='login')
 def password_reset(request):
     return render(request, 'user/auth-reset.html')
 
@@ -181,7 +182,8 @@ def user_logout(request):
     return redirect('home')
 
 #-- list staffs view starts --
-@permission_required
+@login_required(login_url='login')
+@permission_required('user.view_user')
 def listStaff(request):
     
     if request.user.is_authenticated and request.user.is_active:
@@ -201,7 +203,8 @@ def listStaff(request):
 #-- end -- 
 
 #-- adding a staff then as a user --
-@permission_required
+@login_required(login_url='login')
+@permission_required('user.add_user')
 def addStaff(request):
 
     if request.user.is_authenticated and request.user.is_active:
@@ -221,6 +224,8 @@ def addStaff(request):
 
         role_id = request.POST.get('staff_role')
         role = Role.objects.get(pk=role_id)
+
+        permissions = role.permissions.all() #retrieve all permissions assigned to a role
 
         first_name = request.POST.get('first_name')
         last_name= request.POST.get('last_name')
@@ -248,13 +253,16 @@ def addStaff(request):
             profile_photo=request.FILES.get('profile_photo')
         )
         #signing up the created user
-        User.objects.create(
+        user = User.objects.create(
             username = username,
             password = password,
             first_name = request.POST.get('first_name'),
             last_name= request.POST.get('last_name'),
             email = email,
         )
+        #assign user role permissions
+        user.user_permissions.add(*permissions)
+
         #send email to for email verification 
         company_name = company.name
         company_email = company.email
@@ -285,7 +293,8 @@ def addStaff(request):
 #-- end --
 
 # -- delete staff --
-@permission_required
+@login_required(login_url='login')
+@permission_required('user.add_user')
 def deleteStaff(request,pk):
 
     if request.user.is_authenticated and request.user.is_active:
@@ -307,6 +316,8 @@ def deleteStaff(request,pk):
 # -- ends --
 
 # -- update userprofile
+@login_required(login_url='login')
+@permission_required('user.change_user')
 def update_user_profile(request):
         
     if request.user.is_authenticated and request.user.is_active:
@@ -347,6 +358,8 @@ def update_user_profile(request):
 # -- ends
 
 # -- edit user/staff
+@login_required(login_url='login')
+@permission_required('user.change_user')
 def updateStaff(request, pk):
         
     if request.user.is_authenticated and request.user.is_active:
@@ -357,10 +370,12 @@ def updateStaff(request, pk):
             company = None
 
     staff = CompanyStaff.objects.get(id=pk, company=company)
-    phone_no = request.POST.get('phone_no')
-    formated_phone_no = format_phone_number(phone_no)
+    
     
     if request.method == 'POST':
+        phone_no = request.POST.get('phone_no')
+        formated_phone_no = format_phone_number(phone_no) 
+
         staff.company= company
         staff.username = request.POST.get('username')
         staff.email = request.POST.get('email')
@@ -392,8 +407,10 @@ def updateStaff(request, pk):
         form = CompanyStaffForm(initial=form_data)
         return render(request,'user/update-staff.html',{'form':form, 'staff':staff})
 # -- ends 
+
 # -- view to deactivate a staff
-@permission_required
+@login_required(login_url='login')
+@permission_required('user.change_user')
 def deactivateStaff(request, pk):
     staff = CompanyStaff.objects.get(id=pk)
     user = User.objects.get(username=staff.username)
@@ -420,7 +437,8 @@ def deactivateStaff(request, pk):
 # -- ends
 
 # -- view to activate staff
-@permission_required
+@login_required(login_url='login')
+@permission_required('user.change_user')
 def activateStaff(request, pk):
     staff = CompanyStaff.objects.get(id=pk)
     staff.status = 'active'
@@ -446,7 +464,8 @@ def activateStaff(request, pk):
 # -- ends
 
 # -- create role --
-@permission_required
+@login_required(login_url='login')
+@permission_required('user.add_role')
 def addRole(request):
     # Get all available permissions
     permissions = Permission.objects.filter(
@@ -482,7 +501,8 @@ def addRole(request):
 # -- ends --
 
 # -- edit role --
-@permission_required
+@login_required(login_url='login')
+@permission_required('user.change_role')
 def editRole(request, pk):
     if request.user.is_authenticated and request.user.is_active:
         try:
@@ -503,8 +523,20 @@ def editRole(request, pk):
         selected_permissions = request.POST.getlist('permissions')
         role.permissions.set(selected_permissions)
 
+        #update all users with the role permissions
+        permissions = role.permissions.all() 
+
+        #get all staff with this role
+        staffs = CompanyStaff.objects.filter(company=company, staff_role=role)
+        #assign users permissions
+        for staff in staffs:
+            user = User.objects.get(username=staff.username)
+            user.user_permissions.set(permissions)
+
         messages.success(request, 'Role updated successfully!')
         return redirect('roles-list')
+
+        # update all permissions of user under this role -- mind company specifity
 
     else:
         # prepopulate the form with existing data
@@ -520,6 +552,8 @@ def editRole(request, pk):
 # -- ends --
 
 # --  roles list --
+@login_required(login_url='login')
+@permission_required('user.view_role')
 def rolesList(request):
     permissions = Permission.objects.filter(
             content_type__model__in=['branch', 'expense category', 'expense',
@@ -541,7 +575,8 @@ def rolesList(request):
 # -- ends --
 
 # -- delete role --
-@permission_required
+@login_required(login_url='login')
+@permission_required('user.delete_role')
 def deleteRole(request,pk):
 
     if request.user.is_authenticated and request.user.is_active:

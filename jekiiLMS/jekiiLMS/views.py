@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.db.models import Sum
 from datetime import datetime
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required 
 from branch.models import Branch, Expense
 from loan.models import Loan, Repayment
 from member.models import Member

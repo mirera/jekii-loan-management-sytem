@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required 
 from .models import Branch ,ExpenseCategory, Expense
 from .forms import BranchForm, ExpenseCategoryForm , ExpenseForm
 from user.forms import CompanyStaff
@@ -10,7 +10,8 @@ from jekiiLMS.format_inputs import format_phone_number
 
 
 #create branch view starts
-@permission_required
+@login_required(login_url='login')
+@permission_required('branch.add_branch')
 def createBranch(request):
     form = BranchForm()
     #filter the Branch queryset to include only branches that belong to the logged in company 
@@ -49,7 +50,8 @@ def createBranch(request):
 #create branch view ends
 
 #edit branch view starts
-@permission_required
+@login_required(login_url='login')
+@permission_required('branch.change_branch')
 def editBranch(request,pk):
     if request.user.is_authenticated and request.user.is_active:
         try:
@@ -83,9 +85,15 @@ def editBranch(request,pk):
 #edit branch view ends
 
 # list branches view starts 
+@login_required(login_url='login')
+@permission_required('branch.view_branch')
 def list_branches(request):
-    #filter the Branch queryset to include only branches that belong to the logged in company 
-    company = request.user.organization
+    if request.user.is_authenticated and request.user.is_active:
+        try:
+            companystaff = CompanyStaff.objects.get(username=request.user.username)
+            company = companystaff.company
+        except CompanyStaff.DoesNotExist:
+            company = None
     branches = Branch.objects.filter(company=company).order_by('-open_date')
     form = BranchForm()
     
@@ -96,7 +104,8 @@ def list_branches(request):
 # list branches view ends
 
 # delete branch view starts 
-@permission_required
+@login_required(login_url='login')
+@permission_required('branch.delete_branch')
 def deleteBranch(request,pk):
 
     if request.user.is_authenticated and request.user.is_active:
@@ -117,19 +126,19 @@ def deleteBranch(request,pk):
 
 # delete branch ends starts
 
-
 # view branch view starts 
-@permission_required
+@login_required(login_url='login')
+@permission_required('branch.view_branch')
 def viewBranch(request, pk):
     branch = Branch.objects.get(id=pk)
 
     context = {'branch': branch}
     return render(request, 'branch/branch.html', context)
-
 # view branch view ends
 
-
 #create expense category view starts
+@login_required(login_url='login')
+@permission_required('branch.add_expensecategory')
 def createExpenseCategory(request):
     form = ExpenseCategoryForm()
 
@@ -153,6 +162,8 @@ def createExpenseCategory(request):
 #create expense category view ends
 
 #edit expense category view starts
+@login_required(login_url='login')
+@permission_required('branch.change_expensecategory')
 def editCategory(request,pk):
 
     if request.user.is_authenticated and request.user.is_active:
@@ -182,7 +193,9 @@ def editCategory(request,pk):
 
 #edit expense category view ends
 
-# list expense Categories view starts 
+# list expense Categories view starts
+@login_required(login_url='login')
+@permission_required('branch.view_expensecategory') 
 def list_categories(request):
     if request.user.is_authenticated and request.user.is_active:
         try:
@@ -200,6 +213,8 @@ def list_categories(request):
 # list expense categories view ends
 
 # delete expense category view starts 
+@login_required(login_url='login')
+@permission_required('branch.delete_expensecategory')
 def deleteExpenseCategory(request,pk):
     if request.user.is_authenticated and request.user.is_active:
         try:
@@ -220,9 +235,9 @@ def deleteExpenseCategory(request,pk):
 
 # delete expense category view ends 
 
-
-
 #create expense category view starts
+@login_required(login_url='login')
+@permission_required('branch.add_expense')
 def createExpense(request):
     if request.user.is_authenticated and request.user.is_active:
         try:
@@ -260,7 +275,9 @@ def createExpense(request):
 #create expense category view ends  
 
 
-# list expense Categories view starts 
+# list expense Categories view starts
+@login_required(login_url='login')
+@permission_required('branch.view_expense')
 def list_expenses(request):
 
     if request.user.is_authenticated and request.user.is_active:
@@ -275,11 +292,11 @@ def list_expenses(request):
 
     context = {'expenses': expenses, 'form':form}
     return render(request, 'branch/expenses_list.html', context)
-
 # list expense categories view ends
 
-
 #edit expense category view starts
+@login_required(login_url='login')
+@permission_required('branch.change_expense')
 def editExpense(request,pk):
     if request.user.is_authenticated and request.user.is_active:
         try:
@@ -325,11 +342,11 @@ def editExpense(request,pk):
         }
         form = ExpenseForm(initial=form_data)
         return render(request,'branch/expenses_list.html',{'form':form})
-
 #edit expense category view ends  
 
-
-# delete expense  view starts 
+# delete expense  view starts
+@login_required(login_url='login')
+@permission_required('branch.delete_expense') 
 def deleteExpense(request,pk):
     if request.user.is_authenticated and request.user.is_active:
         try:
@@ -347,5 +364,4 @@ def deleteExpense(request,pk):
 
     context = {'obj':expense}
     return render(request,'branch/expenses_list.html', context)
-
 # delete expense  view ends 

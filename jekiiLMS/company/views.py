@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
+from django.contrib.auth.decorators import login_required 
 from django.core.mail import EmailMessage
 from django.contrib import messages
 from .models import Organization, Package
@@ -10,7 +11,8 @@ from jekiiLMS.cred_process import encrypt_secret
 from jekiiLMS.decorators import permission_required
 
 #-- update organization details upon sign up view --
-@permission_required
+@login_required(login_url='login')
+@permission_required('company.change_organization')
 def updateOrganization(request, pk):
     organization = Organization.objects.get(id=pk)
     admins = CompanyStaff.objects.filter(company=organization, user_type='admin')
@@ -96,6 +98,8 @@ def updateOrganization(request, pk):
 
 # -- view to create package
 @permission_required
+@login_required(login_url='login')
+@permission_required('company.add_package')
 def createPackage(request):
     if request.method == 'POST':
         form = PackageForm(request.POST)
@@ -111,7 +115,7 @@ def createPackage(request):
 # -- ends
 
 # -- view to list all packages
-@permission_required
+@login_required(login_url='login')
 def listPackages(request):
     packages = Package.objects.all()
     form = PackageForm()
@@ -122,7 +126,8 @@ def listPackages(request):
 # -- ends
 
 # -- view to list all comapnies
-@permission_required
+@login_required(login_url='login')
+@permission_required('company.view_organization')
 def listCompanies(request):
     companies = Organization.objects.all()
     form = OrganizationForm()
@@ -133,7 +138,8 @@ def listCompanies(request):
 # -- ends
 
 # -- view to add sms setting
-@permission_required
+@login_required(login_url='login')
+@permission_required('company.change_smssetting')
 def updateSms(request, pk):
     organization = Organization.objects.get(id=pk)
     sms_setting = SmsSetting.objects.get(company=organization)
@@ -167,7 +173,8 @@ def updateSms(request, pk):
 # -- ends 
 
 # -- view to add mpesa setting
-@permission_required
+@login_required(login_url='login')
+@permission_required('company.change_mpesasetting')
 def updateMpesa(request, pk):
     organization = Organization.objects.get(id=pk)
     mpesa_setting = MpesaSetting.objects.get(company=organization)
@@ -212,7 +219,8 @@ def updateMpesa(request, pk):
 # -- ends
 
 # -- view to add mpesa setting
-@permission_required
+@login_required(login_url='login')
+@permission_required('company.change_emailsetting')
 def updateEmail(request, pk):
     organization = Organization.objects.get(id=pk)
     email_setting = EmailSetting.objects.get(company=organization)
@@ -257,6 +265,7 @@ def updateEmail(request, pk):
 # -- ends
 
 # -- view to send test email
+@login_required(login_url='login')
 def sendTestEmail(request, pk):
     organization = Organization.objects.get(id=pk)
     email_setting = EmailSetting.objects.get(company=organization)
@@ -286,5 +295,4 @@ def sendTestEmail(request, pk):
             messages.success(request, 'Email sent successfully')
             return redirect('update-organization', organization.id)
     return redirect('update-organization', organization.id)
-
 # -- ends

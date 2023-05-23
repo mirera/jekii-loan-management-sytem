@@ -58,7 +58,7 @@ class CompanyAdmin(models.Model):
 class Role(models.Model): 
     company = models.ForeignKey(Organization, on_delete=models.CASCADE, null=True)
     name = models.CharField(max_length=50)
-    permissions = models.ManyToManyField(Permission, related_name='roles', blank=True)
+    permissions = models.ManyToManyField(Permission, blank=True) #related_name='role_permissions'
     description = models.TextField(blank=True, null=True)
     date_added = models.DateTimeField(auto_now_add=True)
 

@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required 
 from .models import Member, Branch
 from .forms import MemberForm
 from user.models import CompanyStaff
@@ -8,7 +9,8 @@ from jekiiLMS.format_inputs import format_phone_number
 
 
 #create member view starts
-@permission_required
+@login_required(login_url='login')
+@permission_required('member.add_member')
 def createMember(request):
     #filter the Branch queryset to include only branches that belong to the logged in company 
     if request.user.is_authenticated and request.user.is_active:
@@ -49,6 +51,8 @@ def createMember(request):
 #create member view ends
 
 # list member view starts 
+@login_required(login_url='login')
+@permission_required('member.view_member')
 def listMembers(request):
     #filter the Branch queryset to include only branches that belong to the logged in company 
     if request.user.is_authenticated and request.user.is_active:
@@ -64,10 +68,11 @@ def listMembers(request):
 
     context = {'members': members, 'form':form}
     return render(request, 'member/members-list.html', context)
-
 # list member view ends
 
 # view member view starts 
+@login_required(login_url='login')
+@permission_required('member.view_member')
 def viewMember(request, pk):
 
     if request.user.is_authenticated and request.user.is_active:
@@ -81,11 +86,11 @@ def viewMember(request, pk):
     print(member)
     context = {'member': member}
     return render(request, 'member/member-view.html', context) 
-
 # view member view ends
 
 # delete member view starts
-@permission_required
+@login_required(login_url='login')
+@permission_required('member.delete_member')
 def deleteMember(request,pk):
     #member = Member.objects.get(id=pk)
     member = get_object_or_404(Member, id=pk)
@@ -96,11 +101,11 @@ def deleteMember(request,pk):
 
     context = {'member':member}
     return render(request,'member/delete-member.html', context)
-
 # delete member ends 
 
 #edit member view starts
-@permission_required
+@login_required(login_url='login')
+@permission_required('member.change_member')
 def editMember(request,pk):
     
     if request.user.is_authenticated and request.user.is_active:
