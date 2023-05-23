@@ -55,7 +55,7 @@ class CompanyStaffForm(forms.ModelForm):
         self.fields['staff_role'].queryset = Role.objects.filter(company=company)
 
     class Meta:
-        model = CompanyStaff
+        model = CompanyStaff 
         fields = '__all__'
 
 
@@ -86,7 +86,7 @@ class RoleForm(forms.Form):
     permissions = forms.ModelMultipleChoiceField(
         label='Permissions',
         queryset=Permission.objects.filter(
-            content_type__model__in=['branch', 'expense category', 'expense',
+            content_type__model__in=['branch', 'expensecategory', 'expense',
              'member','loanproduct', 'loan', 'repayment','collateral', 'guarantor',
              'companyadmin', 'companystaff', 'role', 'note' ]  # Filter by models you want
         ),
