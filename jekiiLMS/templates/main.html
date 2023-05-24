@@ -178,6 +178,27 @@
             }
         }, 6000)    // 2000 millisecond
     </script>
+    
+    <script type="text/javascript">
+        // Function to redirect to the logout page
+        function redirectLogout() {
+            window.location.href = "/user/logout";
+        }
+    
+        // Function to reset the session timeout on user activity
+        function resetSessionTimeout() {
+            clearTimeout(window.sessionTimeout);
+            window.sessionTimeout = setTimeout(redirectLogout, 300000);  // 5 minutes in milliseconds
+        }
+    
+        // Bind the resetSessionTimeout function to various user activities
+        document.addEventListener("mousemove", resetSessionTimeout);
+        document.addEventListener("mousedown", resetSessionTimeout);
+        document.addEventListener("keypress", resetSessionTimeout);
+        document.addEventListener("touchmove", resetSessionTimeout);
+        document.addEventListener("scroll", resetSessionTimeout);
+    </script>
+    
 
 </body>
 </html> 

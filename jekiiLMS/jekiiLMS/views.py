@@ -66,7 +66,6 @@ def homepage(request):
     repayments = Repayment.objects.filter(company=company)
     members= Member.objects.filter(company=company).order_by('-date_joined')[:5]
     today = datetime.now()
-
     recent_activities = RecentActivity.objects.order_by('-timestamp')[:5]
 
     #company staff context
