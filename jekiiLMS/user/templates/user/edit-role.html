@@ -16,7 +16,7 @@
                 <div class="components-preview wide-md mx-auto">
                     <div class="nk-block-head nk-block-head-lg wide-sm">
                         <div class="nk-block-head-content">
-                            <div class="nk-block-head-sub"><a class="back-to" href="html/components.html"><em class="icon ni ni-arrow-left"></em><span>Back to Roles </span></a></div>
+                            <div class="nk-block-head-sub"><a class="back-to" href="{% url 'roles-list' %}"><em class="icon ni ni-arrow-left"></em><span>Back to Roles </span></a></div>
                         </div>
                     </div>
                     <form action="{% url 'edit-role' role.id %}" method="POST">
