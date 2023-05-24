@@ -83,7 +83,7 @@
                                                 <span>{{branch.phone}}</span>
                                             </td>
                                             <td class="nk-tb-col tb-col-mb" data-order="35040.34">
-                                                <span class="tb-amount">{{branch.capital}} <span class="currency">Ksh</span></span>
+                                                <span class="tb-amount">{{branch.capital}} <span class="currency">{{company_currency}}</span></span>
                                             </td>
                                             <td class="nk-tb-col tb-col-lg" data-order="Email Verified - Kyc Unverified">
                                                 <ul class="list-status">
@@ -91,7 +91,7 @@
                                                 </ul>
                                             </td>
                                             <td class="nk-tb-col tb-col-lg">
-                                                <span>{{branch.open_date}}</span>
+                                                <span>{{branch.open_date.date}}</span>
                                             </td>
                                             <td class="nk-tb-col tb-col-md">
                                                 {% if branch.status == 'active' %}

@@ -33,9 +33,6 @@
                                 <a class="nav-link" data-bs-toggle="tab" href="#email"><em class="icon ni ni-mail-fill"></em><span>Email</span> </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" data-bs-toggle="tab" href="#system"><em class="icon ni ni-setting-alt"></em><span>System</span></a>
-                            </li>
-                            <li class="nav-item">
                                 <a class="nav-link" data-bs-toggle="tab" href="#mpesa"><em class="icon ni ni-wallet"></em><span>Mpesa</span></a>
                             </li>
                             <li class="nav-item">
@@ -47,7 +44,7 @@
                                 <div class="card-inner pt-0">
                                     <h4 class="title nk-block-title">General setting</h4>
                                     <p>Set the organization details.</p>
-                                    <form action=" " class="gy-3 form-settings" method="POST" enctype="multipart/form-data">
+                                    <form action="" class="gy-3 form-settings" method="POST" enctype="multipart/form-data">
                                         {% csrf_token %}
                                         <div class="row g-3 align-center">
                                             <div class="col-lg-5">
@@ -69,6 +66,9 @@
                                                 <div class="form-group">
                                                     <label class="form-label">Organization Logo</label>
                                                     <span class="form-note">The logo of your Organization</span>
+                                                    <div style="width: 200px; height: 150px;">
+                                                        <img src="{{ organization.logo.url }}" srcset="{{ organization.logo.url }}">
+                                                    </div>                                                  
                                                 </div>
                                             </div>
                                             <div class="col-lg-7">
@@ -85,6 +85,21 @@
                                         <div class="row g-3 align-center">
                                             <div class="col-lg-5">
                                                 <div class="form-group">
+                                                    <label class="form-label">Country </label>
+                                                    <span class="form-note">Country where organization headquaters are based .</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-7">
+                                                <div class="form-group">
+                                                    <div class="form-control-wrap">
+                                                        {{form.country}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row g-3 align-center">
+                                            <div class="col-lg-5">
+                                                <div class="form-group">
                                                     <label class="form-label" for="site-copyright">Organization Telephone No.</label>
                                                     <span class="form-note">Contact for your organization.</span>
                                                 </div>
@@ -92,7 +107,12 @@
                                             <div class="col-lg-7">
                                                 <div class="form-group">
                                                     <div class="form-control-wrap">
-                                                        {{form.phone_no}}
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text" id="fv-phone">+254</span>
+                                                            </div>
+                                                            {{form.phone_no}}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -127,17 +147,17 @@
                                                 </div>
                                             </div>
                                         </div>
-                                      <!--  <div class="row g-3 align-center">
+                                        <div class="row g-3 align-center">
                                             <div class="col-lg-5">
                                                 <div class="form-group">
-                                                    <label class="form-label">Main Site</label>
-                                                    <span class="form-note">Specify the URL if your main website.</span>
+                                                    <label class="form-label">Currency </label>
+                                                    <span class="form-note">Your organization preffered currency.</span>
                                                 </div>
                                             </div>
                                             <div class="col-lg-7">
                                                 <div class="form-group">
                                                     <div class="form-control-wrap">
-                                                        <input type="text" class="form-control" name="site-url" value="https://www.softnio.com">
+                                                        {{form.currency}}
                                                     </div>
                                                 </div>
                                             </div>
@@ -145,49 +165,18 @@
                                         <div class="row g-3 align-center">
                                             <div class="col-lg-5">
                                                 <div class="form-group">
-                                                    <label class="form-label">Facebook</label>
-                                                    <span class="form-note">Specify the URL if your facebook page.</span>
+                                                    <label class="form-label">Timezone</label>
+                                                    <span class="form-note">Your organization headquater timezone</span>
                                                 </div>
                                             </div>
                                             <div class="col-lg-7">
                                                 <div class="form-group">
                                                     <div class="form-control-wrap">
-                                                        <input type="text" class="form-control" name="fb-site-url" value="https://www.facebook.com">
+                                                        {{form.timezone}}
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row g-3 align-center">
-                                            <div class="col-lg-5">
-                                                <div class="form-group">
-                                                    <label class="form-label">Instagram</label>
-                                                    <span class="form-note">Specify the URL if your instagram page.</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-7">
-                                                <div class="form-group">
-                                                    <div class="form-control-wrap">
-                                                        <input type="text" class="form-control" name="insta-site-url" value="https://www.instagram.com">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row g-3 align-center">
-                                            <div class="col-lg-5">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="site-off">Maintanance Mode</label>
-                                                    <span class="form-note">Enable to make Project make offline.</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-7">
-                                                <div class="form-group">
-                                                    <div class="custom-control custom-switch">
-                                                        <input type="checkbox" class="custom-control-input" name="reg-public" id="site-off">
-                                                        <label class="custom-control-label" for="site-off">Offline</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div> -->
                                         <div class="row g-3">
                                             <div class="col-lg-7">
                                                 <div class="form-group mt-2">

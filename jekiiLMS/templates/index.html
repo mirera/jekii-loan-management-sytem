@@ -80,9 +80,9 @@
                                                     <div class="invest-data-history">
                                                         <div class="title">Amount</div>
                                                         {% if num_disbursed_loans == 0 %}
-                                                        <div class="amount">Ksh{{total_disbursed_amount}}</div>
+                                                        <div class="amount">{{company_currency}}{{total_disbursed_amount}}</div>
                                                         {% else %}
-                                                        <div class="amount text-soft ">Ksh{{total_disbursed_amount}}</div>
+                                                        <div class="amount text-soft ">{{company_currency}}{{total_disbursed_amount}}</div>
                                                         {% endif %}
                                                     </div>
                                                     {% if num_disbursed_loans > 0 %}
@@ -116,9 +116,9 @@
                                                     <div class="invest-data-history">
                                                         <div class="title">Amount</div>
                                                         {% if total_pending_loans == 0 %}
-                                                        <div class="amount">Ksh{{total_pending_amount}}</div>
+                                                        <div class="amount">{{company_currency}}{{total_pending_amount}}</div>
                                                         {% else %}
-                                                        <div class="amount text-warning ">Ksh{{total_pending_amount}}</div>
+                                                        <div class="amount text-warning ">{{company_currency}}{{total_pending_amount}}</div>
                                                         {% endif %}
                                                     </div>
                                                     {% if total_pending_loans > 0 %}
@@ -152,9 +152,9 @@
                                                     <div class="invest-data-history">
                                                         <div class="title">Amount</div>
                                                         {% if total_overdue_loans == 0 %}
-                                                        <div class="amount">Ksh{{total_overdue_amount}}</div>
+                                                        <div class="amount">{{company_currency}}{{total_overdue_amount}}</div>
                                                         {% else %}
-                                                        <div class="amount text-danger ">Ksh{{total_overdue_amount}}</div>
+                                                        <div class="amount text-danger ">{{company_currency}}{{total_overdue_amount}}</div>
                                                         {% endif %}
                                                     </div>
                                                     {% if total_overdue_loans > 0 %}
@@ -178,13 +178,13 @@
                                                 </div>
                                             </div>
                                             <div class="card-amount">
-                                                <span class="amount text-soft"> Ksh{{expense}} </span>
+                                                <span class="amount text-soft"> {{company_currency}}{{expense}} </span>
                                             </div>
                                             <div class="invest-data">
                                                 <div class="invest-data-amount g-2">
                                                     <div class="invest-data-history">
                                                         <div class="title">This Month</div>
-                                                        <div class="amount">Ksh{{expense}}</div>
+                                                        <div class="amount">{{company_currency}}{{expense}}</div>
                                                     </div>
                                                 </div>
                                                 <div class="invest-data-ck">
@@ -218,9 +218,9 @@
                                                     <div class="invest-data-history">
                                                         <div class="title">Amount</div>
                                                         {% if staff_num_disbursed_loans == 0 %}
-                                                        <div class="amount">Ksh{{staff_total_disbursed_amount}}</div>
+                                                        <div class="amount">{{company_currency}}{{staff_total_disbursed_amount}}</div>
                                                         {% else %}
-                                                        <div class="amount text-soft ">Ksh{{staff_total_disbursed_amount}}</div>
+                                                        <div class="amount text-soft ">{{company_currency}}{{staff_total_disbursed_amount}}</div>
                                                         {% endif %}
                                                     </div>
                                                     {% if staff_num_disbursed_loans > 0 %}
@@ -254,9 +254,9 @@
                                                     <div class="invest-data-history">
                                                         <div class="title">Amount</div>
                                                         {% if staff_num_pending_loans == 0 %}
-                                                        <div class="amount">Ksh{{staff_total_pending_amount}}</div>
+                                                        <div class="amount">{{company_currency}}{{staff_total_pending_amount}}</div>
                                                         {% else %}
-                                                        <div class="amount text-warning ">Ksh{{staff_total_pending_amount}}</div>
+                                                        <div class="amount text-warning ">{{company_currency}}{{staff_total_pending_amount}}</div>
                                                         {% endif %}
                                                     </div>
                                                     {% if staff_num_pending_loans > 0 %}
@@ -290,9 +290,9 @@
                                                     <div class="invest-data-history">
                                                         <div class="title">Amount</div>
                                                         {% if staff_num_overdue_loans == 0 %}
-                                                        <div class="amount">Ksh{{staff_total_overdue_amount}}</div>
+                                                        <div class="amount">{{company_currency}}{{staff_total_overdue_amount}}</div>
                                                         {% else %}
-                                                        <div class="amount text-danger ">Ksh{{staff_total_overdue_amount}}</div>
+                                                        <div class="amount text-danger ">{{company_currency}}{{staff_total_overdue_amount}}</div>
                                                         {% endif %}
                                                     </div>
                                                     {% if staff_num_overdue_loans > 0 %}
@@ -316,13 +316,13 @@
                                                 </div>
                                             </div>
                                             <div class="card-amount">
-                                                <span class="amount text-soft"> Ksh{{staff_expense}} </span>
+                                                <span class="amount text-soft"> {{company_currency}}{{staff_expense}} </span>
                                             </div>
                                             <div class="invest-data">
                                                 <div class="invest-data-amount g-2">
                                                     <div class="invest-data-history">
                                                         <div class="title">This Month</div>
-                                                        <div class="amount">Ksh{{staff_expense}}</div>
+                                                        <div class="amount">{{company_currency}}{{staff_expense}}</div>
                                                     </div>
                                                 </div>
                                                 <div class="invest-data-ck">
@@ -437,12 +437,12 @@
                                                 <div class="analytic-data-group analytic-ov-group g-3">
                                                     <div class="analytic-data analytic-ov-data">
                                                         <div class="title text-primary">Income</div>
-                                                        <div class="amount">Ksh{{total_income}}</div>
+                                                        <div class="amount">{{company_currency}}{{total_income}}</div>
                                                         <div class="change down"><em class="icon ni ni-arrow-long-down"></em>12.37%</div>
                                                     </div>
                                                     <div class="analytic-data analytic-ov-data">
                                                         <div class="title text-danger">Expenses</div>
-                                                        <div class="amount">Ksh{{expense}}</div>
+                                                        <div class="amount">{{company_currency}}{{expense}}</div>
                                                         <div class="change down"><em class="icon ni ni-arrow-long-up"></em>8.37%</div>
                                                     </div>
                                                 </div>
@@ -543,7 +543,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            {% for member in members|slice:"2:" %}
+                                            {% for member in members %}
                                             <div class="card-inner card-inner-md">
                                                 <div class="user-card">
                                                     
@@ -582,48 +582,21 @@
                                                 </div>
                                                 <div class="card-tools">
                                                     <ul class="card-tools-nav">
-                                                        <li><a href="#"><span>Cancel</span></a></li>
-                                                        <li class="active"><a href="#"><span>All</span></a></li>
+                                                        <li class="active"><a href="#"><span>View All</span></a></li>
                                                     </ul>
                                                 </div>
                                             </div>
                                         </div>
                                         <ul class="nk-activity">
+                                            {% for activity in recent_activities %}
                                             <li class="nk-activity-item">
-                                                <div class="nk-activity-media user-avatar bg-success"><img src="./images/avatar/c-sm.jpg" alt=""></div>
+                                                <div class="nk-activity-media user-avatar bg-primary"><img src="" alt=""></div>
                                                 <div class="nk-activity-data">
-                                                    <div class="label">Keith Jensen requested for room.</div>
-                                                    <span class="time">2 hours ago</span>
+                                                    <div class="label">{{ activity.details }}</div>
+                                                    <span class="time">{{ activity.timestamp|timesince }} ago</span>
                                                 </div>
                                             </li>
-                                            <li class="nk-activity-item">
-                                                <div class="nk-activity-media user-avatar bg-warning">HS</div>
-                                                <div class="nk-activity-data">
-                                                    <div class="label">Harry Simpson placed a Order.</div>
-                                                    <span class="time">2 hours ago</span>
-                                                </div>
-                                            </li>
-                                            <li class="nk-activity-item">
-                                                <div class="nk-activity-media user-avatar bg-azure">SM</div>
-                                                <div class="nk-activity-data">
-                                                    <div class="label">Stephanie Marshall cancelled booking.</div>
-                                                    <span class="time">2 hours ago</span>
-                                                </div>
-                                            </li>
-                                            <li class="nk-activity-item">
-                                                <div class="nk-activity-media user-avatar bg-purple"><img src="./images/avatar/d-sm.jpg" alt=""></div>
-                                                <div class="nk-activity-data">
-                                                    <div class="label">Nicholas Carr confirmed booking.</div>
-                                                    <span class="time">2 hours ago</span>
-                                                </div>
-                                            </li>
-                                            <li class="nk-activity-item">
-                                                <div class="nk-activity-media user-avatar bg-pink">TM</div>
-                                                <div class="nk-activity-data">
-                                                    <div class="label">Timothy Moreno placed a Order.</div>
-                                                    <span class="time">2 hours ago</span>
-                                                </div>
-                                            </li>
+                                            {% endfor %}
                                         </ul>
                                     </div><!-- .card -->
                                 </div><!-- .col -->

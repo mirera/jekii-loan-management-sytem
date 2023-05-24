@@ -12,7 +12,7 @@ from jekiiLMS.decorators import permission_required
 
 #-- update organization details upon sign up view --
 @login_required(login_url='login')
-@permission_required('company.change_organization')
+@permission_required('company.change_organization') 
 def updateOrganization(request, pk):
     organization = Organization.objects.get(id=pk)
     admins = CompanyStaff.objects.filter(company=organization, user_type='admin')
@@ -43,21 +43,28 @@ def updateOrganization(request, pk):
         #update company details
         organization.name = request.POST.get('name')
         organization.email = request.POST.get('email')
+        organization.country = request.POST.get('country')
         organization.phone_no = request.POST.get('phone_no')
         organization.email = request.POST.get('email')
         organization.logo = request.FILES.get('logo')
         organization.address = request.POST.get('address')
+        organization.currency = request.POST.get('currency')
+        organization.timezone = request.POST.get('timezone')
         organization.save()
-        return redirect('home')
+        messages.success(request, 'settings updated successfully')
+        return redirect('update-organization', organization.id)
     else:
         # prepopulate the form with existing data
         form_data = {
             'name': organization.name,
             'email': organization.email,
+            'country': organization.country,
             'phone_no': organization.phone_no,
             'email': organization.email,
             'logo': organization.logo,
             'address': organization.address,
+            'currency': organization.currency,
+            'timezone': organization.timezone,
         }
         # prefill the sms form 
         form_data_sms = {
@@ -94,7 +101,7 @@ def updateOrganization(request, pk):
             'organization':organization,
             'admins':admins
         }
-        return render(request,'company/update-company.html', context)
+    return render(request,'company/update-company.html', context)
 
 # -- view to create package
 @permission_required

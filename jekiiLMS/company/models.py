@@ -1,6 +1,7 @@
 from tkinter import CASCADE
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
 from django.contrib.auth.models import User
 
 
@@ -36,7 +37,16 @@ class Organization(models.Model):
     status = models.CharField(max_length=30, default='active')
     is_license_expired = models.BooleanField(default=False) 
     address = models.CharField(max_length=100, default= 'SomeStreet')
+    timezone = models.CharField(max_length=50, default='UTC')
+    currency = models.CharField(max_length=10, default='USD')
+    country = models.CharField(max_length=30, default='Kenya')
+    phone_code = models.CharField(max_length=5, default='1')
+ 
 
+    def get_localized_datetime(self, datetime_value):
+        user_timezone = timezone.pytz.timezone(self.timezone)
+        localized_datetime = datetime_value.astimezone(user_timezone)
+        return localized_datetime
 
     def __str__(self):
         return self.name
@@ -61,7 +71,7 @@ class MpesaSetting(models.Model):
     username = models.CharField(max_length=15, blank=True, null=True)
 
     def __str__(self):
-        return self.company.name
+        return self.company.name 
 # -- ends 
 
 #email setting model

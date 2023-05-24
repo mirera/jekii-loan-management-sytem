@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Branch ,ExpenseCategory, Expense
 from .forms import BranchForm, ExpenseCategoryForm , ExpenseForm
 from user.forms import CompanyStaff
+from user.models import RecentActivity
 from jekiiLMS.decorators import permission_required
 from jekiiLMS.format_inputs import format_phone_number
 
@@ -28,7 +29,7 @@ def createBranch(request):
         phone = phone= request.POST.get('phone')
         formated_phone = format_phone_number(phone)
 
-        Branch.objects.create(
+        branch = Branch.objects.create(
             company = company,
             name = request.POST.get('name'),
             phone= formated_phone,
@@ -37,6 +38,11 @@ def createBranch(request):
             office = request.POST.get('office'),
             open_date = request.POST.get('open_date'),
             notes = request.POST.get('notes'),
+        )
+        # Create a recent activity entry for loan approval
+        RecentActivity.objects.create(
+            event_type='branch_opened',
+            details=f'A new branch {branch.name} has been opened.'
         )
         messages.success(request, 'Branch added successfuly')
         #redirecting user to branches page(url name) after submitting form

@@ -25,7 +25,7 @@
                                     <li>Loan Balance: <span class="text-base">{{loan.loan_balance}}</span></li>
                                     {% endif %}
                                     {% if loan.status == 'pending' %}
-                                    <li>Applied Amount: <span class="text-base">{{loan.applied_amount}}</span></li>
+                                    <li>Applied Amount: <span class="text-base">{{loan.applied_amount}} {{company_currency}}</span></li>
                                     <li>Recommended Amount: <span class="text-base">{{loan.final_reco_amount}}</span></li>
                                     {% endif %}
                                 </ul>
@@ -103,7 +103,7 @@
                                             </tr>
                                             <tr>
                                                 <td class="profile-ud-label">Applied Amount:</td>
-                                                <td class="profile-ud-value text-soft">{{loan.applied_amount}} </td>
+                                                <td class="profile-ud-value text-soft">{{loan.applied_amount}} {{company_currency}} </td>
                                             </tr>
                                             <tr>
                                                 <td class="profile-ud-label">Member Tel:</td>
@@ -128,17 +128,17 @@
                                         {% if loan.status != 'pending' and loan.status != 'rejected' %}
                                             <tr>
                                                 <td class="profile-ud-label">Approved Amount:</td>
-                                                <td class="profile-ud-value">Ksh{{loan.approved_amount}}</td>
+                                                <td class="profile-ud-value">{{loan.approved_amount}} {{company_currency}} </td>
                                             </tr>
                                             {% if loan.status == 'overdue' %}
                                             <tr>
                                                 <td class="profile-ud-label">Amount Due:</td>
-                                                <td class="profile-ud-value text-danger ">Ksh{{loan.due_amount}}</td>
+                                                <td class="profile-ud-value text-danger "> {{loan.due_amount}} {{company_currency}} </td>
                                             </tr>
                                             {% endif %}
                                             <tr>
                                                 <td class="profile-ud-label">Total Payable:</td>
-                                                <td class="profile-ud-value">Ksh{{loan.total_payable}}</td>
+                                                <td class="profile-ud-value"> {{loan.total_payable}} {{company_currency}} </td>
                                             </tr>
                                             <tr>
                                                 <td class="profile-ud-label">No. of Installments:</td>
@@ -146,11 +146,11 @@
                                             </tr>
                                             <tr>
                                                 <td class="profile-ud-label">Amount per Installment:</td>
-                                                <td class="profile-ud-value">Ksh{{loan.due_amount}}</td>
+                                                <td class="profile-ud-value">{{loan.due_amount}} {{company_currency}} </td>
                                             </tr>
                                             <tr>
                                                 <td class="profile-ud-label">Loan Balance:</td>
-                                                <td class="profile-ud-value">Ksh{{loan.loan_balance}}</td>
+                                                <td class="profile-ud-value">{{loan.loan_balance}} {{company_currency}} </td>
                                             </tr>
                                             <tr>
                                                 <td class="profile-ud-label">Approved By:</td>
@@ -159,29 +159,29 @@
                                             {% if loan.status == 'overdue' %}
                                             <tr>
                                                 <td class="profile-ud-label">Date Due:</td>
-                                                <td class="profile-ud-value text-danger">{{loan.due_date}}</td>
+                                                <td class="profile-ud-value text-danger">{{loan.due_date.date}}</td>
                                             </tr>
                                             {% elif loan.status == 'approved' %}
                                             <tr>
                                                 <td class="profile-ud-label">Date Due:</td>
-                                                <td class="profile-ud-value ">{{loan.due_date}}</td>
+                                                <td class="profile-ud-value ">{{loan.due_date.date}}</td>
                                             </tr>
                                             {% endif%}
                                             <tr>
                                                 <td class="profile-ud-label">Date Approved:</td>
-                                                <td class="profile-ud-value">{{loan.approved_date}}</td>
+                                                <td class="profile-ud-value">{{loan.approved_date.date}}</td>
                                             </tr>
                                             <tr>
                                                 <td class="profile-ud-label">Disbursement Date:</td>
-                                                <td class="profile-ud-value">{{loan.approved_date}}</td>
+                                                <td class="profile-ud-value">{{loan.approved_date.date}}</td>
                                             </tr>
                                             <tr>
                                                 <td class="profile-ud-label">Next Payment Date:</td>
-                                                <td class="profile-ud-value">{{loan.next_payment_date}}</td>
+                                                <td class="profile-ud-value">{{loan.next_payment_date.date}}</td>
                                             </tr>
                                             <tr>
                                                 <td class="profile-ud-label">Final Payment Date:</td>
-                                                <td class="profile-ud-value">{{loan.final_payment_date}}</td>
+                                                <td class="profile-ud-value">{{loan.final_payment_date.date}}</td>
                                             </tr>
                                         {% endif %}
                                             </tbody>
@@ -364,7 +364,7 @@
                                                         <tbody>
                                                             {% for repayment in repayments %}
                                                             <tr>
-                                                            <th scope="row">{{repayment.date_paid}}</th>
+                                                            <th scope="row">{{repayment.date_paid.date}}</th>
                                                             <td>{{repayment.amount}}</td>
                                                             <td>{{loan_balance}}</td>
                                                             {% if loan.status != 'cleared' %}
@@ -642,7 +642,7 @@
                                 <div class="form-control-wrap">
                                     <div class="input-group">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text" id="fv-phone">Ksh</span>
+                                            <span class="input-group-text" id="fv-phone">{{company_currency}}</span>
                                         </div>
                                         {{form.amount}}
                                     </div>
@@ -770,7 +770,7 @@
                                 <div class="form-control-wrap">
                                     <div class="input-group">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text" id="fv-phone">Ksh</span>
+                                            <span class="input-group-text" id="fv-phone">{{company_currency}}</span>
                                         </div>
                                         {{form_collateral.estimated_value}}
                                     </div>
@@ -843,7 +843,7 @@
                                 <div class="form-control-wrap">
                                     <div class="input-group">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text" id="fv-phone">Ksh</span>
+                                            <span class="input-group-text" id="fv-phone">{{company_currency}}</span>
                                         </div>
                                         {{form_collateral.estimated_value}}
                                     </div>
