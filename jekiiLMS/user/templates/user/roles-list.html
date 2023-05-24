@@ -105,27 +105,314 @@
             </a>
             <div class="modal-body modal-body-md">
                 <h5 class="modal-title">Add Role </h5><br>
-            
                 <form action="{% url 'add-role' %}" method="POST">
                     {% csrf_token %}
-                    <div class="form-group">
-                        <label class="form-label" for="cf-full-name">Role Name</label>
-                        {{form.name}}
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Permissions</label> 
-                        <div class="  custom-control-group g-3 align-center  "> 
-                            {{form.permissions}}
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="cf-default-textarea">Description</label>
-                        <div class="form-control-wrap">
-                            {{form.description}}
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-lg btn-primary">Save Role</button>
+                    <div class="nk-block nk-block-lg">
+                        <div class="card card-bordered card-preview">
+                            <div class="card-inner">
+                                <div class="form-group">
+                                    <label class="form-label" for="cf-full-name">Role Name</label>
+                                    {{form.name}}
+                                </div>
+                                <ul class="preview-list">
+                                    <li class="preview-item">
+                                        <span class="preview-title overline-title">Permissions</span>
+                                        <ul class="d-flex g-3">
+                                            <li>
+                                                <div class="dropdown">
+                                                    <a href="#" class="dropdown-toggle btn btn-light" data-bs-toggle="dropdown">Branch<em class="icon ni ni-chevron-down"></em></a>
+                                                    <div class="dropdown-menu">
+                                                        {% for permission in form.permissions.field.queryset %}
+                                                        {% if permission.content_type.model == 'branch' %}
+                                                        <ul class="link-tidy">
+                                                            <li>
+                                                                <div class="custom-control custom-control-sm custom-checkbox">
+                                                                    <input type="checkbox" class="custom-control-input" id="{{ permission.codename }}" name="permissions" value="{{ permission.pk }}" {% if permission in role.permissions.all %}checked{% endif %}>
+                                                                    <label class="custom-control-label" for="{{ permission.codename }}">{{ permission.codename }}</label>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                        {% endif %}
+                                                        {% endfor%}
+                                                    </div>
+                                                </div>
+                                            </li><!-- li -->
+                                        </ul>
+                                    </li><!-- li -->
+                                    <li class="preview-item">
+                                        <span class="preview-title overline-title"> .</span>
+                                        <ul class="d-flex g-3">
+                                            <li>
+                                                <div class="dropdown">
+                                                    <a href="#" class="dropdown-toggle btn btn-light" data-bs-toggle="dropdown">Member<em class="icon ni ni-chevron-down"></em></a>
+                                                    <div class="dropdown-menu">
+                                                        {% for permission in form.permissions.field.queryset %}
+                                                        {% if permission.content_type.model == 'member' %}
+                                                        <ul class="link-tidy">
+                                                            <li>
+                                                                <div class="custom-control custom-control-sm custom-checkbox">
+                                                                    <input type="checkbox" class="custom-control-input" id="{{ permission.codename }}" name="permissions" value="{{ permission.pk }}" {% if permission in role.permissions.all %}checked{% endif %}>
+                                                                    <label class="custom-control-label" for="{{ permission.codename }}">{{ permission.codename }}</label>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                        {% endif %}
+                                                        {% endfor%}
+                                                    </div>
+                                                </div>
+                                            </li><!-- li -->
+                                        </ul>
+                                    </li><!-- li -->
+                                    <li class="preview-item">
+                                        <span class="preview-title overline-title">.</span>
+                                        <ul class="d-flex g-3">
+                                            <li>
+                                                <div class="dropdown">
+                                                    <a href="#" class="dropdown-toggle btn btn-light" data-bs-toggle="dropdown">Loan<em class="icon ni ni-chevron-down"></em></a>
+                                                    <div class="dropdown-menu">
+                                                        {% for permission in form.permissions.field.queryset %}
+                                                        {% if permission.content_type.model == 'loan' %}
+                                                        <ul class="link-tidy">
+                                                            <li>
+                                                                <div class="custom-control custom-control-sm custom-checkbox">
+                                                                    <input type="checkbox" class="custom-control-input" id="{{ permission.codename }}" name="permissions" value="{{ permission.pk }}" {% if permission in role.permissions.all %}checked{% endif %}>
+                                                                    <label class="custom-control-label" for="{{ permission.codename }}">{{ permission.codename }}</label>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                        {% endif %}
+                                                        {% endfor%}
+                                                    </div>
+                                                </div>
+                                            </li><!-- li -->
+                                        </ul>
+                                    </li><!-- li -->
+                                    <li class="preview-item">
+                                        <span class="preview-title overline-title"> .</span>
+                                        <ul class="d-flex g-3">
+                                            <li>
+                                                <div class="dropdown">
+                                                    <a href="#" class="dropdown-toggle btn btn-light" data-bs-toggle="dropdown">User<em class="icon ni ni-chevron-down"></em></a>
+                                                    <div class="dropdown-menu">
+                                                        {% for permission in form.permissions.field.queryset %}
+                                                        {% if permission.content_type.model == 'companystaff' %}
+                                                        <ul class="link-tidy">
+                                                            <li>
+                                                                <div class="custom-control custom-control-sm custom-checkbox">
+                                                                    <input type="checkbox" class="custom-control-input" id="{{ permission.codename }}" name="permissions" value="{{ permission.pk }}" {% if permission in role.permissions.all %}checked{% endif %}>
+                                                                    <label class="custom-control-label" for="{{ permission.codename }}">{{ permission.codename }}</label>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                        {% endif %}
+                                                        {% endfor%}
+                                                    </div>
+                                                </div>
+                                            </li><!-- li -->
+                                        </ul>
+                                    </li><!-- li -->
+                                    <li class="preview-item">
+                                        <span class="preview-title overline-title">.</span>
+                                        <ul class="d-flex g-3">
+                                            <li>
+                                                <div class="dropdown">
+                                                    <a href="#" class="dropdown-toggle btn btn-light" data-bs-toggle="dropdown">Product<em class="icon ni ni-chevron-down"></em></a>
+                                                    <div class="dropdown-menu">
+                                                        {% for permission in form.permissions.field.queryset %}
+                                                        {% if permission.content_type.model == 'loanproduct' %}
+                                                        <ul class="link-tidy">
+                                                            <li>
+                                                                <div class="custom-control custom-control-sm custom-checkbox">
+                                                                    <input type="checkbox" class="custom-control-input" id="{{ permission.codename }}" name="permissions" value="{{ permission.pk }}" {% if permission in role.permissions.all %}checked{% endif %}>
+                                                                    <label class="custom-control-label" for="{{ permission.codename }}">{{ permission.codename }}</label>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                        {% endif %}
+                                                        {% endfor%}
+                                                    </div>
+                                                </div>
+                                            </li><!-- li -->
+                                        </ul>
+                                    </li><!-- li -->
+                                    <li class="preview-item">
+                                        <span class="preview-title overline-title">.</span>
+                                        <ul class="d-flex g-3">
+                                            <li>
+                                                <div class="dropdown">
+                                                    <a href="#" class="dropdown-toggle btn btn-light" data-bs-toggle="dropdown">Repayment<em class="icon ni ni-chevron-down"></em></a>
+                                                    <div class="dropdown-menu">
+                                                        {% for permission in form.permissions.field.queryset %}
+                                                        {% if permission.content_type.model == 'repayment' %}
+                                                        <ul class="link-tidy">
+                                                            <li>
+                                                                <div class="custom-control custom-control-sm custom-checkbox">
+                                                                    <input type="checkbox" class="custom-control-input" id="{{ permission.codename }}" name="permissions" value="{{ permission.pk }}" {% if permission in role.permissions.all %}checked{% endif %}>
+                                                                    <label class="custom-control-label" for="{{ permission.codename }}">{{ permission.codename }}</label>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                        {% endif %}
+                                                        {% endfor%}
+                                                    </div>
+                                                </div>
+                                            </li><!-- li -->
+                                        </ul>
+                                    </li><!-- li -->
+                                    <li class="preview-item">
+                                        <span class="preview-title overline-title"> .</span>
+                                        <ul class="d-flex g-3">
+                                            <li>
+                                                <div class="dropdown">
+                                                    <a href="#" class="dropdown-toggle btn btn-light" data-bs-toggle="dropdown">Guarantor<em class="icon ni ni-chevron-down"></em></a>
+                                                    <div class="dropdown-menu">
+                                                        {% for permission in form.permissions.field.queryset %}
+                                                        {% if permission.content_type.model == 'guarantor' %}
+                                                        <ul class="link-tidy">
+                                                            <li>
+                                                                <div class="custom-control custom-control-sm custom-checkbox">
+                                                                    <input type="checkbox" class="custom-control-input" id="{{ permission.codename }}" name="permissions" value="{{ permission.pk }}" {% if permission in role.permissions.all %}checked{% endif %}>
+                                                                    <label class="custom-control-label" for="{{ permission.codename }}">{{ permission.codename }}</label>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                        {% endif %}
+                                                        {% endfor%}
+                                                    </div>
+                                                </div>
+                                            </li><!-- li -->
+                                        </ul>
+                                    </li><!-- li -->
+                                    <li class="preview-item">
+                                        <span class="preview-title overline-title">.</span>
+                                        <ul class="d-flex g-3">
+                                            <li>
+                                                <div class="dropdown">
+                                                    <a href="#" class="dropdown-toggle btn btn-light" data-bs-toggle="dropdown">Collateral<em class="icon ni ni-chevron-down"></em></a>
+                                                    <div class="dropdown-menu">
+                                                        {% for permission in form.permissions.field.queryset %}
+                                                        {% if permission.content_type.model == 'collateral' %}
+                                                        <ul class="link-tidy">
+                                                            <li>
+                                                                <div class="custom-control custom-control-sm custom-checkbox">
+                                                                    <input type="checkbox" class="custom-control-input" id="{{ permission.codename }}" name="permissions" value="{{ permission.pk }}" {% if permission in role.permissions.all %}checked{% endif %}>
+                                                                    <label class="custom-control-label" for="{{ permission.codename }}">{{ permission.codename }}</label>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                        {% endif %}
+                                                        {% endfor%}
+                                                    </div>
+                                                </div>
+                                            </li><!-- li -->
+                                        </ul>
+                                    </li><!-- li -->
+                                    <li class="preview-item">
+                                        <span class="preview-title overline-title"> .</span>
+                                        <ul class="d-flex g-3">
+                                            <li>
+                                                <div class="dropdown">
+                                                    <a href="#" class="dropdown-toggle btn btn-light" data-bs-toggle="dropdown">Note<em class="icon ni ni-chevron-down"></em></a>
+                                                    <div class="dropdown-menu">
+                                                        {% for permission in form.permissions.field.queryset %}
+                                                        {% if permission.content_type.model == 'note' %}
+                                                        <ul class="link-tidy">
+                                                            <li>
+                                                                <div class="custom-control custom-control-sm custom-checkbox">
+                                                                    <input type="checkbox" class="custom-control-input" id="{{ permission.codename }}" name="permissions" value="{{ permission.pk }}" {% if permission in role.permissions.all %}checked{% endif %}>
+                                                                    <label class="custom-control-label" for="{{ permission.codename }}">{{ permission.codename }}</label>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                        {% endif %}
+                                                        {% endfor%}
+                                                    </div>
+                                                </div>
+                                            </li><!-- li -->
+                                        </ul>
+                                    </li><!-- li -->
+                                    <li class="preview-item">
+                                        <span class="preview-title overline-title">.</span>
+                                        <ul class="d-flex g-3">
+                                            <li>
+                                                <div class="dropdown">
+                                                    <a href="#" class="dropdown-toggle btn btn-light" data-bs-toggle="dropdown">Role<em class="icon ni ni-chevron-down"></em></a>
+                                                    <div class="dropdown-menu">
+                                                        {% for permission in form.permissions.field.queryset %}
+                                                        {% if permission.content_type.model == 'role' %}
+                                                        <ul class="link-tidy">
+                                                            <li>
+                                                                <div class="custom-control custom-control-sm custom-checkbox">
+                                                                    <input type="checkbox" class="custom-control-input" id="{{ permission.codename }}" name="permissions" value="{{ permission.pk }}" {% if permission in role.permissions.all %}checked{% endif %}>
+                                                                    <label class="custom-control-label" for="{{ permission.codename }}">{{ permission.codename }}</label>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                        {% endif %}
+                                                        {% endfor%}
+                                                    </div>
+                                                </div>
+                                            </li><!-- li -->
+                                        </ul>
+                                    </li><!-- li -->
+                                    <li class="preview-item">
+                                        <span class="preview-title overline-title"> .</span>
+                                        <ul class="d-flex g-3">
+                                            <li>
+                                                <div class="dropdown">
+                                                    <a href="#" class="dropdown-toggle btn btn-light" data-bs-toggle="dropdown">Expense<em class="icon ni ni-chevron-down"></em></a>
+                                                    <div class="dropdown-menu">
+                                                        {% for permission in form.permissions.field.queryset %}
+                                                        {% if permission.content_type.model == 'expense' %}
+                                                        <ul class="link-tidy">
+                                                            <li>
+                                                                <div class="custom-control custom-control-sm custom-checkbox">
+                                                                    <input type="checkbox" class="custom-control-input" id="{{ permission.codename }}" name="permissions" value="{{ permission.pk }}" {% if permission in role.permissions.all %}checked{% endif %}>
+                                                                    <label class="custom-control-label" for="{{ permission.codename }}">{{ permission.codename }}</label>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                        {% endif %}
+                                                        {% endfor%}
+                                                    </div>
+                                                </div>
+                                            </li><!-- li -->
+                                        </ul>
+                                    </li><!-- li -->
+                                    <li class="preview-item">
+                                        <span class="preview-title overline-title">.</span>
+                                        <ul class="d-flex g-3">
+                                            <li>
+                                                <div class="dropdown">
+                                                    <a href="#" class="dropdown-toggle btn btn-light" data-bs-toggle="dropdown">Expense Category<em class="icon ni ni-chevron-down"></em></a>
+                                                    <div class="dropdown-menu">
+                                                        {% for permission in form.permissions.field.queryset %}
+                                                        {% if permission.content_type.model == 'expensecategory' %}
+                                                        <ul class="link-tidy">
+                                                            <li>
+                                                                <div class="custom-control custom-control-sm custom-checkbox">
+                                                                    <input type="checkbox" class="custom-control-input" id="{{ permission.codename }}" name="permissions" value="{{ permission.pk }}" {% if permission in role.permissions.all %}checked{% endif %}>
+                                                                    <label class="custom-control-label" for="{{ permission.codename }}">{{ permission.codename }}</label>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                        {% endif %}
+                                                        {% endfor%}
+                                                    </div>
+                                                </div>
+                                            </li><!-- li -->
+                                        </ul>
+                                    </li><!-- li -->
+                                </ul> <br>
+                                <div class="form-group">
+                                    <label class="form-label" for="cf-full-name">Description</label>
+                                    {{form.description}}
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-lg btn-primary">Save Role</button>
+                                </div>
+                            </div>
+                        </div><!-- .card-preview -->
                     </div>
                 </form>
             </div>
