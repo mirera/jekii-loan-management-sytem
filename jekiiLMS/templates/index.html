@@ -543,7 +543,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            {% for member in members|slice:"2:" %}
+                                            {% for member in members %}
                                             <div class="card-inner card-inner-md">
                                                 <div class="user-card">
                                                     
@@ -582,48 +582,21 @@
                                                 </div>
                                                 <div class="card-tools">
                                                     <ul class="card-tools-nav">
-                                                        <li><a href="#"><span>Cancel</span></a></li>
-                                                        <li class="active"><a href="#"><span>All</span></a></li>
+                                                        <li class="active"><a href="#"><span>View All</span></a></li>
                                                     </ul>
                                                 </div>
                                             </div>
                                         </div>
                                         <ul class="nk-activity">
+                                            {% for activity in recent_activities %}
                                             <li class="nk-activity-item">
-                                                <div class="nk-activity-media user-avatar bg-success"><img src="./images/avatar/c-sm.jpg" alt=""></div>
+                                                <div class="nk-activity-media user-avatar bg-primary"><img src="" alt=""></div>
                                                 <div class="nk-activity-data">
-                                                    <div class="label">Keith Jensen requested for room.</div>
-                                                    <span class="time">2 hours ago</span>
+                                                    <div class="label">{{ activity.details }}</div>
+                                                    <span class="time">{{ activity.timestamp|timesince }} ago</span>
                                                 </div>
                                             </li>
-                                            <li class="nk-activity-item">
-                                                <div class="nk-activity-media user-avatar bg-warning">HS</div>
-                                                <div class="nk-activity-data">
-                                                    <div class="label">Harry Simpson placed a Order.</div>
-                                                    <span class="time">2 hours ago</span>
-                                                </div>
-                                            </li>
-                                            <li class="nk-activity-item">
-                                                <div class="nk-activity-media user-avatar bg-azure">SM</div>
-                                                <div class="nk-activity-data">
-                                                    <div class="label">Stephanie Marshall cancelled booking.</div>
-                                                    <span class="time">2 hours ago</span>
-                                                </div>
-                                            </li>
-                                            <li class="nk-activity-item">
-                                                <div class="nk-activity-media user-avatar bg-purple"><img src="./images/avatar/d-sm.jpg" alt=""></div>
-                                                <div class="nk-activity-data">
-                                                    <div class="label">Nicholas Carr confirmed booking.</div>
-                                                    <span class="time">2 hours ago</span>
-                                                </div>
-                                            </li>
-                                            <li class="nk-activity-item">
-                                                <div class="nk-activity-media user-avatar bg-pink">TM</div>
-                                                <div class="nk-activity-data">
-                                                    <div class="label">Timothy Moreno placed a Order.</div>
-                                                    <span class="time">2 hours ago</span>
-                                                </div>
-                                            </li>
+                                            {% endfor %}
                                         </ul>
                                     </div><!-- .card -->
                                 </div><!-- .col -->

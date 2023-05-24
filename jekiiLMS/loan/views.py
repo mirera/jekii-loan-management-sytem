@@ -15,6 +15,7 @@ from jekiiLMS.decorators import permission_required
 from .models import LoanProduct, Loan, Note, Repayment, Guarantor, Collateral, MpesaStatement
 from .forms import LoanProductForm, LoanForm, RepaymentForm, GuarantorForm, CollateralForm, MpesaStatementForm
 from member.models import Member
+from user.models import RecentActivity
 from user.models import CompanyStaff
 from company.models import Organization, SmsSetting, MpesaSetting, EmailSetting
 from jekiiLMS.process_loan import is_sufficient_collateral, get_amount_to_disburse, clear_loan, update_member_data, write_loan_off, roll_over
@@ -42,7 +43,7 @@ def createLoanProduct(request):
         
 
     if request.method == 'POST':
-        LoanProduct.objects.create(
+        product = LoanProduct.objects.create(
             company = company,
             loan_product_name = request.POST.get('loan_product_name'),
             minimum_amount= request.POST.get('minimum_amount'),
@@ -59,10 +60,15 @@ def createLoanProduct(request):
             penalty_frequency = request.POST.get('penalty_frequency'),
             loan_product_description = request.POST.get('loan_product_description'),
         )
-        #redirecting user to branches page(url name) after submitting form
+        # Create a recent activity entry for loan approval
+        RecentActivity.objects.create(
+            event_type='loan_product_addition',
+            details=f'A new loan product {product.loan_product_name} has been created.'
+        )
+        messages.success(request,'Loan product added successfuly')
         return redirect('loan-products')
 
-    loanproducts = LoanProduct.objects.all() #this loanproducts context is added to form conext because of {{loanproducts.count}} in the sidebar 
+    loanproducts = LoanProduct.objects.all() 
     context= {'form':form,'loanproducts':loanproducts }
     return render(request,'loan/loan-product-create.html', context)
 #create loan Product view ends
@@ -398,7 +404,11 @@ def approveLoan(request,pk):
                                 token,
                                 borrower.phone_no,
                                 message)
-
+                            # Create a recent activity entry for loan approval
+                            RecentActivity.objects.create(
+                                event_type='loan_approval',
+                                details=f'Loan of {loan.member.first_name} {loan.member.first_name} of {loan.approved_amount} has been approved.'
+                            )
                             messages.success(request, 'Loan approved & disbursed successfully!')
                             return redirect('view-loan', loan.id)
                         else:
@@ -475,7 +485,11 @@ def rejectLoan(request,pk):
                 token,
                 borrower.phone_no,
                 message)
-
+            # Create a recent activity entry for loan approval
+            RecentActivity.objects.create(
+                event_type='loan_rejection',
+                details=f'Loan of {loan.member.first_name} {loan.member.first_name} of {loan.approved_amount} has been rejected.'
+            )
             messages.info(request,'The loan was rejected succussesfully!')
             return redirect(url_with_anchor)
     return render(request,'loan/loans-list.html')

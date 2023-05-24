@@ -5,7 +5,7 @@ from django.core.validators import MinValueValidator
 from decimal import Decimal
 from django.contrib.auth.models import User
 from company.models import Organization
-#from user.models import CompanyStaff
+
 
 #Branch model for a branch
 ACTIVE_CHOICES = (

@@ -178,3 +178,9 @@ ONLINE_PASSKEY = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c9
 INITIATOR_NAME = 'MIRERA'
 SECURITY_CREDENTIAL = 'Somepassword'
 
+
+# Set the session cookie age to 5 minutes (300 seconds)
+SESSION_COOKIE_AGE = 300
+
+# Expire the session when the user closes the browser
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
