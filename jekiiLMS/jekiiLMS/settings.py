@@ -180,7 +180,7 @@ SECURITY_CREDENTIAL = 'Somepassword'
 
 
 # Set the session cookie age to 5 minutes (300 seconds)
-SESSION_COOKIE_AGE = 300
+SESSION_COOKIE_AGE = 1200
 
 # Expire the session when the user closes the browser
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True

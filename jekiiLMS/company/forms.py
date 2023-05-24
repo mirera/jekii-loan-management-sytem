@@ -1,9 +1,26 @@
 from dataclasses import fields
 from django import forms
+from pytz import all_timezones
+from iso4217 import Currency
 from .models import Organization, Package, SmsSetting, MpesaSetting, EmailSetting
 
 
-class OrganizationForm(forms.ModelForm):
+class OrganizationForm(forms.ModelForm): 
+
+    #timezone = forms.ChoiceField(choices=[(tz, tz) for tz in all_timezones])
+    all_currencies = [currency.code for currency in Currency]
+
+    timezone = forms.ChoiceField(
+        choices=[(tz, tz) for tz in all_timezones],
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
+    currency = forms.ChoiceField(
+        choices=[(curr, curr) for curr in all_currencies],
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
+
     class Meta:
         model = Organization
         fields = '__all__'
@@ -15,8 +32,12 @@ class OrganizationForm(forms.ModelForm):
             'email': forms.EmailInput(attrs={'class': 'form-control','id': 'fv-email'}),
             'phone_no': forms.NumberInput(attrs={'class': 'form-control'}),
             'logo': forms.FileInput(attrs={'class': 'form-file-input', 'id':'customFile', 'type':'file'}),
-            'address': forms.TextInput(attrs={'class': 'form-control', 'id': 'site-address'}),
+            'address': forms.TextInput(attrs={'class': 'form-control'}),
+            'timezone': forms.Select(attrs={'class': 'form-control'}),
+            'currency': forms.Select(attrs={'class': 'form-control'}),
         }
+
+    
 
 class PackageForm(forms.ModelForm):
     class Meta:
