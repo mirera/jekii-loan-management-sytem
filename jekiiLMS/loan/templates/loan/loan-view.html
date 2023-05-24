@@ -159,29 +159,29 @@
                                             {% if loan.status == 'overdue' %}
                                             <tr>
                                                 <td class="profile-ud-label">Date Due:</td>
-                                                <td class="profile-ud-value text-danger">{{loan.due_date}}</td>
+                                                <td class="profile-ud-value text-danger">{{loan.due_date.date}}</td>
                                             </tr>
                                             {% elif loan.status == 'approved' %}
                                             <tr>
                                                 <td class="profile-ud-label">Date Due:</td>
-                                                <td class="profile-ud-value ">{{loan.due_date}}</td>
+                                                <td class="profile-ud-value ">{{loan.due_date.date}}</td>
                                             </tr>
                                             {% endif%}
                                             <tr>
                                                 <td class="profile-ud-label">Date Approved:</td>
-                                                <td class="profile-ud-value">{{loan.approved_date}}</td>
+                                                <td class="profile-ud-value">{{loan.approved_date.date}}</td>
                                             </tr>
                                             <tr>
                                                 <td class="profile-ud-label">Disbursement Date:</td>
-                                                <td class="profile-ud-value">{{loan.approved_date}}</td>
+                                                <td class="profile-ud-value">{{loan.approved_date.date}}</td>
                                             </tr>
                                             <tr>
                                                 <td class="profile-ud-label">Next Payment Date:</td>
-                                                <td class="profile-ud-value">{{loan.next_payment_date}}</td>
+                                                <td class="profile-ud-value">{{loan.next_payment_date.date}}</td>
                                             </tr>
                                             <tr>
                                                 <td class="profile-ud-label">Final Payment Date:</td>
-                                                <td class="profile-ud-value">{{loan.final_payment_date}}</td>
+                                                <td class="profile-ud-value">{{loan.final_payment_date.date}}</td>
                                             </tr>
                                         {% endif %}
                                             </tbody>
@@ -364,7 +364,7 @@
                                                         <tbody>
                                                             {% for repayment in repayments %}
                                                             <tr>
-                                                            <th scope="row">{{repayment.date_paid}}</th>
+                                                            <th scope="row">{{repayment.date_paid.date}}</th>
                                                             <td>{{repayment.amount}}</td>
                                                             <td>{{loan_balance}}</td>
                                                             {% if loan.status != 'cleared' %}
