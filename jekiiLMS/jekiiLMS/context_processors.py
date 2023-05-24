@@ -20,3 +20,14 @@ def get_user(request):
         except CompanyStaff.DoesNotExist:
             pass
     return {}
+
+def get_company_currency(request):
+    if request.user.is_authenticated and request.user.is_active:
+        try:
+            user = CompanyStaff.objects.get(username=request.user.username)
+            organization = user.company
+            company_currency = organization.currency
+            return {"company_currency" :company_currency}
+        except CompanyStaff.DoesNotExist:
+            pass
+    return {}

@@ -43,6 +43,7 @@ def updateOrganization(request, pk):
         #update company details
         organization.name = request.POST.get('name')
         organization.email = request.POST.get('email')
+        organization.country = request.POST.get('country')
         organization.phone_no = request.POST.get('phone_no')
         organization.email = request.POST.get('email')
         organization.logo = request.FILES.get('logo')
@@ -57,6 +58,7 @@ def updateOrganization(request, pk):
         form_data = {
             'name': organization.name,
             'email': organization.email,
+            'country': organization.country,
             'phone_no': organization.phone_no,
             'email': organization.email,
             'logo': organization.logo,

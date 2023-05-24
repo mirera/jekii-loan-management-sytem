@@ -74,6 +74,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'jekiiLMS.context_processors.get_organization',
                 'jekiiLMS.context_processors.get_user',
+                'jekiiLMS.context_processors.get_company_currency',
             ],
         },
     },

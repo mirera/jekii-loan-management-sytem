@@ -85,6 +85,21 @@
                                         <div class="row g-3 align-center">
                                             <div class="col-lg-5">
                                                 <div class="form-group">
+                                                    <label class="form-label">Country </label>
+                                                    <span class="form-note">Country where organization headquaters are based .</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-7">
+                                                <div class="form-group">
+                                                    <div class="form-control-wrap">
+                                                        {{form.country}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row g-3 align-center">
+                                            <div class="col-lg-5">
+                                                <div class="form-group">
                                                     <label class="form-label" for="site-copyright">Organization Telephone No.</label>
                                                     <span class="form-note">Contact for your organization.</span>
                                                 </div>
@@ -92,7 +107,12 @@
                                             <div class="col-lg-7">
                                                 <div class="form-group">
                                                     <div class="form-control-wrap">
-                                                        {{form.phone_no}}
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text" id="fv-phone">+254</span>
+                                                            </div>
+                                                            {{form.phone_no}}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>

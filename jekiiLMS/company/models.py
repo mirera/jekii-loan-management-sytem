@@ -39,6 +39,9 @@ class Organization(models.Model):
     address = models.CharField(max_length=100, default= 'SomeStreet')
     timezone = models.CharField(max_length=50, default='UTC')
     currency = models.CharField(max_length=10, default='USD')
+    country = models.CharField(max_length=30, default='Kenya')
+    phone_code = models.CharField(max_length=5, default='1')
+ 
 
     def get_localized_datetime(self, datetime_value):
         user_timezone = timezone.pytz.timezone(self.timezone)
