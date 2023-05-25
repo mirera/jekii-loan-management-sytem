@@ -31,3 +31,14 @@ def get_company_currency(request):
         except CompanyStaff.DoesNotExist:
             pass
     return {}
+
+def get_company_phone_code(request):
+    if request.user.is_authenticated and request.user.is_active:
+        try:
+            user = CompanyStaff.objects.get(username=request.user.username)
+            organization = user.company
+            company_phone_code = organization.phone_code
+            return {"company_phone_code" :company_phone_code}
+        except CompanyStaff.DoesNotExist:
+            pass
+    return {}

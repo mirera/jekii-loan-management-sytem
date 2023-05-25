@@ -5,7 +5,7 @@ from .models import Member, Branch
 from .forms import MemberForm
 from user.models import CompanyStaff
 from jekiiLMS.decorators import permission_required
-from jekiiLMS.format_inputs import format_phone_number
+from jekiiLMS.format_inputs import format_phone_number, deformat_phone_no
 
 
 #create member view starts
@@ -22,12 +22,12 @@ def createMember(request):
 
     form = MemberForm(request.POST, company=company) #instiated the two kwargs to be able to access them on the forms.py
 
-    branch_id = request.POST.get('branch')
-    branch = Branch.objects.get(id=branch_id)
-    phone_no = request.POST.get('phone_no')
-    formated_phone_no = format_phone_number(phone_no)
-
     if request.method == 'POST':
+        branch_id = request.POST.get('branch')
+        branch = Branch.objects.get(id=branch_id)
+        phone_no = request.POST.get('phone_no')
+        formated_phone_no = format_phone_number(phone_no, company.phone_code)
+        
         member = Member.objects.create(
             company = company,
             first_name = request.POST.get('first_name'),
@@ -121,7 +121,7 @@ def editMember(request,pk):
 
     if request.method == 'POST':
         phone_no = request.POST.get('phone_no')
-        formated_phone_no = format_phone_number(phone_no)
+        formated_phone_no = format_phone_number(phone_no, company.phone_code)
         # Get the selected branch id from the form
         branch_id = request.POST.get('branch')
         
@@ -148,11 +148,12 @@ def editMember(request,pk):
         return redirect('members')
     else:
         # prepopulate the form with existing data
+        deheaded_phone = deformat_phone_no(member.phone_no, member.company.phone_code)
         form_data = {
             'first_name': member.first_name,
             'last_name': member.last_name,
             'id_no': member.id_no,
-            'phone_no': member.phone_no,
+            'phone_no': deheaded_phone,
             'email': member.email,
             'branch': member.branch,
             'date_joined': member.date_joined,

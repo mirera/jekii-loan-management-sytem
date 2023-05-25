@@ -8,7 +8,7 @@ from django.core.mail import EmailMessage
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.contrib.auth.models import User, Permission
-from jekiiLMS.format_inputs import format_phone_number
+from jekiiLMS.format_inputs import format_phone_number, deformat_phone_no
 from .forms import CustomUserCreationForm, CompanyStaffForm , RoleForm
 from django.contrib import messages
 from .models import CompanyStaff, Role
@@ -236,7 +236,7 @@ def addStaff(request):
         password = make_password(request.POST.get('password'))  # Hash the password
 
         phone_no = request.POST.get('phone_no')
-        formated_phone_no = format_phone_number(phone_no)
+        formated_phone_no = format_phone_number(phone_no, company.phone_code)
 
         CompanyStaff.objects.create(
             company = company,
@@ -333,7 +333,7 @@ def update_user_profile(request):
     
     if request.method == 'POST':
         phone_no = request.POST.get('phone_no')
-        formated_phone_no = format_phone_number(phone_no)
+        formated_phone_no = format_phone_number(phone_no,company.phone_code)
         
         user.first_name = request.POST.get('first_name')
         user.last_name = request.POST.get('last_name')
@@ -344,12 +344,12 @@ def update_user_profile(request):
 
         return redirect('profile')
     else:
-
+        deheaded_phone = deformat_phone_no(user.phone_no, user.company.phone_code)
         form_data = {
             'first_name': user.first_name,
             'last_name': user.last_name,
             'id_no': user.id_no,
-            'phone_no': user.phone_no,
+            'phone_no': deheaded_phone,
             'email': user.email,
         }
 
@@ -374,7 +374,7 @@ def updateStaff(request, pk):
     
     if request.method == 'POST':
         phone_no = request.POST.get('phone_no')
-        formated_phone_no = format_phone_number(phone_no) 
+        formated_phone_no = format_phone_number(phone_no, company.phone_code) 
 
         staff.company= company
         staff.username = request.POST.get('username')
@@ -390,14 +390,14 @@ def updateStaff(request, pk):
 
         return redirect('staffs')
     else:
-
+        deheaded_phone = deformat_phone_no(staff.phone_no, staff.company.phone_code)
         form_data = {
             'username':staff.username,
             'email':staff.email,
             'first_name': staff.first_name,
             'last_name': staff.last_name,
             'id_no': staff.id_no,
-            'phone_no': staff.phone_no,
+            'phone_no': deheaded_phone,
             'branch':staff.branch,
             'user_type':staff.user_type,
             'staff_role':staff.staff_role,

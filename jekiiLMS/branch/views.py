@@ -6,7 +6,7 @@ from .forms import BranchForm, ExpenseCategoryForm , ExpenseForm
 from user.forms import CompanyStaff
 from user.models import RecentActivity
 from jekiiLMS.decorators import permission_required
-from jekiiLMS.format_inputs import format_phone_number
+from jekiiLMS.format_inputs import format_phone_number, deformat_phone_no
 
 
 
@@ -27,7 +27,7 @@ def createBranch(request):
 
     if request.method == 'POST':
         phone = phone= request.POST.get('phone')
-        formated_phone = format_phone_number(phone)
+        formated_phone = format_phone_number(phone, company.phone_code)
 
         branch = Branch.objects.create(
             company = company,
@@ -70,7 +70,7 @@ def editBranch(request,pk):
 
     if request.method == 'POST':
         phone = phone= request.POST.get('phone')
-        formated_phone = format_phone_number(phone)
+        formated_phone = format_phone_number(phone, company.phone_code)
         form = BranchForm(request.POST, instance=branch)
         
         if form.is_valid():
@@ -84,6 +84,7 @@ def editBranch(request,pk):
             messages.error(request, 'Fill the form as required')
     else:
         # prepopulate the form with existing data
+        branch.phone = deformat_phone_no(branch.phone, branch.company.phone_code)
         form = BranchForm(instance=branch)
 
     return render(request, 'branch/branch_edit.html', {'form': form})
