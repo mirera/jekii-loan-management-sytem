@@ -4,11 +4,12 @@ from pytz import all_timezones
 from iso4217 import Currency
 import pycountry
 from .models import Organization, Package, SmsSetting, MpesaSetting, EmailSetting
+from jekiiLMS.utils import phone_codes
 
 
 class OrganizationForm(forms.ModelForm): 
 
-    all_currencies = [currency.code for currency in Currency]
+    all_currencies = [currency.code for currency in Currency] 
 
 
     timezone = forms.ChoiceField(
@@ -25,7 +26,14 @@ class OrganizationForm(forms.ModelForm):
         widget=forms.Select(attrs={'class': 'form-control'})
     )
 
-    phone_code = forms.CharField(widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+   
+
+    phone_code = forms.ChoiceField(
+        choices=phone_codes,
+        widget=forms.Select(attrs={'class': 'form-control ', 'style':'background-color:#ebeef2;'})
+    )
+
+
 
     class Meta:
         model = Organization
@@ -36,10 +44,9 @@ class OrganizationForm(forms.ModelForm):
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control','id': 'fv-email'}),
-            'phone_no': forms.NumberInput(attrs={'class': 'form-control'}),
+            'phone_no': forms.NumberInput(attrs={'class': 'form-control', 'minlength':'10'}),
             'logo': forms.FileInput(attrs={'class': 'form-file-input', 'id':'customFile', 'type':'file'}),
             'address': forms.TextInput(attrs={'class': 'form-control'}),
-
         }
 
     
