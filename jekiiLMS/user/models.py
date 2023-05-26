@@ -117,7 +117,7 @@ class RecentActivity(models.Model):
         ('loan_product_addition', 'Loan Product Addition'),
         ('branch_opened', 'Branch Opened'),
     )
-
+    company = models.ForeignKey(Organization, on_delete=models.CASCADE, null=True)
     event_type = models.CharField(max_length=50, choices=EVENT_CHOICES)
     timestamp = models.DateTimeField(auto_now_add=True)
     details = models.CharField(max_length=200)
@@ -125,5 +125,24 @@ class RecentActivity(models.Model):
 
     def __str__(self):
         return self.event_type
+
+class Notification(models.Model):
+    STATES = (
+        ('warning', 'warning'),
+        ('success', 'success'),
+        ('danger', 'danger'),
+        ('info', 'info'),
+        ('stateless', 'stateless'),
+    )
+    company = models.ForeignKey(Organization, on_delete=models.CASCADE)
+    recipient = models.ForeignKey(CompanyStaff, on_delete=models.CASCADE)
+    message = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+    state = models.CharField(max_length=50, choices=STATES, default='info')
+
+
+    def __str__(self):
+        return self.recipient.first_name
 
  

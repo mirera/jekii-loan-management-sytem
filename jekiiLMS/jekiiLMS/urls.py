@@ -28,7 +28,7 @@ urlpatterns = [
     path('branch/', include('branch.urls')),
     path('company/', include('company.urls')),
     path('api/', include('api.urls')),
-    path('',views.homepage, name='home'),  #path('companyadmin/dashboard/', views.companyadmin_dashboard, name='companyadmin_dashboard'),
+    path('',views.homepage, name='home'),
 
     #dashboards
     path('superadmin/dashboard', views.superadmin_dashboard, name='superadmin_dashboard'),

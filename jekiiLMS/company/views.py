@@ -9,6 +9,7 @@ from user.models import CompanyStaff
 from company.models import SmsSetting, MpesaSetting, EmailSetting
 from jekiiLMS.cred_process import encrypt_secret
 from jekiiLMS.decorators import permission_required
+from jekiiLMS.format_inputs import format_phone_number, deformat_phone_no
 
 #-- update organization details upon sign up view --
 @login_required(login_url='login')
@@ -40,31 +41,39 @@ def updateOrganization(request, pk):
 
     
     if request.method == 'POST':
+        phone_no = request.POST.get('phone_no') 
+        phone_code = request.POST.get('phone_code') 
+        formatted_phone = format_phone_number(phone_no, phone_code)
         #update company details
         organization.name = request.POST.get('name')
         organization.email = request.POST.get('email')
         organization.country = request.POST.get('country')
-        organization.phone_no = request.POST.get('phone_no')
+        organization.phone_no = formatted_phone
         organization.email = request.POST.get('email')
         organization.logo = request.FILES.get('logo')
         organization.address = request.POST.get('address')
         organization.currency = request.POST.get('currency')
         organization.timezone = request.POST.get('timezone')
+        organization.phone_code = request.POST.get('phone_code')
         organization.save()
         messages.success(request, 'settings updated successfully')
         return redirect('update-organization', organization.id)
     else:
         # prepopulate the form with existing data
+        
+        #deformat phone number when displying on form
+        deheaded_phone = deformat_phone_no(organization.phone_no, organization.phone_code)
         form_data = {
             'name': organization.name,
             'email': organization.email,
             'country': organization.country,
-            'phone_no': organization.phone_no,
+            'phone_no': deheaded_phone, 
             'email': organization.email,
-            'logo': organization.logo,
+            'logo': organization.logo, 
             'address': organization.address,
             'currency': organization.currency,
             'timezone': organization.timezone,
+            'phone_code': organization.phone_code,
         }
         # prefill the sms form 
         form_data_sms = {

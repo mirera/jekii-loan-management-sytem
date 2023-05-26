@@ -66,9 +66,9 @@
                                                 <div class="form-group">
                                                     <label class="form-label">Organization Logo</label>
                                                     <span class="form-note">The logo of your Organization</span>
-                                                    <div style="width: 200px; height: 150px;">
+                                                    <div style="width: 100px; height: 50px;">
                                                         <img src="{{ organization.logo.url }}" srcset="{{ organization.logo.url }}">
-                                                    </div>                                                  
+                                                    </div><br><br>                                                  
                                                 </div>
                                             </div>
                                             <div class="col-lg-7">
@@ -85,7 +85,7 @@
                                         <div class="row g-3 align-center">
                                             <div class="col-lg-5">
                                                 <div class="form-group">
-                                                    <label class="form-label">Country </label>
+                                                    <label class="form-label">Country </label> 
                                                     <span class="form-note">Country where organization headquaters are based .</span>
                                                 </div>
                                             </div>
@@ -109,7 +109,7 @@
                                                     <div class="form-control-wrap">
                                                         <div class="input-group">
                                                             <div class="input-group-prepend">
-                                                                <span class="input-group-text" id="fv-phone">+254</span>
+                                                                <span id="fv-phone">{{ form.phone_code }}</span>
                                                             </div>
                                                             {{form.phone_no}}
                                                         </div>

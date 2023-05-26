@@ -15,7 +15,7 @@ from jekiiLMS.decorators import permission_required
 from .models import LoanProduct, Loan, Note, Repayment, Guarantor, Collateral, MpesaStatement
 from .forms import LoanProductForm, LoanForm, RepaymentForm, GuarantorForm, CollateralForm, MpesaStatementForm
 from member.models import Member
-from user.models import RecentActivity
+from user.models import RecentActivity, Notification
 from user.models import CompanyStaff
 from company.models import Organization, SmsSetting, MpesaSetting, EmailSetting
 from jekiiLMS.process_loan import is_sufficient_collateral, get_amount_to_disburse, clear_loan, update_member_data, write_loan_off, roll_over
@@ -62,6 +62,7 @@ def createLoanProduct(request):
         )
         # Create a recent activity entry for loan approval
         RecentActivity.objects.create(
+            company = company,
             event_type='loan_product_addition',
             details=f'A new loan product {product.loan_product_name} has been created.'
         )
@@ -379,6 +380,19 @@ def approveLoan(request,pk):
                             # call fill due_amount function to fill due_amount & final payment date on the Loan model 
                             save_due_amount(loan)
 
+                            # Create a recent activity entry for loan approval
+                            RecentActivity.objects.create(
+                                company = company,
+                                event_type='loan_approval',
+                                details=f'Loan of {loan.member.first_name} {loan.member.first_name} of {loan.approved_amount} has been approved.'
+                            )
+                            Notification.objects.create(
+                                company = company,
+                                recipient = loan.loan_officer,
+                                state='info',
+                                message = f'Loan for {loan.member.first_name} {loan.member.last_name} has been approved.'
+                            )
+                            
                             #send mail and message to borrower.
                             email_setting = EmailSetting.objects.get(company=company)
                             context = {'loan':loan}
@@ -404,11 +418,7 @@ def approveLoan(request,pk):
                                 token,
                                 borrower.phone_no,
                                 message)
-                            # Create a recent activity entry for loan approval
-                            RecentActivity.objects.create(
-                                event_type='loan_approval',
-                                details=f'Loan of {loan.member.first_name} {loan.member.first_name} of {loan.approved_amount} has been approved.'
-                            )
+                            
                             messages.success(request, 'Loan approved & disbursed successfully!')
                             return redirect('view-loan', loan.id)
                         else:
@@ -451,7 +461,6 @@ def rejectLoan(request,pk):
         borrower = loan.member
 
         #email variables
-        company_name = company.name
         company_email =company.email
         email = loan.member.email
 
@@ -460,6 +469,19 @@ def rejectLoan(request,pk):
         if loan.status == 'pending':
             loan.status = 'rejected'
             loan.save()
+
+            # Create a recent activity entry for loan approval
+            RecentActivity.objects.create(
+                company = company,
+                event_type='loan_rejection',
+                details=f'Loan of {loan.member.first_name} {loan.member.last_name} of {loan.applied_amount} has been rejected.'
+            )
+            Notification.objects.create(
+                company = company,
+                recipient = loan.loan_officer,
+                state='danger',
+                message = f'Loan for {loan.member.first_name} {loan.member.last_name} has been rejected.'
+            )
 
             #send mail and message to borrower.
             email_setting = EmailSetting.objects.get(company=company)
@@ -485,11 +507,7 @@ def rejectLoan(request,pk):
                 token,
                 borrower.phone_no,
                 message)
-            # Create a recent activity entry for loan approval
-            RecentActivity.objects.create(
-                event_type='loan_rejection',
-                details=f'Loan of {loan.member.first_name} {loan.member.first_name} of {loan.approved_amount} has been rejected.'
-            )
+
             messages.info(request,'The loan was rejected succussesfully!')
             return redirect(url_with_anchor)
     return render(request,'loan/loans-list.html')

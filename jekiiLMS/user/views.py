@@ -8,11 +8,12 @@ from django.core.mail import EmailMessage
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.contrib.auth.models import User, Permission
-from jekiiLMS.format_inputs import format_phone_number
+from jekiiLMS.format_inputs import format_phone_number, deformat_phone_no
 from .forms import CustomUserCreationForm, CompanyStaffForm , RoleForm
 from django.contrib import messages
 from .models import CompanyStaff, Role
 from branch.models import Branch 
+from user.models import Notification
 from company.models import Organization, Package, SmsSetting
 from jekiiLMS.sms_messages import send_sms 
 
@@ -82,14 +83,14 @@ def user_signup(request):
 
             #save user but no commit before lowercasing the username
             user = form.save(commit=False)
-            # user.username = user.username.lower()
+            user.username = user.username.lower()
             user.save()
 
             # assign Company admin user, all permissions 
             permissions = Permission.objects.filter(
                     content_type__model__in=['branch', 'expense category', 'expense',
                                             'member', 'loanproduct', 'loan', 'repayment',
-                                            'collateral', 'guarantor', 'companyadmin',
+                                            'collateral', 'organization', 'guarantor', 'companyadmin',
                                             'companystaff', 'role', 'note','smssetting',
                                              'mpesasetting', 'emailsetting']
                 )
@@ -183,7 +184,6 @@ def user_logout(request):
 
 #-- list staffs view starts --
 @login_required(login_url='login')
-@permission_required('user.view_user')
 def listStaff(request):
     
     if request.user.is_authenticated and request.user.is_active:
@@ -236,7 +236,7 @@ def addStaff(request):
         password = make_password(request.POST.get('password'))  # Hash the password
 
         phone_no = request.POST.get('phone_no')
-        formated_phone_no = format_phone_number(phone_no)
+        formated_phone_no = format_phone_number(phone_no, company.phone_code)
 
         CompanyStaff.objects.create(
             company = company,
@@ -317,7 +317,7 @@ def deleteStaff(request,pk):
 
 # -- update userprofile
 @login_required(login_url='login')
-@permission_required('user.change_user')
+#@permission_required('user.change_user')
 def update_user_profile(request):
         
     if request.user.is_authenticated and request.user.is_active:
@@ -333,7 +333,7 @@ def update_user_profile(request):
     
     if request.method == 'POST':
         phone_no = request.POST.get('phone_no')
-        formated_phone_no = format_phone_number(phone_no)
+        formated_phone_no = format_phone_number(phone_no,company.phone_code)
         
         user.first_name = request.POST.get('first_name')
         user.last_name = request.POST.get('last_name')
@@ -344,12 +344,12 @@ def update_user_profile(request):
 
         return redirect('profile')
     else:
-
+        deheaded_phone = deformat_phone_no(user.phone_no, user.company.phone_code)
         form_data = {
             'first_name': user.first_name,
             'last_name': user.last_name,
             'id_no': user.id_no,
-            'phone_no': user.phone_no,
+            'phone_no': deheaded_phone,
             'email': user.email,
         }
 
@@ -359,7 +359,7 @@ def update_user_profile(request):
 
 # -- edit user/staff
 @login_required(login_url='login')
-@permission_required('user.change_user')
+#@permission_required('user.change_user')
 def updateStaff(request, pk):
         
     if request.user.is_authenticated and request.user.is_active:
@@ -370,41 +370,53 @@ def updateStaff(request, pk):
             company = None
 
     staff = CompanyStaff.objects.get(id=pk, company=company)
+    user = User.objects.get(username=staff.username)
     
     
     if request.method == 'POST':
+        branch_id = request.POST.get('branch')
+        branch = Branch.objects.get(id=branch_id)
+
+        role_id = request.POST.get('staff_role')
+        staff_role = Role.objects.get(id=role_id)
+
         phone_no = request.POST.get('phone_no')
-        formated_phone_no = format_phone_number(phone_no) 
+        formated_phone_no = format_phone_number(phone_no, company.phone_code) 
 
         staff.company= company
-        staff.username = request.POST.get('username')
+        staff.username = request.POST.get('username').lower()
         staff.email = request.POST.get('email')
         staff.first_name = request.POST.get('first_name')
         staff.last_name = request.POST.get('last_name')
         staff.id_no = request.POST.get('id_no')
         staff.phone_no = formated_phone_no
-        staff.branch = request.POST.get('branch')
+        staff.branch = branch
         staff.user_type = request.POST.get('user_type')
-        staff.staff_role = request.POST.get('staff_role')
+        staff.staff_role = staff_role
         staff.save()
+
+        #since the companystaff is linked to user obj via username update user.username
+        user.username = staff.username
+        user.save()
 
         return redirect('staffs')
     else:
-
+        deheaded_phone = deformat_phone_no(staff.phone_no, staff.company.phone_code)
         form_data = {
             'username':staff.username,
             'email':staff.email,
             'first_name': staff.first_name,
             'last_name': staff.last_name,
             'id_no': staff.id_no,
-            'phone_no': staff.phone_no,
+            'phone_no': deheaded_phone, 
             'branch':staff.branch,
             'user_type':staff.user_type,
             'staff_role':staff.staff_role,
             'email': staff.email,
         }
+    
+        form = CompanyStaffForm(initial=form_data, company=company)
 
-        form = CompanyStaffForm(initial=form_data)
         return render(request,'user/update-staff.html',{'form':form, 'staff':staff})
 # -- ends 
 
@@ -469,9 +481,12 @@ def activateStaff(request, pk):
 def addRole(request):
     # Get all available permissions
     permissions = Permission.objects.filter(
-            content_type__model__in=['branch', 'expense category', 'expense',
-             'member','loanproduct', 'loan', 'repayment','collateral', 'guarantor',
-             'companyadmin', 'companystaff', 'role', 'note' ] 
+            content_type__model__in=[
+                'branch', 'expense category', 'expense',
+                'member','loanproduct', 'organization', 
+                'loan', 'repayment','collateral', 'guarantor',
+                'companyadmin', 'companystaff', 'role', 'note',
+                'smssetting','mpesasetting', 'emailsetting' ] 
         )
     if request.user.is_authenticated and request.user.is_active:
         try:
@@ -525,13 +540,13 @@ def editRole(request, pk):
 
         #update all users with the role permissions
         permissions = role.permissions.all() 
-
         #get all staff with this role
         staffs = CompanyStaff.objects.filter(company=company, staff_role=role)
         #assign users permissions
         for staff in staffs:
             user = User.objects.get(username=staff.username)
             user.user_permissions.set(permissions)
+            user.save()
 
         messages.success(request, 'Role updated successfully!')
         return redirect('roles-list')
@@ -554,7 +569,6 @@ def editRole(request, pk):
 
 # --  roles list --
 @login_required(login_url='login')
-@permission_required('user.view_role')
 def rolesList(request):
     permissions = Permission.objects.filter(
             content_type__model__in=['branch', 'expense category', 'expense',
@@ -596,3 +610,14 @@ def deleteRole(request,pk):
     return render(request, 'user/roles-list.html', context)
 # -- ends --
  
+#mark notfication as read
+@login_required(login_url='login')
+def mark_notfications_read(request, pk):
+    notifications = Notification.objects.filter(recipient=pk, is_read=False)
+    for notification in notifications:
+        notification.is_read = True
+        notification.save()
+    return redirect('home')
+
+
+

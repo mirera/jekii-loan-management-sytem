@@ -5,7 +5,7 @@ from .models import Member, Branch
 from .forms import MemberForm
 from user.models import CompanyStaff
 from jekiiLMS.decorators import permission_required
-from jekiiLMS.format_inputs import format_phone_number
+from jekiiLMS.format_inputs import format_phone_number, deformat_phone_no, user_local_time,to_utc
 
 
 #create member view starts
@@ -22,12 +22,12 @@ def createMember(request):
 
     form = MemberForm(request.POST, company=company) #instiated the two kwargs to be able to access them on the forms.py
 
-    branch_id = request.POST.get('branch')
-    branch = Branch.objects.get(id=branch_id)
-    phone_no = request.POST.get('phone_no')
-    formated_phone_no = format_phone_number(phone_no)
-
     if request.method == 'POST':
+        branch_id = request.POST.get('branch')
+        branch = Branch.objects.get(id=branch_id)
+        phone_no = request.POST.get('phone_no')
+        formated_phone_no = format_phone_number(phone_no, company.phone_code)
+        
         member = Member.objects.create(
             company = company,
             first_name = request.POST.get('first_name'),
@@ -121,19 +121,18 @@ def editMember(request,pk):
 
     if request.method == 'POST':
         phone_no = request.POST.get('phone_no')
-        formated_phone_no = format_phone_number(phone_no)
         # Get the selected branch id from the form
         branch_id = request.POST.get('branch')
-        
+        date_time = request.POST.get('date_joined')
         # Get the corresponding Branch object
         branch = Branch.objects.get(pk=branch_id)
         # update the branch with the submitted form data
         member.first_name = request.POST.get('first_name')
         member.last_name = request.POST.get('last_name')
         member.id_no = request.POST.get('id_no')
-        member.phone_no = formated_phone_no
+        member.phone_no = format_phone_number(phone_no, company.phone_code)
         member.email = request.POST.get('email')
-        member.date_joined = request.POST.get('date_joined')
+        member.date_joined = to_utc(company.timezone, date_time)
         member.branch = branch
         member.business_name = request.POST.get('business_name')
         member.industry = request.POST.get('industry')
@@ -152,10 +151,11 @@ def editMember(request,pk):
             'first_name': member.first_name,
             'last_name': member.last_name,
             'id_no': member.id_no,
-            'phone_no': member.phone_no,
+            'phone_no': deformat_phone_no(member.phone_no, member.company.phone_code),
             'email': member.email,
             'branch': member.branch,
-            'date_joined': member.date_joined,
+            #'date_joined': member.date_joined,
+            'date_joined': user_local_time(company.timezone, member.date_joined),
             'business_name': member.business_name,
             'industry': member.industry,
             'address': member.address,

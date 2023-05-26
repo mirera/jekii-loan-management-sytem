@@ -30,7 +30,7 @@ class Organization(models.Model):
     admin = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     email = models.EmailField()
-    phone_no = models.CharField(max_length=10, default='0712345678')
+    phone_no = models.CharField(max_length=12, default='712345678')
     logo = models.ImageField(default='default.png', upload_to='companies_logo/')
     date_joined = models.DateTimeField(auto_now_add=True)
     package = models.ForeignKey(Package, on_delete=models.SET_NULL,null=True)
@@ -40,7 +40,7 @@ class Organization(models.Model):
     timezone = models.CharField(max_length=50, default='UTC')
     currency = models.CharField(max_length=10, default='USD')
     country = models.CharField(max_length=30, default='Kenya')
-    phone_code = models.CharField(max_length=5, default='1')
+    phone_code = models.CharField(max_length=5, default='1') 
  
 
     def get_localized_datetime(self, datetime_value):
