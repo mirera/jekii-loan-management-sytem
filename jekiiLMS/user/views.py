@@ -359,7 +359,7 @@ def update_user_profile(request):
 
 # -- edit user/staff
 @login_required(login_url='login')
-@permission_required('user.change_user')
+#@permission_required('user.change_user')
 def updateStaff(request, pk):
         
     if request.user.is_authenticated and request.user.is_active:
@@ -374,20 +374,25 @@ def updateStaff(request, pk):
     
     
     if request.method == 'POST':
+        branch_id = request.POST.get('branch')
+        branch = Branch.objects.get(id=branch_id)
+
+        role_id = request.POST.get('staff_role')
+        staff_role = Role.objects.get(id=role_id)
+
         phone_no = request.POST.get('phone_no')
-        username = request.POST.get('username').lower()
         formated_phone_no = format_phone_number(phone_no, company.phone_code) 
 
         staff.company= company
-        staff.username = username
+        staff.username = request.POST.get('username').lower()
         staff.email = request.POST.get('email')
         staff.first_name = request.POST.get('first_name')
         staff.last_name = request.POST.get('last_name')
         staff.id_no = request.POST.get('id_no')
         staff.phone_no = formated_phone_no
-        staff.branch = request.POST.get('branch')
+        staff.branch = branch
         staff.user_type = request.POST.get('user_type')
-        staff.staff_role = request.POST.get('staff_role')
+        staff.staff_role = staff_role
         staff.save()
 
         #since the companystaff is linked to user obj via username update user.username
@@ -403,14 +408,15 @@ def updateStaff(request, pk):
             'first_name': staff.first_name,
             'last_name': staff.last_name,
             'id_no': staff.id_no,
-            'phone_no': deheaded_phone,
+            'phone_no': deheaded_phone, 
             'branch':staff.branch,
             'user_type':staff.user_type,
             'staff_role':staff.staff_role,
             'email': staff.email,
         }
+    
+        form = CompanyStaffForm(initial=form_data, company=company)
 
-        form = CompanyStaffForm(initial=form_data)
         return render(request,'user/update-staff.html',{'form':form, 'staff':staff})
 # -- ends 
 

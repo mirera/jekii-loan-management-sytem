@@ -137,7 +137,7 @@
                                             <ul class="d-flex g-3">
                                                 <li>
                                                     <div class="dropdown">
-                                                        <a href="#" class="dropdown-toggle btn btn-light" data-bs-toggle="dropdown">User<em class="icon ni ni-chevron-down"></em></a>
+                                                        <a href="#" class="dropdown-toggle btn btn-light" data-bs-toggle="dropdown">Staff<em class="icon ni ni-chevron-down"></em></a>
                                                         <div class="dropdown-menu">
                                                             {% for permission in form.permissions.field.queryset %}
                                                             {% if permission.content_type.model == 'companystaff' %}

@@ -67,7 +67,7 @@ class CompanyStaffForm(forms.ModelForm):
                 'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder':'Write your last name'}),
                 'email': forms.EmailInput(attrs={'class': 'form-control'}),
                 'id_no': forms.TextInput(attrs={'class': 'form-control', 'minlength':'8'}),
-                'phone_no': forms.NumberInput(attrs={'class': 'form-control','id': 'fv-email', 'placeholder':'0712345678', 'minlength':'10'}),
+                'phone_no': forms.NumberInput(attrs={'class': 'form-control','id': 'fv-email', 'placeholder':'0712345678', 'minlength':'9'}),
                 'branch': forms.Select(attrs={'class': 'form-select js-select2'}), 
                 'user_type': forms.Select(attrs={'class': 'form-select js-select2'}),
                 'staff_role': forms.Select(attrs={'class': 'form-select js-select2'}),
