@@ -86,7 +86,7 @@ class RoleForm(forms.Form):
     permissions = forms.ModelMultipleChoiceField(
         label='Permissions',
         queryset=Permission.objects.filter(
-            content_type__model__in=['branch', 'expensecategory', 'expense',
+            content_type__model__in=['branch', 'organization','expensecategory', 'expense',
              'member','loanproduct', 'loan', 'repayment','collateral', 'guarantor',
              'companyadmin', 'companystaff', 'role', 'note' ]  # Filter by models you want
         ),

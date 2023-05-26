@@ -85,6 +85,30 @@
                                             </ul>
                                         </li><!-- li -->
                                         <li class="preview-item">
+                                            <span class="preview-title overline-title"> .</span>
+                                            <ul class="d-flex g-3">
+                                                <li>
+                                                    <div class="dropdown">
+                                                        <a href="#" class="dropdown-toggle btn btn-light" data-bs-toggle="dropdown">Company<em class="icon ni ni-chevron-down"></em></a>
+                                                        <div class="dropdown-menu">
+                                                            {% for permission in form.permissions.field.queryset %}
+                                                            {% if permission.content_type.model == 'organization' %}
+                                                            <ul class="link-tidy">
+                                                                <li>
+                                                                    <div class="custom-control custom-control-sm custom-checkbox">
+                                                                        <input type="checkbox" class="custom-control-input" id="{{ permission.codename }}" name="permissions" value="{{ permission.pk }}" {% if permission in role.permissions.all %}checked{% endif %}>
+                                                                        <label class="custom-control-label" for="{{ permission.codename }}">{{ permission.codename }}</label>
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+                                                            {% endif %}
+                                                            {% endfor%}
+                                                        </div>
+                                                    </div>
+                                                </li><!-- li -->
+                                            </ul>
+                                        </li><!-- li -->
+                                        <li class="preview-item">
                                             <span class="preview-title overline-title">.</span>
                                             <ul class="d-flex g-3">
                                                 <li>

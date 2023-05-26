@@ -83,14 +83,14 @@ def user_signup(request):
 
             #save user but no commit before lowercasing the username
             user = form.save(commit=False)
-            # user.username = user.username.lower()
+            user.username = user.username.lower()
             user.save()
 
             # assign Company admin user, all permissions 
             permissions = Permission.objects.filter(
                     content_type__model__in=['branch', 'expense category', 'expense',
                                             'member', 'loanproduct', 'loan', 'repayment',
-                                            'collateral', 'guarantor', 'companyadmin',
+                                            'collateral', 'organization', 'guarantor', 'companyadmin',
                                             'companystaff', 'role', 'note','smssetting',
                                              'mpesasetting', 'emailsetting']
                 )
@@ -184,7 +184,6 @@ def user_logout(request):
 
 #-- list staffs view starts --
 @login_required(login_url='login')
-@permission_required('user.view_user')
 def listStaff(request):
     
     if request.user.is_authenticated and request.user.is_active:
@@ -371,14 +370,16 @@ def updateStaff(request, pk):
             company = None
 
     staff = CompanyStaff.objects.get(id=pk, company=company)
+    user = User.objects.get(username=staff.username)
     
     
     if request.method == 'POST':
         phone_no = request.POST.get('phone_no')
+        username = request.POST.get('username').lower()
         formated_phone_no = format_phone_number(phone_no, company.phone_code) 
 
         staff.company= company
-        staff.username = request.POST.get('username')
+        staff.username = username
         staff.email = request.POST.get('email')
         staff.first_name = request.POST.get('first_name')
         staff.last_name = request.POST.get('last_name')
@@ -388,6 +389,10 @@ def updateStaff(request, pk):
         staff.user_type = request.POST.get('user_type')
         staff.staff_role = request.POST.get('staff_role')
         staff.save()
+
+        #since the companystaff is linked to user obj via username update user.username
+        user.username = staff.username
+        user.save()
 
         return redirect('staffs')
     else:
@@ -470,9 +475,12 @@ def activateStaff(request, pk):
 def addRole(request):
     # Get all available permissions
     permissions = Permission.objects.filter(
-            content_type__model__in=['branch', 'expense category', 'expense',
-             'member','loanproduct', 'loan', 'repayment','collateral', 'guarantor',
-             'companyadmin', 'companystaff', 'role', 'note' ] 
+            content_type__model__in=[
+                'branch', 'expense category', 'expense',
+                'member','loanproduct', 'organization', 
+                'loan', 'repayment','collateral', 'guarantor',
+                'companyadmin', 'companystaff', 'role', 'note',
+                'smssetting','mpesasetting', 'emailsetting' ] 
         )
     if request.user.is_authenticated and request.user.is_active:
         try:
@@ -526,13 +534,13 @@ def editRole(request, pk):
 
         #update all users with the role permissions
         permissions = role.permissions.all() 
-
         #get all staff with this role
         staffs = CompanyStaff.objects.filter(company=company, staff_role=role)
         #assign users permissions
         for staff in staffs:
             user = User.objects.get(username=staff.username)
             user.user_permissions.set(permissions)
+            user.save()
 
         messages.success(request, 'Role updated successfully!')
         return redirect('roles-list')
@@ -555,7 +563,6 @@ def editRole(request, pk):
 
 # --  roles list --
 @login_required(login_url='login')
-@permission_required('user.view_role')
 def rolesList(request):
     permissions = Permission.objects.filter(
             content_type__model__in=['branch', 'expense category', 'expense',

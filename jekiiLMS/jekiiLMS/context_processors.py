@@ -1,12 +1,13 @@
 from company.models import Organization
 from user.models import CompanyStaff, Notification
+from django.contrib.auth.models import User
 
 #-- custome context processor for login organization --
 def get_organization(request):
     if request.user.is_authenticated and request.user.is_active:
         try:
-            user = CompanyStaff.objects.get(username=request.user.username)
-            organization = user.company
+            user = CompanyStaff.objects.get(username=request.user.username) 
+            organization = user.company 
             return {"organization" :organization}
         except Organization.DoesNotExist:
             pass
