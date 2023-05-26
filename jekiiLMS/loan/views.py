@@ -380,6 +380,19 @@ def approveLoan(request,pk):
                             # call fill due_amount function to fill due_amount & final payment date on the Loan model 
                             save_due_amount(loan)
 
+                            # Create a recent activity entry for loan approval
+                            RecentActivity.objects.create(
+                                company = company,
+                                event_type='loan_approval',
+                                details=f'Loan of {loan.member.first_name} {loan.member.first_name} of {loan.approved_amount} has been approved.'
+                            )
+                            Notification.objects.create(
+                                company = company,
+                                recipient = loan.loan_officer,
+                                state='info',
+                                message = f'Loan for {loan.member.first_name} {loan.member.last_name} has been approved.'
+                            )
+                            
                             #send mail and message to borrower.
                             email_setting = EmailSetting.objects.get(company=company)
                             context = {'loan':loan}
@@ -405,12 +418,7 @@ def approveLoan(request,pk):
                                 token,
                                 borrower.phone_no,
                                 message)
-                            # Create a recent activity entry for loan approval
-                            RecentActivity.objects.create(
-                                company = company,
-                                event_type='loan_approval',
-                                details=f'Loan of {loan.member.first_name} {loan.member.first_name} of {loan.approved_amount} has been approved.'
-                            )
+                            
                             messages.success(request, 'Loan approved & disbursed successfully!')
                             return redirect('view-loan', loan.id)
                         else:
@@ -453,7 +461,6 @@ def rejectLoan(request,pk):
         borrower = loan.member
 
         #email variables
-        company_name = company.name
         company_email =company.email
         email = loan.member.email
 

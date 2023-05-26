@@ -4,9 +4,9 @@ from user.models import CompanyStaff, Notification
 #-- custome context processor for login organization --
 def get_organization(request):
     if request.user.is_authenticated and request.user.is_active:
-        user = request.user
         try:
-            organization = Organization.objects.get(admin=user)
+            user = CompanyStaff.objects.get(username=request.user.username)
+            organization = user.company
             return {"organization" :organization}
         except Organization.DoesNotExist:
             pass

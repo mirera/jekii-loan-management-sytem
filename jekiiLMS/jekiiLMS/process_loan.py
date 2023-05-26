@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from loan.models import Collateral
 from branch.models import Expense, ExpenseCategory
 from loan.models import Loan
-from user.models import RecentActivity
+from user.models import RecentActivity, Notification
 from .credit_score import member_credit_score, update_credit_score
 from jekiiLMS.sms_messages import send_sms
 from jekiiLMS.loan_math import loan_due_date, save_due_amount, num_installments
@@ -77,15 +77,22 @@ def clear_loan(loan):
                 loan.status = 'cleared'
                 loan.cleared_date = today 
                 loan.save()
-                #send sms
-                message = f"Dear {loan.member.first_name}, You have successfully cleared your loan balance. Success in your business."
-                send_sms(loan.member.phone_no, message)
-                # Create a recent activity entry for loan approval
+                # Create a recent activity entry for loan clearance
                 RecentActivity.objects.create(
                     company = loan.company,
                     event_type='loan_clearance',
                     details=f'Loan of {loan.member.first_name} {loan.member.first_name} of {loan.approved_amount} has been cleared.'
                 )
+                Notification.objects.create(
+                    company = loan.company,
+                    recipient = loan.loan_officer,
+                    state='success',
+                    message = f'Loan for {loan.member.first_name} {loan.member.last_name} has been cleared.'
+                )
+                #send sms
+                message = f"Dear {loan.member.first_name}, You have successfully cleared your loan balance. Success in your business."
+                send_sms(loan.member.phone_no, message)
+
 
 #update member details after loan cleared               
 def update_member_data(loan):
@@ -135,6 +142,12 @@ def write_loan_off(loan):
             event_type='loan_write_off',
             details=f'Loan of {loan.member.first_name} {loan.member.first_name} of {loan.approved_amount} has been written off.'
         )
+        Notification.objects.create(
+            company = loan.company,
+            recipient = loan.loan_officer,
+            state='stateless',
+            message = f'Loan for {loan.member.first_name} {loan.member.last_name} has been written off.'
+        )
 # -- ends
 
 # --roll over loan
@@ -180,7 +193,12 @@ def roll_over(loan):
             event_type='loan_roll_over',
             details=f'Loan of {loan.member.first_name} {loan.member.first_name} of {loan.approved_amount} has been rolled over.'
         )
-
+    Notification.objects.create(
+            company = loan.company,
+            recipient = loan.loan_officer,
+            state='stateless',
+            message = f'Loan for {loan.member.first_name} {loan.member.last_name} has been rolled over.'
+        )
     return new_loan
 # -- ends
 
