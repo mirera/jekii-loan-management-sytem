@@ -82,6 +82,7 @@ def clear_loan(loan):
                 send_sms(loan.member.phone_no, message)
                 # Create a recent activity entry for loan approval
                 RecentActivity.objects.create(
+                    company = loan.company,
                     event_type='loan_clearance',
                     details=f'Loan of {loan.member.first_name} {loan.member.first_name} of {loan.approved_amount} has been cleared.'
                 )
@@ -130,6 +131,7 @@ def write_loan_off(loan):
         loan.write_off_expense = amount
         loan.save()
         RecentActivity.objects.create(
+            company = loan.company,
             event_type='loan_write_off',
             details=f'Loan of {loan.member.first_name} {loan.member.first_name} of {loan.approved_amount} has been written off.'
         )
@@ -174,6 +176,7 @@ def roll_over(loan):
     loan.status = 'rolled over'
     loan.save()
     RecentActivity.objects.create(
+            company = loan.company,
             event_type='loan_roll_over',
             details=f'Loan of {loan.member.first_name} {loan.member.first_name} of {loan.approved_amount} has been rolled over.'
         )

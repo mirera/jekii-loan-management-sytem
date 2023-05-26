@@ -34,7 +34,7 @@ class Member(models.Model):
     address = models.CharField(max_length=500)
     previous_credit_score = models.IntegerField(default=0)
     credit_score = models.IntegerField(default=0)
-    date_joined = models.DateField()
+    date_joined = models.DateTimeField()
     passport_photo = models.ImageField( default='default.png', upload_to='member_passports/')
     status = models.CharField(max_length=50, choices=STATUS, default='inactive', )
 

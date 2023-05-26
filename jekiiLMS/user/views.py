@@ -13,6 +13,7 @@ from .forms import CustomUserCreationForm, CompanyStaffForm , RoleForm
 from django.contrib import messages
 from .models import CompanyStaff, Role
 from branch.models import Branch 
+from user.models import Notification
 from company.models import Organization, Package, SmsSetting
 from jekiiLMS.sms_messages import send_sms 
 
@@ -317,7 +318,7 @@ def deleteStaff(request,pk):
 
 # -- update userprofile
 @login_required(login_url='login')
-@permission_required('user.change_user')
+#@permission_required('user.change_user')
 def update_user_profile(request):
         
     if request.user.is_authenticated and request.user.is_active:
@@ -596,3 +597,14 @@ def deleteRole(request,pk):
     return render(request, 'user/roles-list.html', context)
 # -- ends --
  
+#mark notfication as read
+@login_required(login_url='login')
+def mark_notfications_read(request, pk):
+    notifications = Notification.objects.filter(recipient=pk, is_read=False)
+    for notification in notifications:
+        notification.is_read = True
+        notification.save()
+    return redirect('home')
+
+
+

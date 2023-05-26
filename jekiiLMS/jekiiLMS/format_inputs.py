@@ -1,4 +1,5 @@
-import pycountry
+import pytz
+from datetime import datetime
 
 #format phone number to 254706384073
 def format_phone_number(phone_no, phone_code):
@@ -16,11 +17,20 @@ def format_phone_number(phone_no, phone_code):
 
     return phone_no  
 
+#deformat the number
 def deformat_phone_no(phone_no, phone_code):
     phone_code_length = len(phone_code[1:]) #remove plus sign
-    print(phone_code[1:])
-    print(phone_code_length)
     deheaded_phone = phone_no[phone_code_length:]
-    print(phone_no)
-    print(deheaded_phone)
     return deheaded_phone
+
+def user_local_time(user_timezone, datetime_value): 
+    # Convert the datetime to the user's timezone
+    user_timezone = pytz.timezone(user_timezone)
+    user_datetime = datetime_value.astimezone(user_timezone)
+    return user_datetime
+
+#convert to utc for db storage
+def to_utc(user_timezone, datetime_value):
+    user_timezone = pytz.timezone(user_timezone)
+    datetime_utc = datetime_value.astimezone(user_timezone)
+    return datetime_utc

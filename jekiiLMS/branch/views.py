@@ -6,7 +6,7 @@ from .forms import BranchForm, ExpenseCategoryForm , ExpenseForm
 from user.forms import CompanyStaff
 from user.models import RecentActivity
 from jekiiLMS.decorators import permission_required
-from jekiiLMS.format_inputs import format_phone_number, deformat_phone_no
+from jekiiLMS.format_inputs import format_phone_number, deformat_phone_no, user_local_time, to_utc
 
 
 
@@ -41,6 +41,7 @@ def createBranch(request):
         )
         # Create a recent activity entry for loan approval
         RecentActivity.objects.create(
+            company=company,
             event_type='branch_opened',
             details=f'A new branch {branch.name} has been opened.'
         )
@@ -70,13 +71,13 @@ def editBranch(request,pk):
 
     if request.method == 'POST':
         phone = phone= request.POST.get('phone')
-        formated_phone = format_phone_number(phone, company.phone_code)
         form = BranchForm(request.POST, instance=branch)
         
         if form.is_valid():
             branch = form.save(commit=False)
             branch.company = company
-            branch.phone = formated_phone
+            branch.phone = format_phone_number(phone, company.phone_code)
+            branch.open_date = to_utc(company.timezone, branch.open_date)
             branch.save()
             messages.success(request, 'Branch edited successfully')
             return redirect('list')
@@ -84,8 +85,14 @@ def editBranch(request,pk):
             messages.error(request, 'Fill the form as required')
     else:
         # prepopulate the form with existing data
+        print(branch.open_date)
         branch.phone = deformat_phone_no(branch.phone, branch.company.phone_code)
+        branch.open_date = user_local_time(company.timezone, branch.open_date)
+        print(branch.open_date)
+        print(user_local_time(company.timezone, branch.open_date))
         form = BranchForm(instance=branch)
+        print(branch.open_date)
+        
 
     return render(request, 'branch/branch_edit.html', {'form': form})
 

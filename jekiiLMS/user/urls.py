@@ -20,5 +20,8 @@ urlpatterns = [
     path('add-role', views.addRole, name='add-role'),
     path('edit-role/<str:pk>', views.editRole, name='edit-role'),
     path('roles-list', views.rolesList, name='roles-list'),
-    path('delete-role/<str:pk>', views.deleteRole, name='delete-role')
+    path('delete-role/<str:pk>', views.deleteRole, name='delete-role'),
+
+    #--notifications
+    path('<str:pk>/read-notification', views.mark_notfications_read, name='mark-read'),
 ]

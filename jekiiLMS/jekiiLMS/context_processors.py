@@ -1,5 +1,5 @@
 from company.models import Organization
-from user.models import CompanyStaff
+from user.models import CompanyStaff, Notification
 
 #-- custome context processor for login organization --
 def get_organization(request):
@@ -39,6 +39,16 @@ def get_company_phone_code(request):
             organization = user.company
             company_phone_code = organization.phone_code
             return {"company_phone_code" :company_phone_code}
+        except CompanyStaff.DoesNotExist:
+            pass
+    return {}
+
+def get_user_notifications(request):
+    if request.user.is_authenticated and request.user.is_active:
+        try:
+            user = CompanyStaff.objects.get(username=request.user.username)
+            notifications = Notification.objects.filter(recipient=user, is_read=False).order_by('-timestamp')[:3]
+            return {"notifications" :notifications}
         except CompanyStaff.DoesNotExist:
             pass
     return {}

@@ -76,6 +76,7 @@ TEMPLATES = [
                 'jekiiLMS.context_processors.get_user',
                 'jekiiLMS.context_processors.get_company_currency',
                 'jekiiLMS.context_processors.get_company_phone_code',
+                'jekiiLMS.context_processors.get_user_notifications',
             ],
         },
     },
