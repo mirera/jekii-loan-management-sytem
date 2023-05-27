@@ -10,6 +10,7 @@
     {% endfor %}
 {% endif %}
 <!-- content @s -->
+{% load tz %}
 <div class="nk-content ">
     <div class="container-fluid">
         <div class="nk-content-inner">
@@ -99,7 +100,7 @@
                                                     <span class="tb-sub">{{loan.applied_amount}}</span>
                                                 </div>
                                                 <div class="nk-tb-col tb-col-md">
-                                                    <span class="tb-sub">{{loan.application_date.date}}</span>
+                                                    <span class="tb-sub">{% timezone company_tz %} {{loan.application_date.date}} {% endtimezone %}</span>
                                                 </div>
                                                 <div class="nk-tb-col tb-col-lg">
                                                     <span class="tb-sub"><a href="{% url 'view-member' loan.member.id %}">{{loan.loan_officer}}</a></span>
@@ -182,7 +183,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="nk-tb-col tb-col-md">
-                                                    <span class="tb-sub">{{loan.application_date.date}}</span>
+                                                    <span class="tb-sub"> {% timezone company_tz %} {{loan.application_date.date}} {% endtimezone %}</span>
                                                 </div>
                                                 <div class="nk-tb-col tb-col-lg">
                                                     <span class="tb-sub tb-amount">{{loan.applied_amount}}</span>
@@ -245,13 +246,13 @@
                                                     </div>
                                                 </div>
                                                 <div class="nk-tb-col tb-col-md">
-                                                    <span class="tb-sub">{{loan.approved_date.date}}</span>
+                                                    <span class="tb-sub">{% timezone company_tz %} {{loan.approved_date.date}} {% endtimezone %}</span>
                                                 </div>
                                                 <div class="nk-tb-col tb-col-md">
-                                                    <span class="tb-sub">{{loan.due_date.date}}</span>
+                                                    <span class="tb-sub">{% timezone company_tz %} {{loan.due_date.date}} {% endtimezone %} </span>
                                                 </div>
                                                 <div class="nk-tb-col tb-col-md">
-                                                    <span class="tb-sub">{{loan.final_payment_date.date}}</span>
+                                                    <span class="tb-sub"> {% timezone company_tz %} {{loan.final_payment_date.date}} {% endtimezone %}</span>
                                                 </div>
                                                 <div class="nk-tb-col tb-col-lg">
                                                     <span class="tb-sub tb-amount">{{loan.applied_amount}}</span>
@@ -321,10 +322,10 @@
                                                     <span class="tb-sub">{{loan.approved_amount}}</span>
                                                 </div>
                                                 <div class="nk-tb-col tb-col-lg">
-                                                    <span class="tb-sub text-primary">{{loan.approved_date.date}}</span>
+                                                    <span class="tb-sub text-primary">{% timezone company_tz %} {{loan.approved_date.date}} {% endtimezone %}</span>
                                                 </div>
                                                 <div class="nk-tb-col">
-                                                    <span class="tb-sub tb-amount">{{loan.cleared_date.date}}</span>
+                                                    <span class="tb-sub tb-amount"> {% timezone company_tz %} {{loan.cleared_date.date}} {% endtimezone %}</span>
                                                 </div>
                                                 <div class="nk-tb-col">
                                                     <span class="tb-sub tb-amount">{{loan.approved_by}}</span>
@@ -386,13 +387,13 @@
                                                     </div>
                                                 </div>
                                                 <div class="nk-tb-col tb-col-md">
-                                                    <span class="tb-sub">{{loan.approved_date.date}}</span>
+                                                    <span class="tb-sub">{% timezone company_tz %} {{loan.approved_date.date}} {% endtimezone %}</span>
                                                 </div>
                                                 <div class="nk-tb-col tb-col-md">
-                                                    <span class="tb-sub">{{loan.due_date.date}}</span>
+                                                    <span class="tb-sub">{% timezone company_tz %}{{loan.due_date.date}} {% endtimezone %}</span>
                                                 </div>
                                                 <div class="nk-tb-col tb-col-md">
-                                                    <span class="tb-sub">{{loan.final_payment_date.date}}</span>
+                                                    <span class="tb-sub">{% timezone company_tz %} {{loan.final_payment_date.date}} {% endtimezone %}</span>
                                                 </div>
                                                 <div class="nk-tb-col">
                                                     <span class="tb-sub tb-amount">{{loan.approved_amount}} </span>

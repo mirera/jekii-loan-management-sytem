@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from datetime import datetime
 from django.contrib.auth.decorators import login_required 
 from .models import Branch ,ExpenseCategory, Expense
 from .forms import BranchForm, ExpenseCategoryForm , ExpenseForm
@@ -29,6 +30,10 @@ def createBranch(request):
         phone = phone= request.POST.get('phone')
         formated_phone = format_phone_number(phone, company.phone_code)
 
+        open_date_str = request.POST.get('open_date')
+        open_date = datetime.strptime(open_date_str, '%Y-%m-%d')  # Convert to datetime 
+        utcz_datetime = to_utc(company.timezone, open_date)
+
         branch = Branch.objects.create(
             company = company,
             name = request.POST.get('name'),
@@ -36,7 +41,7 @@ def createBranch(request):
             email = request.POST.get('email'),
             capital = request.POST.get('capital'),
             office = request.POST.get('office'),
-            open_date = request.POST.get('open_date'),
+            open_date = utcz_datetime,
             notes = request.POST.get('notes'),
         )
         # Create a recent activity entry for loan approval
@@ -72,12 +77,16 @@ def editBranch(request,pk):
     if request.method == 'POST':
         phone = phone= request.POST.get('phone')
         form = BranchForm(request.POST, instance=branch)
+
+        open_date_str = request.POST.get('open_date')
+        open_date = datetime.strptime(open_date_str, '%Y-%m-%d %H:%M:%S')  # Convert to datetime 
+        utcz_datetime = to_utc(company.timezone, open_date)
         
         if form.is_valid():
             branch = form.save(commit=False)
             branch.company = company
             branch.phone = format_phone_number(phone, company.phone_code)
-            branch.open_date = to_utc(company.timezone, branch.open_date)
+            branch.open_date = utcz_datetime
             branch.save()
             messages.success(request, 'Branch edited successfully')
             return redirect('list')
@@ -85,13 +94,9 @@ def editBranch(request,pk):
             messages.error(request, 'Fill the form as required')
     else:
         # prepopulate the form with existing data
-        print(branch.open_date)
         branch.phone = deformat_phone_no(branch.phone, branch.company.phone_code)
         branch.open_date = user_local_time(company.timezone, branch.open_date)
-        print(branch.open_date)
-        print(user_local_time(company.timezone, branch.open_date))
         form = BranchForm(instance=branch)
-        print(branch.open_date)
         
 
     return render(request, 'branch/branch_edit.html', {'form': form})
@@ -109,6 +114,7 @@ def list_branches(request):
         except CompanyStaff.DoesNotExist:
             company = None
     branches = Branch.objects.filter(company=company).order_by('-open_date')
+
     form = BranchForm()
     
 
@@ -334,8 +340,12 @@ def editExpense(request,pk):
         # Get the corresponding Branch object
         branch = Branch.objects.get(pk=branch_id)
 
+        expense_date_str = request.POST.get('expense_date')
+        expense_date = datetime.strptime(expense_date_str, '%Y-%m-%d %H:%M:%S')  # Convert to datetime 
+        utcz_datetime = to_utc(company.timezone, expense_date)
+
         # update the branch with the submitted form data
-        expense.expense_date = request.POST.get('expense_date')
+        expense.expense_date = utcz_datetime
         expense.category = category
         expense.amount = request.POST.get('amount')
         expense.branch = branch
@@ -343,19 +353,21 @@ def editExpense(request,pk):
         expense.attachement = request.FILES.get('attachement')
         expense.save()
 
+        messages.success(request, 'Expense edited successfully')
         return redirect('expenses')
     else:
         # prepopulate the form with existing data
+       
         form_data = {
-            'expense_date': expense.expense_date,
+            'expense_date': user_local_time(company.timezone, expense.expense_date),
             'category': expense.category,
             'amount': expense.amount,
             'branch': expense.branch,
             'note': expense.note,
             'attachement': expense.attachement,
         }
-        form = ExpenseForm(initial=form_data)
-        return render(request,'branch/expenses_list.html',{'form':form})
+        form = ExpenseForm(initial=form_data, company=company)
+        return render(request,'branch/expense-edit.html',{'form':form, 'expense':expense})
 #edit expense category view ends  
 
 # delete expense  view starts

@@ -19,8 +19,8 @@ def format_phone_number(phone_no, phone_code):
 
 #deformat the number
 def deformat_phone_no(phone_no, phone_code):
-    phone_code_length = len(phone_code[1:]) #remove plus sign
-    deheaded_phone = phone_no[phone_code_length:]
+    phone_code_length = len(phone_code[1:]) #remove plus sign 
+    deheaded_phone = phone_no[phone_code_length:] #remove code 700000200
     return deheaded_phone
 
 def user_local_time(user_timezone, datetime_value): 
@@ -29,8 +29,9 @@ def user_local_time(user_timezone, datetime_value):
     user_datetime = datetime_value.astimezone(user_timezone)
     return user_datetime
 
-#convert to utc for db storage
 def to_utc(user_timezone, datetime_value):
     user_timezone = pytz.timezone(user_timezone)
-    datetime_utc = datetime_value.astimezone(user_timezone)
+    datetime_local = user_timezone.localize(datetime_value)
+    datetime_utc = datetime_local.astimezone(pytz.utc)
     return datetime_utc
+

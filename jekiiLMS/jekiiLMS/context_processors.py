@@ -53,3 +53,14 @@ def get_user_notifications(request):
         except CompanyStaff.DoesNotExist:
             pass
     return {}
+
+def get_company_tz(request):
+    if request.user.is_authenticated and request.user.is_active:
+        try:
+            user = CompanyStaff.objects.get(username=request.user.username)
+            organization = user.company
+            company_tz = organization.timezone
+            return {"company_tz" :company_tz}
+        except CompanyStaff.DoesNotExist:
+            pass
+    return {}

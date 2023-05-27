@@ -56,7 +56,8 @@
                                             <td class="nk-tb-col">
                                                 <div class="user-card">
                                                     <div class="user-info">
-                                                        <span class="tb-lead">{{expense.expense_date}} <span class="dot dot-success d-md-none ms-1"></span></span>
+                                                        {% load tz %}
+                                                        <span class="tb-lead">{% timezone company_tz %} {{expense.expense_date}} {% endtimezone %} <span class="dot dot-success d-md-none ms-1"></span></span>
                                                         
                                                     </div>
                                                 </div>
@@ -86,7 +87,7 @@
                                                             <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
                                                             <div class="dropdown-menu dropdown-menu-end">
                                                                 <ul class="link-list-opt no-bdr">
-                                                                    <li><a data-bs-toggle="modal" href="#editExpense"><em class="icon ni ni-edit-alt"></em><span>Edit Expense</span></a></li>
+                                                                    <li><a href="{% url 'edit-expense' expense.id %}"><em class="icon ni ni-edit-alt"></em><span>Edit Expense</span></a></li>
                                                                     <!-- <li><a href="#"><em class="icon ni ni-activity-round"></em><span>Activities</span></a></li> -->
                                                                     <li class="divider"></li>
                                                                     <!-- <li><a href="#"><em class="icon ni ni-shield-star"></em><span>Reset Pass</span></a></li> -->

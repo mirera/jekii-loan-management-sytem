@@ -23,6 +23,7 @@ from jekiiLMS.mpesa_statement import get_loans_table
 from jekiiLMS.loan_math import loan_due_date, save_due_amount, num_installments, total_interest, final_date
 from jekiiLMS.sms_messages import send_sms
 from jekiiLMS.mpesa_api import disburse_loan
+from jekiiLMS.format_inputs import to_utc, user_local_time
 
 
 
@@ -43,6 +44,7 @@ def createLoanProduct(request):
         
 
     if request.method == 'POST':
+        
         product = LoanProduct.objects.create(
             company = company,
             loan_product_name = request.POST.get('loan_product_name'),
@@ -224,21 +226,24 @@ def createLoan(request):
         loan_officer_id = request.POST.get('loan_officer')
         loan_officer = CompanyStaff.objects.get(pk=loan_officer_id)
 
+        application_date_str = request.POST.get('application_date')
+        application_date = datetime.strptime(application_date_str, '%Y-%m-%d')  # Convert to datetime 
+        utcz_datetime = to_utc(company.timezone, application_date)
+
         if member.has_active_loan():
-            return render(request, 'loan/error.html', {'message': 'You cannot apply for a new loan while you have an active loan.'})
+            messages.error(request, 'You cannot apply for a new loan while you have an active loan.')
 
         Loan.objects.create(
                 company = company,
                 loan_product= loanproduct,
                 member= member,
                 applied_amount = request.POST.get('applied_amount'),
-                application_date = request.POST.get('application_date'),
+                application_date = utcz_datetime,
                 loan_officer = loan_officer,
                 loan_purpose = request.POST.get('loan_purpose'),
                 attachments = request.FILES.get('attachments'),
             )
         
-        #redirecting user to branches page(url name) after submitting form
         messages.success(request, 'Loan created successfully!')
         return redirect('loans')
     context= {'form':form}
@@ -281,12 +286,16 @@ def editLoan(request,pk):
         loan_officer_id = request.POST.get('loan_officer')
         loan_officer = CompanyStaff.objects.get(pk=loan_officer_id)
 
+        application_date_str = request.POST.get('application_date')
+        application_date = datetime.strptime(application_date_str, '%Y-%m-%d')  # Convert to datetime 
+        utcz_datetime = to_utc(company.timezone, application_date)
+
         # update the branch with the submitted form data
         loan.loan_id = request.POST.get('loan_id')
         loan.loan_product = loanproduct
         loan.member = member
         loan.applied_amount = request.POST.get('applied_amount')
-        loan.application_date = request.POST.get('application_date')
+        loan.application_date = utcz_datetime
         loan.loan_officer = loan_officer
         loan.loan_purpose = request.POST.get('loan_purpose')
         loan.attachments = request.FILES.get('attachments')
@@ -301,7 +310,7 @@ def editLoan(request,pk):
             'loan_product': loan.loan_product,
             'member': loan.member,
             'applied_amount': loan.applied_amount,
-            'application_date': loan.application_date,
+            'application_date': user_local_time(company.timezone, loan.application_date),
             'loan_officer': loan.loan_officer,
             'loan_purpose': loan.loan_purpose,
             'attachments': loan.attachments
@@ -645,6 +654,11 @@ def createRepayment(request):
         member = Member.objects.get(pk=member_id, company=company)
         # Get the approved or overdue Loan object associated with the member
         loan = member.loans_as_member.get(status=('approved' or 'overdue'))
+
+        date_paid_str = request.POST.get('date_paid')
+        date_paid = datetime.strptime(date_paid_str, '%Y-%m-%d %H:%M:%S')  # Convert to datetime 
+        utcz_datetime = to_utc(company.timezone, date_paid)
+
         if loan:
             Repayment.objects.create(
                 company = company,
@@ -652,7 +666,7 @@ def createRepayment(request):
                 loan_id = loan,
                 member = member,
                 amount= request.POST.get('amount'),
-                date_paid = request.POST.get('date_paid'),
+                date_paid = utcz_datetime,
             )
             
             clear_loan(loan) #clear a loan
@@ -737,10 +751,15 @@ def editRepayment(request,pk):
 
         loan = member.loans_as_member.get(status=('approved' or 'overdue'))
 
+        date_paid_str = request.POST.get('date_paid')
+        date_paid = datetime.strptime(date_paid_str, '%Y-%m-%d %H:%M:%S')  # Convert to datetime 
+        utcz_datetime = to_utc(company.timezone, date_paid)
+
         if form.is_valid():
             repayment= form.save(commit=False)
             repayment.loan_id = loan
             repayment.company = company
+            repayment.date_paid = utcz_datetime
             repayment.save()
 
             clear_loan(loan) #clear a loan
@@ -750,6 +769,7 @@ def editRepayment(request,pk):
         else:
             messages.error(request, 'Fill the form as required')
     # prepopulate the form with existing data
+    repayment.date_paid = user_local_time(company.timezone, repayment.date_paid)
     form = RepaymentForm(instance=repayment, company=company)
     return render(request,'loan/edit-repayment.html',{'form':form}) 
 #edit repayment view ends
@@ -1007,13 +1027,18 @@ def addRepayment(request, pk):
     form = RepaymentForm(request.POST, company=company)
     #processing the data
     if request.method == 'POST':
+
+        date_paid_str = request.POST.get('date_paid')
+        date_paid = datetime.strptime(date_paid_str, '%Y-%m-%d %H:%M:%S')  # Convert to datetime 
+        utcz_datetime = to_utc(company.timezone, date_paid)
+
         repayment = Repayment.objects.create(
             company = company,
             transaction_id = request.POST.get('transaction_id'),
             loan_id = loan,
             member = member,
             amount = request.POST.get('amount'),
-            date_paid = request.POST.get('date_paid')
+            date_paid = utcz_datetime
         )
         if loan.status == 'written off':
             loan.write_off_expense = loan.write_off_expense - repayment.amount

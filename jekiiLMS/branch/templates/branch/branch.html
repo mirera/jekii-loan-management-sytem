@@ -59,7 +59,8 @@
                                         <div class="data-item" data-bs-toggle="modal" data-bs-target="#profile-edit">
                                             <div class="data-col">
                                                 <span class="data-label">Date Opened</span>
-                                                <span class="data-value">{{branch.open_date}}</span>
+                                                {% load tz %}
+                                                <span class="data-value">{% timezone company_tz %} {{branch.open_date}} {% endtimezone %}</span>
                                             </div>
                                             <div class="data-col data-col-end"><span class="data-more"></span></div>
                                         </div><!-- data-item -->
