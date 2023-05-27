@@ -8,6 +8,7 @@ from member.models import Member
 from company.models import Organization
 from user.models import CompanyStaff
 from user.models import RecentActivity
+from jekiiLMS.format_inputs import user_local_time
 
 
 
@@ -62,11 +63,13 @@ def homepage(request):
               company = None
  
     branches=Branch.objects.filter(company=company)
+    company_tz = company.timezone
     loans = Loan.objects.filter(company=company).order_by('-application_date')[:5]
     repayments = Repayment.objects.filter(company=company)
     members= Member.objects.filter(company=company).order_by('-date_joined')[:5]
     today = datetime.now()
     recent_activities = RecentActivity.objects.order_by('-timestamp')[:5]
+
 
     #company staff context
     staff = CompanyStaff.objects.get(username=request.user.username)
@@ -193,6 +196,7 @@ def homepage(request):
         'pc_rolled_loans':pc_rolled_loans,
         'pc_disbursed_loans':pc_disbursed_loans,
         'recent_activities':recent_activities,
+        'company_tz':company_tz,
         }
     return render(request, 'index.html', context)
   #--- companyadmin dashboard logic ends here--- 

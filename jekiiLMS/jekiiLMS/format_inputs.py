@@ -29,8 +29,9 @@ def user_local_time(user_timezone, datetime_value):
     user_datetime = datetime_value.astimezone(user_timezone)
     return user_datetime
 
-#convert to utc for db storage
 def to_utc(user_timezone, datetime_value):
     user_timezone = pytz.timezone(user_timezone)
-    datetime_utc = datetime_value.astimezone(user_timezone)
+    datetime_local = user_timezone.localize(datetime_value)
+    datetime_utc = datetime_local.astimezone(pytz.utc)
     return datetime_utc
+

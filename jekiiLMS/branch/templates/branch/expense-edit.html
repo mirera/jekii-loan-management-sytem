@@ -42,7 +42,8 @@
                                                     <div class="form-icon form-icon-left">
                                                         <em class="icon ni ni-calendar"></em>
                                                     </div>
-                                                    {{form.expense_date}}
+                                                    {% load tz %}
+                                                    {% timezone company_tz %} {{form.expense_date}} {% endtimezone %}
                                                 </div>
                                             </div>
                                         </div>

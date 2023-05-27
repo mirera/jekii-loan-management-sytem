@@ -39,7 +39,7 @@ class ExpenseCategory(models.Model):
 
 class Expense(models.Model):
     company = models.ForeignKey(Organization, on_delete=models.CASCADE)
-    expense_date = models.DateField()
+    expense_date = models.DateTimeField()
     category = models.ForeignKey(ExpenseCategory, on_delete=models.SET_NULL, null=True)
     amount= models.IntegerField()
     branch= models.ForeignKey(Branch, on_delete=models.SET_NULL, null=True)

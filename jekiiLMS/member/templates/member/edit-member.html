@@ -80,7 +80,8 @@
                                                     <div class="form-icon form-icon-left">
                                                         <em class="icon ni ni-calendar"></em>
                                                     </div>
-                                                    {{form.date_joined}}
+                                                    {% load tz %}
+                                                    {% timezone company_tz %} {{form.date_joined}} {% endtimezone %}
                                                 </div>
                                                 <div class="form-note">Date format <code>yyyy-mm-dd</code></div>
                                             </div>

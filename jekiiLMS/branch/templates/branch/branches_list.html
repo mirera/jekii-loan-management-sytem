@@ -91,7 +91,8 @@
                                                 </ul>
                                             </td>
                                             <td class="nk-tb-col tb-col-lg">
-                                                <span>{{branch.open_date.date}}</span>
+                                                {% load tz %}
+                                                <span>{% timezone company_tz %} {{ branch.open_date.date }} {% endtimezone %}</span>
                                             </td>
                                             <td class="nk-tb-col tb-col-md">
                                                 {% if branch.status == 'active' %}
