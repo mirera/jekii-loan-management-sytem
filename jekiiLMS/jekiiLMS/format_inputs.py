@@ -19,8 +19,8 @@ def format_phone_number(phone_no, phone_code):
 
 #deformat the number
 def deformat_phone_no(phone_no, phone_code):
-    phone_code_length = len(phone_code[1:]) #remove plus sign
-    deheaded_phone = phone_no[phone_code_length:]
+    phone_code_length = len(phone_code[1:]) #remove plus sign 
+    deheaded_phone = phone_no[phone_code_length:] #remove code 700000200
     return deheaded_phone
 
 def user_local_time(user_timezone, datetime_value): 

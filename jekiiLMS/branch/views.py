@@ -109,6 +109,7 @@ def list_branches(request):
         except CompanyStaff.DoesNotExist:
             company = None
     branches = Branch.objects.filter(company=company).order_by('-open_date')
+
     form = BranchForm()
     
 

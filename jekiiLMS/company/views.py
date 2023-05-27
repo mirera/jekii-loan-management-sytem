@@ -6,6 +6,8 @@ from django.contrib import messages
 from .models import Organization, Package
 from .forms import OrganizationForm, PackageForm, SmsForm, MpesaSettingForm, EmailSettingForm
 from user.models import CompanyStaff
+from branch.models import Branch
+from member.models import Member
 from company.models import SmsSetting, MpesaSetting, EmailSetting
 from jekiiLMS.cred_process import encrypt_secret
 from jekiiLMS.decorators import permission_required
@@ -39,6 +41,8 @@ def updateOrganization(request, pk):
         # create 
         email_setting = EmailSetting.objects.create(company=organization)
 
+    old_phone_code = organization.phone_code
+
     
     if request.method == 'POST':
         phone_no = request.POST.get('phone_no') 
@@ -56,6 +60,28 @@ def updateOrganization(request, pk):
         organization.timezone = request.POST.get('timezone')
         organization.phone_code = request.POST.get('phone_code')
         organization.save()
+
+        #update db phone enties with new phonecode
+        branches = Branch.objects.filter(company=organization)
+        for branch in branches:
+            deformated_phone = deformat_phone_no(branch.phone, old_phone_code)
+            print(deformated_phone)
+            branch.phone = format_phone_number(deformated_phone, phone_code)
+            print(branch.phone)
+            branch.save()
+        
+        members = Member.objects.filter(company=organization)
+        for member in members:
+            deformated_phone = deformat_phone_no(member.phone_no, old_phone_code)
+            member.phone_no = format_phone_number(deformated_phone, phone_code)
+            member.save()
+        
+        staffs = CompanyStaff.objects.filter(company=organization)
+        for staff in staffs:
+            deformated_phone = deformat_phone_no(staff.phone_no, old_phone_code)
+            staff.phone_no = format_phone_number(deformated_phone, phone_code)
+            staff.save()
+        
         messages.success(request, 'settings updated successfully')
         return redirect('update-organization', organization.id)
     else:
