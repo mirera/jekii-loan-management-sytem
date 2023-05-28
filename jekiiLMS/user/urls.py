@@ -10,11 +10,13 @@ urlpatterns = [
     #adding user
     path('add-staff', views.addStaff, name='add-staff'),
     path('staffs', views.listStaff, name='staffs'),
-    path('user-profile', views.update_user_profile, name='profile'), 
+    path('user-profile', views.update_user_profile, name='profile'),
+    path('view-staff/<str:pk>', views.view_staff, name='view-staff'),  
     path('delete-staff/<str:pk>', views.deleteStaff, name='delete-staff'), 
     path('update-staff/<str:pk>', views.updateStaff, name='update-staff'), 
     path('deactivate-staff/<str:pk>', views.deactivateStaff, name='deactivate-staff'),
     path('activate-staff/<str:pk>', views.activateStaff, name='activate-staff'),
+    path('change-photo', views.change_photo, name='change-photo'),
 
     #-- roles url
     path('add-role', views.addRole, name='add-role'),

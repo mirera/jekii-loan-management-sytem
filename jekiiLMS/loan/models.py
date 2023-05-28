@@ -4,8 +4,6 @@ from django.urls import reverse
 from django.db.models import Sum
 from datetime import timedelta, datetime
 from dateutil.relativedelta import relativedelta
-from django.contrib.auth.models import Permission
-from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.utils.timezone import now
@@ -166,7 +164,7 @@ class Loan(models.Model):
     #method to calculte the next payment date
     def next_payment_date(self):
         start_date = self.approved_date #consider adding grace period
-        elapsed_days = (datetime.now().date() - start_date.date()).days 
+        elapsed_days = (now().date() - start_date.date()).days 
 
         if self.loan_product.repayment_frequency == 'onetime':
             return self.due_date

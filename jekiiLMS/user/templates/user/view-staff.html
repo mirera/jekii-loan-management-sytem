@@ -39,42 +39,42 @@
                                         <div class="data-item" data-bs-toggle="modal" data-bs-target="#profileEdit">
                                             <div class="data-col">
                                                 <span class="data-label">Full Name</span>
-                                                <span class="data-value">{{user.first_name}} {{user.last_name}} </span>
+                                                <span class="data-value">{{staff_user.first_name}} {{staff_user.last_name}} </span>
                                             </div>
                                             <div class="data-col data-col-end"><span class="data-more"><em class="icon ni ni-forward-ios"></em></span></div>
                                         </div><!-- data-item -->
                                         <div class="data-item" data-bs-toggle="modal" data-bs-target="#profileEdit">
                                             <div class="data-col">
                                                 <span class="data-label">email</span>
-                                                <span class="data-value">{{user.email}}</span>
+                                                <span class="data-value">{{staff_user.email}}</span>
                                             </div>
                                             <div class="data-col data-col-end"><span class="data-more"><em class="icon ni ni-forward-ios"></em></span></div>
                                         </div><!-- data-item -->
                                         <div class="data-item">
                                             <div class="data-col">
                                                 <span class="data-label">Username</span>
-                                                <span class="data-value">{{user.username}}</span>
+                                                <span class="data-value">{{staff_user.username}}</span>
                                             </div>
                                             <div class="data-col data-col-end"><span class="data-more disable"><em class="icon ni ni-lock-alt"></em></span></div>
                                         </div><!-- data-item -->
                                         <div class="data-item" data-bs-toggle="modal" data-bs-target="#profileEdit">
                                             <div class="data-col">
                                                 <span class="data-label">Phone Number</span>
-                                                <span class="data-value text-soft">{{user.phone_no}}</span>
+                                                <span class="data-value text-soft">{{staff_user.phone_no}}</span>
                                             </div>
                                             <div class="data-col data-col-end"><span class="data-more"><em class="icon ni ni-forward-ios"></em></span></div>
                                         </div><!-- data-item -->
                                         <div class="data-item" data-bs-toggle="modal" data-bs-target="#profileEdit">
                                             <div class="data-col">
                                                 <span class="data-label">Date Added</span>
-                                                <span class="data-value">{% timezone company_tz %} {{user.date_added}} {% endtimezone %}</span>
+                                                <span class="data-value">{% timezone company_tz %} {{staff_user.date_added}} {% endtimezone %}</span>
                                             </div>
                                             <div class="data-col data-col-end"><span class="data-more"><em class="icon ni ni-forward-ios"></em></span></div>
                                         </div><!-- data-item -->
                                         <div class="data-item" data-bs-toggle="modal" data-bs-target="#profileEdit" data-tab-target="#address">
                                             <div class="data-col">
                                                 <span class="data-label">ID/Passport No.</span>
-                                                <span class="data-value">{{user.id_no}}</span>
+                                                <span class="data-value">{{staff_user.id_no}}</span>
                                             </div>
                                             <div class="data-col data-col-end"><span class="data-more"><em class="icon ni ni-forward-ios"></em></span></div>
                                         </div><!-- data-item -->
@@ -86,30 +86,26 @@
                                         <div class="data-item">
                                             <div class="data-col">
                                                 <span class="data-label">Branch</span>
-                                                <span class="data-value">{{user.branch}}</span>
+                                                <span class="data-value">{{staff_user.branch}}</span>
                                             </div>
-                                            <div class="data-col data-col-end"><a href="#" class="link link-primary">Change Language</a></div>
                                         </div><!-- data-item -->
                                         <div class="data-item">
                                             <div class="data-col">
                                                 <span class="data-label">User Type</span>
-                                                <span class="data-value">{{user.user_type}}</span>
+                                                <span class="data-value">{{staff_user.user_type}}</span>
                                             </div>
-                                            <div class="data-col data-col-end"><a href="#" class="link link-primary">Change</a></div>
                                         </div><!-- data-item -->
                                         <div class="data-item">
                                             <div class="data-col">
                                                 <span class="data-label">Role</span>
-                                                <span class="data-value"> {{user.staff_role}}</span>
+                                                <span class="data-value"> {{staff_user.staff_role}}</span>
                                             </div>
-                                            <div class="data-col data-col-end"><a href="#" class="link link-primary">Change</a></div>
                                         </div><!-- data-item -->
                                         <div class="data-item">
                                             <div class="data-col">
                                                 <span class="data-label">User Permissions</span>
-                                                <span class="data-value"> {{ user.user_permissions.all }}</span>
+                                                <span class="data-value"> {{ staff_user.user_permissions.all }}</span>
                                             </div>
-                                            <div class="data-col data-col-end"><a href="#" class="link link-primary">Change</a></div>
                                         </div><!-- data-item -->
                                     </div><!-- data-list -->
                                 </div><!-- .nk-block -->
@@ -119,22 +115,11 @@
                                     <div class="card-inner">
                                         <div class="user-card">
                                             <div class="user-avatar bg-primary">
-                                                <img src="{{user.profile_photo.url}}">
+                                                <img src="{{staff_user.profile_photo.url}}">
                                             </div>
                                             <div class="user-info">
-                                                <span class="lead-text">{{user.first_name}} {{user.last_name}}</span>
-                                                <span class="sub-text">{{user.email}}</span>
-                                            </div>
-                                            <div class="user-action">
-                                                <div class="dropdown">
-                                                    <a class="btn btn-icon btn-trigger me-n2" data-bs-toggle="dropdown" href="#"><em class="icon ni ni-more-v"></em></a>
-                                                    <div class="dropdown-menu dropdown-menu-end">
-                                                        <ul class="link-list-opt no-bdr">
-                                                            <li><a data-bs-toggle="modal" href="#changePhoto"><em class="icon ni ni-camera-fill"></em><span>Change Photo</span></a></li>
-                                                            <li><a data-bs-toggle="modal" href="#profileEdit"><em class="icon ni ni-edit-fill"></em><span>Update Profile</span></a></li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
+                                                <span class="lead-text">{{staff_user.first_name}} {{staff_user.last_name}}</span>
+                                                <span class="sub-text">{{staff_user.email}}</span>
                                             </div>
                                         </div><!-- .user-card -->
                                     </div><!-- .card-inner -->
@@ -164,114 +149,7 @@
     </div>
 </div>
 <!-- content @e -->
-<!-- update profile modal starts-->
-<div class="modal fade" role="dialog" id="profileEdit">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-        <div class="modal-content">
-            <a href="#" class="close" data-bs-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
-            <div class="modal-body modal-body-lg">
-                <h5 class="title">Update Profile</h5>
-                <ul class="nk-nav nav nav-tabs">
-                    <li class="nav-item">
-                        <a class="nav-link active" data-bs-toggle="tab" href="#personal">Personal</a>
-                    </li>
-                </ul><!-- .nav-tabs -->
-                <div class="tab-content">
-                <form action="{% url 'profile' %}" method="POST">
-                    {% csrf_token %}
-                    <div class="tab-pane active" id="personal">
-                        <div class="row gy-4">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="full-name">First Name</label>
-                                    {{form.first_name}}
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="display-name">Last Name</label>
-                                    {{form.last_name}}
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="phone-no">Work email</label>
-                                    {{form.email}}
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="phone-no">Phone Number</label>
-                                    {{form.phone_no}}
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="birth-day">ID/Passport No.</label>
-                                    {{form.id_no}}
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
-                                    <li>
-                                       <!-- <a href="#" class="btn btn-lg btn-primary" data-bs-dismiss="modal">Update Profile</a> -->
-                                        <button class="btn btn-lg btn-primary" type="submit"> Update Profile </button>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div><!-- .tab-pane -->
-                </form>  
-                </div><!-- .tab-content -->
-            </div><!-- .modal-body -->
-        </div><!-- .modal-content -->
-    </div><!-- .modal-dialog -->
-</div><!-- .modal -->
-<!-- change profile picture modal starts-->
-<div class="modal fade" role="dialog" id="changePhoto">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-        <div class="modal-content">
-            <a href="#" class="close" data-bs-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
-            <div class="modal-body modal-body-lg">
-                <h5 class="title">Change Profile Photo</h5>
-                <ul class="nk-nav nav nav-tabs">
-                    <li class="nav-item">
-                        <a class="nav-link active" data-bs-toggle="tab" href="#personal">Personal</a>
-                    </li>
-                </ul><!-- .nav-tabs -->
-                <div class="tab-content">
-                <form action="{% url 'change-photo' %}" method="POST" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <div class="tab-pane active" id="personal">
-                        <div class="row gy-4">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="birth-day"> Current Profile Photo</label>
-                                    <div class="rounded-circle profile-photo" style="width:150px ; height:150px; border-radius: 50%;">
-                                        <img src="{{ user.profile_photo.url }}" class="img-fluid" alt="Profile Photo">
-                                    </div> 
-                                </div>
-                                    <div class="form-group">
-                                        <label class="form-label" for="birth-day">Change Profile Photo</label>
-                                        {{form.profile_photo}}
-                                    </div>
-                            </div>
-                            <div class="col-12">
-                                <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
-                                    <li>
-                                       <!-- <a href="#" class="btn btn-lg btn-primary" data-bs-dismiss="modal">Update Profile</a> -->
-                                        <button class="btn btn-lg btn-primary" type="submit"> Change </button>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div><!-- .tab-pane -->
-                </form>  
-                </div><!-- .tab-content -->
-            </div><!-- .modal-body -->
-        </div><!-- .modal-content -->
-    </div><!-- .modal-dialog -->
-</div><!-- .modal -->
+
 <!--  ends-->
 <script>
     setTimeout(function(){
@@ -281,5 +159,3 @@
     }, 10000)    // 2000 millisecond
 </script>
 {% endblock content %}
-
-

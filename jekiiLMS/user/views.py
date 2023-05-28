@@ -195,7 +195,7 @@ def listStaff(request):
     else:
         company = None
         
-    staffs = CompanyStaff.objects.filter(company=company).order_by('date_added')
+    staffs = CompanyStaff.objects.filter(company=company).order_by('date_added')[1:] #xclude main admin
     form = CompanyStaffForm(request.POST, company=company) 
 
     context = {'staffs': staffs, 'form':form}
@@ -292,9 +292,27 @@ def addStaff(request):
     return render(request,'user/users-list.html', context)
 #-- end --
 
+# -- view staff --
+@login_required(login_url='login')
+#@permission_required('user.view_user')
+def view_staff(request,pk):
+
+    if request.user.is_authenticated and request.user.is_active:
+        try:
+            companystaff = CompanyStaff.objects.get(username=request.user.username)
+            company = companystaff.company
+        except CompanyStaff.DoesNotExist:
+            company = None
+            
+    staff_user = CompanyStaff.objects.get(id=pk, company=company)
+    context = {'staff_user':staff_user}
+    return render(request, 'user/view-staff.html', context)
+# -- ends --
+
+
 # -- delete staff --
 @login_required(login_url='login')
-@permission_required('user.add_user')
+@permission_required('user.delete_user')
 def deleteStaff(request,pk):
 
     if request.user.is_authenticated and request.user.is_active:
@@ -351,6 +369,36 @@ def update_user_profile(request):
             'id_no': user.id_no,
             'phone_no': deheaded_phone,
             'email': user.email,
+        }
+
+        form = CompanyStaffForm(initial=form_data)
+        return render(request,'user/user-profile.html',{'form':form, 'user':user})
+# -- ends
+
+# --  user change photo
+@login_required(login_url='login')
+#@permission_required('user.change_user')
+def change_photo(request):
+        
+    if request.user.is_authenticated and request.user.is_active:
+        try:
+            companystaff = CompanyStaff.objects.get(username=request.user.username)
+            company = companystaff.company
+        except CompanyStaff.DoesNotExist:
+            company = None
+    else:
+        company = None
+
+    user = CompanyStaff.objects.get(username=request.user.username)
+    
+    if request.method == 'POST':
+        user.profile_photo = request.FILES.get('profile_photo')
+        user.save()
+
+        return redirect('profile')
+    else:
+        form_data = {
+            'profile_photo': user.profile_photo,
         }
 
         form = CompanyStaffForm(initial=form_data)
