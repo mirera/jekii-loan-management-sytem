@@ -8,6 +8,7 @@ import os
 from django.contrib import messages
 from django.db.models import Sum
 from datetime import datetime
+from django.utils import timezone
 import json
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -337,7 +338,8 @@ def approveLoan(request,pk):
         loan = Loan.objects.get(id=pk, company=company)
         borrower = loan.member
         guarantors = Guarantor.objects.filter(loan=loan)
-        today = datetime.today().strftime('%Y-%m-%d')
+        #today = datetime.today().strftime('%Y-%m-%d')
+        today = timezone.now() #converted to uct already
 
         #email variables & context
         company_email = company.email
@@ -1166,8 +1168,9 @@ def repayment_callback(request):
         #get the loan
         loan = Loan.objects.get(member=member, status__in=['approved','overdue'])
 
-        # Convert transaction_time to datetime object
-        transaction_datetime = datetime.strptime(transaction_time, '%Y%m%d%H%M%S') #comsider checking this
+        # Convert transaction_time to datetime object then to utc
+        transaction_datetime = datetime.strptime(transaction_time, '%Y%m%d%H%M%S') #consider checking this
+        date_paid = to_utc(company.timezone, transaction_datetime)
 
         # Create a new Repayment object
         repayment = Repayment.objects.create(
@@ -1176,7 +1179,7 @@ def repayment_callback(request):
             amount=amount,
             member = member,
             loan_id = loan,
-            date_paid=transaction_datetime,
+            date_paid=date_paid,
         )
         clear_loan(loan) #clear a loan
         update_member_data(loan) #update member/borrower data

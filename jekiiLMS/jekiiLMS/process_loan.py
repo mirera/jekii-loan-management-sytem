@@ -1,7 +1,8 @@
-from datetime import datetime
+
 from django.db.models import Sum
 from django.db import transaction
 from django.contrib.auth.models import User
+from django.utils import timezone
 from loan.models import Collateral
 from branch.models import Expense, ExpenseCategory
 from loan.models import Loan
@@ -72,7 +73,7 @@ def get_amount_to_disburse(loan, approved_amount):
 #clear loan
 def clear_loan(loan):
     loan_balance = loan.loan_balance()
-    today = datetime.today().strftime('%Y-%m-%d')
+    today = timezone.now()
     if loan_balance <= 0 and loan.status in ['approved', 'overdue', 'written off']:
                 loan.status = 'cleared'
                 loan.cleared_date = today 
@@ -128,15 +129,16 @@ def write_loan_off(loan):
             category=expense_category,
             branch=branch,
             note=f"Loan write off for {loan}",
-            expense_date=datetime.today().strftime('%Y-%m-%d'),
+            expense_date=timezone.now(),
             created_by=user_staff,
         )
         
         # change loan status to written off and save loan
         loan.status = 'written off'
-        loan.write_off_date = datetime.today().strftime('%Y-%m-%d')
+        loan.write_off_date = timezone.now()
         loan.write_off_expense = amount
         loan.save()
+
         RecentActivity.objects.create(
             company = loan.company,
             event_type='loan_write_off',
@@ -188,11 +190,13 @@ def roll_over(loan):
     #old loan update
     loan.status = 'rolled over'
     loan.save()
+
     RecentActivity.objects.create(
             company = loan.company,
             event_type='loan_roll_over',
             details=f'Loan of {loan.member.first_name} {loan.member.first_name} of {loan.approved_amount} has been rolled over.'
         )
+
     Notification.objects.create(
             company = loan.company,
             recipient = loan.loan_officer,

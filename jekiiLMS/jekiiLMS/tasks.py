@@ -1,5 +1,6 @@
 from celery import shared_task 
 from datetime import date, time
+from django.utils import timezone
 from datetime import timedelta, datetime
 from dateutil.relativedelta import relativedelta
 from loan.models import Loan, Repayment
@@ -9,7 +10,8 @@ from jekiiLMS.sms_messages import send_sms
 #task to mark a loan as overdue
 @shared_task
 def mark_loans_as_overdue():
-    today = date.today()
+    #today = date.today()
+    today = timezone.now()
     loans = Loan.objects.filter(due_date__lt=today).exclude(status__in=['cleared', 'overdue', 'written off', 'rolled over'])
 
     # Find all loans that are due but not yet cleared or marked as overdue
@@ -35,10 +37,11 @@ def hello_engima():
 @shared_task
 def update_due_date():
     #change today datetime to today midnight
-    today_date = date.today()
-    midnight = time.min
-    today = datetime.combine(today_date, midnight)
-    loans = Loan.objects.filter(due_date=today, status='approved')
+    #today_date = date.today()
+    #midnight = time.min
+    #today = datetime.combine(today_date, midnight)
+    today = timezone.now()
+    loans = Loan.objects.filter(due_date=today, status='approved') # run this every second or strp due date to date only
     for loan in loans:
         #get all repayment from approved_date to due_date
         repayments = Repayment.objects.filter(

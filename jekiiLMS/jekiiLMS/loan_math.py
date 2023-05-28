@@ -1,7 +1,7 @@
 from datetime import timedelta, datetime, date, time
 from dateutil.relativedelta import relativedelta
+from django.utils import timezone
 import math
-import pytz
 
 #function to ge the total paybale of a loan
 def total_interest(loan):
@@ -20,9 +20,7 @@ def total_interest(loan):
     
 #function to get total penalitis 
 def total_penalty(loan):
-
-    tz = pytz.timezone('UTC')
-    today = datetime.now(tz)
+    today = timezone.now()
     if loan.status in ['pending', 'rejected', 'cleared']:
         time_overdue = 0
     else:
@@ -93,11 +91,8 @@ def loan_due_amount(loan):
     return amount
 
 def loan_due_date(loan):
-    #change today datetime to today midnight
-    tz = pytz.timezone('UTC')
-    today_date = date.today()
-    midnight = time.min
-    today = datetime.combine(today_date, midnight, tz)
+    #utc and tz aware
+    today = timezone.now()
      #because this function is called only when approving a loan.
     if loan.loan_product.repayment_frequency == 'onetime':
         # For one-time payments, the due date is simply the application date plus the loan product term
