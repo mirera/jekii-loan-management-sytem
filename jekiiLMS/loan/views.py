@@ -21,10 +21,11 @@ from user.models import CompanyStaff
 from company.models import Organization, SmsSetting, MpesaSetting, EmailSetting
 from jekiiLMS.process_loan import is_sufficient_collateral, get_amount_to_disburse, clear_loan, update_member_data, write_loan_off, roll_over
 from jekiiLMS.mpesa_statement import get_loans_table
-from jekiiLMS.loan_math import loan_due_date, save_due_amount, num_installments, total_interest, final_date
+from jekiiLMS.loan_math import loan_due_date, save_due_amount, num_installments, total_interest, final_date, installments
 from jekiiLMS.sms_messages import send_sms
 from jekiiLMS.mpesa_api import disburse_loan
 from jekiiLMS.format_inputs import to_utc, user_local_time
+from jekiiLMS.utils import get_user_company
 
 
 
@@ -33,19 +34,9 @@ from jekiiLMS.format_inputs import to_utc, user_local_time
 @permission_required('loan.add_loanproduct')
 def createLoanProduct(request):
     form = LoanProductForm()
-
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-        
+    company = get_user_company(request)    
 
     if request.method == 'POST':
-        
         product = LoanProduct.objects.create(
             company = company,
             loan_product_name = request.POST.get('loan_product_name'),
@@ -80,17 +71,8 @@ def createLoanProduct(request):
 # list Loan Products view starts
 @login_required(login_url='login')
 @permission_required('loan.view_loanproduct') 
-def listLoanProducts(request):
-    
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-        
+def listLoanProducts(request): 
+    company = get_user_company(request) 
     loanproducts = LoanProduct.objects.filter(company=company)
     form = LoanProductForm()
 
@@ -102,16 +84,7 @@ def listLoanProducts(request):
 @login_required(login_url='login')
 @permission_required('loan.view_loanproduct') 
 def viewLoanProduct(request, pk):
-    
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-        
+    company = get_user_company(request) 
     loanproduct = LoanProduct.objects.get(id=pk, company=company)
 
     context = {'loanproduct': loanproduct}
@@ -122,17 +95,9 @@ def viewLoanProduct(request, pk):
 @login_required(login_url='login')
 @permission_required('loan.delete_loanproduct')
 def deleteLoanProduct(request,pk):
-    
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-        
+    company = get_user_company(request)
     loanproduct = LoanProduct.objects.get(id=pk, company=company)
+
     if request.method == 'POST':
         loanproduct.delete()
         messages.success(request, 'Branch deleted successfully.')
@@ -145,16 +110,7 @@ def deleteLoanProduct(request,pk):
 @login_required(login_url='login')
 @permission_required('loan.change_loanproduct')
 def editLoanProduct(request,pk):
-    
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-        
+    company = get_user_company(request)  
     loanproduct = LoanProduct.objects.get(id=pk, company=company)
     
     if request.method == 'POST':
@@ -206,17 +162,8 @@ def editLoanProduct(request,pk):
 @login_required(login_url='login')
 @permission_required('loan.add_loan')
 def createLoan(request):
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-    
+    company = get_user_company(request)
     form = LoanForm(request.POST, company=company) #instiated the two kwargs to be able to access them on the forms.py
-    #processing the data
     if request.method == 'POST':
         loanproduct_id = request.POST.get('loan_product')
         loanproduct = LoanProduct.objects.get(pk=loanproduct_id)
@@ -255,15 +202,7 @@ def createLoan(request):
 @login_required(login_url='login')
 @permission_required('loan.change_loan')
 def editLoan(request,pk):
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-    
+    company = get_user_company(request)
     loan = Loan.objects.get(id=pk, company=company)
     
     if request.method == 'POST':
@@ -326,15 +265,7 @@ def editLoan(request,pk):
 @permission_required('loan.approve_loan')
 def approveLoan(request,pk):
     if request.method == 'POST':
-        if request.user.is_authenticated and request.user.is_active:
-            try:
-                companystaff = CompanyStaff.objects.get(username=request.user.username)
-                company = companystaff.company
-            except CompanyStaff.DoesNotExist:
-                company = None
-        else:
-            company = None
-        
+        company = get_user_company(request)
         loan = Loan.objects.get(id=pk, company=company)
         borrower = loan.member
         guarantors = Guarantor.objects.filter(loan=loan)
@@ -458,16 +389,7 @@ def approveLoan(request,pk):
 @permission_required('loan.reject_loan')
 def rejectLoan(request,pk):
     if request.method == 'POST':
-
-        if request.user.is_authenticated and request.user.is_active:
-            try:
-                companystaff = CompanyStaff.objects.get(username=request.user.username)
-                company = companystaff.company
-            except CompanyStaff.DoesNotExist:
-                company = None
-        else:
-            company = None
-
+        company = get_user_company(request)
         loan = Loan.objects.get(id=pk, company=company)
         borrower = loan.member
 
@@ -528,15 +450,7 @@ def rejectLoan(request,pk):
 @login_required(login_url='login')
 @permission_required('loan.view_loan')
 def listLoans(request):
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-    
+    company = get_user_company(request)
     form = LoanForm(request.POST, company=company) #instiated the two kwargs to be able to access them on the forms.py
     loans = Loan.objects.filter(company=company)
 
@@ -549,14 +463,7 @@ def listLoans(request):
 @login_required(login_url='login')
 @permission_required('loan.view_loan')
 def viewLoan(request, pk):
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
+    company = get_user_company(request)
     loan = Loan.objects.get(id=pk, company=company)
     borrower = loan.member
     
@@ -613,24 +520,11 @@ def viewLoan(request, pk):
 @login_required(login_url='login')
 @permission_required('loan.delete_loan')
 def deleteLoan(request,pk):
-
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-
+    company = get_user_company(request)
     loan = Loan.objects.filter(id=pk, company=company)
-#include a functionality to limit any user from deleteng this objec unless they have admin previleges
     if request.method == 'POST':
         loan.delete()
         return redirect('loans')
-
-
-     #context is {'obj':branch}, in delete.html we are accessing room/message as 'obj'
     context = {'obj':loan}
     return render(request,'loan/delete-loan.html', context)
 # delete Loan  ends starts
@@ -639,18 +533,8 @@ def deleteLoan(request,pk):
 @login_required(login_url='login')
 @permission_required('loan.add_repayment')
 def createRepayment(request):
-
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-        
+    company = get_user_company(request)
     form = RepaymentForm(request.POST, company=company) 
-    #processing the data
     if request.method == 'POST':
         member_id = request.POST.get('member')
         member = Member.objects.get(pk=member_id, company=company)
@@ -686,16 +570,7 @@ def createRepayment(request):
 @login_required(login_url='login')
 @permission_required('loan.view_repayment')
 def listRepayments(request):
-    
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-        
+    company = get_user_company(request)
     form = RepaymentForm(request.POST, company=company)
     repayments = Repayment.objects.filter(company=company)
 
@@ -707,24 +582,11 @@ def listRepayments(request):
 @login_required(login_url='login')
 @permission_required('loan.delete_repayment')
 def deleteRepayment(request,pk):
-    
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-
+    company = get_user_company(request)
     repayment = Repayment.objects.filter(id=pk, company=company)
-#include a functionality to limit any user from deleteng this objec unless they have admin previleges
     if request.method == 'POST':
         repayment.delete()
         return redirect('repayments')
-
-
-     #context is {'obj':branch}, in delete.html we are accessing room/message as 'obj'
     context = {'obj':repayment}
     return render(request,'loan/delete-repayment.html', context)
 # delete Repayment  ends 
@@ -733,16 +595,7 @@ def deleteRepayment(request,pk):
 @login_required(login_url='login')
 @permission_required('loan.change_repayment')
 def editRepayment(request,pk):
-        
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-        
+    company = get_user_company(request)
     repayment = Repayment.objects.get(id=pk, company=company)
     
     if request.method == 'POST':
@@ -779,6 +632,7 @@ def editRepayment(request,pk):
 #loan cacl view start
 @login_required(login_url='login')
 def loan_calculator(request):
+
     form =LoanForm()
     if request.method == "POST":
         loan_product_id = request.POST.get("loan_product")
@@ -789,28 +643,35 @@ def loan_calculator(request):
         interest_type = loan_product.interest_type
         loan_term = loan_product.loan_product_term
 
+
         amount_to_pay = 0
         total_interest = 0
+        number_installments = installments(loan_product)
 
         if interest_type == 'flat rate':
             interest_rate = loan_product.interest_rate / 100
             total_interest = amount * interest_rate * loan_term
             total_payable = amount + total_interest 
-            amount_to_pay = total_payable / loan_term
+            amount_to_pay = total_payable /number_installments #loan_term
         else:
             interest_rate = loan_product.interest_rate / 100
             payment_amount = (interest_rate * amount) / (1 - (1 + interest_rate)**(-loan_term))
             total_payable = payment_amount * loan_term
+            amount_to_pay = total_payable /number_installments
             
 
         table_data = []
-        for i in range(loan_term):
-            principal_amount = amount_to_pay * (i+1)
-            interest_per_term = total_interest / loan_term
-            principal_per_term = amount / loan_term
+
+
+        for i in range(number_installments): #iterate over number of installments
+            installment_nu = (number_installments - i)
+            principal_amount = round(amount_to_pay * (i+1), 2)
+            interest_per_term = round(total_interest / number_installments, 2)
+            principal_per_term = round(amount / number_installments, 2)
             amount_per_term = interest_per_term + principal_per_term
-            loan_balance = principal_amount - amount_per_term
+            loan_balance = round(principal_amount - amount_per_term, 2)
             table_data.append({
+                "installment_nu":installment_nu,
                 "principal_amount": principal_amount,
                 "total_payable": total_payable,
                 "amount_to_pay": amount_to_pay,
@@ -821,15 +682,15 @@ def loan_calculator(request):
             })
 
         context = {
-            "loanproducts": LoanProduct.objects.all(),
-            "table_data": table_data,
+            "loanproducts": LoanProduct.objects.filter(company=get_user_company(request)),
+            "table_data": list(reversed(table_data)) ,
             'form':form
         }
 
         return render(request, "loan/loan-calculator.html", context)
 
     context = {
-        "loanproducts": LoanProduct.objects.all(),
+        "loanproducts": LoanProduct.objects.filter(company=get_user_company(request)),
         "table_data": []
     }
     return render(request, "loan/loan-calculator.html", context)
@@ -839,19 +700,9 @@ def loan_calculator(request):
 @login_required(login_url='login')
 @permission_required('loan.add_guarantor')
 def addGuarantor(request, pk):
-
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-        
+    company = get_user_company(request)  
     loan = get_object_or_404(Loan, id=pk, company=company)
     borrower = loan.member
-
     guarantor_id = request.POST.get('name')
     guarantor = Member.objects.get(id=guarantor_id)
     
@@ -871,20 +722,11 @@ def addGuarantor(request, pk):
     return render(request,'loan/loan-view.html', context)
 #dd guarontor view ends   
 
-
 # delete guarantor  view starts
 @login_required(login_url='login')
 @permission_required('loan.delete_guarantor')
 def removeGuarantor(request, pk, guarantor_id):
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-        
+    company = get_user_company(request)
     loan = get_object_or_404(Loan, id=pk, company=company)
     guarantor = get_object_or_404(Guarantor, id=guarantor_id, loan=loan)
 
@@ -901,20 +743,9 @@ def removeGuarantor(request, pk, guarantor_id):
 @login_required(login_url='login')
 @permission_required('loan.add_collateral')
 def addCollateral(request, pk):
-
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-        
+    company = get_user_company(request)
     loan = get_object_or_404(Loan, id=pk, company=company)
-
     form = CollateralForm(request.POST)
-    #processing the data
     if request.method == 'POST':
         Collateral.objects.create(
             company = company,
@@ -935,15 +766,7 @@ def addCollateral(request, pk):
 @login_required(login_url='login')
 @permission_required('loan.delete_collateral')
 def removeCollateral(request, pk, collateral_id):
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-        
+    company = get_user_company(request)
     loan = get_object_or_404(Loan, id=pk, company=company)
     collateral = get_object_or_404(Collateral, id=collateral_id, loan=loan)
 
@@ -961,16 +784,7 @@ def removeCollateral(request, pk, collateral_id):
 @login_required(login_url='login')
 @permission_required('loan.change_collateral')
 def editCollateral(request,pk):
-
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-        
+    company = get_user_company(request)
     collateral = get_object_or_404(Collateral, id=pk, company=company)
 
     if request.method == 'POST':
@@ -1013,23 +827,11 @@ def editCollateral(request,pk):
 @login_required(login_url='login')
 @permission_required('loan.add_repayment')
 def addRepayment(request, pk):
-
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-        
+    company = get_user_company(request)
     loan = get_object_or_404(Loan, id=pk, company=company)
-
-    member = loan.member #retrieving the loan borrower
+    member = loan.member 
     form = RepaymentForm(request.POST, company=company)
-    #processing the data
     if request.method == 'POST':
-
         date_paid_str = request.POST.get('date_paid')
         date_paid = datetime.strptime(date_paid_str, '%Y-%m-%d %H:%M:%S')  # Convert to datetime 
         utcz_datetime = to_utc(company.timezone, date_paid)
@@ -1058,16 +860,7 @@ def addRepayment(request, pk):
 @login_required(login_url='login')
 @permission_required('loan.add_mpesastatement')
 def addStatement(request, pk):
-
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-        
+    company = get_user_company(request)
     loan = get_object_or_404(Loan, id=pk, company=company)
     borrower = loan.member
     form = MpesaStatementForm(request.POST) 
@@ -1093,16 +886,7 @@ def addStatement(request, pk):
 @login_required(login_url='login')
 @permission_required('loan.view_loan')
 def analyseStatement(request, pk):
-
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-        
+    company = get_user_company(request)
     loan = get_object_or_404(Loan, id=pk, company=company)
     statement_id = request.POST.get('statement_id')
     statement = get_object_or_404(MpesaStatement, id=statement_id, company=company)
@@ -1195,7 +979,8 @@ def repayment_callback(request):
 @login_required(login_url='login')
 @permission_required('loan.write_off_loan')
 def writeOff(request, pk):
-    loan = Loan.objects.get(id=pk)
+    company = get_user_company(request)
+    loan = Loan.objects.get(id=pk, company=company)
     write_loan_off(loan)
 
     messages.success(request, f'{loan.member} loan has been written off. The loan can still receive repayments')
@@ -1206,7 +991,8 @@ def writeOff(request, pk):
 @login_required(login_url='login')
 @permission_required('loan.rollover_loan')
 def rollOver(request, pk):
-    loan = Loan.objects.get(id=pk)
+    company = get_user_company(request)
+    loan = Loan.objects.get(id=pk, company=company)
     borrower = loan.member
     repayments = loan.repayments.all()
     total_repayments = repayments.aggregate(Sum('amount'))['amount__sum'] or 0

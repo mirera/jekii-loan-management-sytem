@@ -81,35 +81,43 @@
                                     </div><!-- data-list -->
                                     <div class="nk-data data-list">
                                         <div class="data-head">
-                                            <h6 class="overline-title">Organizational Preferences</h6>
+                                            <h6 class="overline-title">Organizational </h6>
                                         </div>
                                         <div class="data-item">
                                             <div class="data-col">
                                                 <span class="data-label">Branch</span>
                                                 <span class="data-value">{{user.branch}}</span>
                                             </div>
-                                            <div class="data-col data-col-end"><a href="#" class="link link-primary">Change Language</a></div>
                                         </div><!-- data-item -->
                                         <div class="data-item">
                                             <div class="data-col">
                                                 <span class="data-label">User Type</span>
                                                 <span class="data-value">{{user.user_type}}</span>
                                             </div>
-                                            <div class="data-col data-col-end"><a href="#" class="link link-primary">Change</a></div>
                                         </div><!-- data-item -->
                                         <div class="data-item">
                                             <div class="data-col">
                                                 <span class="data-label">Role</span>
                                                 <span class="data-value"> {{user.staff_role}}</span>
                                             </div>
-                                            <div class="data-col data-col-end"><a href="#" class="link link-primary">Change</a></div>
                                         </div><!-- data-item -->
                                         <div class="data-item">
                                             <div class="data-col">
                                                 <span class="data-label">User Permissions</span>
-                                                <span class="data-value"> {{ user.user_permissions.all }}</span>
+                                                <span class="data-value">
+                                                    {% for permission in user.staff_role.permissions.all|slice:":5" %}
+                                                        {{ permission.codename }},
+                                                    {% endfor %}
+                                                    {% if user.staff_role.permissions.count > 5 %}
+                                                        <a href="#" onclick="togglePermissions(event)">See More</a>
+                                                    {% endif %}
+                                                    <span id="morePermissions" style="display: none;">
+                                                        {% for permission in user.staff_role.permissions.all|slice:"5:" %}
+                                                            {{ permission.codename }},
+                                                        {% endfor %}
+                                                    </span>
+                                                </span>
                                             </div>
-                                            <div class="data-col data-col-end"><a href="#" class="link link-primary">Change</a></div>
                                         </div><!-- data-item -->
                                     </div><!-- data-list -->
                                 </div><!-- .nk-block -->
@@ -140,9 +148,9 @@
                                     </div><!-- .card-inner -->
                                     <div class="card-inner">
                                         <div class="user-account-info py-0">
-                                            <h6 class="overline-title-alt">Nio Wallet Account</h6>
-                                            <div class="user-balance">12.395769 <small class="currency currency-btc">BTC</small></div>
-                                            <div class="user-balance-sub">Locked <span>0.344939 <span class="currency currency-btc">BTC</span></span></div>
+                                            <h6 class="overline-title-alt">Loan Account</h6>
+                                            <div class="user-balance">2,395,769 <small class="currency currency-btc">{{company_currency}}</small></div>
+                                            <div class="user-balance-sub">Members: <span>100</span></div>
                                         </div>
                                     </div><!-- .card-inner -->
                                     <div class="card-inner p-0">
@@ -280,6 +288,19 @@
         }
     }, 10000)    // 2000 millisecond
 </script>
+<script>
+    function togglePermissions(event) {
+        event.preventDefault();
+        var morePermissions = document.getElementById('morePermissions');
+        if (morePermissions.style.display === 'none') {
+            morePermissions.style.display = 'inline';
+            event.target.textContent = 'See Less';
+        } else {
+            morePermissions.style.display = 'none';
+            event.target.textContent = 'See More';
+        }
+    }
+    </script>
 {% endblock content %}
 
 

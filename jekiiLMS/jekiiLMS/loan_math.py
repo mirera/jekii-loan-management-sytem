@@ -83,6 +83,7 @@ def num_installments(loan):
     num_installments = math.ceil(num_intervals)
 
     return num_installments
+
 #get due amount per install
 def loan_due_amount(loan):
     payable = total_payable_amount(loan)
@@ -156,3 +157,35 @@ def save_due_amount(loan):
     loan.service_fee_amount = get_service_fee(loan)
     loan.final_date = final_date(loan) #fill final payment date
     loan.save()
+
+def installments(loanproduct):
+    payment_frequency = loanproduct.repayment_frequency
+    loan_term = loanproduct.loan_product_term
+    term_period = loanproduct.loan_term_period
+
+    if payment_frequency == 'onetime':
+        return 1
+    elif payment_frequency == 'daily':
+        interval_duration = timedelta(days=1)
+    elif payment_frequency == 'weekly':
+        interval_duration = timedelta(weeks=1)
+    else:
+        interval_duration = relativedelta(months=1)
+    
+    # Convert loan term to timedelta object
+    if term_period == 'day':
+        loan_term = timedelta(days=loan_term)
+    elif term_period == 'week':
+        loan_term = timedelta(weeks=loan_term)
+    elif term_period == 'month':
+        loan_term = relativedelta(months=loan_term)
+    else:
+        loan_term = relativedelta(years=loan_term)
+
+    # Calculate the number of payment intervals within the loan term
+    num_intervals = loan_term / interval_duration
+
+    # Round up to the nearest whole number of intervals
+    num_installments = math.ceil(num_intervals)
+
+    return num_installments
