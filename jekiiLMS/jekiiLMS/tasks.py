@@ -1,13 +1,10 @@
 from celery import shared_task 
-from datetime import date, time
 from django.utils import timezone
-from datetime import timedelta, datetime
-from dateutil.relativedelta import relativedelta
 from loan.models import Loan, Repayment
 from .loan_math import loan_due_date
 from jekiiLMS.sms_messages import send_sms 
 
-#task to mark a loan as overdue
+#task to mark a loan as overdue 
 @shared_task
 def mark_loans_as_overdue():
     #today = date.today()
@@ -28,7 +25,6 @@ def mark_loans_as_overdue():
             message = f"Dear {loan.member.first_name}, your loan installment of Ksh{loan.due_amount} is overdue. Make payment to avoid further penalties. Acc. 5840988 Paybill 522522"
             send_sms(loan.member.phone_no, message)
 
-
 @shared_task
 def hello_engima():
     print('I get printed after every minute')
@@ -36,10 +32,6 @@ def hello_engima():
 #task to update due date 
 @shared_task
 def update_due_date():
-    #change today datetime to today midnight
-    #today_date = date.today()
-    #midnight = time.min
-    #today = datetime.combine(today_date, midnight)
     today = timezone.now()
     loans = Loan.objects.filter(due_date=today, status='approved') # run this every second or strp due date to date only
     for loan in loans:

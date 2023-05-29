@@ -21,7 +21,7 @@ from user.models import CompanyStaff
 from company.models import Organization, SmsSetting, MpesaSetting, EmailSetting
 from jekiiLMS.process_loan import is_sufficient_collateral, get_amount_to_disburse, clear_loan, update_member_data, write_loan_off, roll_over
 from jekiiLMS.mpesa_statement import get_loans_table
-from jekiiLMS.loan_math import loan_due_date, save_due_amount, num_installments, total_interest, final_date, installments
+from jekiiLMS.loan_math import loan_due_date, save_due_amount, total_interest, final_date, installments
 from jekiiLMS.sms_messages import send_sms
 from jekiiLMS.mpesa_api import disburse_loan
 from jekiiLMS.format_inputs import to_utc, user_local_time
@@ -265,6 +265,7 @@ def editLoan(request,pk):
 @permission_required('loan.approve_loan')
 def approveLoan(request,pk):
     if request.method == 'POST':
+        staff = CompanyStaff.objects.get(username=request.user.username)
         company = get_user_company(request)
         loan = Loan.objects.get(id=pk, company=company)
         borrower = loan.member
@@ -284,7 +285,7 @@ def approveLoan(request,pk):
         approved_amount = int(request.POST.get('approved_amount'))
         amount_to_disburse = get_amount_to_disburse(loan, approved_amount)
         due_date = loan_due_date(loan)
-        installments = num_installments(loan)
+        installment = installments(loan.loan_product)
 
         if member_score >= 5 and guarantors_score >= 7:
 
@@ -294,10 +295,10 @@ def approveLoan(request,pk):
                     loan.approved_amount = int(approved_amount)
                     loan.disbursed_amount = amount_to_disburse
                     loan.approved_date = today
-                    loan.approved_by = companystaff
+                    loan.approved_by = staff
                     loan.status = 'approved'
                     loan.due_date = due_date
-                    loan.num_installments = installments
+                    loan.num_installments = installment
 
                     #update borrower details
                     borrower.status = 'active'
@@ -668,7 +669,7 @@ def loan_calculator(request):
             principal_amount = round(amount_to_pay * (i+1), 2)
             interest_per_term = round(total_interest / number_installments, 2)
             principal_per_term = round(amount / number_installments, 2)
-            amount_per_term = interest_per_term + principal_per_term
+            amount_per_term = round(interest_per_term + principal_per_term, 2)
             loan_balance = round(principal_amount - amount_per_term, 2)
             table_data.append({
                 "installment_nu":installment_nu,

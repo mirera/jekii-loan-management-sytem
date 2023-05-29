@@ -51,39 +51,6 @@ def total_payable_amount(loan):
     amount = penalties + interest_amount + principal
     return amount
 
-#get the number of installment
-def num_installments(loan):
-    payment_frequency = loan.loan_product.repayment_frequency
-    loan_term = loan.loan_product.loan_product_term
-    term_period = loan.loan_product.loan_term_period
-
-    if payment_frequency == 'onetime':
-        return 1
-    elif payment_frequency == 'daily':
-        interval_duration = timedelta(days=1)
-    elif payment_frequency == 'weekly':
-        interval_duration = timedelta(weeks=1)
-    else:
-        interval_duration = relativedelta(months=1)
-    
-    # Convert loan term to timedelta object
-    if term_period == 'day':
-        loan_term = timedelta(days=loan_term)
-    elif term_period == 'week':
-        loan_term = timedelta(weeks=loan_term)
-    elif term_period == 'month':
-        loan_term = relativedelta(months=loan_term)
-    else:
-        loan_term = relativedelta(years=loan_term)
-
-    # Calculate the number of payment intervals within the loan term
-    num_intervals = loan_term / interval_duration
-
-    # Round up to the nearest whole number of intervals
-    num_installments = math.ceil(num_intervals)
-
-    return num_installments
-
 #get due amount per install
 def loan_due_amount(loan):
     payable = total_payable_amount(loan)
@@ -145,18 +112,6 @@ def get_service_fee(loan):
         elif service_fee_type == 'percentage':
             service_fee = approved_amount * service_fee_value * 0.01
         return service_fee
-  
-
-#function to fill due_amount field in Loan once loan is approved & final date
-def save_due_amount(loan):
-    payable = total_payable_amount(loan)
-    installments = num_installments(loan)
-    amount = payable / installments
-    loan.due_amount = amount
-    loan.interest_amount = total_interest(loan)
-    loan.service_fee_amount = get_service_fee(loan)
-    loan.final_date = final_date(loan) #fill final payment date
-    loan.save()
 
 def installments(loanproduct):
     payment_frequency = loanproduct.repayment_frequency
@@ -168,9 +123,9 @@ def installments(loanproduct):
     elif payment_frequency == 'daily':
         interval_duration = timedelta(days=1)
     elif payment_frequency == 'weekly':
-        interval_duration = timedelta(weeks=1)
+        interval_duration = timedelta(days=7)
     else:
-        interval_duration = relativedelta(months=1)
+        interval_duration = timedelta(days=30)
     
     # Convert loan term to timedelta object
     if term_period == 'day':
@@ -178,9 +133,9 @@ def installments(loanproduct):
     elif term_period == 'week':
         loan_term = timedelta(weeks=loan_term)
     elif term_period == 'month':
-        loan_term = relativedelta(months=loan_term)
+        loan_term = timedelta(days=loan_term)*30 
     else:
-        loan_term = relativedelta(years=loan_term)
+        loan_term = timedelta(days=loan_term)*365
 
     # Calculate the number of payment intervals within the loan term
     num_intervals = loan_term / interval_duration
@@ -189,3 +144,15 @@ def installments(loanproduct):
     num_installments = math.ceil(num_intervals)
 
     return num_installments
+
+#function to fill due_amount field in Loan once loan is approved & final date
+def save_due_amount(loan):
+    payable = total_payable_amount(loan)
+    installments = installments(loan)
+    amount = payable / installments
+    loan.due_amount = amount
+    loan.interest_amount = total_interest(loan)
+    loan.service_fee_amount = get_service_fee(loan)
+    loan.final_date = final_date(loan) #fill final payment date
+    loan.save()
+

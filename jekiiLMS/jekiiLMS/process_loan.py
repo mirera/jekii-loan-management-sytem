@@ -9,7 +9,7 @@ from loan.models import Loan
 from user.models import RecentActivity, Notification
 from .credit_score import member_credit_score, update_credit_score
 from jekiiLMS.sms_messages import send_sms
-from jekiiLMS.loan_math import loan_due_date, save_due_amount, num_installments
+from jekiiLMS.loan_math import loan_due_date, save_due_amount
 
 
 
