@@ -4,11 +4,11 @@ from django.contrib.auth.decorators import login_required
 from django.core.mail import EmailMessage
 from django.contrib import messages
 from .models import Organization, Package
-from .forms import OrganizationForm, PackageForm, SmsForm, MpesaSettingForm, EmailSettingForm
+from .forms import OrganizationForm, PackageForm, SmsForm, MpesaSettingForm, EmailSettingForm, SystemSettingForm
 from user.models import CompanyStaff
 from branch.models import Branch
 from member.models import Member
-from company.models import SmsSetting, MpesaSetting, EmailSetting
+from company.models import SmsSetting, MpesaSetting, EmailSetting, SystemSetting
 from jekiiLMS.cred_process import encrypt_secret
 from jekiiLMS.decorators import permission_required
 from jekiiLMS.format_inputs import format_phone_number, deformat_phone_no
@@ -40,6 +40,14 @@ def updateOrganization(request, pk):
     except EmailSetting.DoesNotExist:
         # create 
         email_setting = EmailSetting.objects.create(company=organization)
+
+    #if preference obj none, create
+    
+    try:
+        preferences = SystemSetting.objects.get(company=organization)
+    except SystemSetting.DoesNotExist:
+        # create 
+        preferences = SystemSetting.objects.create(company=organization)
 
     old_phone_code = organization.phone_code
 
@@ -124,6 +132,11 @@ def updateOrganization(request, pk):
             'smtp_username': email_setting.smtp_username,
             'smtp_password': email_setting.smtp_password
         }
+        # prefill the system preference form 
+        form_data_preferences = {
+            'is_auto_disburse': preferences.is_auto_disburse,
+        }
+        form_preferences = SystemSettingForm(initial=form_data_preferences)
         form_email = EmailSettingForm(initial=form_data_email)
         form_mpesa = MpesaSettingForm(initial=form_data_mpesa)
         form_sms = SmsForm(initial=form_data_sms)
@@ -133,6 +146,7 @@ def updateOrganization(request, pk):
             'form_sms':form_sms,
             'form_mpesa':form_mpesa,
             'form_email':form_email,
+            'form_preferences':form_preferences,
             'organization':organization,
             'admins':admins
         }
@@ -338,3 +352,34 @@ def sendTestEmail(request, pk):
             return redirect('update-organization', organization.id)
     return redirect('update-organization', organization.id)
 # -- ends
+
+# update prefenrences view
+@login_required(login_url='login')
+def updatePreferences(request, pk):
+    organization = Organization.objects.get(id=pk)
+    #preferences = SystemSetting.objects.get(company=organization)
+    preferences, created = SystemSetting.objects.get_or_create(company=organization)
+
+    if request.method == 'POST':
+        form_preferences = SystemSettingForm(request.POST, instance=preferences)
+        if form_preferences.is_valid():
+            is_auto_disburse = request.POST.get('is_auto_disburse') == 'on'  # Check if the checkbox is checked
+            preferences = form_preferences.save(commit=False)
+            preferences.company = organization
+            preferences.is_auto_disburse = is_auto_disburse
+            preferences.save()
+
+        messages.success(request, 'System preferences updated successfully.')
+        return redirect('update-organization', organization.id)
+    else:
+        # prepopulate the form with existing data
+        form_data = {
+            'is_auto_disburse': preferences.is_auto_disburse
+        }
+        form_preferences = SystemSettingForm(initial=form_data)
+ 
+    context = {
+            'form_preferences':form_preferences
+        }
+    return render(request,'company/update-company.html', context) 
+# --ends

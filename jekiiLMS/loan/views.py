@@ -21,7 +21,7 @@ from user.models import CompanyStaff
 from company.models import Organization, SmsSetting, MpesaSetting, EmailSetting
 from jekiiLMS.process_loan import is_sufficient_collateral, get_amount_to_disburse, clear_loan, update_member_data, write_loan_off, roll_over
 from jekiiLMS.mpesa_statement import get_loans_table
-from jekiiLMS.loan_math import loan_due_date, save_due_amount, total_interest, final_date, installments
+from jekiiLMS.loan_math import loan_due_date, save_due_amount, total_interest, installments
 from jekiiLMS.sms_messages import send_sms
 from jekiiLMS.mpesa_api import disburse_loan
 from jekiiLMS.format_inputs import to_utc, user_local_time

@@ -93,3 +93,12 @@ class EmailSetting(models.Model):
     def __str__(self):
         return self.company.name
 # -- ends 
+
+#system setting model
+class SystemSetting(models.Model):
+    company = models.ForeignKey(Organization, on_delete=models.SET_NULL, blank=True, null=True, )
+    is_auto_disburse = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.company.name
+# -- ends 

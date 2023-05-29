@@ -3,7 +3,7 @@ from django import forms
 from pytz import all_timezones
 from iso4217 import Currency
 import pycountry
-from .models import Organization, Package, SmsSetting, MpesaSetting, EmailSetting
+from .models import Organization, Package, SmsSetting, MpesaSetting, EmailSetting, SystemSetting
 from jekiiLMS.utils import phone_codes
 
 
@@ -102,4 +102,14 @@ class EmailSettingForm(forms.ModelForm):
             'smtp_port': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'e.g. 587', 'required':'True'}),
             'smtp_username': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'e.g info@loginit.com', 'required':'True'}),
             'smtp_password': forms.PasswordInput(attrs={'class': 'form-control', 'required':'True'}),
+        }
+
+class SystemSettingForm(forms.ModelForm):
+    class Meta:
+        model = SystemSetting
+        fields = ['is_auto_disburse']
+        exclude = ['company']
+        
+        widgets = {
+            'is_auto_disburse': forms.CheckboxInput(attrs={'class': 'custom-control-input', 'id': 'auto_disburse'}),   
         }

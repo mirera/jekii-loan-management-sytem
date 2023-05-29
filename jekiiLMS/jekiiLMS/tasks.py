@@ -63,4 +63,20 @@ def send_loan_balance():
         # send sms of loan balance
         message = f"Dear {loan.member.first_name}, Your current loan balance is Ksh{balance}. Final payment date is {final_date}. Wishing you success in your business."
         send_sms(loan.member.phone_no, message)
+# --end
+
+@shared_task
+def disburse_loan_task(consumer_key, consumer_secret, shortcode, username, loan):
+    # Call the disburse_loan function
+    disburse_loan(consumer_key, consumer_secret, shortcode, username, loan)
+
+@shared_task
+def send_sms_task(sender_id, token, phone_number, message):
+    # Call the send_sms function
+    send_sms(sender_id, token, phone_number, message)
+
+@shared_task
+def send_email_task(subject, message, from_email, recipient_list):
+    # Call the send_email function
+    send_email(subject, message, from_email, recipient_list)
  
