@@ -93,10 +93,7 @@ def disburse_loan_task(consumer_key, consumer_secret, shortcode, username, loan)
         loan
     )
 
-@shared_task
-def print_message_task(message):
-    # Call the send_sms function
-    print(f'I am a product of Celery, {message}')
+
 
 
  

@@ -27,7 +27,7 @@ from jekiiLMS.sms_messages import send_sms
 from jekiiLMS.mpesa_api import disburse_loan
 from jekiiLMS.format_inputs import to_utc, user_local_time
 from jekiiLMS.utils import get_user_company
-from jekiiLMS.tasks import send_email_task, send_sms_task, disburse_loan_task, print_message_task
+from jekiiLMS.tasks import send_email_task, send_sms_task, disburse_loan_task
 
 
 
@@ -306,11 +306,24 @@ def approveLoan(request,pk):
                     
                     #send mail arguments.
                     email_setting = EmailSetting.objects.get(company=company)
-                    #context = {'loan':loan}
+
+                    #having this context because delay() need model serialzation
                     context = {
+                        'member_1name': loan.member.first_name,
+                        'member_2name': loan.member.last_name,
+                        'approved_amount': loan.approved_amount,
+                        'term': loan.loan_product.loan_product_term,
+                        'period': loan.loan_product.loan_term_period ,
+                        'interest_rate': loan.loan_product.interest_rate,
+                        'installments': loan.num_installments,
                         'due_amount': loan.due_amount,
-                        'borrower_name': loan.member.first_name,
-                        }
+                        'due_date': user_local_time(loan.company.timezone, loan.due_date).date(),
+                        'total_payable': loan.total_payable(),
+                        'loan_officer': loan.loan_officer.first_name ,
+                        'company': loan.company.name,
+                        'tzone':loan.company.timezone
+                    }
+
                     from_name = email_setting.from_name
                     from_email = email_setting.from_email
                     template_path = 'loan/loan-approved.html'
@@ -387,9 +400,6 @@ def approveLoan(request,pk):
                             messages.error(request, f'Loan disbursement failed! {str(errors)}')
                             return redirect('view-loan', loan.id)
                     else:
-                        print(f'Before asynchronous {message}')
-                        print_message_task.delay(message)
-
                         #Enqueue the send_sms_task and send email tasks
                         send_sms_task.delay(
                             sender_id, 
@@ -512,11 +522,7 @@ def listLoans(request):
 def viewLoan(request, pk):
     company = get_user_company(request)
     loan = Loan.objects.get(id=pk, company=company)
-    borrower = loan.member
-   
-   
-
-    
+    borrower = loan.member    
     loan_notes = loan.note_set.all().order_by('-created')
     guarantors = Guarantor.objects.filter(loan=loan) #here loan=loan mean loan_obj=loan loan_obj in guarantor model and form
     collaterals = Collateral.objects.filter(loan=loan)
