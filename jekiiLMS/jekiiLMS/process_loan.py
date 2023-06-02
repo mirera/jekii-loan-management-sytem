@@ -7,9 +7,11 @@ from loan.models import Collateral
 from branch.models import Expense, ExpenseCategory
 from loan.models import Loan
 from user.models import RecentActivity, Notification
+from company.models import SmsSetting
 from .credit_score import member_credit_score, update_credit_score
 from jekiiLMS.sms_messages import send_sms
-from jekiiLMS.loan_math import loan_due_date, save_due_amount
+from jekiiLMS.loan_math import loan_due_date, save_due_amount, installments
+from jekiiLMS.tasks import send_email_task, send_sms_task
 
 
 
@@ -91,8 +93,17 @@ def clear_loan(loan):
                     message = f'Loan for {loan.member.first_name} {loan.member.last_name} has been cleared.'
                 )
                 #send sms
-                message = f"Dear {loan.member.first_name}, You have successfully cleared your loan balance. Success in your business."
-                send_sms(loan.member.phone_no, message)
+                sms_setting = SmsSetting.objects.get(company=loan.company)
+                sender_id = sms_setting.sender_id
+                token = sms_setting.api_token 
+                message = f"Dear {loan.member.first_name}, You have successfully cleared your loan. Success in your business."
+                send_sms_task.delay(
+                            sender_id, 
+                            token, 
+                            loan.member.phone_no, 
+                            message
+                        ) 
+
 
 
 #update member details after loan cleared               
@@ -176,7 +187,7 @@ def roll_over(loan):
         approved_amount = applied_amount
     )
     new_loan.disbursed_amount = get_amount_to_disburse(new_loan, applied_amount)
-    new_loan.num_installments = num_installments(new_loan)
+    new_loan.num_installments = installments(new_loan.loan_product)
     new_loan.due_date = loan_due_date(new_loan)
     new_loan.disbursed_date = final_payment_date
     new_loan.approved_date = final_payment_date

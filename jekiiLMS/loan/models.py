@@ -236,12 +236,11 @@ class Loan(models.Model):
         if term_period == 'day':
             loan_term = timedelta(days=loan_term)
         elif term_period == 'week':
-            loan_term = timedelta(weeks=loan_term)
+            loan_term = timedelta(days=loan_term * 7)
         elif term_period == 'month':
-            loan_term = relativedelta(months=loan_term)
+            loan_term = timedelta(days=loan_term * 30)
         elif term_period == 'year':
-            loan_term = relativedelta(years=loan_term)
-
+            loan_term = timedelta(days=loan_term * 365)
 
         final_date = start_date + loan_term 
 

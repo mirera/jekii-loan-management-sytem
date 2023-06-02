@@ -1,8 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
-from django.core.mail import EmailMessage
 from django.conf import settings
-from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required 
 import os
 from django.contrib import messages
@@ -13,7 +11,6 @@ import json
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from jekiiLMS.decorators import permission_required
-from django.forms.models import model_to_dict
 from .models import LoanProduct, Loan, Note, Repayment, Guarantor, Collateral, MpesaStatement
 from .forms import LoanProductForm, LoanForm, RepaymentForm, GuarantorForm, CollateralForm, MpesaStatementForm
 from member.models import Member
@@ -23,8 +20,6 @@ from company.models import Organization, SmsSetting, MpesaSetting, EmailSetting,
 from jekiiLMS.process_loan import is_sufficient_collateral, get_amount_to_disburse, clear_loan, update_member_data, write_loan_off, roll_over
 from jekiiLMS.mpesa_statement import get_loans_table
 from jekiiLMS.loan_math import loan_due_date, save_due_amount, total_interest, installments
-from jekiiLMS.sms_messages import send_sms
-from jekiiLMS.mpesa_api import disburse_loan
 from jekiiLMS.format_inputs import to_utc, user_local_time
 from jekiiLMS.utils import get_user_company
 from jekiiLMS.tasks import send_email_task, send_sms_task, disburse_loan_task
@@ -450,10 +445,6 @@ def rejectLoan(request,pk):
         loan = Loan.objects.get(id=pk, company=company)
         borrower = loan.member
 
-        #email variables
-        company_email =company.email
-        email = loan.member.email
-
         url = reverse('view-loan', args=[pk])
         url_with_anchor = f'{url}'
         if loan.status == 'pending':
@@ -473,30 +464,42 @@ def rejectLoan(request,pk):
                 message = f'Loan for {loan.member.first_name} {loan.member.last_name} has been rejected.'
             )
 
-            #send mail and message to borrower.
-            email_setting = EmailSetting.objects.get(company=company)
-            context = {'loan':loan}
-            from_name_email = f'{email_setting.from_name} <{email_setting.from_email}>' 
-            template = render_to_string('loan/loan-rejected.html', context)
-            e_mail = EmailMessage(
-                'Loan Rejected',
-                template,
-                from_name_email, #'John Doe <john.doe@example.com>'
-                [email],
-                reply_to=[company_email, email_setting.from_email],
-            )
-            e_mail.send(fail_silently=False)
-
             #send sms
             sms_setting = SmsSetting.objects.get(company=company)
             sender_id = sms_setting.sender_id
             token = sms_setting.api_token 
             message = f"Dear {borrower.first_name}, we regret to inform you that we are unable to approve your loan request at this time."
-            send_sms(
-                sender_id,
-                token,
-                borrower.phone_no,
-                message)
+            #Enqueue 
+            send_sms_task.delay(
+                sender_id, 
+                token, 
+                borrower.phone_no, 
+                message
+            )
+            #send email
+            email_setting = EmailSetting.objects.get(company=company)
+            context = {
+                'member_1name': loan.member.first_name,
+                'member_2name': loan.member.last_name,
+                'loan_officer': loan.loan_officer.first_name ,
+                'company': loan.company.name,
+            }
+            from_name = email_setting.from_name
+            from_email = email_setting.from_email
+            template_path = 'loan/loan-rejected.html'
+            subject = 'Loan Rejected'
+            recipient_email = borrower.email
+            replyto_email = company.email
+
+            send_email_task.delay(
+                context, 
+                template_path, 
+                from_name, 
+                from_email, 
+                subject, 
+                recipient_email, 
+                replyto_email
+            )
 
             messages.info(request,'The loan was rejected succussesfully!')
             return redirect(url_with_anchor)
@@ -1060,12 +1063,12 @@ def rollOver(request, pk):
         sender_id = sms_setting.sender_id
         token = sms_setting.api_token
         message = f"Dear {borrower.first_name}, Your loan roll over request has been approved. The next payment date {date}, amount Ksh{new_loan.due_amount}. Acc. 5840988 Paybill 522522"
-        send_sms(
-            sender_id,
-            token,
+        send_sms_task.delay(
+            sender_id, 
+            token, 
             borrower.phone_no, 
             message
-        )
+        ) 
 
         messages.success(request, f'{loan.member} loan has been rolled over')
         return redirect('view-loan', new_loan.id) #should be a new loan.id

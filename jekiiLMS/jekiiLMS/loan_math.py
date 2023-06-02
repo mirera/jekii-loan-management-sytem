@@ -1,4 +1,4 @@
-from datetime import timedelta, datetime, date, time
+from datetime import timedelta
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 import math
@@ -58,7 +58,7 @@ def loan_due_amount(loan):
     amount = payable / installments
     return amount
 
-def loan_due_date(loan):
+def loan_due_date(loan): 
     #utc and tz aware
     today = timezone.now()
      #because this function is called only when approving a loan.
@@ -67,18 +67,18 @@ def loan_due_date(loan):
         if loan.loan_product.loan_term_period == 'day':
             return today + timedelta(days=loan.loan_product.loan_product_term)
         elif loan.loan_product.loan_term_period == 'week':
-            return today + timedelta(weeks=loan.loan_product.loan_product_term)
+            return today + timedelta(days=loan.loan_product.loan_product_term * 7)
         elif loan.loan_product.loan_term_period == 'month':
-            return today + relativedelta(months=loan.loan_product.loan_product_term)
+            return today + timedelta(days=loan.loan_product.loan_product_term * 30)
         else:
-            return today + relativedelta(years=loan.loan_product.loan_product_term)
+            return today + timedelta(days=loan.loan_product.loan_product_term * 365)
     elif loan.loan_product.repayment_frequency == 'daily':
         return today + timedelta(days=1)
         
     elif loan.loan_product.repayment_frequency == 'weekly':
-        return today + timedelta(weeks=1)
+        return today + timedelta(days=7)
     else:
-        return today + relativedelta(months=1)    
+        return today + timedelta(days=30)    
 
 #final payment date
 def final_date(loan):
@@ -88,11 +88,11 @@ def final_date(loan):
     if term_period == 'day':
         loan_term = timedelta(days=loan_term)
     elif term_period == 'week':
-        loan_term = timedelta(weeks=loan_term)
+        loan_term = timedelta(days=loan_term * 7)
     elif term_period == 'month':
-        loan_term = relativedelta(months=loan_term)
+        loan_term = timedelta(months=loan_term * 30)
     elif term_period == 'year':
-        loan_term = relativedelta(years=loan_term)
+        loan_term = timedelta(years=loan_term * 365)
 
 
     final_date = start_date + loan_term 
@@ -152,7 +152,7 @@ def save_due_amount(loan):
     amount = payable / installment
     loan.due_amount = amount
     loan.interest_amount = total_interest(loan)
-    loan.service_fee_amount = get_service_fee(loan)
-    loan.final_date = final_date(loan) #fill final payment date
+    loan.service_fee_amount = get_service_fee(loan) 
+    loan.final_due_date = final_date(loan) #fill final payment date 
     loan.save()
 

@@ -8,7 +8,6 @@ from jekiiLMS.mpesa_api import disburse_loan
 #task to mark a loan as overdue 
 @shared_task
 def mark_loans_as_overdue():
-    #today = date.today()
     today = timezone.now()
     loans = Loan.objects.filter(due_date__lt=today).exclude(status__in=['cleared', 'overdue', 'written off', 'rolled over'])
 
@@ -33,8 +32,8 @@ def hello_engima():
 #task to update due date 
 @shared_task
 def update_due_date():
-    today = timezone.now()
-    loans = Loan.objects.filter(due_date=today, status='approved') # run this every second or strp due date to date only
+    today = timezone.now().date()
+    loans = Loan.objects.filter(due_date__date=today, status='approved') 
     for loan in loans:
         #get all repayment from approved_date to due_date
         repayments = Repayment.objects.filter(
@@ -45,9 +44,9 @@ def update_due_date():
 
         total_repayments = sum(repayment.amount for repayment in repayments)
         amount_due = loan.amount_due()
-        due_date_zof = loan.due_date.replace(tzinfo=None)
 
-        if due_date_zof == today and total_repayments >= amount_due:
+
+        if loan.due_date.date() == today and total_repayments >= amount_due:
             # Change due date
             loan.due_date = loan_due_date(loan) 
             loan.save()
