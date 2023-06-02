@@ -150,6 +150,7 @@ def updateOrganization(request, pk):
             'organization':organization,
             'admins':admins
         }
+       
     return render(request,'company/update-company.html', context)
 
 # -- view to create package
@@ -357,7 +358,6 @@ def sendTestEmail(request, pk):
 @login_required(login_url='login')
 def updatePreferences(request, pk):
     organization = Organization.objects.get(id=pk)
-    #preferences = SystemSetting.objects.get(company=organization)
     preferences, created = SystemSetting.objects.get_or_create(company=organization)
 
     if request.method == 'POST':
@@ -368,10 +368,12 @@ def updatePreferences(request, pk):
             preferences.company = organization
             preferences.is_auto_disburse = is_auto_disburse
             preferences.save()
-
         messages.success(request, 'System preferences updated successfully.')
         return redirect('update-organization', organization.id)
     else:
+        mpesa_setting = MpesaSetting.objects.get(company=organization)
+        print(mpesa_setting.online_passkey)
+
         # prepopulate the form with existing data
         form_data = {
             'is_auto_disburse': preferences.is_auto_disburse
@@ -379,7 +381,8 @@ def updatePreferences(request, pk):
         form_preferences = SystemSettingForm(initial=form_data)
  
     context = {
-            'form_preferences':form_preferences
+            'form_preferences':form_preferences,
         }
+    
     return render(request,'company/update-company.html', context) 
 # --ends

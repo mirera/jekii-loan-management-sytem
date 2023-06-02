@@ -2,7 +2,8 @@ from celery import shared_task
 from django.utils import timezone
 from loan.models import Loan, Repayment
 from .loan_math import loan_due_date
-from jekiiLMS.sms_messages import send_sms 
+from jekiiLMS.sms_messages import send_sms, send_email
+from jekiiLMS.mpesa_api import disburse_loan
 
 #task to mark a loan as overdue 
 @shared_task
@@ -66,17 +67,36 @@ def send_loan_balance():
 # --end
 
 @shared_task
-def disburse_loan_task(consumer_key, consumer_secret, shortcode, username, loan):
-    # Call the disburse_loan function
-    disburse_loan(consumer_key, consumer_secret, shortcode, username, loan)
-
-@shared_task
 def send_sms_task(sender_id, token, phone_number, message):
     # Call the send_sms function
     send_sms(sender_id, token, phone_number, message)
 
 @shared_task
-def send_email_task(subject, message, from_email, recipient_list):
-    # Call the send_email function
-    send_email(subject, message, from_email, recipient_list)
+def send_email_task(context, template_path, from_name, from_email, subject, recipient_email, replyto_email):
+    send_email(
+        context, 
+        template_path, 
+        from_name, 
+        from_email, 
+        subject, 
+        recipient_email, 
+        replyto_email
+    )
+
+@shared_task
+def disburse_loan_task(consumer_key, consumer_secret, shortcode, username, loan):
+    disburse_loan(
+        consumer_key, 
+        consumer_secret, 
+        shortcode, 
+        username, 
+        loan
+    )
+
+@shared_task
+def print_message_task(message):
+    # Call the send_sms function
+    print(f'I am a product of Celery, {message}')
+
+
  

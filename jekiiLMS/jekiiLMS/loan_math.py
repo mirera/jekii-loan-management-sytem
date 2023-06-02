@@ -148,8 +148,8 @@ def installments(loanproduct):
 #function to fill due_amount field in Loan once loan is approved & final date
 def save_due_amount(loan):
     payable = total_payable_amount(loan)
-    installments = installments(loan)
-    amount = payable / installments
+    installment = installments(loan.loan_product)
+    amount = payable / installment
     loan.due_amount = amount
     loan.interest_amount = total_interest(loan)
     loan.service_fee_amount = get_service_fee(loan)
