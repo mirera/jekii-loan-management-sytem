@@ -56,7 +56,8 @@
                                             <div class="form-group">
                                                 <label class="form-label" for="pay-amount-1">Date Paid</label>
                                                 <div class="form-control-wrap">
-                                                    {{form.date_paid}}
+                                                    {% load tz %}
+                                                    {% timezone company_tz %} {{form.date_paid}} {% endtimezone %}
                                                 </div>
                                             </div>
                                         </div>

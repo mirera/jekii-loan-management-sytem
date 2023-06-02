@@ -12,4 +12,4 @@ urlpatterns = [
     path('income-expense/<int:company_id>/', views.getCompanyIncomExpense),
     path('loans-repayment/<int:company_id>/', views.getCompanyLoansRepayments),
     path('disbursement-data/<int:company_id>/', views.getCompanyLoansDisbursement),
-]
+] 

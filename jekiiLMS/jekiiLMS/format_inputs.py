@@ -1,5 +1,4 @@
 import pytz
-from datetime import datetime
 
 #format phone number to 254706384073
 def format_phone_number(phone_no, phone_code):

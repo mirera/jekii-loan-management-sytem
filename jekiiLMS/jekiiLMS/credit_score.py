@@ -1,4 +1,5 @@
 from datetime import datetime
+from django.utils import timezone
 from django.db.models import Sum
 
 
@@ -6,8 +7,9 @@ def member_credit_score(member):
     credit_score = member.credit_score
     # Get the current member active loan
     active_loan = member.loans_as_member.filter(status=('approved', 'overdue')).order_by('-approved_date').first()
-    # Get the current date
-    current_date = datetime.now().date()
+    
+    #current_date = datetime.now().date()
+    current_date = timezone.now()
 
     # If the member has no cleared loans, return the default credit score
     if active_loan is None:
@@ -69,9 +71,7 @@ def member_credit_score(member):
                         loan_product_term = loan_product_term * 365
                         credit_score += 4 / loan_product_term
     # Make sure the credit score stays within the valid range of 0 to 100
-    print(credit_score)
     credit_score = max(0, min(100,credit_score))
-    print(credit_score)
     member.save()
     return credit_score
 

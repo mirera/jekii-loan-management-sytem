@@ -27,6 +27,9 @@
                                 <a class="nav-link active" data-bs-toggle="tab" href="#site"><em class="icon ni ni-laptop"></em><span>General</span></a>
                             </li>
                             <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#system"><em class="icon ni ni-setting"></em><span>System Preferences</span></a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" data-bs-toggle="tab" href="#admin"><em class="icon ni ni-user-alt"></em><span>Admin </span></a>
                             </li>
                             <li class="nav-item">
@@ -188,6 +191,49 @@
                                 </div>
                             </div>
                             <!--tab pan -->
+                            <div class="tab-pane" id="system">
+                                <form action="{% url 'preferences' organization.id %}" method="POST" >
+                                    {% csrf_token %}
+                                    <div class="card-inner pt-0">
+                                        <div class="nk-block-head">
+                                            <div class="nk-block-head-content">
+                                                <h4 class="title nk-block-title">System Preferences</h4>
+                                                <p>Tailor the system to your needs.</p>
+                                                <div class="alert alert-icon alert-warning" role="alert">
+                                                    <em class="icon ni ni-alert-circle"></em> 
+                                                    <strong>Auto-disburse is turned on and your Mpesa credentials are not set or upto date.</strong>Consider updating your Mpesa settings.  
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row g-gs">
+                                            <div class="row g-3 align-center">
+                                                <div class="col-lg-5">
+                                                    <div class="form-group">
+                                                        <label class="form-label" for="site-off">Auto Disburse Loans</label>
+                                                        <span class="form-note">Set auto disburse on to auto-disburse loans once approved.</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-7">
+                                                    <div class="form-group">
+                                                        <div class="custom-control custom-switch">
+                                                            <!-- <input type="checkbox" class="custom-control-input" name="is_auto_disburse" id="auto_disburse"> -->
+                                                            {{form_preferences.is_auto_disburse}}
+                                                            <label class="custom-control-label" for="auto_disburse">On</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div> <!-- .row -->
+                                        <div class="row g-3">
+                                            <div class="col-lg-7">
+                                                <div class="form-group mt-2">
+                                                    <button type="submit" class="btn btn-lg btn-primary">Update</button>
+                                                </div>
+                                            </div><!-- .col -->
+                                        </div><!-- .row -->
+                                    </div>
+                                </form>
+                            </div><!-- .tab-pane -->
                             <div class="tab-pane" id="admin">
                                 <div class="card-inner position-relative card-tools-toggle pt-0">
                                     <div class="nk-block-between g-3">

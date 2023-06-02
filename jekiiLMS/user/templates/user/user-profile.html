@@ -9,6 +9,7 @@
     {% endfor %}
 {% endif %} 
 <!-- content @s -->
+{% load tz %}
 <div class="nk-content ">
     <div class="container-fluid">
         <div class="nk-content-inner">
@@ -66,7 +67,7 @@
                                         <div class="data-item" data-bs-toggle="modal" data-bs-target="#profileEdit">
                                             <div class="data-col">
                                                 <span class="data-label">Date Added</span>
-                                                <span class="data-value">{{user.date_added}}</span>
+                                                <span class="data-value">{% timezone company_tz %} {{user.date_added}} {% endtimezone %}</span>
                                             </div>
                                             <div class="data-col data-col-end"><span class="data-more"><em class="icon ni ni-forward-ios"></em></span></div>
                                         </div><!-- data-item -->
@@ -80,35 +81,43 @@
                                     </div><!-- data-list -->
                                     <div class="nk-data data-list">
                                         <div class="data-head">
-                                            <h6 class="overline-title">Organizational Preferences</h6>
+                                            <h6 class="overline-title">Organizational </h6>
                                         </div>
                                         <div class="data-item">
                                             <div class="data-col">
                                                 <span class="data-label">Branch</span>
                                                 <span class="data-value">{{user.branch}}</span>
                                             </div>
-                                            <div class="data-col data-col-end"><a href="#" class="link link-primary">Change Language</a></div>
                                         </div><!-- data-item -->
                                         <div class="data-item">
                                             <div class="data-col">
                                                 <span class="data-label">User Type</span>
                                                 <span class="data-value">{{user.user_type}}</span>
                                             </div>
-                                            <div class="data-col data-col-end"><a href="#" class="link link-primary">Change</a></div>
                                         </div><!-- data-item -->
                                         <div class="data-item">
                                             <div class="data-col">
                                                 <span class="data-label">Role</span>
                                                 <span class="data-value"> {{user.staff_role}}</span>
                                             </div>
-                                            <div class="data-col data-col-end"><a href="#" class="link link-primary">Change</a></div>
                                         </div><!-- data-item -->
                                         <div class="data-item">
                                             <div class="data-col">
                                                 <span class="data-label">User Permissions</span>
-                                                <span class="data-value"> {{ user.user_permissions.all }}</span>
+                                                <span class="data-value">
+                                                    {% for permission in user.staff_role.permissions.all|slice:":5" %}
+                                                        {{ permission.codename }},
+                                                    {% endfor %}
+                                                    {% if user.staff_role.permissions.count > 5 %}
+                                                        <a href="#" onclick="togglePermissions(event)">See More</a>
+                                                    {% endif %}
+                                                    <span id="morePermissions" style="display: none;">
+                                                        {% for permission in user.staff_role.permissions.all|slice:"5:" %}
+                                                            {{ permission.codename }},
+                                                        {% endfor %}
+                                                    </span>
+                                                </span>
                                             </div>
-                                            <div class="data-col data-col-end"><a href="#" class="link link-primary">Change</a></div>
                                         </div><!-- data-item -->
                                     </div><!-- data-list -->
                                 </div><!-- .nk-block -->
@@ -129,7 +138,7 @@
                                                     <a class="btn btn-icon btn-trigger me-n2" data-bs-toggle="dropdown" href="#"><em class="icon ni ni-more-v"></em></a>
                                                     <div class="dropdown-menu dropdown-menu-end">
                                                         <ul class="link-list-opt no-bdr">
-                                                            <li><a href="#"><em class="icon ni ni-camera-fill"></em><span>Change Photo</span></a></li>
+                                                            <li><a data-bs-toggle="modal" href="#changePhoto"><em class="icon ni ni-camera-fill"></em><span>Change Photo</span></a></li>
                                                             <li><a data-bs-toggle="modal" href="#profileEdit"><em class="icon ni ni-edit-fill"></em><span>Update Profile</span></a></li>
                                                         </ul>
                                                     </div>
@@ -139,9 +148,9 @@
                                     </div><!-- .card-inner -->
                                     <div class="card-inner">
                                         <div class="user-account-info py-0">
-                                            <h6 class="overline-title-alt">Nio Wallet Account</h6>
-                                            <div class="user-balance">12.395769 <small class="currency currency-btc">BTC</small></div>
-                                            <div class="user-balance-sub">Locked <span>0.344939 <span class="currency currency-btc">BTC</span></span></div>
+                                            <h6 class="overline-title-alt">Loan Account</h6>
+                                            <div class="user-balance">2,395,769 <small class="currency currency-btc">{{company_currency}}</small></div>
+                                            <div class="user-balance-sub">Members: <span>100</span></div>
                                         </div>
                                     </div><!-- .card-inner -->
                                     <div class="card-inner p-0">
@@ -180,7 +189,6 @@
                     {% csrf_token %}
                     <div class="tab-pane active" id="personal">
                         <div class="row gy-4">
-                        
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label" for="full-name">First Name</label>
@@ -211,17 +219,56 @@
                                     {{form.id_no}}
                                 </div>
                             </div>
-                         <!--   <div class="col-12">
-                                <div class="custom-control custom-switch">
-                                    <input type="checkbox" class="custom-control-input" id="latest-sale">
-                                    <label class="custom-control-label" for="latest-sale">Use full name to display </label>
-                                </div>
-                            </div> -->
                             <div class="col-12">
                                 <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
                                     <li>
                                        <!-- <a href="#" class="btn btn-lg btn-primary" data-bs-dismiss="modal">Update Profile</a> -->
                                         <button class="btn btn-lg btn-primary" type="submit"> Update Profile </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div><!-- .tab-pane -->
+                </form>  
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+<!-- change profile picture modal starts-->
+<div class="modal fade" role="dialog" id="changePhoto">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-bs-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h5 class="title">Change Profile Photo</h5>
+                <ul class="nk-nav nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-bs-toggle="tab" href="#personal">Personal</a>
+                    </li>
+                </ul><!-- .nav-tabs -->
+                <div class="tab-content">
+                <form action="{% url 'change-photo' %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="birth-day"> Current Profile Photo</label>
+                                    <div class="rounded-circle profile-photo" style="width:150px ; height:150px; border-radius: 50%;">
+                                        <img src="{{ user.profile_photo.url }}" class="img-fluid" alt="Profile Photo">
+                                    </div> 
+                                </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="birth-day">Change Profile Photo</label>
+                                        {{form.profile_photo}}
+                                    </div>
+                            </div>
+                            <div class="col-12">
+                                <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
+                                    <li>
+                                       <!-- <a href="#" class="btn btn-lg btn-primary" data-bs-dismiss="modal">Update Profile</a> -->
+                                        <button class="btn btn-lg btn-primary" type="submit"> Change </button>
                                     </li>
                                 </ul>
                             </div>
@@ -241,4 +288,19 @@
         }
     }, 10000)    // 2000 millisecond
 </script>
+<script>
+    function togglePermissions(event) {
+        event.preventDefault();
+        var morePermissions = document.getElementById('morePermissions');
+        if (morePermissions.style.display === 'none') {
+            morePermissions.style.display = 'inline';
+            event.target.textContent = 'See Less';
+        } else {
+            morePermissions.style.display = 'none';
+            event.target.textContent = 'See More';
+        }
+    }
+    </script>
 {% endblock content %}
+
+

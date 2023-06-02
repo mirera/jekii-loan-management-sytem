@@ -1,13 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
-from django.core.mail import EmailMessage
 from django.conf import settings
-from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required 
 import os
 from django.contrib import messages
 from django.db.models import Sum
 from datetime import datetime
+from django.utils import timezone
 import json
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -17,13 +16,13 @@ from .forms import LoanProductForm, LoanForm, RepaymentForm, GuarantorForm, Coll
 from member.models import Member
 from user.models import RecentActivity, Notification
 from user.models import CompanyStaff
-from company.models import Organization, SmsSetting, MpesaSetting, EmailSetting
+from company.models import Organization, SmsSetting, MpesaSetting, EmailSetting, SystemSetting
 from jekiiLMS.process_loan import is_sufficient_collateral, get_amount_to_disburse, clear_loan, update_member_data, write_loan_off, roll_over
 from jekiiLMS.mpesa_statement import get_loans_table
-from jekiiLMS.loan_math import loan_due_date, save_due_amount, num_installments, total_interest, final_date
-from jekiiLMS.sms_messages import send_sms
-from jekiiLMS.mpesa_api import disburse_loan
+from jekiiLMS.loan_math import loan_due_date, save_due_amount, total_interest, installments
 from jekiiLMS.format_inputs import to_utc, user_local_time
+from jekiiLMS.utils import get_user_company
+from jekiiLMS.tasks import send_email_task, send_sms_task, disburse_loan_task
 
 
 
@@ -32,19 +31,9 @@ from jekiiLMS.format_inputs import to_utc, user_local_time
 @permission_required('loan.add_loanproduct')
 def createLoanProduct(request):
     form = LoanProductForm()
-
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-        
+    company = get_user_company(request)    
 
     if request.method == 'POST':
-        
         product = LoanProduct.objects.create(
             company = company,
             loan_product_name = request.POST.get('loan_product_name'),
@@ -79,17 +68,8 @@ def createLoanProduct(request):
 # list Loan Products view starts
 @login_required(login_url='login')
 @permission_required('loan.view_loanproduct') 
-def listLoanProducts(request):
-    
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-        
+def listLoanProducts(request): 
+    company = get_user_company(request) 
     loanproducts = LoanProduct.objects.filter(company=company)
     form = LoanProductForm()
 
@@ -101,16 +81,7 @@ def listLoanProducts(request):
 @login_required(login_url='login')
 @permission_required('loan.view_loanproduct') 
 def viewLoanProduct(request, pk):
-    
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-        
+    company = get_user_company(request) 
     loanproduct = LoanProduct.objects.get(id=pk, company=company)
 
     context = {'loanproduct': loanproduct}
@@ -121,17 +92,9 @@ def viewLoanProduct(request, pk):
 @login_required(login_url='login')
 @permission_required('loan.delete_loanproduct')
 def deleteLoanProduct(request,pk):
-    
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-        
+    company = get_user_company(request)
     loanproduct = LoanProduct.objects.get(id=pk, company=company)
+
     if request.method == 'POST':
         loanproduct.delete()
         messages.success(request, 'Branch deleted successfully.')
@@ -144,16 +107,7 @@ def deleteLoanProduct(request,pk):
 @login_required(login_url='login')
 @permission_required('loan.change_loanproduct')
 def editLoanProduct(request,pk):
-    
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-        
+    company = get_user_company(request)  
     loanproduct = LoanProduct.objects.get(id=pk, company=company)
     
     if request.method == 'POST':
@@ -205,17 +159,8 @@ def editLoanProduct(request,pk):
 @login_required(login_url='login')
 @permission_required('loan.add_loan')
 def createLoan(request):
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-    
+    company = get_user_company(request)
     form = LoanForm(request.POST, company=company) #instiated the two kwargs to be able to access them on the forms.py
-    #processing the data
     if request.method == 'POST':
         loanproduct_id = request.POST.get('loan_product')
         loanproduct = LoanProduct.objects.get(pk=loanproduct_id)
@@ -254,15 +199,7 @@ def createLoan(request):
 @login_required(login_url='login')
 @permission_required('loan.change_loan')
 def editLoan(request,pk):
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-    
+    company = get_user_company(request)
     loan = Loan.objects.get(id=pk, company=company)
     
     if request.method == 'POST':
@@ -325,23 +262,13 @@ def editLoan(request,pk):
 @permission_required('loan.approve_loan')
 def approveLoan(request,pk):
     if request.method == 'POST':
-        if request.user.is_authenticated and request.user.is_active:
-            try:
-                companystaff = CompanyStaff.objects.get(username=request.user.username)
-                company = companystaff.company
-            except CompanyStaff.DoesNotExist:
-                company = None
-        else:
-            company = None
-        
+        staff = CompanyStaff.objects.get(username=request.user.username)
+        company = get_user_company(request)
         loan = Loan.objects.get(id=pk, company=company)
         borrower = loan.member
         guarantors = Guarantor.objects.filter(loan=loan)
-        today = datetime.today().strftime('%Y-%m-%d')
-
-        #email variables & context
-        company_email = company.email
-        email = borrower.email
+        #today = datetime.today().strftime('%Y-%m-%d')
+        today = timezone.now() #converted to uct already
 
         guarantors_score = 0
         for guarantor in guarantors:
@@ -351,95 +278,153 @@ def approveLoan(request,pk):
         approved_amount = int(request.POST.get('approved_amount'))
         amount_to_disburse = get_amount_to_disburse(loan, approved_amount)
         due_date = loan_due_date(loan)
-        installments = num_installments(loan)
+        installment = installments(loan.loan_product)
 
         if member_score >= 5 and guarantors_score >= 7:
-
             if is_sufficient_collateral(loan):
                 if loan.status == 'pending':
                     #update loan details
                     loan.approved_amount = int(approved_amount)
                     loan.disbursed_amount = amount_to_disburse
                     loan.approved_date = today
-                    loan.approved_by = companystaff
+                    loan.approved_by = staff
                     loan.status = 'approved'
                     loan.due_date = due_date
-                    loan.num_installments = installments
+                    loan.num_installments = installment
 
                     #update borrower details
                     borrower.status = 'active'
                     borrower.save()
                     loan.save()
+                    # fill due_amount & final payment date on the Loan model 
+                    save_due_amount(loan)
+                    
+                    #send mail arguments.
+                    email_setting = EmailSetting.objects.get(company=company)
 
-                    #disburse loan
-                    mpesa_setting = MpesaSetting.objects.get(company=loan.company)
-                    consumer_key = mpesa_setting.app_consumer_key
-                    consumer_secret = mpesa_setting.app_consumer_secret
-                    shortcode = mpesa_setting.shortcode
-                    username = mpesa_setting.username
-                    try:
-                        disbursement_response = disburse_loan(
-                            consumer_key, 
-                            consumer_secret,
-                            shortcode,
-                            username,
-                            loan
+                    #having this context because delay() need model serialzation
+                    context = {
+                        'member_1name': loan.member.first_name,
+                        'member_2name': loan.member.last_name,
+                        'approved_amount': loan.approved_amount,
+                        'term': loan.loan_product.loan_product_term,
+                        'period': loan.loan_product.loan_term_period ,
+                        'interest_rate': loan.loan_product.interest_rate,
+                        'installments': loan.num_installments,
+                        'due_amount': loan.due_amount,
+                        'due_date': user_local_time(loan.company.timezone, loan.due_date).date(),
+                        'total_payable': loan.total_payable(),
+                        'loan_officer': loan.loan_officer.first_name ,
+                        'company': loan.company.name,
+                        'tzone':loan.company.timezone
+                    }
+
+                    from_name = email_setting.from_name
+                    from_email = email_setting.from_email
+                    template_path = 'loan/loan-approved.html'
+                    subject = 'Loan Approved'
+                    recipient_email = borrower.email
+                    replyto_email = company.email
+
+                    #send sms aurguments
+                    sms_setting = SmsSetting.objects.get(company=company)
+                    sender_id = sms_setting.sender_id
+                    token = sms_setting.api_token 
+                    date = loan.due_date.date().strftime('%Y-%m-%d')
+                    message = f"Dear {borrower.first_name}, Your loan request has been approved and queued for disbursal. The next payment date {date}, amount Ksh{loan.due_amount}. Acc. 5840988 Paybill 522522"  
+
+                    system_setting = SystemSetting.objects.get(company=company)
+                    if system_setting.is_auto_disburse:
+                        #disburse loan
+                        mpesa_setting = MpesaSetting.objects.get(company=company)
+                        consumer_key = mpesa_setting.app_consumer_key
+                        consumer_secret = mpesa_setting.app_consumer_secret
+                        shortcode = mpesa_setting.shortcode
+                        username = mpesa_setting.username
+                        try:
+                            disbursement_response = disburse_loan_task.delay(
+                                                        consumer_key,
+                                                        consumer_secret, 
+                                                        shortcode,
+                                                        username, 
+                                                        loan
+                                                    )
+
+                            if disbursement_response['ResponseCode'] == '0':
+                                # Create a recent activity entry for loan approval
+                                RecentActivity.objects.create(
+                                    company = company,
+                                    event_type='loan_approval',
+                                    details=f'Loan of {loan.member.first_name} {loan.member.first_name} of {loan.approved_amount} has been approved.'
+                                )
+                                Notification.objects.create(
+                                    company = company,
+                                    recipient = loan.loan_officer,
+                                    state='info',
+                                    message = f'Loan for {loan.member.first_name} {loan.member.last_name} has been approved & disbursed.'
+                                )
+                                
+                                #Enqueue the send_sms_task
+                                send_sms_task.delay(
+                                    sender_id, 
+                                    token, 
+                                    borrower.phone_no, 
+                                    message
+                                )
+                                send_email_task.delay(
+                                    context, 
+                                    template_path, 
+                                    from_name, 
+                                    from_email, 
+                                    subject, 
+                                    recipient_email, 
+                                    replyto_email
+                                )
+                                
+                                messages.success(request, 'Loan approved & disbursed successfully!')
+                                return redirect('view-loan', loan.id)
+                            else:
+                                #undo loan and member status and save
+                                #loan.status = 'pending'
+                                #borrower.status = 'inactive'
+                                #borrower.save()
+                                #loan.save()
+                                messages.error(request, 'Loan disbursement failed!')
+                                return redirect('view-loan', loan.id)
+                        except Exception as errors:
+                            messages.error(request, f'Loan disbursement failed! {str(errors)}')
+                            return redirect('view-loan', loan.id)
+                    else:
+                        #Enqueue the send_sms_task and send email tasks
+                        send_sms_task.delay(
+                            sender_id, 
+                            token, 
+                            borrower.phone_no, 
+                            message
+                        ) 
+                        send_email_task.delay(
+                            context, 
+                            template_path, 
+                            from_name, 
+                            from_email, 
+                            subject, 
+                            recipient_email, 
+                            replyto_email
                         )
-                        if disbursement_response['ResponseCode'] == '0':
-                            # call fill due_amount function to fill due_amount & final payment date on the Loan model 
-                            save_due_amount(loan)
 
-                            # Create a recent activity entry for loan approval
-                            RecentActivity.objects.create(
-                                company = company,
-                                event_type='loan_approval',
-                                details=f'Loan of {loan.member.first_name} {loan.member.first_name} of {loan.approved_amount} has been approved.'
-                            )
-                            Notification.objects.create(
-                                company = company,
-                                recipient = loan.loan_officer,
-                                state='info',
-                                message = f'Loan for {loan.member.first_name} {loan.member.last_name} has been approved.'
-                            )
-                            
-                            #send mail and message to borrower.
-                            email_setting = EmailSetting.objects.get(company=company)
-                            context = {'loan':loan}
-                            from_name_email = f'{email_setting.from_name} <{email_setting.from_email}>' 
-                            template = render_to_string('loan/loan-approved.html', context)
-                            e_mail = EmailMessage(
-                                'Loan Approved and Disbursed',
-                                template,
-                                from_name_email, #'John Doe <john.doe@example.com>'
-                                [email],
-                                reply_to=[company_email, email_setting.from_email],
-                            )
-                            e_mail.send(fail_silently=False)
-
-                            #send sms
-                            sms_setting = SmsSetting.objects.get(company=company)
-                            sender_id = sms_setting.sender_id
-                            token = sms_setting.api_token 
-                            date = loan.due_date.date().strftime('%Y-%m-%d')
-                            message = f"Dear {borrower.first_name}, Your loan request has been approved and disbursed. The next payment date {date}, amount Ksh{loan.due_amount}. Acc. 5840988 Paybill 522522"
-                            send_sms(
-                                sender_id,
-                                token,
-                                borrower.phone_no,
-                                message)
-                            
-                            messages.success(request, 'Loan approved & disbursed successfully!')
-                            return redirect('view-loan', loan.id)
-                        else:
-                            #undo loan and member status and save
-                            loan.status = 'pending'
-                            borrower.status = 'inactive'
-                            borrower.save()
-                            loan.save()
-                            messages.error(request, 'Loan disbursement failed!')
-                            return redirect('view-loan', loan.id)
-                    except Exception as errors:
-                        messages.error(request, f'Loan disbursement failed! {str(errors)}')
+                        # Create a recent activity entry for loan approval
+                        RecentActivity.objects.create(
+                            company = company,
+                            event_type='loan_approval',
+                            details=f'Loan of {loan.member.first_name} {loan.member.first_name} of {loan.approved_amount} has been approved.'
+                        )
+                        Notification.objects.create(
+                            company = company,
+                            recipient = loan.loan_officer,
+                            state='info',
+                            message = f'Loan for {loan.member.first_name} {loan.member.last_name} has been approved waiting for disbursal.'
+                        )                        
+                        messages.success(request, 'Loan approved, waiting for disbursal!')
                         return redirect('view-loan', loan.id)
             else:
                 messages.error(request, 'The collateral value is too low!')
@@ -456,22 +441,9 @@ def approveLoan(request,pk):
 @permission_required('loan.reject_loan')
 def rejectLoan(request,pk):
     if request.method == 'POST':
-
-        if request.user.is_authenticated and request.user.is_active:
-            try:
-                companystaff = CompanyStaff.objects.get(username=request.user.username)
-                company = companystaff.company
-            except CompanyStaff.DoesNotExist:
-                company = None
-        else:
-            company = None
-
+        company = get_user_company(request)
         loan = Loan.objects.get(id=pk, company=company)
         borrower = loan.member
-
-        #email variables
-        company_email =company.email
-        email = loan.member.email
 
         url = reverse('view-loan', args=[pk])
         url_with_anchor = f'{url}'
@@ -492,30 +464,42 @@ def rejectLoan(request,pk):
                 message = f'Loan for {loan.member.first_name} {loan.member.last_name} has been rejected.'
             )
 
-            #send mail and message to borrower.
-            email_setting = EmailSetting.objects.get(company=company)
-            context = {'loan':loan}
-            from_name_email = f'{email_setting.from_name} <{email_setting.from_email}>' 
-            template = render_to_string('loan/loan-rejected.html', context)
-            e_mail = EmailMessage(
-                'Loan Rejected',
-                template,
-                from_name_email, #'John Doe <john.doe@example.com>'
-                [email],
-                reply_to=[company_email, email_setting.from_email],
-            )
-            e_mail.send(fail_silently=False)
-
             #send sms
             sms_setting = SmsSetting.objects.get(company=company)
             sender_id = sms_setting.sender_id
             token = sms_setting.api_token 
             message = f"Dear {borrower.first_name}, we regret to inform you that we are unable to approve your loan request at this time."
-            send_sms(
-                sender_id,
-                token,
-                borrower.phone_no,
-                message)
+            #Enqueue 
+            send_sms_task.delay(
+                sender_id, 
+                token, 
+                borrower.phone_no, 
+                message
+            )
+            #send email
+            email_setting = EmailSetting.objects.get(company=company)
+            context = {
+                'member_1name': loan.member.first_name,
+                'member_2name': loan.member.last_name,
+                'loan_officer': loan.loan_officer.first_name ,
+                'company': loan.company.name,
+            }
+            from_name = email_setting.from_name
+            from_email = email_setting.from_email
+            template_path = 'loan/loan-rejected.html'
+            subject = 'Loan Rejected'
+            recipient_email = borrower.email
+            replyto_email = company.email
+
+            send_email_task.delay(
+                context, 
+                template_path, 
+                from_name, 
+                from_email, 
+                subject, 
+                recipient_email, 
+                replyto_email
+            )
 
             messages.info(request,'The loan was rejected succussesfully!')
             return redirect(url_with_anchor)
@@ -526,15 +510,7 @@ def rejectLoan(request,pk):
 @login_required(login_url='login')
 @permission_required('loan.view_loan')
 def listLoans(request):
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-    
+    company = get_user_company(request)
     form = LoanForm(request.POST, company=company) #instiated the two kwargs to be able to access them on the forms.py
     loans = Loan.objects.filter(company=company)
 
@@ -547,17 +523,9 @@ def listLoans(request):
 @login_required(login_url='login')
 @permission_required('loan.view_loan')
 def viewLoan(request, pk):
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
+    company = get_user_company(request)
     loan = Loan.objects.get(id=pk, company=company)
-    borrower = loan.member
-    
+    borrower = loan.member    
     loan_notes = loan.note_set.all().order_by('-created')
     guarantors = Guarantor.objects.filter(loan=loan) #here loan=loan mean loan_obj=loan loan_obj in guarantor model and form
     collaterals = Collateral.objects.filter(loan=loan)
@@ -611,24 +579,11 @@ def viewLoan(request, pk):
 @login_required(login_url='login')
 @permission_required('loan.delete_loan')
 def deleteLoan(request,pk):
-
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-
+    company = get_user_company(request)
     loan = Loan.objects.filter(id=pk, company=company)
-#include a functionality to limit any user from deleteng this objec unless they have admin previleges
     if request.method == 'POST':
         loan.delete()
         return redirect('loans')
-
-
-     #context is {'obj':branch}, in delete.html we are accessing room/message as 'obj'
     context = {'obj':loan}
     return render(request,'loan/delete-loan.html', context)
 # delete Loan  ends starts
@@ -637,18 +592,8 @@ def deleteLoan(request,pk):
 @login_required(login_url='login')
 @permission_required('loan.add_repayment')
 def createRepayment(request):
-
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-        
+    company = get_user_company(request)
     form = RepaymentForm(request.POST, company=company) 
-    #processing the data
     if request.method == 'POST':
         member_id = request.POST.get('member')
         member = Member.objects.get(pk=member_id, company=company)
@@ -684,16 +629,7 @@ def createRepayment(request):
 @login_required(login_url='login')
 @permission_required('loan.view_repayment')
 def listRepayments(request):
-    
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-        
+    company = get_user_company(request)
     form = RepaymentForm(request.POST, company=company)
     repayments = Repayment.objects.filter(company=company)
 
@@ -705,24 +641,11 @@ def listRepayments(request):
 @login_required(login_url='login')
 @permission_required('loan.delete_repayment')
 def deleteRepayment(request,pk):
-    
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-
+    company = get_user_company(request)
     repayment = Repayment.objects.filter(id=pk, company=company)
-#include a functionality to limit any user from deleteng this objec unless they have admin previleges
     if request.method == 'POST':
         repayment.delete()
         return redirect('repayments')
-
-
-     #context is {'obj':branch}, in delete.html we are accessing room/message as 'obj'
     context = {'obj':repayment}
     return render(request,'loan/delete-repayment.html', context)
 # delete Repayment  ends 
@@ -731,16 +654,7 @@ def deleteRepayment(request,pk):
 @login_required(login_url='login')
 @permission_required('loan.change_repayment')
 def editRepayment(request,pk):
-        
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-        
+    company = get_user_company(request)
     repayment = Repayment.objects.get(id=pk, company=company)
     
     if request.method == 'POST':
@@ -777,6 +691,7 @@ def editRepayment(request,pk):
 #loan cacl view start
 @login_required(login_url='login')
 def loan_calculator(request):
+
     form =LoanForm()
     if request.method == "POST":
         loan_product_id = request.POST.get("loan_product")
@@ -787,28 +702,35 @@ def loan_calculator(request):
         interest_type = loan_product.interest_type
         loan_term = loan_product.loan_product_term
 
+
         amount_to_pay = 0
         total_interest = 0
+        number_installments = installments(loan_product)
 
         if interest_type == 'flat rate':
             interest_rate = loan_product.interest_rate / 100
             total_interest = amount * interest_rate * loan_term
             total_payable = amount + total_interest 
-            amount_to_pay = total_payable / loan_term
+            amount_to_pay = total_payable /number_installments #loan_term
         else:
             interest_rate = loan_product.interest_rate / 100
             payment_amount = (interest_rate * amount) / (1 - (1 + interest_rate)**(-loan_term))
             total_payable = payment_amount * loan_term
+            amount_to_pay = total_payable /number_installments
             
 
         table_data = []
-        for i in range(loan_term):
-            principal_amount = amount_to_pay * (i+1)
-            interest_per_term = total_interest / loan_term
-            principal_per_term = amount / loan_term
-            amount_per_term = interest_per_term + principal_per_term
-            loan_balance = principal_amount - amount_per_term
+
+
+        for i in range(number_installments): #iterate over number of installments
+            installment_nu = (number_installments - i)
+            principal_amount = round(amount_to_pay * (i+1), 2)
+            interest_per_term = round(total_interest / number_installments, 2)
+            principal_per_term = round(amount / number_installments, 2)
+            amount_per_term = round(interest_per_term + principal_per_term, 2)
+            loan_balance = round(principal_amount - amount_per_term, 2)
             table_data.append({
+                "installment_nu":installment_nu,
                 "principal_amount": principal_amount,
                 "total_payable": total_payable,
                 "amount_to_pay": amount_to_pay,
@@ -819,15 +741,15 @@ def loan_calculator(request):
             })
 
         context = {
-            "loanproducts": LoanProduct.objects.all(),
-            "table_data": table_data,
+            "loanproducts": LoanProduct.objects.filter(company=get_user_company(request)),
+            "table_data": list(reversed(table_data)) ,
             'form':form
         }
 
         return render(request, "loan/loan-calculator.html", context)
 
     context = {
-        "loanproducts": LoanProduct.objects.all(),
+        "loanproducts": LoanProduct.objects.filter(company=get_user_company(request)),
         "table_data": []
     }
     return render(request, "loan/loan-calculator.html", context)
@@ -837,19 +759,9 @@ def loan_calculator(request):
 @login_required(login_url='login')
 @permission_required('loan.add_guarantor')
 def addGuarantor(request, pk):
-
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-        
+    company = get_user_company(request)  
     loan = get_object_or_404(Loan, id=pk, company=company)
     borrower = loan.member
-
     guarantor_id = request.POST.get('name')
     guarantor = Member.objects.get(id=guarantor_id)
     
@@ -869,20 +781,11 @@ def addGuarantor(request, pk):
     return render(request,'loan/loan-view.html', context)
 #dd guarontor view ends   
 
-
 # delete guarantor  view starts
 @login_required(login_url='login')
 @permission_required('loan.delete_guarantor')
 def removeGuarantor(request, pk, guarantor_id):
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-        
+    company = get_user_company(request)
     loan = get_object_or_404(Loan, id=pk, company=company)
     guarantor = get_object_or_404(Guarantor, id=guarantor_id, loan=loan)
 
@@ -899,20 +802,9 @@ def removeGuarantor(request, pk, guarantor_id):
 @login_required(login_url='login')
 @permission_required('loan.add_collateral')
 def addCollateral(request, pk):
-
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-        
+    company = get_user_company(request)
     loan = get_object_or_404(Loan, id=pk, company=company)
-
     form = CollateralForm(request.POST)
-    #processing the data
     if request.method == 'POST':
         Collateral.objects.create(
             company = company,
@@ -933,15 +825,7 @@ def addCollateral(request, pk):
 @login_required(login_url='login')
 @permission_required('loan.delete_collateral')
 def removeCollateral(request, pk, collateral_id):
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-        
+    company = get_user_company(request)
     loan = get_object_or_404(Loan, id=pk, company=company)
     collateral = get_object_or_404(Collateral, id=collateral_id, loan=loan)
 
@@ -959,16 +843,7 @@ def removeCollateral(request, pk, collateral_id):
 @login_required(login_url='login')
 @permission_required('loan.change_collateral')
 def editCollateral(request,pk):
-
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-        
+    company = get_user_company(request)
     collateral = get_object_or_404(Collateral, id=pk, company=company)
 
     if request.method == 'POST':
@@ -1011,23 +886,11 @@ def editCollateral(request,pk):
 @login_required(login_url='login')
 @permission_required('loan.add_repayment')
 def addRepayment(request, pk):
-
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-        
+    company = get_user_company(request)
     loan = get_object_or_404(Loan, id=pk, company=company)
-
-    member = loan.member #retrieving the loan borrower
+    member = loan.member 
     form = RepaymentForm(request.POST, company=company)
-    #processing the data
     if request.method == 'POST':
-
         date_paid_str = request.POST.get('date_paid')
         date_paid = datetime.strptime(date_paid_str, '%Y-%m-%d %H:%M:%S')  # Convert to datetime 
         utcz_datetime = to_utc(company.timezone, date_paid)
@@ -1056,16 +919,7 @@ def addRepayment(request, pk):
 @login_required(login_url='login')
 @permission_required('loan.add_mpesastatement')
 def addStatement(request, pk):
-
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-        
+    company = get_user_company(request)
     loan = get_object_or_404(Loan, id=pk, company=company)
     borrower = loan.member
     form = MpesaStatementForm(request.POST) 
@@ -1091,16 +945,7 @@ def addStatement(request, pk):
 @login_required(login_url='login')
 @permission_required('loan.view_loan')
 def analyseStatement(request, pk):
-
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-        
+    company = get_user_company(request)
     loan = get_object_or_404(Loan, id=pk, company=company)
     statement_id = request.POST.get('statement_id')
     statement = get_object_or_404(MpesaStatement, id=statement_id, company=company)
@@ -1166,8 +1011,9 @@ def repayment_callback(request):
         #get the loan
         loan = Loan.objects.get(member=member, status__in=['approved','overdue'])
 
-        # Convert transaction_time to datetime object
-        transaction_datetime = datetime.strptime(transaction_time, '%Y%m%d%H%M%S') #comsider checking this
+        # Convert transaction_time to datetime object then to utc
+        transaction_datetime = datetime.strptime(transaction_time, '%Y%m%d%H%M%S') #consider checking this
+        date_paid = to_utc(company.timezone, transaction_datetime)
 
         # Create a new Repayment object
         repayment = Repayment.objects.create(
@@ -1176,7 +1022,7 @@ def repayment_callback(request):
             amount=amount,
             member = member,
             loan_id = loan,
-            date_paid=transaction_datetime,
+            date_paid=date_paid,
         )
         clear_loan(loan) #clear a loan
         update_member_data(loan) #update member/borrower data
@@ -1192,7 +1038,8 @@ def repayment_callback(request):
 @login_required(login_url='login')
 @permission_required('loan.write_off_loan')
 def writeOff(request, pk):
-    loan = Loan.objects.get(id=pk)
+    company = get_user_company(request)
+    loan = Loan.objects.get(id=pk, company=company)
     write_loan_off(loan)
 
     messages.success(request, f'{loan.member} loan has been written off. The loan can still receive repayments')
@@ -1203,7 +1050,8 @@ def writeOff(request, pk):
 @login_required(login_url='login')
 @permission_required('loan.rollover_loan')
 def rollOver(request, pk):
-    loan = Loan.objects.get(id=pk)
+    company = get_user_company(request)
+    loan = Loan.objects.get(id=pk, company=company)
     borrower = loan.member
     repayments = loan.repayments.all()
     total_repayments = repayments.aggregate(Sum('amount'))['amount__sum'] or 0
@@ -1215,12 +1063,12 @@ def rollOver(request, pk):
         sender_id = sms_setting.sender_id
         token = sms_setting.api_token
         message = f"Dear {borrower.first_name}, Your loan roll over request has been approved. The next payment date {date}, amount Ksh{new_loan.due_amount}. Acc. 5840988 Paybill 522522"
-        send_sms(
-            sender_id,
-            token,
+        send_sms_task.delay(
+            sender_id, 
+            token, 
             borrower.phone_no, 
             message
-        )
+        ) 
 
         messages.success(request, f'{loan.member} loan has been rolled over')
         return redirect('view-loan', new_loan.id) #should be a new loan.id

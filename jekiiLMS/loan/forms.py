@@ -5,7 +5,7 @@ from member.models import Member
 from user.forms import CompanyStaff
 
 
-class LoanProductForm(forms.ModelForm):
+class LoanProductForm(forms.ModelForm): 
     class Meta:
         model = LoanProduct
         fields = '__all__'
@@ -29,7 +29,6 @@ class LoanProductForm(forms.ModelForm):
             'loan_product_description': forms.Textarea(attrs={'class': 'form-control form-control-sm','placeholder':'Write a short description of your product.'}),
         }
 
- 
 class LoanForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
@@ -64,7 +63,6 @@ class LoanForm(forms.ModelForm):
             'attachments': forms.FileInput(attrs={'class': 'form-control'})
         }
 
-
 class RepaymentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         company = kwargs.pop('company', None)  # Get the company from kwargs, set default to None
@@ -85,7 +83,6 @@ class RepaymentForm(forms.ModelForm):
             'date_paid': forms.DateInput(attrs={'class': 'form-control date-picker-range', 'data-date-format':'yyyy-mm-dd'}),   
             
         } 
-
 
 class GuarantorForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):

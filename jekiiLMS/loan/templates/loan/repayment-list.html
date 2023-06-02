@@ -9,6 +9,7 @@
     {% endfor %}
 {% endif %} 
 <!-- content @s -->
+{% load tz %}
 <div class="nk-content ">
     <div class="container-fluid">
         <div class="nk-content-inner">
@@ -84,10 +85,10 @@
                                                 <span>{{repayment.amount}}</span>
                                             </td>
                                             <td class="nk-tb-col tb-col-md">
-                                                <span>{{repayment.date_paid.date}}</span>
+                                                <span>{% timezone company_tz %} {{repayment.date_paid.date}} {% endtimezone %}</span>
                                             </td>
                                             <td class=" nk-tb-col tb-col-lg" >
-                                                <span class="tb-amount">{{repayment.next_repayment_date.date}}</span>
+                                                <span class="tb-amount"> {% timezone company_tz %} {{repayment.next_repayment_date.date}} {% endtimezone %}</span>
                                             </td>
                                             <td class="nk-tb-col tb-col-mb">
                                                 <span>{{ repayment.loanBalance }}</span>

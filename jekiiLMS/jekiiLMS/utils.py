@@ -1,3 +1,19 @@
+from user.models import CompanyStaff
+
+#get the company of a user.
+def get_user_company(request):
+    if request.user.is_authenticated and request.user.is_active:
+        try:
+            companystaff = CompanyStaff.objects.get(username=request.user.username)
+            company = companystaff.company
+        except CompanyStaff.DoesNotExist:
+            company = None
+    else:
+        company = None
+
+    return company
+
+
 phone_codes = [
     ('+93', 'AF +93'),
     ('+355', 'AL +355'),

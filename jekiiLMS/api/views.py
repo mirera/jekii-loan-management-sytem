@@ -2,6 +2,7 @@ from rest_framework.response import Response
 from django.db.models import Sum, Count
 from datetime import datetime
 from rest_framework.decorators import api_view
+from django.db.models.functions import TruncMonth
 from member.models import Member
 from .serializers import MemberSerializer
 from loan.models import Loan
@@ -26,7 +27,7 @@ def apiEndpoints(request):
         'Get company income-income':'http://127.0.0.1:8000/api/income-expense/1',
         'Get company loan perfomance':'http://127.0.0.1:8000/api/loans-repayment/1',
         'Get company loan dibursement':'http://127.0.0.1:8000/api/disbursement-data/1',
-    }
+    } 
     
     return Response(endpoints)
 
@@ -66,6 +67,37 @@ def getCompanyExpense(request, company_id):
     serializer = ExpenseSerializer(expense, many=True)
     return Response(serializer.data)
 
+
+@api_view(['GET'])
+def getCompanyIncomExpense(request, company_id):
+    # Retrieve expenses for the given company and aggregate monthly expense data
+    expense_data = Expense.objects.filter(company=company_id).annotate(
+        expense_month=TruncMonth('expense_date')
+    ).values('expense_month').annotate(total_expense=Sum('amount'))
+
+    # Retrieve income data for the given company and aggregate monthly income data
+    income_data = Loan.objects.filter(company=company_id, status__in=['cleared', 'rolled over']).annotate(
+        income_month=TruncMonth('approved_date')
+    ).values('income_month').annotate(total_income=Sum('interest_amount'))
+
+    # Prepare the response data
+    response_data = {
+        'expenseData': [0] * 12,  # Initialize with 12 zeros
+        'incomeData': [0] * 12,   # Initialize with 12 zeros
+    }
+
+    # Update the corresponding month's value in the response data
+    for item in expense_data:
+        month = item['expense_month'].month
+        response_data['expenseData'][month - 1] = item['total_expense']
+
+    for item in income_data:
+        month = item['income_month'].month
+        response_data['incomeData'][month - 1] = item['total_income']
+
+    return Response(response_data)
+
+'''
 @api_view(['GET'])
 def getCompanyIncomExpense(request, company_id):
     # Retrieve expenses for the given company and aggregate monthly expense data
@@ -90,7 +122,7 @@ def getCompanyIncomExpense(request, company_id):
         response_data['incomeData'][month - 1] = item['total_income']
 
     return Response(response_data)
-
+'''
 @api_view(['GET']) 
 def getCompanyLoansRepayments(request, company_id):
     today = datetime.now()

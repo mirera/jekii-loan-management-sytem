@@ -13,6 +13,7 @@ urlpatterns = [
     path('mpesa/<str:pk>', views.updateMpesa, name='update-mpesa'),
     path('email/<str:pk>', views.updateEmail, name='update-email'),
     path('test-email/<str:pk>', views.sendTestEmail, name='test-email'),
+    path('preferences/<str:pk>', views.updatePreferences, name='preferences'), 
 
 
     #package urls
