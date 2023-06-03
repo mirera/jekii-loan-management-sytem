@@ -1,7 +1,7 @@
 from celery import shared_task 
 from django.utils import timezone
 from loan.models import Loan, Repayment
-from .loan_math import loan_due_date
+from .process_loan import update_due_amount
 from jekiiLMS.sms_messages import send_sms, send_email
 from jekiiLMS.mpesa_api import disburse_loan
 
@@ -29,27 +29,12 @@ def mark_loans_as_overdue():
 def hello_engima():
     print('I get printed after every minute')
 
-#task to update due date -- consider moving this to when a repayment is added
+#update due amount foe overdue loans
 @shared_task
-def update_due_date():
-    today = timezone.now().date()
-    loans = Loan.objects.filter(due_date__date=today, status='approved') 
-    for loan in loans:
-        #get all repayment from approved_date to due_date
-        repayments = Repayment.objects.filter(
-            loan_id=loan,
-            member=loan.member, 
-            date_paid__lte=loan.due_date
-        )
-
-        total_repayments = sum(repayment.amount for repayment in repayments)
-        amount_due = loan.amount_due()
-
-
-        if loan.due_date.date() == today and total_repayments >= amount_due:
-            # Change due date
-            loan.due_date = loan_due_date(loan) 
-            loan.save()
+def update_due_amount_task():
+    loan = Loan.objects.filter(status='overdue') 
+    update_due_amount(loan)
+    
 
 #task to send loan balances sms weekly
 @shared_task

@@ -11,7 +11,7 @@ from user.models import RecentActivity, Notification
 from company.models import SmsSetting
 from .credit_score import member_credit_score, update_credit_score
 from jekiiLMS.sms_messages import send_sms
-from jekiiLMS.loan_math import loan_due_date, save_due_amount, installments
+from jekiiLMS.loan_math import loan_due_date, save_due_amount, installments, total_penalty
 from jekiiLMS.tasks import send_email_task, send_sms_task
 
 
@@ -263,4 +263,10 @@ def update_due_date(loan):
                         loan.member.phone_no, 
                         message
                     ) 
+
+#update due amount
+def update_due_amount(loan):
+    due_amount = loan.due_amount + total_penalty(loan)
+    loan.due_amount = due_amount
+    loan.save()
 
