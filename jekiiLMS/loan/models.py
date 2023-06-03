@@ -76,7 +76,7 @@ class LoanProduct(models.Model):
     service_fee_value = models.FloatField()
     penalty_type = models.CharField(max_length=300, choices=PENALTY_FEE_TYPE_CHOICES, default='fixed_value')
     penalty_value = models.FloatField()
-    penalty_frequency = models.CharField(max_length=300, choices=PENALTY_FREQUENCY_TYPE_CHOICES, default='fixed_value')
+    penalty_frequency = models.CharField(max_length=300, choices=PENALTY_FREQUENCY_TYPE_CHOICES, default='onetime')
     status = models.CharField(max_length=10, choices=ACTIVE_CHOICES, default='active')
     loan_product_description = models.TextField(null=True, blank=True)
 

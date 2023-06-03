@@ -20,33 +20,32 @@ def total_interest(loan):
     
 #function to get total penalitis 
 def total_penalty(loan):
-    today = timezone.now()
-    if loan.status in ['pending', 'rejected', 'cleared']:
-        time_overdue = 0
-    else:
-         time_overdue = (today - loan.due_date).days
-         
-    amount_due = loan.due_amount
-    rate_or_value = loan.loan_product.penalty_value
+    current_date = timezone.now().date()
+    penal_rate = loan.loan_product.penalty_value
     penalty_type = loan.loan_product.penalty_type
-    penalty_frequency = loan.loan_product.penalty_frequency
-    penalty = 0
-
-
-    if loan.status == 'overdue':
+    principal = loan.approved_amount
+    interest = loan.interest_amount
+    if loan.status in ['overdue','written off']:
+        if loan.loan_product.penalty_frequency == 'onetime':
+            period_overdue = 1
+        elif loan.loan_product.penalty_frequency == 'daily':
+            period_overdue = (current_date - loan.due_date.date()).days
+        elif loan.loan_product.penalty_frequency == 'weekly':
+            period_overdue = (current_date - loan.due_date.date()).days // 7
+        else:
+            period_overdue = current_date - loan.due_date.date() # in months
+            period_overdue = (current_date.year - loan.due_date.date().year) * 12 + (current_date.month - loan.due_date.date().month)
         if penalty_type == 'fixed_value':
-                penalty = rate_or_value
+            penalty_amount = loan.penalty_value
         elif penalty_type == 'percentage of principal':
-                penalty = (amount_due * rate_or_value * time_overdue) / 100
-        elif penalty_type == 'percentage of principal interest':
-                penalty = (amount_due * rate_or_value * time_overdue) / 100 
-    else:
-        penalty = 0
-    return penalty
+            penalty_amount = principal * period_overdue * penal_rate / 100
+        else:
+            penalty_amount = (principal + interest) * period_overdue * penal_rate / 100
+        return penalty_amount
 
 def total_payable_amount(loan):
     principal = loan.approved_amount or 0
-    penalties = total_penalty(loan)
+    penalties = total_penalty(loan) or 0
     interest_amount = total_interest(loan)
     amount = penalties + interest_amount + principal
     return amount
@@ -58,7 +57,7 @@ def loan_due_amount(loan):
     amount = payable / installments
     return amount
 
-def loan_due_date(loan): 
+def loan_due_date(loan):  #initital due date
     #utc and tz aware
     today = timezone.now()
      #because this function is called only when approving a loan.

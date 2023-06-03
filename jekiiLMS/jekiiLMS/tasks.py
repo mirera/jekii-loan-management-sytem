@@ -29,7 +29,7 @@ def mark_loans_as_overdue():
 def hello_engima():
     print('I get printed after every minute')
 
-#task to update due date 
+#task to update due date -- consider moving this to when a repayment is added
 @shared_task
 def update_due_date():
     today = timezone.now().date()
