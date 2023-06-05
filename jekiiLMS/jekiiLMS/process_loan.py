@@ -3,14 +3,14 @@ from django.db.models import Sum
 from django.db import transaction
 from django.contrib.auth.models import User
 from django.utils import timezone
+from datetime import timedelta
 from loan.models import Collateral
 from branch.models import Expense, ExpenseCategory
-from loan.models import Loan
+from loan.models import Loan, Repayment
 from user.models import RecentActivity, Notification
 from company.models import SmsSetting
 from .credit_score import member_credit_score, update_credit_score
-from jekiiLMS.sms_messages import send_sms
-from jekiiLMS.loan_math import loan_due_date, save_due_amount, installments
+from jekiiLMS.loan_math import loan_due_date, save_due_amount, installments, get_previous_due_date , get_interval_period
 from jekiiLMS.tasks import send_email_task, send_sms_task
 
 
@@ -103,8 +103,6 @@ def clear_loan(loan):
                             loan.member.phone_no, 
                             message
                         ) 
-
-
 
 #update member details after loan cleared               
 def update_member_data(loan):
@@ -217,4 +215,49 @@ def roll_over(loan):
     return new_loan
 # -- ends
 
+
+#update due date once repayment made
+def update_due_date(loan):
+    interval_period = get_interval_period(loan)
+    last_due_date = get_previous_due_date(loan)
+    repayments = Repayment.objects.filter(  
+        loan_id=loan,
+        member=loan.member,
+        date_paid__lte=loan.due_date, #this will only capture repayment made during or before due date, cater for scenarios where we are past due date (current date and last due date)
+        date_paid__gte=last_due_date
+    )
+    total_repayments = repayments.aggregate(total_amount=Sum('amount'))['total_amount']
+    if total_repayments >- loan.due_amount:
+        #update due date to new due date
+        if loan.status in ['approved', 'overdue','written off']:
+            new_due_date = loan.due_date + interval_period  # Add interval_period to the current due date
+            loan.due_date = new_due_date
+            loan.save()        
+            #send sms
+            sms_setting = SmsSetting.objects.get(company=loan.company)
+            sender_id = sms_setting.sender_id
+            token = sms_setting.api_token 
+            message = f"Dear {loan.member.first_name}, You next payment is on {loan.due_date}. Success in your business."
+            send_sms_task.delay(
+                        sender_id, 
+                        token, 
+                        loan.member.phone_no, 
+                        message
+                    ) 
+
+#change from overdue to approve
+def overdue_to_approved(loan):
+    if loan.status == 'overdue':
+        last_due_date = get_previous_due_date(loan)
+        current_date = timezone.now()
+        repayments = Repayment.objects.filter(
+            loan_id=loan,
+            member=loan.member,
+            date_paid__lte=current_date,
+            date_paid__gte=last_due_date
+        )
+        total_repayments = repayments.aggregate(total_amount=Sum('amount'))['total_amount']
+        if total_repayments >- loan.due_amount:
+            loan.status = 'approved'
+            loan.save()
 

@@ -12,7 +12,7 @@ from member.models import Member
 from company.models import Organization
 from user.models import CompanyStaff
 from jekiiLMS.mpesa_statement import amount_based_cs, final_recommended_amount
-from jekiiLMS.loan_math import total_payable_amount, installments, total_penalty
+from jekiiLMS.loan_math import total_payable_amount, installments, total_penalty, get_previous_due_date, final_date
 
    
 
@@ -37,8 +37,7 @@ SERVICE_FEE_TYPE_CHOICES = (
 
 PENALTY_FEE_TYPE_CHOICES = (
     ('fixed_value','FIXED VALUE'),
-    ('percentage of principal', 'p.c of Due Principal'),
-    ('percentage of principal interest', 'p.c of Due P + I'),
+    ('percentage of due_amount', 'p.c of Due Amount')
 )
 
 PENALTY_FREQUENCY_TYPE_CHOICES = (
@@ -76,7 +75,7 @@ class LoanProduct(models.Model):
     service_fee_value = models.FloatField()
     penalty_type = models.CharField(max_length=300, choices=PENALTY_FEE_TYPE_CHOICES, default='fixed_value')
     penalty_value = models.FloatField()
-    penalty_frequency = models.CharField(max_length=300, choices=PENALTY_FREQUENCY_TYPE_CHOICES, default='fixed_value')
+    penalty_frequency = models.CharField(max_length=300, choices=PENALTY_FREQUENCY_TYPE_CHOICES, default='onetime')
     status = models.CharField(max_length=10, choices=ACTIVE_CHOICES, default='active')
     loan_product_description = models.TextField(null=True, blank=True)
 
@@ -149,102 +148,18 @@ class Loan(models.Model):
     def clean(self):
         if self.application_date.date() > now().date():
             raise ValidationError('Application date cannot be in the future.')
-            
-    #method to calculate first_repayment_date
-    def first_repayment_date(self):
-        if self.loan_product.repayment_frequency == 'weekly':
-            return self.application_date + timedelta(days=7)
-        elif self.loan_product.repayment_frequency == 'monthly':
-            return self.application_date + timedelta(days=30)
-        elif self.loan_product.repayment_frequency == 'daily':
-            self.application_date + timedelta(days=1)
-        else:
-            if self.loan_product.loan_term_period == 'day':
-                return self.application_date + timedelta(days=self.loan_product.loan_product_term)
-            elif self.loan_product.loan_term_period == 'week':
-                return self.application_date + timedelta(days=self.loan_product.loan_product_term*7)
-            elif self.loan_product.loan_term_period == 'month':
-                return self.application_date + timedelta(days=self.loan_product.loan_product_term*30)
-            else:
-                return self.application_date + timedelta(days=self.loan_product.loan_product_term*365)
     
-    
-    #method to calculte the next payment date
-    def next_payment_date(self):
-        start_date = self.approved_date + timedelta(days=1) #consider adding grace period
-        elapsed_days = (now().date() - start_date.date()).days 
-
-        if self.loan_product.repayment_frequency == 'onetime':
-            return self.due_date
-        else:
-            # Calculate the next payment date based on the loan's repayment frequency
-            if self.loan_product.repayment_frequency == 'daily':
-                interval_duration = 1
-            elif self.loan_product.repayment_frequency == 'weekly':
-                interval_duration = 7
-            elif self.loan_product.repayment_frequency == 'monthly':
-                interval_duration = 30
-
-            # Calculate the number of intervals that have elapsed since the loan was disbursed
-            intervals_elapsed = elapsed_days / interval_duration
-
-            # Calculate the number of the next interval (e.g. the next month if the repayment frequency is monthly)
-            next_interval = intervals_elapsed + 1
-
-            # Calculate the date of the next payment by adding the duration of the next interval to the start date
-            next_payment_date = start_date + timedelta(days=(next_interval * interval_duration)) 
-            return next_payment_date
-
     #method to calculte the previous payment date
-    def previous_payment_date(self):
-        # Get the loan's payment frequency and number of installments
-        payment_frequency = self.loan_product.repayment_frequency
-        num_installments = self.num_installments
-        
-        # Calculate the interval duration based on the payment frequency
-        if payment_frequency == 'daily':
-            interval_duration = timedelta(days=1)
-        elif payment_frequency == 'weekly':
-            interval_duration = timedelta(days=7)
-        elif payment_frequency == 'monthly':
-            interval_duration = timedelta(days=30)
-
-        
-        # Get the current next payment date
-        next_payment_date = self.next_payment_date()
-        
-        # Calculate the number of intervals that have elapsed since the start date
-        intervals_elapsed = (next_payment_date - self.approved_date) // interval_duration
-        
-        if intervals_elapsed < 1:
-            previous_payment_date = None
-
-     
-        # Calculate the number of the previous interval (e.g. the previous week if the repayment frequency is weekly)
-        previous_interval = intervals_elapsed - num_installments + 1
-        
-        # Calculate the date of the previous payment by subtracting the duration of the previous interval from the next payment date
-        previous_payment_date = next_payment_date - (previous_interval * interval_duration)
+    def previous_due_date(self):
+        previous_payment_date = get_previous_due_date(self)
         
         return previous_payment_date
 
     #final payment date
     def final_payment_date(self):
-        start_date = self.approved_date + timedelta(days=1) #1day grace period
-        loan_term = self.loan_product.loan_product_term
-        term_period = self.loan_product.loan_term_period
-        if term_period == 'day':
-            loan_term = timedelta(days=loan_term)
-        elif term_period == 'week':
-            loan_term = timedelta(days=loan_term * 7)
-        elif term_period == 'month':
-            loan_term = timedelta(days=loan_term * 30)
-        elif term_period == 'year':
-            loan_term = timedelta(days=loan_term * 365)
-
-        final_date = start_date + loan_term 
-
-        return final_date
+        date = final_date(self)
+        return date
+    
     # method to calculate total_payable
     def total_payable(self):
         amount_payable = total_payable_amount(self)
