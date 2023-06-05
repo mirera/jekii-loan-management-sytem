@@ -10,8 +10,7 @@ from loan.models import Loan, Repayment
 from user.models import RecentActivity, Notification
 from company.models import SmsSetting
 from .credit_score import member_credit_score, update_credit_score
-from jekiiLMS.sms_messages import send_sms
-from jekiiLMS.loan_math import loan_due_date, save_due_amount, installments, total_penalty
+from jekiiLMS.loan_math import loan_due_date, save_due_amount, installments, get_previous_due_date , get_interval_period
 from jekiiLMS.tasks import send_email_task, send_sms_task
 
 
@@ -104,8 +103,6 @@ def clear_loan(loan):
                             loan.member.phone_no, 
                             message
                         ) 
-
-
 
 #update member details after loan cleared               
 def update_member_data(loan):
@@ -218,31 +215,15 @@ def roll_over(loan):
     return new_loan
 # -- ends
 
+
 #update due date once repayment made
 def update_due_date(loan):
-    if loan.loan_product.repayment_frequency == 'onetime':
-        # For one-time payments, the due date is simply the application date plus the loan product term
-        if loan.loan_product.loan_term_period == 'day':
-            interval_period = timedelta(days=loan.loan_product.loan_product_term)
-        elif loan.loan_product.loan_term_period == 'week':
-            interval_period = timedelta(days=loan.loan_product.loan_product_term * 7)
-        elif loan.loan_product.loan_term_period == 'month':
-            interval_period = timedelta(days=loan.loan_product.loan_product_term * 30)
-        else:
-            interval_period = timedelta(days=loan.loan_product.loan_product_term * 365)
-    elif loan.loan_product.repayment_frequency == 'daily':
-        interval_period = timedelta(days=1)
-        
-    elif loan.loan_product.repayment_frequency == 'weekly':
-        interval_period = timedelta(days=7)
-    else:
-        interval_period = timedelta(days=30)
-
-    last_due_date = loan.due_date - interval_period
-    repayments = Repayment.objects.filter(
+    interval_period = get_interval_period(loan)
+    last_due_date = get_previous_due_date(loan)
+    repayments = Repayment.objects.filter(  
         loan_id=loan,
         member=loan.member,
-        date_paid__lte=loan.due_date,
+        date_paid__lte=loan.due_date, #this will only capture repayment made during or before due date, cater for scenarios where we are past due date (current date and last due date)
         date_paid__gte=last_due_date
     )
     total_repayments = repayments.aggregate(total_amount=Sum('amount'))['total_amount']
@@ -264,9 +245,19 @@ def update_due_date(loan):
                         message
                     ) 
 
-#update due amount
-def update_due_amount(loan):
-    due_amount = loan.due_amount + total_penalty(loan)
-    loan.due_amount = due_amount
-    loan.save()
+#change from overdue to approve
+def overdue_to_approved(loan):
+    if loan.status == 'overdue':
+        last_due_date = get_previous_due_date(loan)
+        current_date = timezone.now()
+        repayments = Repayment.objects.filter(
+            loan_id=loan,
+            member=loan.member,
+            date_paid__lte=current_date,
+            date_paid__gte=last_due_date
+        )
+        total_repayments = repayments.aggregate(total_amount=Sum('amount'))['total_amount']
+        if total_repayments >- loan.due_amount:
+            loan.status = 'approved'
+            loan.save()
 

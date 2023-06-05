@@ -17,9 +17,9 @@ from member.models import Member
 from user.models import RecentActivity, Notification
 from user.models import CompanyStaff
 from company.models import Organization, SmsSetting, MpesaSetting, EmailSetting, SystemSetting
-from jekiiLMS.process_loan import is_sufficient_collateral, get_amount_to_disburse, clear_loan, update_member_data, write_loan_off, roll_over, update_due_date
+from jekiiLMS.process_loan import is_sufficient_collateral, get_amount_to_disburse, clear_loan, update_member_data, write_loan_off, roll_over, update_due_date, overdue_to_approved
 from jekiiLMS.mpesa_statement import get_loans_table
-from jekiiLMS.loan_math import loan_due_date, save_due_amount, total_interest, installments
+from jekiiLMS.loan_math import loan_due_date, save_due_amount, total_interest, installments, calculate_fined_amount
 from jekiiLMS.format_inputs import to_utc, user_local_time
 from jekiiLMS.utils import get_user_company
 from jekiiLMS.tasks import send_email_task, send_sms_task, disburse_loan_task
@@ -615,7 +615,8 @@ def createRepayment(request):
                 amount= request.POST.get('amount'),
                 date_paid = utcz_datetime,
             )
-            clear_loan(loan) #clear a loan    
+            clear_loan(loan) #clear a loan is arrears cleared
+            overdue_to_approved(loan) #change to approved if qualifies 
             update_due_date(loan) #updates due date accordingly
             update_member_data(loan) #update member/borrower data
             messages.success(request,'The repayment was added succussesfully!')
@@ -911,8 +912,9 @@ def addRepayment(request, pk):
         if loan.status == 'written off':
             loan.write_off_expense = loan.write_off_expense - repayment.amount
             loan.save()
-        clear_loan(loan) #clear a loan    
-        update_due_date(loan) #updates due date accordingly
+        clear_loan(loan) #clear a loan 
+        overdue_to_approved(loan) #change to approved if qualifies  test further 
+        update_due_date(loan) #updates due date accordingly test further
         update_member_data(loan) #update member/borrower data
         messages.success(request, 'Repayment added successfully.')
         return redirect('view-loan', pk=loan.id)

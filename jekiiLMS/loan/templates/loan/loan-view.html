@@ -176,10 +176,7 @@
                                                 <td class="profile-ud-label">Disbursement Date:</td>
                                                 <td class="profile-ud-value">{% timezone company_tz %}{{loan.approved_date}} {% endtimezone %}</td>
                                             </tr>
-                                            <tr>
-                                                <td class="profile-ud-label">Next Payment Date:</td>
-                                                <td class="profile-ud-value">{% timezone company_tz %} {{loan.next_payment_date.date}} {% endtimezone %}</td>
-                                            </tr>
+
                                             <tr>
                                                 <td class="profile-ud-label">Final Payment Date:</td>
                                                 <td class="profile-ud-value">{% timezone company_tz %} {{loan.final_payment_date.date}} {% endtimezone %}</td>
