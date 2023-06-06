@@ -9,8 +9,7 @@ from branch.models import Expense, ExpenseCategory
 from loan.models import Loan, Repayment
 from user.models import RecentActivity, Notification
 from company.models import SmsSetting
-from .credit_score import member_credit_score, update_credit_score
-from jekiiLMS.loan_math import loan_due_date, save_due_amount, installments, get_previous_due_date , get_interval_period
+from jekiiLMS.loan_math import loan_due_date, save_due_amount, get_previous_due_date , get_interval_period, update_credit_score
 from jekiiLMS.tasks import send_email_task, send_sms_task
 
 
@@ -80,6 +79,10 @@ def clear_loan(loan):
                 loan.status = 'cleared'
                 loan.cleared_date = today 
                 loan.save()
+
+                #update member credit score
+                update_credit_score(loan)
+
                 # Create a recent activity entry for loan clearance
                 RecentActivity.objects.create(
                     company = loan.company,
@@ -148,6 +151,9 @@ def write_loan_off(loan):
         loan.write_off_expense = amount
         loan.save()
 
+        #update member credit score to zero
+        update_credit_score(loan)
+
         RecentActivity.objects.create(
             company = loan.company,
             event_type='loan_write_off',
@@ -164,32 +170,22 @@ def write_loan_off(loan):
 # --roll over loan
 @transaction.atomic
 def roll_over(loan):
-    company = loan.company
-    loanproduct = loan.loan_product
-    member = loan.member
-    applied_amount = loan.loan_balance()
-    final_payment_date = loan.final_payment_date()
-    loan_officer = loan.loan_officer
-    purpose = loan.loan_purpose
-    admin = loan.approved_by
-
-
     new_loan = Loan.objects.create(
-        company = company,
-        loan_product= loanproduct,
-        member= member,
-        applied_amount = applied_amount,
-        application_date = final_payment_date,
-        loan_officer = loan_officer,
-        loan_purpose = purpose,
-        approved_amount = applied_amount
+        company = loan.company,
+        loan_product= loan.loan_product,
+        member= loan.member,
+        applied_amount = loan.loan_balance(),
+        application_date = loan.final_payment_date(),
+        loan_officer = loan.loan_officer,
+        loan_purpose = loan.loan_purpose,
+        approved_amount = loan.loan_balance()
     )
-    new_loan.disbursed_amount = get_amount_to_disburse(new_loan, applied_amount)
-    new_loan.num_installments = installments(new_loan.loan_product)
+    new_loan.disbursed_amount = loan.loan_balance()
+    new_loan.num_installments = loan.num_installments
     new_loan.due_date = loan_due_date(new_loan)
-    new_loan.disbursed_date = final_payment_date
-    new_loan.approved_date = final_payment_date
-    new_loan.approved_by = admin
+    new_loan.disbursed_date = loan.final_payment_date()
+    new_loan.approved_date = loan.final_payment_date()
+    new_loan.approved_by = loan.approved_by
     new_loan.status = 'approved'
     new_loan.parent_loan = loan
     new_loan.save()
@@ -199,6 +195,9 @@ def roll_over(loan):
     #old loan update
     loan.status = 'rolled over'
     loan.save()
+
+    #update member credit score to zero
+    update_credit_score(loan)
 
     RecentActivity.objects.create(
             company = loan.company,
@@ -219,20 +218,25 @@ def roll_over(loan):
 #update due date once repayment made
 def update_due_date(loan):
     interval_period = get_interval_period(loan)
-    last_due_date = get_previous_due_date(loan)
+    last_due_date = get_previous_due_date(loan).date()
+
     repayments = Repayment.objects.filter(  
         loan_id=loan,
         member=loan.member,
-        date_paid__lte=loan.due_date, #this will only capture repayment made during or before due date, cater for scenarios where we are past due date (current date and last due date)
-        date_paid__gte=last_due_date
+        date_paid__date__lte=loan.due_date.date(),
+        date_paid__date__gte=last_due_date
     )
+ 
     total_repayments = repayments.aggregate(total_amount=Sum('amount'))['total_amount']
     if total_repayments >- loan.due_amount:
         #update due date to new due date
-        if loan.status in ['approved', 'overdue','written off']:
+        if loan.status in ['approved', 'overdue']:
             new_due_date = loan.due_date + interval_period  # Add interval_period to the current due date
             loan.due_date = new_due_date
-            loan.save()        
+            loan.save()  
+
+            #update member credit score
+            update_credit_score(loan)  
             #send sms
             sms_setting = SmsSetting.objects.get(company=loan.company)
             sender_id = sms_setting.sender_id
@@ -247,6 +251,9 @@ def update_due_date(loan):
 
 #change from overdue to approve
 def overdue_to_approved(loan):
+    #update member credit score before changing to approved
+    update_credit_score(loan) 
+    
     if loan.status == 'overdue':
         last_due_date = get_previous_due_date(loan)
         current_date = timezone.now()

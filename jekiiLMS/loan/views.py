@@ -19,7 +19,7 @@ from user.models import CompanyStaff
 from company.models import Organization, SmsSetting, MpesaSetting, EmailSetting, SystemSetting
 from jekiiLMS.process_loan import is_sufficient_collateral, get_amount_to_disburse, clear_loan, update_member_data, write_loan_off, roll_over, update_due_date, overdue_to_approved
 from jekiiLMS.mpesa_statement import get_loans_table
-from jekiiLMS.loan_math import loan_due_date, save_due_amount, total_interest, installments, calculate_fined_amount
+from jekiiLMS.loan_math import loan_due_date, save_due_amount, total_interest, installments
 from jekiiLMS.format_inputs import to_utc, user_local_time
 from jekiiLMS.utils import get_user_company
 from jekiiLMS.tasks import send_email_task, send_sms_task, disburse_loan_task
@@ -267,7 +267,6 @@ def approveLoan(request,pk):
         loan = Loan.objects.get(id=pk, company=company)
         borrower = loan.member
         guarantors = Guarantor.objects.filter(loan=loan)
-        #today = datetime.today().strftime('%Y-%m-%d')
         today = timezone.now() #converted to uct already
 
         guarantors_score = 0
@@ -525,7 +524,7 @@ def listLoans(request):
 def viewLoan(request, pk):
     company = get_user_company(request)
     loan = Loan.objects.get(id=pk, company=company)
-    borrower = loan.member  
+    borrower = loan.member 
 
     loan_notes = loan.note_set.all().order_by('-created')
     guarantors = Guarantor.objects.filter(loan=loan) #here loan=loan mean loan_obj=loan loan_obj in guarantor model and form
@@ -538,17 +537,7 @@ def viewLoan(request, pk):
     form_repayment = RepaymentForm()
     form_statement = MpesaStatementForm()
 
-    #a sum of all repayments made toward a specifi loan 
-    loan_repayments = Repayment.objects.filter(loan_id=loan.id).aggregate(Sum('amount'))['amount__sum']
-    #loan balance
-    total_payable= loan.total_payable()
-    if loan_repayments:
-        if total_payable:
-            loan_balance= total_payable-loan_repayments
-        else:
-            loan_balance = 0
-    else:
-        loan_balance = total_payable
+    
 
     if request.method == 'POST' and 'body' in request.POST:
         Note.objects.create(
@@ -562,8 +551,6 @@ def viewLoan(request, pk):
     context = {
         'loan_notes': loan_notes,
         'loan':loan,
-        'loan_repayments':loan_repayments,
-        'loan_balance':loan_balance,
         'form':form,
         'guarantors':guarantors,
         'repayments':repayments,
@@ -602,7 +589,7 @@ def createRepayment(request):
         loan = member.loans_as_member.get(status=('approved' or 'overdue'))
 
         date_paid_str = request.POST.get('date_paid')
-        date_paid_str += ' 02:00:00' 
+        date_paid_str += ' 16:00:00' 
         date_paid = datetime.strptime(date_paid_str, '%Y-%m-%d %H:%M:%S')  # Convert to datetime 
         utcz_datetime = to_utc(company.timezone, date_paid)
 
@@ -616,9 +603,8 @@ def createRepayment(request):
                 date_paid = utcz_datetime,
             )
             clear_loan(loan) #clear a loan is arrears cleared
-            overdue_to_approved(loan) #change to approved if qualifies 
+            overdue_to_approved(loan) #change to approved if qualifies & update c.s
             update_due_date(loan) #updates due date accordingly
-            update_member_data(loan) #update member/borrower data
             messages.success(request,'The repayment was added succussesfully!')
             return redirect('repayments')
         else:
@@ -669,7 +655,7 @@ def editRepayment(request,pk):
         loan = member.loans_as_member.get(status=('approved' or 'overdue'))
 
         date_paid_str = request.POST.get('date_paid')
-        date_paid_str += ' 02:00:00' 
+        date_paid_str += ' 16:00:00' 
         date_paid = datetime.strptime(date_paid_str, '%Y-%m-%d %H:%M:%S')  # Convert to datetime 
         utcz_datetime = to_utc(company.timezone, date_paid)
 
@@ -681,8 +667,8 @@ def editRepayment(request,pk):
             repayment.save()
 
             clear_loan(loan) #clear a loan    
+            overdue_to_approved(loan) #change to approved if qualifies & update c.s
             update_due_date(loan) #updates due date accordingly
-            update_member_data(loan) #update member/borrower data
             messages.success(request,'The repayment was edited succussesfully!')
             return redirect('repayments')
         else:
@@ -897,7 +883,7 @@ def addRepayment(request, pk):
     form = RepaymentForm(request.POST, company=company)
     if request.method == 'POST':
         date_paid_str = request.POST.get('date_paid')
-        date_paid_str += ' 02:00:00' 
+        date_paid_str += ' 16:00:00' 
         date_paid = datetime.strptime(date_paid_str, '%Y-%m-%d %H:%M:%S')  # Convert to datetime 
         utcz_datetime = to_utc(company.timezone, date_paid)
 
@@ -915,7 +901,6 @@ def addRepayment(request, pk):
         clear_loan(loan) #clear a loan 
         overdue_to_approved(loan) #change to approved if qualifies  test further 
         update_due_date(loan) #updates due date accordingly test further
-        update_member_data(loan) #update member/borrower data
         messages.success(request, 'Repayment added successfully.')
         return redirect('view-loan', pk=loan.id)
  
@@ -1079,8 +1064,8 @@ def rollOver(request, pk):
         ) 
 
         messages.success(request, f'{loan.member} loan has been rolled over')
-        return redirect('view-loan', new_loan.id) #should be a new loan.id
+        return redirect('view-loan', new_loan.id) 
     else:
         messages.error(request, f'{loan.member} loan can not be rolled over. Member should clear loan interest first, then try again.')
-        return redirect('view-loan', loan.id) #should be a new loan.id
+        return redirect('view-loan', loan.id) 
 # -- ends

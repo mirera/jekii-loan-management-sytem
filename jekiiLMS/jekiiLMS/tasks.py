@@ -2,9 +2,9 @@ from celery import shared_task
 from django.utils import timezone
 from loan.models import Loan, Repayment
 from company.models import SmsSetting
-from .loan_math import update_due_amount,get_previous_due_date
-from jekiiLMS.sms_messages import send_sms, send_email
-from jekiiLMS.mpesa_api import disburse_loan
+from .loan_math import update_due_amount,get_previous_due_date, update_credit_score
+from .sms_messages import send_sms, send_email
+from .mpesa_api import disburse_loan
 
 #task to mark a loan as overdue 
 @shared_task
@@ -26,6 +26,10 @@ def mark_loans_as_overdue():
             # Loan is overdue
             loan.status = 'overdue'
             loan.save()
+
+            #update member credit score
+            update_credit_score(loan)
+
             # send sms
             message = f"Dear {loan.member.first_name}, your loan installment of Ksh{loan.due_amount} is overdue. Make payment to avoid further penalties. Acc. 5840988 Paybill 522522"
             sms_settings = SmsSetting.objects.get(company=loan.company)

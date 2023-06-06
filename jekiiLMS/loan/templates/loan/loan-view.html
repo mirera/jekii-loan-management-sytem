@@ -181,6 +181,14 @@
                                                 <td class="profile-ud-label">Final Payment Date:</td>
                                                 <td class="profile-ud-value">{% timezone company_tz %} {{loan.final_payment_date.date}} {% endtimezone %}</td>
                                             </tr>
+                                            <tr>
+                                                <td class="profile-ud-label">Expected Interest:</td>
+                                                <td class="profile-ud-value">{{ loan.interest_amount }}</td> 
+                                            </tr>
+                                            <tr>
+                                                <td class="profile-ud-label"> Service Fees Charged:</td>
+                                                <td class="profile-ud-value">{{ loan.service_fee_amount }}</td> 
+                                            </tr>
                                         {% endif %}
                                             </tbody>
                                         </table><br>
@@ -364,7 +372,7 @@
                                                             <tr>
                                                             <th scope="row">{{repayment.date_paid.date}}</th>
                                                             <td>{{repayment.amount}}</td>
-                                                            <td>{{loan_balance}}</td>
+                                                            <td>{{repayment.loan_id.loan_balance}}</td>
                                                             {% if loan.status != 'cleared' %}
                                                             <td>
                                                                 <div class="dropdown">

@@ -159,7 +159,7 @@ def loan_due_date(loan):
 
 #final payment date
 def final_date(loan):
-    start_date = loan.approved_date + timedelta(days=1) #consider adding grace period
+    start_date = loan.approved_date + timedelta(days=1) #grace period of one day
     loan_term = loan.loan_product.loan_product_term
     term_period = loan.loan_product.loan_term_period
     if term_period == 'day':
@@ -173,7 +173,6 @@ def final_date(loan):
 
 
     final_date = start_date + loan_term 
-
     return final_date
 
 #calculate the service fee amount  
@@ -206,4 +205,20 @@ def update_due_amount(loan):
     loan.due_amount = amount
     loan.save()
 #-- ends --
+
+#update member credit score
+def update_credit_score(loan):
+    credit_score = loan.member.credit_score
+    if loan.status == 'overdue':
+        credit_score -= 2
+    elif loan.status == 'approved':
+        credit_score += 1 
+    elif loan.status == 'written off':
+        credit_score = 0
+    elif loan.status == 'rolled over':
+        credit_score -= 3  
+    loan.member.previous_credit_score = loan.member.credit_score
+    loan.member.credit_score = credit_score
+    loan.member.save()
+# -- ends 
 
