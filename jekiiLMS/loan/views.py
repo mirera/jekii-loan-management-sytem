@@ -17,7 +17,7 @@ from member.models import Member
 from user.models import RecentActivity, Notification
 from user.models import CompanyStaff
 from company.models import Organization, SmsSetting, MpesaSetting, EmailSetting, SystemSetting
-from jekiiLMS.process_loan import is_sufficient_collateral, get_amount_to_disburse, clear_loan, update_member_data, write_loan_off, roll_over, update_due_date, overdue_to_approved
+from jekiiLMS.process_loan import is_sufficient_collateral, get_amount_to_disburse, clear_loan, update_member_data, write_loan_off, roll_over, update_due_date, overdue_to_approved, change_due_amount
 from jekiiLMS.mpesa_statement import get_loans_table
 from jekiiLMS.loan_math import loan_due_date, save_due_amount, total_interest, installments
 from jekiiLMS.format_inputs import to_utc, user_local_time
@@ -511,7 +511,7 @@ def rejectLoan(request,pk):
 def listLoans(request):
     company = get_user_company(request)
     form = LoanForm(request.POST, company=company) #instiated the two kwargs to be able to access them on the forms.py
-    loans = Loan.objects.filter(company=company)
+    loans = Loan.objects.filter(company=company).order_by('-application_date')
 
     context = {'loans': loans, 'form':form}
     return render(request, 'loan/loans-list.html', context)
@@ -525,6 +525,9 @@ def viewLoan(request, pk):
     company = get_user_company(request)
     loan = Loan.objects.get(id=pk, company=company)
     borrower = loan.member 
+
+
+
 
     loan_notes = loan.note_set.all().order_by('-created')
     guarantors = Guarantor.objects.filter(loan=loan) #here loan=loan mean loan_obj=loan loan_obj in guarantor model and form
@@ -602,9 +605,15 @@ def createRepayment(request):
                 amount= request.POST.get('amount'),
                 date_paid = utcz_datetime,
             )
-            clear_loan(loan) #clear a loan is arrears cleared
+            change_due_amount(loan)
             overdue_to_approved(loan) #change to approved if qualifies & update c.s
-            update_due_date(loan) #updates due date accordingly
+
+            ''' update_due_date(loan) function updates due date accordingly, 
+                calls clear_loan function if loan balance <= 0
+                calls update due amount
+            '''
+            update_due_date(loan) 
+
             messages.success(request,'The repayment was added succussesfully!')
             return redirect('repayments')
         else:
@@ -666,9 +675,14 @@ def editRepayment(request,pk):
             repayment.date_paid = utcz_datetime
             repayment.save()
 
-            clear_loan(loan) #clear a loan    
+            change_due_amount(loan)
             overdue_to_approved(loan) #change to approved if qualifies & update c.s
-            update_due_date(loan) #updates due date accordingly
+
+            ''' update_due_date(loan) function updates due date accordingly, 
+                calls clear_loan function if loan balance <= 0
+                calls update due amount
+            '''
+            update_due_date(loan) 
             messages.success(request,'The repayment was edited succussesfully!')
             return redirect('repayments')
         else:
@@ -898,9 +912,14 @@ def addRepayment(request, pk):
         if loan.status == 'written off':
             loan.write_off_expense = loan.write_off_expense - repayment.amount
             loan.save()
-        clear_loan(loan) #clear a loan 
-        overdue_to_approved(loan) #change to approved if qualifies  test further 
-        update_due_date(loan) #updates due date accordingly test further
+        change_due_amount(loan, repayment)
+        overdue_to_approved(loan) #change to approved if qualifies & update c.s
+
+        ''' update_due_date(loan) function updates due date accordingly, 
+            calls clear_loan function if loan balance <= 0
+            calls update due amount
+        '''
+        update_due_date(loan) 
         messages.success(request, 'Repayment added successfully.')
         return redirect('view-loan', pk=loan.id)
  
@@ -1048,7 +1067,7 @@ def rollOver(request, pk):
     borrower = loan.member
     repayments = loan.repayments.all()
     total_repayments = repayments.aggregate(Sum('amount'))['amount__sum'] or 0
-    if total_repayments >= total_interest(loan): 
+    if total_repayments >= total_interest(loan) and loan.status == 'overdue': 
         new_loan = roll_over(loan)
         #send sms
         date = new_loan.due_date.date().strftime('%Y-%m-%d')
@@ -1066,6 +1085,6 @@ def rollOver(request, pk):
         messages.success(request, f'{loan.member} loan has been rolled over')
         return redirect('view-loan', new_loan.id) 
     else:
-        messages.error(request, f'{loan.member} loan can not be rolled over. Member should clear loan interest first, then try again.')
+        messages.error(request, f'{loan.member} loan can not be rolled over. Member should clear loan interest first or Loan is not due for rollover, then try again.')
         return redirect('view-loan', loan.id) 
 # -- ends

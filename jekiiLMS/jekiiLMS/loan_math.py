@@ -174,7 +174,7 @@ def final_date(loan):
 
     final_date = start_date + loan_term 
     return final_date
-
+ 
 #calculate the service fee amount  
 def get_service_fee(loan): 
     service_fee_type = loan.loan_product.service_fee_type 
@@ -200,10 +200,16 @@ def save_due_amount(loan):
     loan.save()
 
 #update due amount if overdue
+'''
+The update_due_amount(loan) update loan due amount if a loan is overdue and attracts penalty.
+Its called by a task on jekiiLMS/tasks/py 
+Do not confuse it with update_due_amount(loan) function.
+'''
 def update_due_amount(loan):
-    amount = loan.due_amount + total_penalty(loan)
-    loan.due_amount = amount
-    loan.save()
+    if loan.status == 'overdue':
+        amount = loan.due_amount + total_penalty(loan)
+        loan.due_amount = amount
+        loan.save()
 #-- ends --
 
 #update member credit score
@@ -216,7 +222,9 @@ def update_credit_score(loan):
     elif loan.status == 'written off':
         credit_score = 0
     elif loan.status == 'rolled over':
-        credit_score -= 3  
+        credit_score -= 3 
+    elif loan.status == 'cleared':
+        credit_score += 1   
     loan.member.previous_credit_score = loan.member.credit_score
     loan.member.credit_score = credit_score
     loan.member.save()
