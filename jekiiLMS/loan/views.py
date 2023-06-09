@@ -176,9 +176,9 @@ def createLoan(request):
         utcz_datetime = to_utc(company.timezone, application_date)
 
         if member.has_active_loan():
-            messages.error(request, 'You cannot apply for a new loan while you have an active loan.')
+            messages.error(request, 'Error!, member has an active loan.')
 
-        Loan.objects.create(
+        loan = Loan.objects.create(
                 company = company,
                 loan_product= loanproduct,
                 member= member,
@@ -189,7 +189,7 @@ def createLoan(request):
                 attachments = request.FILES.get('attachments'),
             )
         
-        messages.success(request, 'Loan created successfully!')
+        messages.success(request, f'The loan application for {loan.member.first_name} {loan.member.last_name} is successful!')
         return redirect('loans')
     context= {'form':form}
     return render(request,'loan/loans-list.html', context)
@@ -526,9 +526,6 @@ def viewLoan(request, pk):
     loan = Loan.objects.get(id=pk, company=company)
     borrower = loan.member 
 
-
-
-
     loan_notes = loan.note_set.all().order_by('-created')
     guarantors = Guarantor.objects.filter(loan=loan) #here loan=loan mean loan_obj=loan loan_obj in guarantor model and form
     collaterals = Collateral.objects.filter(loan=loan)
@@ -597,23 +594,22 @@ def createRepayment(request):
         utcz_datetime = to_utc(company.timezone, date_paid)
 
         if loan:
-            Repayment.objects.create(
-                company = company,
-                transaction_id= request.POST.get('transaction_id'),
-                loan_id = loan,
-                member = member,
-                amount= request.POST.get('amount'),
-                date_paid = utcz_datetime,
-            )
-            change_due_amount(loan)
+            repayment = Repayment.objects.create(
+                    company = company,
+                    transaction_id= request.POST.get('transaction_id'),
+                    loan_id = loan,
+                    member = member,
+                    amount= request.POST.get('amount'),
+                    date_paid = utcz_datetime,
+                )
+            change_due_amount(loan, repayment)
             overdue_to_approved(loan) #change to approved if qualifies & update c.s
 
             ''' update_due_date(loan) function updates due date accordingly, 
                 calls clear_loan function if loan balance <= 0
                 calls update due amount
             '''
-            update_due_date(loan) 
-
+            update_due_date(loan)
             messages.success(request,'The repayment was added succussesfully!')
             return redirect('repayments')
         else:
@@ -675,14 +671,14 @@ def editRepayment(request,pk):
             repayment.date_paid = utcz_datetime
             repayment.save()
 
-            change_due_amount(loan)
+            change_due_amount(loan, repayment)
             overdue_to_approved(loan) #change to approved if qualifies & update c.s
 
             ''' update_due_date(loan) function updates due date accordingly, 
                 calls clear_loan function if loan balance <= 0
                 calls update due amount
             '''
-            update_due_date(loan) 
+            update_due_date(loan)
             messages.success(request,'The repayment was edited succussesfully!')
             return redirect('repayments')
         else:

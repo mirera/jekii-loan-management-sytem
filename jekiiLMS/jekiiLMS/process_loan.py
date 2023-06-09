@@ -249,32 +249,26 @@ def update_due_date(loan):
             date_paid__date__gte=loan.approved_date.date()
         )
         total_repayments = repayments.aggregate(total_amount=Sum('amount'))['total_amount'] #10000
-        print(f'total_repayments {total_repayments}')
 
         #Number of elapsed intervals 
         elapsed_intervals = (abs(loan.due_date - loan.approved_date) // interval_period) 
-        print(loan.due_date)
-        print(loan.approved_date)
-        print(f'elapsed_intervals {elapsed_intervals}')
+
         #Total expected due_amounts of elapsed repayment intervals
         expected_due_amounts = elapsed_intervals * initial_due_amount #13000
-        print(f'expected_due_amounts {expected_due_amounts}')
-
 
         if total_repayments >= expected_due_amounts: 
             #update due date to new due date
-            print(f'Loan due date before manipulation {loan.due_date}')
+
             if loan.status == 'approved': 
                 new_due_date = loan.due_date + interval_period  
                 loan.due_date = new_due_date
                 loan.save()
-                print(f'Loan due date after saving {loan.due_date}')
+
             update_credit_score(loan)
             #at this point due amount as been updated for above 
-            difference = total_repayments - expected_due_amounts #-3000
-            print(f'Difference {difference}')
-            print(f'Loan balance {difference}')
-            if loan.loan_balance() <= 0 : #False 6500
+            difference = total_repayments - expected_due_amounts 
+
+            if loan.loan_balance() <= 0:
                 #call clear loan function
                 clear_loan(loan)
             else:
@@ -284,28 +278,24 @@ def update_due_date(loan):
                     loan.due_amount = initial_due_amount + loan.due_amount
                 loan.save()
 
-                print(f'Loan due amount before while loop {loan.due_amount}')
-                print(f'Difference before while loop {difference}')
-                
-                #if the difference is >= initial due amount 
-                while difference >= initial_due_amount:
+                #case where borrower paid more than due amount time two upwards 
+                while difference >= initial_due_amount: 
                     if loan.status == 'approved':
                         #update due date to new due date
                         new_due_date = loan.due_date + interval_period  
                         loan.due_date = new_due_date
+
                         #update due amount
-                        #loan.due_amount = loan.due_amount + initial_due_amount
                         if loan.due_amount == 0:
                             loan.due_amount = initial_due_amount
                         elif loan.due_amount < 0:
                             loan.due_amount = loan.due_amount + initial_due_amount
                         loan.save()
-                        print(f'Inside the loop {loan.due_amount}')
                     update_credit_score(loan)  
-                    #difference = difference - loan.due_amount 
                     difference = difference - initial_due_amount 
-                    print(f'Difference after while loop {difference}')
-                    if difference == 0:
+                    if difference >= 0 and difference < initial_due_amount:
+                        loan.due_amount = loan.due_amount + initial_due_amount
+                        loan.save()
                         break
 
                 if total_repayments >= loan.due_amount and loan.loan_balance() > 0:
@@ -319,61 +309,57 @@ def update_due_date(loan):
                                 loan.member.phone_no, 
                                 message
                             ) 
+    
     #part 2a    
-    else: #Handling a normal payment case
+    if last_due_date.date() < current_date.date(): #Handling a normal payment case   
         repayments = Repayment.objects.filter(
             loan_id=loan,
             member=loan.member,
             date_paid__date__lte=current_date.date(),
-            date_paid__date__gte=last_due_date.date() 
+            date_paid__date__gte=last_due_date.date()  
         )
-        total_repayments = repayments.aggregate(total_amount=Sum('amount'))['total_amount'] #3250
-        if total_repayments >= loan.due_amount: # true
+        total_repayments = repayments.aggregate(total_amount=Sum('amount'))['total_amount'] 
+        if total_repayments >= loan.due_amount: #true
             #update due date to new due date
-            if loan.status == 'approved': #true
+            if loan.status == 'approved': 
                 new_due_date = loan.due_date + interval_period  
                 loan.due_date = new_due_date
                 loan.save()
-                #due amount has been updated already
+
+                #due amount has been updated already  
             update_credit_score(loan)
 
         #part 2b -- due amount is updated before this function is called on view
-        difference = 0
         #case where borrower paid exact due amount
         if loan.due_amount == 0: 
             #update due amount 
-            print(f'Before set to initial due amount {loan.due_amount}')
             loan.due_amount = initial_due_amount
-            print(f'Before saving due amount already set to initial due amount {loan.due_amount}')
             loan.save()
         #case where borrower paid less than due amount
         elif loan.due_amount > 0: 
-            #update due amount 
             loan.due_amount = initial_due_amount - loan.due_amount
             loan.save()
-            #difference = 0
         #case where borrower paid more than due_amount
-        elif loan.due_amount < 0: #-1000 test this part later
-            difference = loan.due_amount
-        
+        elif loan.due_amount < 0:  #true
             #part 2c   
-            while difference >= loan.due_amount:
+            while loan.due_amount <= 0: #true #true #true
                 if loan.status == 'approved':
                     #update due amount
-                    #loan.due_amount = loan.due_amount + initial_due_amount
                     if loan.due_amount == 0:
                         loan.due_amount = initial_due_amount
-                    elif loan.due_amount < 0:
-                        loan.due_amount = loan.due_amount + initial_due_amount
-
-                    #update due date to new due date
-                    new_due_date = loan.due_date + interval_period  
-                    loan.due_date = new_due_date
+                    elif loan.due_amount < 0: #true #true #true
+                        loan.due_amount = loan.due_amount + initial_due_amount #-3500 #-250 #3000
                     loan.save()
+                    #update if only this is not the last due date if interval period is > loan.finalpaydate 
+                    #update due date to new due date
+                    new_due_date = loan.due_date + interval_period #2023-06-31 #2023-07-08 #2023-07-15
+                    if loan.final_due_date > new_due_date: #this avoids updating due date when youre already on the last due date
+                        loan.due_date = new_due_date
+                        loan.save()
 
                 update_credit_score(loan)  
-                difference = difference - loan.due_amount
-                if difference == 0:
+
+                if loan.due_amount > 0: 
                     break
         #part 2d 
         # send message if due date is updated and loan is not cleared   
@@ -387,7 +373,7 @@ def update_due_date(loan):
                         loan.member.phone_no, 
                         message
                     )   
-  
+    
 # -- ends
 
  
