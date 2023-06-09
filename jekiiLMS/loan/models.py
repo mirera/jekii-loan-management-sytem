@@ -277,40 +277,7 @@ class Repayment(models.Model):
 
     def __str__(self):
         return self.member.first_name + ' ' + self.member.first_name
- 
-
-    
-
-    def loanBalance(self):
-        if self.loan_id:
-            loan = Loan.objects.get(pk=self.loan_id.pk)
-            loan_repayments = Repayment.objects.filter(loan_id=self.loan_id).aggregate(Sum('amount'))['amount__sum']
-            total_payable = loan.total_payable()
-            loan_balance = total_payable - loan_repayments
-            return loan_balance
-
-    #method to calculate next_repayment_date
-    def next_repayment_date(self):
-        start_date = self.loan_id.approved_date + timedelta(days=1)
-        if self.loan_id:
-            if self.loan_id.loan_product.repayment_frequency == 'weekly':
-                return self.date_paid + timedelta(days=7)
-            elif self.loan_id.loan_product.repayment_frequency == 'monthly':
-                return self.date_paid + timedelta(days=30)
-            elif self.loan_id.loan_product.repayment_frequency == 'daily':
-                return self.date_paid + timedelta(days=1)
-            else:
-                if self.loan_id.loan_product.loan_term_period == 'day': 
-                    return start_date + timedelta(days=self.loan_id.loan_product.loan_product_term)
-                elif self.loan_id.loan_product.loan_term_period == 'week': 
-                    return start_date + timedelta(days=self.loan_id.loan_product.loan_product_term * 7)
-                elif self.loan_id.loan_product.loan_term_period == 'month': 
-                    return start_date + timedelta(days=self.loan_id.loan_product.loan_product_term * 30)
-                else:
-                    return start_date + timedelta(days=self.loan_id.loan_product.loan_product_term * 365)
         
-    
-
 #Repayment model ends 
 
 #Guarantor Model starts

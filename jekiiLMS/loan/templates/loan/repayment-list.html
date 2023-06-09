@@ -77,7 +77,7 @@
                                                 <div class="user-card">
                                                     <div class="user-info">
                                                         <span class="tb-lead">{{repayment.member.first_name}} {{repayment.member.last_name}}<span class="dot dot-success d-md-none ms-1"></span></span>
-                                                        <span>{{repayment.loan.member.phone_no}}</span>
+                                                        <span>{{repayment.loan_id.member.phone_no}}</span>
                                                     </div>
                                                 </div>
                                             </td>
@@ -88,10 +88,10 @@
                                                 <span>{% timezone company_tz %} {{repayment.date_paid.date}} {% endtimezone %}</span>
                                             </td>
                                             <td class=" nk-tb-col tb-col-lg" >
-                                                <span class="tb-amount"> {% timezone company_tz %} {{repayment.next_repayment_date.date}} {% endtimezone %}</span>
+                                                <span class="tb-amount"> {% timezone company_tz %} {{repayment.loan_id.due_date.date}} {% endtimezone %}</span>
                                             </td>
                                             <td class="nk-tb-col tb-col-mb">
-                                                <span>{{ repayment.loanBalance }}</span>
+                                                <span>{{ repayment.loan_id.loan_balance }}</span>
                                             </td>
                                             <td class="nk-tb-col tb-col-md">
                                                 <span>{{repayment.transaction_id}}</span>
