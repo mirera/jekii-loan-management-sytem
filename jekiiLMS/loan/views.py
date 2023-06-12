@@ -526,6 +526,7 @@ def viewLoan(request, pk):
     loan = Loan.objects.get(id=pk, company=company)
     borrower = loan.member 
 
+
     loan_notes = loan.note_set.all().order_by('-created')
     guarantors = Guarantor.objects.filter(loan=loan) #here loan=loan mean loan_obj=loan loan_obj in guarantor model and form
     collaterals = Collateral.objects.filter(loan=loan)
