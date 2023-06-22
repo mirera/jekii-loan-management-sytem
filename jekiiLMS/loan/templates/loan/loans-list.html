@@ -142,8 +142,8 @@
                                                                 {% else %}
                                                                 <li><a href="{% url 'view-loan' loan.id %}"><em class="icon ni ni-eye-alt"></em><span>View</span></a></li>
                                                                 {% if user.user_type == 'admin' and loan.status == 'overdue' %}
-                                                                <li><a href="{% url 'view-loan' loan.id %}"><em class="icon ni ni-repeat-v"></em><span>RollOver</span></a></li>
-                                                                <li><a href="{% url 'write-off' loan.id %}"><em class="icon ni ni-property-remove"></em><span>WriteOff</span></a></li>  
+                                                               <!-- <li><a href="{% url 'view-loan' loan.id %}"><em class="icon ni ni-repeat-v"></em><span>RollOver</span></a></li>
+                                                                <li><a href="{% url 'write-off' loan.id %}"><em class="icon ni ni-property-remove"></em><span>WriteOff</span></a></li>  -->
                                                                 {% endif %}
                                                                 {% endif %}
                                                             </ul>
@@ -261,7 +261,7 @@
                                                     <span class="tb-sub tb-amount">{{loan.approved_amount}} </span>
                                                 </div>
                                                 <div class="nk-tb-col">
-                                                    <span class="tb-sub tb-amount">{{loan.total_payable}} </span>
+                                                    <span class="tb-sub tb-amount">{{loan.total_payable}} </span> 
                                                 </div>
                                                 <div class="nk-tb-col">
                                                     {% if loan.status == 'approved' %}
@@ -278,7 +278,7 @@
                                                                 <li><a data-bs-toggle="modal" class="delete-button" href="#deleteLoan" data-pk="{{ loan.id }}"><em class="icon ni ni-trash"></em><span>Delete</span></a></li>
                                                                 {% else %}
                                                                 <li><a href="{% url 'view-loan' loan.id %}"><em class="icon ni ni-eye-alt"></em><span>View Details</span></a></li>
-                                                                <li><a href="{% url 'view-loan' loan.id %}"><em class="icon ni ni-repeat-v"></em><span>Roll Over</span></a></li> 
+                                                                <!-- <li><a href="{% url 'view-loan' loan.id %}"><em class="icon ni ni-repeat-v"></em><span>Roll Over</span></a></li> -->
                                                                 {% endif %}
                                                             </ul>
                                                         </div>
@@ -425,7 +425,7 @@
                                                                 <li><a data-bs-toggle="modal" class="delete-button" href="#deleteLoan" data-pk="{{ loan.id }}"><em class="icon ni ni-trash"></em><span>Delete</span></a></li>
                                                                 {% else %}
                                                                 <li><a href="{% url 'view-loan' loan.id %}"><em class="icon ni ni-eye-alt"></em><span>View Details</span></a></li>
-                                                                <li><a href="{% url 'view-loan' loan.id %}"><em class="icon ni ni-repeat-v"></em><span>Roll Over</span></a></li> 
+                                                                <!-- <li><a href="{% url 'view-loan' loan.id %}"><em class="icon ni ni-repeat-v"></em><span>Roll Over</span></a></li> -->
                                                                 {% endif %}
                                                             </ul>
                                                         </div>

@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path 
 from . import views
 
 
@@ -21,6 +21,12 @@ urlpatterns = [
     path('view-loan/<str:pk>/reject', views.rejectLoan, name='reject'),
     path('view-loan/<str:pk>/write-off', views.writeOff, name='write-off'),
     path('view-loan/<str:pk>/roll-over', views.rollOver, name='roll-over'),
+
+    path('pending-loans', views.pending_loans, name='pending-loans'),
+    path('approved-loans', views.approved_loans, name='approved-loans'),
+    path('overdue-loans', views.overdue_loans, name='overdue-loans'),
+    #path('cleared-loans', views.cleared_loans, name='cleared-loans'),
+
 
     #repayment urls
     path('repayments', views.listRepayments, name='repayments'),

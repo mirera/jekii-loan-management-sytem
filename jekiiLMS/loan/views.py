@@ -518,7 +518,7 @@ def listLoans(request):
 # list Loan  view ends
 
 
-# detailview Loan  view starts 
+# detailview Loan  view starts  
 @login_required(login_url='login')
 @permission_required('loan.view_loan')
 def viewLoan(request, pk):
@@ -576,6 +576,36 @@ def deleteLoan(request,pk):
     context = {'obj':loan}
     return render(request,'loan/delete-loan.html', context)
 # delete Loan  ends starts
+
+# List pending loans
+@login_required(login_url='login')
+def pending_loans(request):
+    company = get_user_company(request)
+    loans = Loan.objects.filter(company=company, status='pending')
+
+    context = {'loans':loans}
+    return render(request, 'loan/pending-loans.html', context)
+# --Ends 
+
+# List approved loans
+@login_required(login_url='login')
+def approved_loans(request):
+    company = get_user_company(request)
+    loans = Loan.objects.filter(company=company, status='approved')
+
+    context = {'loans':loans}
+    return render(request, 'loan/approved-loans.html', context)
+# --Ends 
+
+# List approved loans
+@login_required(login_url='login')
+def overdue_loans(request):
+    company = get_user_company(request)
+    loans = Loan.objects.filter(company=company, status='overdue')
+
+    context = {'loans':loans}
+    return render(request, 'loan/overdue-loans.html', context)
+# --Ends 
 
 #create repayment view starts
 @login_required(login_url='login')

@@ -55,7 +55,7 @@ class Organization(models.Model):
 class SmsSetting(models.Model):
     company = models.ForeignKey(Organization, on_delete=models.SET_NULL, blank=True, null=True, )
     sender_id = models.CharField(max_length=15, blank=True, null=True)
-    api_token = models.CharField(max_length=200, blank=True, null=True)#encrypted 
+    api_token = models.CharField(max_length=200, blank=True, null=True)
 
     def __str__(self):
         return self.company.name
@@ -98,6 +98,8 @@ class EmailSetting(models.Model):
 class SystemSetting(models.Model):
     company = models.ForeignKey(Organization, on_delete=models.SET_NULL, blank=True, null=True, )
     is_auto_disburse = models.BooleanField(default=False)
+    is_send_sms = models.BooleanField(default=False)
+    is_send_email = models.BooleanField(default=False)
 
     def __str__(self):
         return self.company.name

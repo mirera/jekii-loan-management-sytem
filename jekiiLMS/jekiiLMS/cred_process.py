@@ -4,7 +4,7 @@ import os
 
 
 ENCRYPTION_KEY = os.environ.get('ENCRYPTION_KEY')
-
+ 
 
 #encrypt secret
 def encrypt_secret(secret):

@@ -107,9 +107,11 @@ class EmailSettingForm(forms.ModelForm):
 class SystemSettingForm(forms.ModelForm):
     class Meta:
         model = SystemSetting
-        fields = ['is_auto_disburse']
+        fields = '__all__'
         exclude = ['company']
         
         widgets = {
-            'is_auto_disburse': forms.CheckboxInput(attrs={'class': 'custom-control-input', 'id': 'auto_disburse'}),   
+            'is_auto_disburse': forms.CheckboxInput(attrs={'class': 'custom-control-input', 'id': 'auto_disburse'}),
+            'is_send_sms': forms.CheckboxInput(attrs={'class': 'custom-control-input', 'id': 'send_sms'}), 
+            'is_send_email': forms.CheckboxInput(attrs={'class': 'custom-control-input', 'id': 'send_email'}),    
         }

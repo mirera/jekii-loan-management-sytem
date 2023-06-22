@@ -14,7 +14,7 @@ from django.contrib import messages
 from .models import CompanyStaff, Role
 from branch.models import Branch 
 from user.models import Notification
-from company.models import Organization, Package, SmsSetting
+from company.models import Organization, Package, SmsSetting, SystemSetting
 from jekiiLMS.sms_messages import send_sms 
 
 
@@ -157,14 +157,15 @@ def user_signup(request):
             email = EmailMessage(
                 "Welcome to Loginit",
                 template,
-                settings.EMAIL_HOST_USER  ,
+                #settings.EMAIL_HOST_USER  ,
+                f'Loginit mdeni <{settings.EMAIL_HOST_USER}>',
                 [email],
                 reply_to=[settings.EMAIL_HOST_USER],
             )
             email.send(fail_silently=False)
 
             #redirect to update organization info
-            messages.success(request, f'Account for {company_name} was created successfully. Check your {email} for verification instructions')
+            messages.success(request, f'Account for {company_name} was created successfully. Check your email for verification instructions')
             return redirect('update-organization', pk = organization.id )
         else:
             #return error message
@@ -183,7 +184,7 @@ def user_logout(request):
     return redirect('home')
 
 #-- list staffs view starts --
-@login_required(login_url='login')
+@login_required(login_url='login') 
 def listStaff(request):
     
     if request.user.is_authenticated and request.user.is_active:
@@ -475,22 +476,24 @@ def deactivateStaff(request, pk):
     staff = CompanyStaff.objects.get(id=pk)
     user = User.objects.get(username=staff.username)
     company = staff.company
+    system_preferences = SystemSetting.objects.get(company=company)
     staff.status = 'inactive'
     user.is_active= False
     user.save()
     staff.save()
-
-    #send sms
-    sms_setting = SmsSetting.objects.get(company=company)
-    sender_id = sms_setting.sender_id
-    token = sms_setting.api_token 
-    message = f"Dear {staff.first_name}, Your {company.name} user account has been deactivated. Contact your system admin"
-    send_sms(
-        sender_id,
-        token,
-        staff.phone_no, 
-        message,
-        )
+    
+    if system_preferences.is_send_sms:
+        #send sms
+        sms_setting = SmsSetting.objects.get(company=company) 
+        sender_id = sms_setting.sender_id
+        token = sms_setting.api_token 
+        message = f"Dear {staff.first_name}, Your {company.name} user account has been deactivated. Contact your system admin"
+        send_sms(
+            sender_id,
+            token,
+            staff.phone_no, 
+            message,
+            )
 
     messages.info(request, 'Staff deactivated! The user will not be able to login in unless activated.')
     return redirect('staffs')
@@ -508,17 +511,21 @@ def activateStaff(request, pk):
     user = User.objects.get(username=staff.username)
     user.is_active= True
     user.save()
+
+    system_preferences = SystemSetting.objects.get(company=company)
     #send sms
     sms_setting = SmsSetting.objects.get(company=company)
     sender_id = sms_setting.sender_id
     token = sms_setting.api_token 
     message = f"Dear {staff.first_name}, Your {company.name} user account has been activated. You can now login"
-    send_sms(
-            sender_id,
-            token,
-            staff.phone_no, 
-            message,
-        )
+    
+    if system_preferences.is_send_sms:
+        send_sms(
+                sender_id,
+                token,
+                staff.phone_no, 
+                message,
+            )
     messages.info(request, 'Staff activated!')
     return redirect('staffs')
 # -- ends

@@ -15,7 +15,7 @@
                     </div><!-- .nk-block-head -->
                     <div class="nk-block nk-block-lg">
                         <div class="card card-bordered">
-                            <form action="{% url 'create-loan-product' %}" method="POST" class="nk-stepper stepper-init is-alter nk-stepper-s1"  id="stepper-create-project" >
+                            <form action="{% url 'create-loan-product' %}" method="POST" class="nk-stepper stepper-init is-alter nk-stepper-s1 validate"  id="stepper-create-project" >
                                 {% csrf_token %}
                                 <div class="row g-0 col-sep col-sep-md col-sep-xl">
                                     <div class="col-md-4 col-xl-4">

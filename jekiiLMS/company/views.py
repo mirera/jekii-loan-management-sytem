@@ -73,9 +73,7 @@ def updateOrganization(request, pk):
         branches = Branch.objects.filter(company=organization)
         for branch in branches:
             deformated_phone = deformat_phone_no(branch.phone, old_phone_code)
-            print(deformated_phone)
             branch.phone = format_phone_number(deformated_phone, phone_code)
-            print(branch.phone)
             branch.save()
         
         members = Member.objects.filter(company=organization)
@@ -135,6 +133,8 @@ def updateOrganization(request, pk):
         # prefill the system preference form 
         form_data_preferences = {
             'is_auto_disburse': preferences.is_auto_disburse,
+            'is_send_sms': preferences.is_send_sms,
+            'is_send_email': preferences.is_send_email
         }
         form_preferences = SystemSettingForm(initial=form_data_preferences)
         form_email = EmailSettingForm(initial=form_data_email)
@@ -154,10 +154,10 @@ def updateOrganization(request, pk):
     return render(request,'company/update-company.html', context)
 
 # -- view to create package
-@permission_required
 @login_required(login_url='login')
 @permission_required('company.add_package')
 def createPackage(request):
+    form = PackageForm()
     if request.method == 'POST':
         form = PackageForm(request.POST)
         if form.is_valid():
@@ -363,20 +363,24 @@ def updatePreferences(request, pk):
     if request.method == 'POST':
         form_preferences = SystemSettingForm(request.POST, instance=preferences)
         if form_preferences.is_valid():
-            is_auto_disburse = request.POST.get('is_auto_disburse') == 'on'  # Check if the checkbox is checked
+            is_auto_disburse = request.POST.get('is_auto_disburse') == 'on'
+            is_send_sms = request.POST.get('is_send_sms') == 'on' 
+            is_send_email = request.POST.get('is_send_email') == 'on' 
             preferences = form_preferences.save(commit=False)
             preferences.company = organization
             preferences.is_auto_disburse = is_auto_disburse
+            preferences.is_send_sms = is_send_sms
+            preferences.is_send_email = is_send_email
             preferences.save()
         messages.success(request, 'System preferences updated successfully.')
         return redirect('update-organization', organization.id)
     else:
-        mpesa_setting = MpesaSetting.objects.get(company=organization)
-        print(mpesa_setting.online_passkey)
 
         # prepopulate the form with existing data
         form_data = {
-            'is_auto_disburse': preferences.is_auto_disburse
+            'is_auto_disburse': preferences.is_auto_disburse,
+            'is_send_sms': preferences.is_send_sms,
+            'is_send_email': preferences.is_send_email
         }
         form_preferences = SystemSettingForm(initial=form_data)
  

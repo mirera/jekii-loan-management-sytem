@@ -98,7 +98,8 @@ LOAN_STATUS = (
 )
 class Loan(models.Model):
     company = models.ForeignKey(Organization, on_delete=models.CASCADE)
-    loan_id =models.CharField(max_length=50, null=True, unique=True, blank=True)
+    #loan_id =models.CharField(max_length=50, unique=True) 
+    loan_id = models.IntegerField(unique=True) 
     loan_product = models.ForeignKey(LoanProduct, on_delete=models.SET_NULL, null=True)
     member = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True, related_name='loans_as_member')
     applied_amount = models.IntegerField()
@@ -125,6 +126,7 @@ class Loan(models.Model):
     write_off_expense = models.IntegerField(blank=True, null=True)
     #parent loan
     parent_loan = models.ForeignKey('self', on_delete=models.SET_NULL, blank=True, null=True)
+    been_penalized = models.BooleanField(default=False)
    
 
 
