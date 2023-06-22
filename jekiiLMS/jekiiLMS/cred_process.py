@@ -19,6 +19,5 @@ def decrypt_secret(encrypted_secret_str):
     f = Fernet(ENCRYPTION_KEY.encode('utf-8'))
     encrypted_secret = base64.b64decode(encrypted_secret_str.encode('utf-8'))
     decrypted_secret = f.decrypt(encrypted_secret).decode('utf-8')
-    print(decrypted_secret)
     return decrypted_secret
 # -- ends

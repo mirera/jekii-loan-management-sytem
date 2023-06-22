@@ -36,8 +36,8 @@ def disburse_loan(consumer_key, consumer_secret, shortcode, username, loan):
     transaction_reference = f"DISBURSEMENT_{loan.id}"
     command_id = "BusinessPayment"
     short_code = shortcode
-    timeout_url = 'http://127.0.0.1:8000/loan/api/b2c-timeout'
-    result_url = 'http://127.0.0.1:8000/loan/api/b2c-result'
+    timeout_url = 'https://mdeni.loginit.co.ke/loan/api/b2c-timeout'
+    result_url = 'https://mdeni.loginit.co.ke/loan/api/b2c-result'
     payload = {
         "InitiatorName": username,
         "SecurityCredential": "<your security credential>",
