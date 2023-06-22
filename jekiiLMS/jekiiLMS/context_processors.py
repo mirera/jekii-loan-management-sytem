@@ -5,13 +5,18 @@ from django.contrib.auth.models import User
 #-- custome context processor for login organization --
 def get_organization(request):
     if request.user.is_authenticated and request.user.is_active:
+        if User.objects.filter(username=request.user.username, is_staff=True).exists():
+            # If the user is a superadmin or Loginit staff, return an  organization as Loginit
+            return {"organization": None}
         try:
-            user = CompanyStaff.objects.get(username=request.user.username) 
+            user = CompanyStaff.objects.get(username=request.user.username)
             organization = user.company 
             return {"organization" :organization}
         except Organization.DoesNotExist:
             pass
     return {}  
+
+
 
 def get_user(request):
     if request.user.is_authenticated and request.user.is_active:
@@ -24,6 +29,9 @@ def get_user(request):
 
 def get_company_currency(request):
     if request.user.is_authenticated and request.user.is_active:
+        if User.objects.filter(username=request.user.username, is_staff=True).exists():
+            # If the user is a superadmin or Loginit staff, return an  company_currency as Kes
+            return {"company_currency": "Kes"}
         try:
             user = CompanyStaff.objects.get(username=request.user.username)
             organization = user.company
@@ -35,6 +43,9 @@ def get_company_currency(request):
 
 def get_company_phone_code(request):
     if request.user.is_authenticated and request.user.is_active:
+        if User.objects.filter(username=request.user.username, is_staff=True).exists():
+            # If the user is a superadmin or Loginit staff, return an  company_currency as Kes
+            return {"company_phone_code": "+254"}
         try:
             user = CompanyStaff.objects.get(username=request.user.username)
             organization = user.company
@@ -56,6 +67,9 @@ def get_user_notifications(request):
 
 def get_company_tz(request):
     if request.user.is_authenticated and request.user.is_active:
+        if User.objects.filter(username=request.user.username, is_staff=True).exists():
+            # If the user is a superadmin or Loginit staff, return an  company_currency as Kes
+            return {"company_tz": "Africa/Nairobi"}
         try:
             user = CompanyStaff.objects.get(username=request.user.username)
             organization = user.company

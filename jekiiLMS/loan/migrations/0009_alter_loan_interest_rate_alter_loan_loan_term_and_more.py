@@ -13,12 +13,12 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='loan',
             name='interest_rate',
-            field=models.IntegerField(),
+            field=models.IntegerField(default=0),
         ),
         migrations.AlterField(
             model_name='loan',
             name='loan_term',
-            field=models.PositiveSmallIntegerField(),
+            field=models.PositiveSmallIntegerField(default=1),
         ),
         migrations.AlterField(
             model_name='loan',

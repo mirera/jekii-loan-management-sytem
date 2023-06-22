@@ -7,7 +7,6 @@ from jekiiLMS.cred_process import decrypt_secret
 
 #sms
 def send_sms(sender_id, token, phone_no, message):
-
     token_decrypted = decrypt_secret(token)
 
     url = 'https://sms.erranium.com/api/v3/sms/send'

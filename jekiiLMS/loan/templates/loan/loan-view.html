@@ -291,8 +291,8 @@
                                                               <td>{{collateral.type}}</td>
                                                               <td>{{collateral.serial_number}}</td>
                                                               <td>{{collateral.estimated_value}}</td>
+                                                              {% if loan.status == 'pending' %}
                                                               <td>
-                                                                  {% if loan.status == 'pending' %}
                                                                   <div class="dropdown">
                                                                       <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="dropdown"><span>Action</span><em class="icon ni ni-chevron-down"></em></a>
                                                                       <div class="dropdown-menu dropdown-menu-end dropdown-menu-auto mt-1">
@@ -302,8 +302,8 @@
                                                                           </ul>
                                                                       </div>
                                                                   </div>
-                                                                  {% endif %}
-                                                              </td>    
+                                                              </td> 
+                                                              {% endif %}   
                                                             </tr>
                                                             {% endfor %}
                                                         </tbody>

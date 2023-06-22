@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='loan',
             name='interest_rate',
-            field=models.ForeignKey(default=0.3, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='interest_rate_applied', to='loan.loanproduct'),
+            field=models.ForeignKey(default=1, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='interest_rate_applied', to='loan.loanproduct'),
         ),
         migrations.AlterField(
             model_name='loan',

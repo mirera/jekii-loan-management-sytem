@@ -1,7 +1,7 @@
 from user.models import CompanyStaff
 
 #get the company of a user.
-def get_user_company(request):
+def get_user_company(request): 
     if request.user.is_authenticated and request.user.is_active:
         try:
             companystaff = CompanyStaff.objects.get(username=request.user.username)

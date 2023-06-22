@@ -4,16 +4,17 @@ from loan.models import Loan, Repayment
 from company.models import SmsSetting
 from .loan_math import update_due_amount,get_previous_due_date, update_credit_score
 from .sms_messages import send_sms, send_email
-from .mpesa_api import disburse_loan
+from .mpesa_api import disburse_loan 
 
 #task to mark a loan as overdue 
 @shared_task
 def mark_loans_as_overdue():
-    today = timezone.now()
-    previous_due_date = get_previous_due_date(loan)
+    today = timezone.now().date()
+    
     # Find all loans that are due but not yet cleared or marked as overdue
-    loans = Loan.objects.filter(due_date__lt=today).exclude(status__in=['cleared', 'overdue', 'written off', 'rolled over'])
+    loans = Loan.objects.filter(due_date__date__lt=today).exclude(status__in=['cleared', 'overdue', 'written off', 'rolled over'])
     for loan in loans:
+        previous_due_date = get_previous_due_date(loan).date()
         # Check if there are any repayments made by the borrower for the loan
         repayments = Repayment.objects.filter(
             loan_id=loan,
@@ -26,7 +27,6 @@ def mark_loans_as_overdue():
             # Loan is overdue
             loan.status = 'overdue'
             loan.save()
-
             #update member credit score
             update_credit_score(loan)
 

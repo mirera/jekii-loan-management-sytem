@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.db.models import Sum
-from datetime import datetime
+from django.utils import timezone
 from django.contrib.auth.decorators import login_required 
 from branch.models import Branch, Expense
 from loan.models import Loan, Repayment
@@ -13,38 +13,17 @@ from jekiiLMS.format_inputs import user_local_time
 
 
  #--- superadmin dashboard  logic starts here---
-@login_required(login_url='login')
+@login_required(login_url='login') 
 def superadmin_dashboard(request): 
 
     companies=Organization.objects.all()
     active_companies = Organization.objects.filter(status='active')
     license_expired_companies = Organization.objects.filter(is_license_expired=True)
-    branches=Branch.objects.all()
-    loans = Loan.objects.all()
-    repayments = Repayment.objects.all()
-    members= Member.objects.all()
-
-    pending_loans = Loan.objects.filter(status ='pending')
-    total_pending_loans = pending_loans.count()
-    total_pending_amount = pending_loans.aggregate(Sum('applied_amount'))['applied_amount__sum'] or 0
-
-    disbursed_loans = Loan.objects.filter(status ='approved')
-    total_disbursed_amount = disbursed_loans.aggregate(Sum('applied_amount'))['applied_amount__sum'] or 0
-
-    total_expense = Expense.objects.all()
-    expense = total_expense.aggregate(Sum('amount'))['amount__sum'] or 0
-
+    
     context= {
         'companies':companies,
         'active_companies':active_companies,
         'license_expired_companies':license_expired_companies, 
-        'loans':loans, 
-        'repayments':repayments,
-        'members':members,
-        'total_pending_loans':total_pending_loans,
-        'total_pending_amount':total_pending_amount,
-        'total_disbursed_amount':total_disbursed_amount,
-        'expense':expense
         }
     return render(request, 'superadmin-dash.html', context)
   #--- superadmin dashboard logic ends here---
@@ -67,7 +46,7 @@ def homepage(request):
     loans = Loan.objects.filter(company=company).order_by('-application_date')[:5]
     repayments = Repayment.objects.filter(company=company)
     members= Member.objects.filter(company=company).order_by('-date_joined')[:5]
-    today = datetime.now()
+    today = timezone.now()
     recent_activities = RecentActivity.objects.order_by('-timestamp')[:5]
 
 
@@ -78,17 +57,26 @@ def homepage(request):
     #rejected loans contexts
     rejected_loans = Loan.objects.filter(status='rejected').filter(company=company)
     num_rejected_loans = rejected_loans.count()
-    pc_rejected_loans = round(num_rejected_loans * 100 /all_loans , 2)
+    if all_loans != 0:
+        pc_rejected_loans = round(num_rejected_loans * 100 /all_loans , 2)
+    else:
+        pc_rejected_loans = 0
 
     #rolledover loans contexts
     rolledover_loans = Loan.objects.filter(status='rolled over').filter(company=company)
     num_rolledover_loans = rolledover_loans.count()
-    pc_rolled_loans = round(num_rolledover_loans * 100 /all_loans , 2)
+    if all_loans != 0:
+        pc_rolled_loans = round(num_rolledover_loans * 100 /all_loans , 2)
+    else:
+        pc_rolled_loans = 0
 
     #disbursed loans contexts
     disbursed_loans = Loan.objects.filter(status__in=['approved','cleared','overdue', 'written off', 'rolled over']).filter(company=company)
     num_disbursed_loans = disbursed_loans.count()
-    pc_disbursed_loans = round(num_disbursed_loans * 100 /all_loans , 2)
+    if all_loans != 0:
+        pc_disbursed_loans = round(num_disbursed_loans * 100 /all_loans , 2)
+    else:
+        pc_disbursed_loans = 0
     total_disbursed_amount = disbursed_loans.aggregate(Sum('approved_amount'))['approved_amount__sum'] or 0
 
     #disbursed loans contexts - staff specific
@@ -116,7 +104,7 @@ def homepage(request):
     staff_num_overdue_loans = staff_overdue_loans.count()
     staff_total_overdue_amount = staff_overdue_loans.aggregate(Sum('approved_amount'))['approved_amount__sum'] or 0
 
-    #expenses contexts
+    #expenses contexts 
     total_expense = Expense.objects.filter(company=company)
     expense = total_expense.aggregate(Sum('amount'))['amount__sum'] or 0
     #expenses contexts - staff specific
@@ -124,7 +112,7 @@ def homepage(request):
     staff_expense = staff_total_expense.aggregate(Sum('amount'))['amount__sum'] or 0
 
     #mature loan contexts
-    mature_loans = Loan.objects.filter(final_due_date__lt=today, company=company) 
+    mature_loans = Loan.objects.filter(final_due_date__date__lt=today.date(), company=company) 
     amount_matured = mature_loans.aggregate(Sum('approved_amount'))['approved_amount__sum'] or 0
     if total_disbursed_amount != 0:
         matured_pc = round(amount_matured * 100 / total_disbursed_amount, 2)
@@ -158,7 +146,7 @@ def homepage(request):
 
     # income, service fees, penalties secured contexts
     interest_secured = mature_cleared_loans.aggregate(Sum('interest_amount'))['interest_amount__sum'] or 0 
-    service_fee = mature_cleared_loans.aggregate(Sum('service_fee_amount'))['service_fee_amount__sum'] or 0 
+    service_fee = disbursed_loans.aggregate(Sum('service_fee_amount'))['service_fee_amount__sum'] or 0 
     total_income = interest_secured + service_fee #later add penalty secured 
 
     context= {

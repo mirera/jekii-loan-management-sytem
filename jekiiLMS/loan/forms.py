@@ -12,7 +12,7 @@ class LoanProductForm(forms.ModelForm):
         
         
         widgets = {
-            'loan_product_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder':'Product Name'}),
+            'loan_product_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder':'Product Name', 'required':True}),
             'minimum_amount': forms.NumberInput(attrs={'class': 'form-control','placeholder':'Minimum Loan Amount e.g 10000'}),
             'maximum_amount': forms.NumberInput(attrs={'class': 'form-control','placeholder':'Maximum Loan Amount e.g 50000'}),
             'loan_product_term': forms.NumberInput(attrs={'class': 'form-control','placeholder':'Enter the loan term e.g 3'}),
