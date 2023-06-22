@@ -1,6 +1,6 @@
 from datetime import timedelta
 from dateutil.relativedelta import relativedelta
-from django.utils import timezone
+from django.utils import timezone 
 import math
 
 # loan paymnent interval period
@@ -114,7 +114,7 @@ def total_penalty(loan):
             #period_overdue = current_date - loan.due_date.date() # in months
             period_overdue = (current_date.year - loan.due_date.date().year) * 12 + (current_date.month - loan.due_date.date().month)
         if penalty_type == 'fixed_value':
-            penalty_amount = loan.penalty_value
+            penalty_amount = loan.loan_product.penalty_value 
         else:
             penalty_amount = fined_amount * period_overdue * penal_rate / 100
 
