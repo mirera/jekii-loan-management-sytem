@@ -1,9 +1,18 @@
+from pathlib import Path
 from cryptography.fernet import Fernet
 import base64
+import dotenv
 import os
 
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
 
-ENCRYPTION_KEY = os.environ.get('ENCRYPTION_KEY')
+# Load environment variables from .env file
+dotenv_file = os.path.join(BASE_DIR, ".env")
+if os.path.isfile(dotenv_file):
+    dotenv.load_dotenv(dotenv_file)
+
+ENCRYPTION_KEY = os.environ.get('ENCRYPTION_KEY') 
  
 
 #encrypt secret
@@ -19,6 +28,5 @@ def decrypt_secret(encrypted_secret_str):
     f = Fernet(ENCRYPTION_KEY.encode('utf-8'))
     encrypted_secret = base64.b64decode(encrypted_secret_str.encode('utf-8'))
     decrypted_secret = f.decrypt(encrypted_secret).decode('utf-8')
-    print(decrypted_secret)
     return decrypted_secret
 # -- ends

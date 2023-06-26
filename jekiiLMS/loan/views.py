@@ -300,6 +300,7 @@ def approveLoan(request,pk):
                     
                     #send mail arguments.
                     email_setting = EmailSetting.objects.get(company=company)
+                    mpesa_setting = MpesaSetting.objects.get(company=company)
 
                     #having this context because delay() need model serialzation
                     context = {
@@ -326,16 +327,15 @@ def approveLoan(request,pk):
                     replyto_email = company.email
 
                     #send sms aurguments
-                    sms_setting = SmsSetting.objects.get(company=company)
+                    sms_setting = SmsSetting.objects.get(company=company) 
                     sender_id = sms_setting.sender_id
                     token = sms_setting.api_token 
                     date = loan.due_date.date().strftime('%Y-%m-%d')
                     message = f"Dear {borrower.first_name}, Your loan request has been approved and queued for disbursal. The next payment date {date}, amount Ksh{loan.due_amount}. Acc. 5840988 Paybill 522522"  
 
                     system_setting = SystemSetting.objects.get(company=company)
-                    if system_setting.is_auto_disburse:
+                    if system_setting.is_auto_disburse and mpesa_setting.online_passkey is not None:
                         #disburse loan
-                        mpesa_setting = MpesaSetting.objects.get(company=company)
                         consumer_key = mpesa_setting.app_consumer_key
                         consumer_secret = mpesa_setting.app_consumer_secret
                         shortcode = mpesa_setting.shortcode
@@ -362,54 +362,52 @@ def approveLoan(request,pk):
                                     state='info',
                                     message = f'Loan for {loan.member.first_name} {loan.member.last_name} has been approved & disbursed.'
                                 )
-                                
-                                #Enqueue the send_sms_task
-                                send_sms_task.delay(
-                                    sender_id, 
-                                    token, 
-                                    borrower.phone_no, 
-                                    message
-                                )
-                                send_email_task.delay(
-                                    context, 
-                                    template_path, 
-                                    from_name, 
-                                    from_email, 
-                                    subject, 
-                                    recipient_email, 
-                                    replyto_email
-                                )
+                                if system_setting.is_send_sms and sender_id is not None and token is not None:
+                                    #Enqueue the send_sms_task
+                                    send_sms_task.delay(
+                                        sender_id, 
+                                        token, 
+                                        borrower.phone_no, 
+                                        message
+                                    )
+                                if system_setting.is_send_email and email_setting.smtp_username is not None and email_setting.smtp_password is not None:
+                                    send_email_task.delay(
+                                        context, 
+                                        template_path, 
+                                        from_name, 
+                                        from_email, 
+                                        subject, 
+                                        recipient_email, 
+                                        replyto_email
+                                    )
                                 
                                 messages.success(request, 'Loan approved & disbursed successfully!')
                                 return redirect('view-loan', loan.id)
                             else:
-                                #undo loan and member status and save
-                                #loan.status = 'pending'
-                                #borrower.status = 'inactive'
-                                #borrower.save()
-                                #loan.save()
                                 messages.error(request, 'Loan disbursement failed!')
                                 return redirect('view-loan', loan.id)
                         except Exception as errors:
                             messages.error(request, f'Loan disbursement failed! {str(errors)}')
                             return redirect('view-loan', loan.id)
                     else:
-                        #Enqueue the send_sms_task and send email tasks
-                        send_sms_task.delay(
-                            sender_id, 
-                            token, 
-                            borrower.phone_no, 
-                            message
-                        ) 
-                        send_email_task.delay(
-                            context, 
-                            template_path, 
-                            from_name, 
-                            from_email, 
-                            subject, 
-                            recipient_email, 
-                            replyto_email
-                        )
+                        if system_setting.is_send_sms and sender_id is not None and token is not None:
+                            #Enqueue the send_sms_task and send email tasks
+                            send_sms_task.delay(
+                                sender_id, 
+                                token, 
+                                borrower.phone_no, 
+                                message
+                            )
+                        if system_setting.is_send_email and email_setting.smtp_username is not None and email_setting.smtp_password is not None: 
+                            send_email_task.delay(
+                                context, 
+                                template_path, 
+                                from_name, 
+                                from_email, 
+                                subject, 
+                                recipient_email, 
+                                replyto_email
+                            )
 
                         # Create a recent activity entry for loan approval
                         RecentActivity.objects.create(
@@ -435,7 +433,7 @@ def approveLoan(request,pk):
     return redirect('view-loan', loan.id)
 #approve logic ends
 
-#approve loan logic starts here
+#reject oan logic starts here
 @login_required(login_url='login')
 @permission_required('loan.reject_loan')
 def rejectLoan(request,pk):
@@ -468,13 +466,15 @@ def rejectLoan(request,pk):
             sender_id = sms_setting.sender_id
             token = sms_setting.api_token 
             message = f"Dear {borrower.first_name}, we regret to inform you that we are unable to approve your loan request at this time."
-            #Enqueue 
-            send_sms_task.delay(
-                sender_id, 
-                token, 
-                borrower.phone_no, 
-                message
-            )
+            #Enqueue
+            system_setting = SystemSetting.objects.get(company=company) 
+            if system_setting.is_send_sms and sender_id is not None and token is not None:
+                send_sms_task.delay(
+                    sender_id, 
+                    token, 
+                    borrower.phone_no, 
+                    message
+                )
             #send email
             email_setting = EmailSetting.objects.get(company=company)
             context = {
@@ -490,20 +490,21 @@ def rejectLoan(request,pk):
             recipient_email = borrower.email
             replyto_email = company.email
 
-            send_email_task.delay(
-                context, 
-                template_path, 
-                from_name, 
-                from_email, 
-                subject, 
-                recipient_email, 
-                replyto_email
-            )
+            if system_setting.is_send_email and email_setting.smtp_username is not None and email_setting.smtp_password is not None:
+                send_email_task.delay(
+                    context, 
+                    template_path, 
+                    from_name, 
+                    from_email, 
+                    subject, 
+                    recipient_email, 
+                    replyto_email
+                )
 
             messages.info(request,'The loan was rejected succussesfully!')
             return redirect(url_with_anchor)
     return render(request,'loan/loans-list.html')
-#approve logic ends
+# ends
 
 # list Loan  view starts 
 @login_required(login_url='login')

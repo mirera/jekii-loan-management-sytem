@@ -196,7 +196,7 @@ def listCompanies(request):
 
 # -- view to add sms setting
 @login_required(login_url='login')
-@permission_required('company.change_smssetting')
+#@permission_required('company.change_smssetting')
 def updateSms(request, pk):
     organization = Organization.objects.get(id=pk)
     sms_setting = SmsSetting.objects.get(company=organization)
@@ -231,7 +231,7 @@ def updateSms(request, pk):
 
 # -- view to add mpesa setting
 @login_required(login_url='login')
-@permission_required('company.change_mpesasetting')
+#@permission_required('company.change_mpesasetting')
 def updateMpesa(request, pk):
     organization = Organization.objects.get(id=pk)
     mpesa_setting = MpesaSetting.objects.get(company=organization)
@@ -277,7 +277,7 @@ def updateMpesa(request, pk):
 
 # -- view to add mpesa setting
 @login_required(login_url='login')
-@permission_required('company.change_emailsetting')
+#@permission_required('company.change_emailsetting')
 def updateEmail(request, pk):
     organization = Organization.objects.get(id=pk)
     email_setting = EmailSetting.objects.get(company=organization)

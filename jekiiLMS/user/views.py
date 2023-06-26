@@ -16,6 +16,7 @@ from branch.models import Branch
 from user.models import Notification
 from company.models import Organization, Package, SmsSetting, SystemSetting
 from jekiiLMS.sms_messages import send_sms 
+from jekiiLMS.utils import get_user_company
 
 
 #---user login in logic starts here---
@@ -95,7 +96,6 @@ def user_signup(request):
                                              'mpesasetting', 'emailsetting']
                 )
             user.user_permissions.add(*permissions)
-            #user.save()    
             login(request, user)
             messages.success(request, 'User created successfully!')
 
@@ -125,14 +125,15 @@ def user_signup(request):
             permissions = Permission.objects.filter(
                     content_type__model__in=['branch', 'expense category', 'expense',
                                             'member', 'loanproduct', 'loan', 'repayment',
-                                            'collateral', 'guarantor', 'companyadmin',
-                                            'companystaff', 'role', 'note']
+                                            'collateral', 'organization', 'guarantor', 'companyadmin',
+                                            'companystaff', 'role', 'note','smssetting',
+                                             'mpesasetting', 'emailsetting']
                 )
 
             role = Role(
                 company=organization,
                 name=organization.name + '-admin',
-                description='This is the default role of the admin user. They have all the permissions'
+                description='This is the default role of the admin user. They have all the permissions. DO NOT DELETE!'
             )
             role.save()
             # Assign the retrieved permissions to the role using the set() method
@@ -186,16 +187,7 @@ def user_logout(request):
 #-- list staffs view starts --
 @login_required(login_url='login') 
 def listStaff(request):
-    
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-        
+    company = get_user_company(request)  
     staffs = CompanyStaff.objects.filter(company=company).order_by('date_added')[1:] #xclude main admin
     form = CompanyStaffForm(request.POST, company=company) 
 
@@ -205,18 +197,9 @@ def listStaff(request):
 
 #-- adding a staff then as a user --
 @login_required(login_url='login')
-@permission_required('user.add_user')
+@permission_required('user.add_companystaff')
 def addStaff(request):
-
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-        
+    company = get_user_company(request) 
     form = CompanyStaffForm(request.POST, company=company) 
 
     if request.method == 'POST':
@@ -295,16 +278,9 @@ def addStaff(request):
 
 # -- view staff --
 @login_required(login_url='login')
-#@permission_required('user.view_user')
+@permission_required('user.view_companystaff')
 def view_staff(request,pk):
-
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-            
+    company = get_user_company(request)        
     staff_user = CompanyStaff.objects.get(id=pk, company=company)
     context = {'staff_user':staff_user}
     return render(request, 'user/view-staff.html', context)
@@ -313,16 +289,9 @@ def view_staff(request,pk):
 
 # -- delete staff --
 @login_required(login_url='login')
-@permission_required('user.delete_user')
+@permission_required('user.delete_companystaff')
 def deleteStaff(request,pk):
-
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-            
+    company = get_user_company(request)      
     if request.method == 'POST':
         staff = CompanyStaff.objects.get(id=pk, company=company)
         user = User.objects.get(username=staff.username)
@@ -336,18 +305,8 @@ def deleteStaff(request,pk):
 
 # -- update userprofile
 @login_required(login_url='login')
-#@permission_required('user.change_user')
-def update_user_profile(request):
-        
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-
+def update_user_profile(request): 
+    company = get_user_company(request) 
     user = CompanyStaff.objects.get(username=request.user.username)
     
     if request.method == 'POST':
@@ -378,18 +337,7 @@ def update_user_profile(request):
 
 # --  user change photo
 @login_required(login_url='login')
-#@permission_required('user.change_user')
 def change_photo(request):
-        
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-    else:
-        company = None
-
     user = CompanyStaff.objects.get(username=request.user.username)
     
     if request.method == 'POST':
@@ -408,19 +356,11 @@ def change_photo(request):
 
 # -- edit user/staff
 @login_required(login_url='login')
-#@permission_required('user.change_user')
+@permission_required('user.change_companystaff')
 def updateStaff(request, pk):
-        
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-
+    company = get_user_company(request) 
     staff = CompanyStaff.objects.get(id=pk, company=company)
     user = User.objects.get(username=staff.username)
-    
     
     if request.method == 'POST':
         branch_id = request.POST.get('branch')
@@ -488,12 +428,14 @@ def deactivateStaff(request, pk):
         sender_id = sms_setting.sender_id
         token = sms_setting.api_token 
         message = f"Dear {staff.first_name}, Your {company.name} user account has been deactivated. Contact your system admin"
-        send_sms(
-            sender_id,
-            token,
-            staff.phone_no, 
-            message,
-            )
+        preferences = SystemSetting.objects.get(company=company)
+        if preferences.is_send_sms and sender_id is not None and token is not None:
+            send_sms(
+                sender_id,
+                token,
+                staff.phone_no, 
+                message,
+                )
 
     messages.info(request, 'Staff deactivated! The user will not be able to login in unless activated.')
     return redirect('staffs')
@@ -519,7 +461,8 @@ def activateStaff(request, pk):
     token = sms_setting.api_token 
     message = f"Dear {staff.first_name}, Your {company.name} user account has been activated. You can now login"
     
-    if system_preferences.is_send_sms:
+    preferences = SystemSetting.objects.get(company=company)
+    if preferences.is_send_sms and sender_id is not None and token is not None:
         send_sms(
                 sender_id,
                 token,
@@ -543,12 +486,7 @@ def addRole(request):
                 'companyadmin', 'companystaff', 'role', 'note',
                 'smssetting','mpesasetting', 'emailsetting' ] 
         )
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
+    company = get_user_company(request) 
 
     if request.method == 'POST':
         # Create a Role instance with form data
@@ -574,13 +512,7 @@ def addRole(request):
 @login_required(login_url='login')
 @permission_required('user.change_role')
 def editRole(request, pk):
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-
+    company = get_user_company(request) 
     role = Role.objects.get(id=pk, company=company)
 
     if request.method == 'POST':
@@ -630,14 +562,7 @@ def rolesList(request):
              'member','loanproduct', 'loan', 'repayment','collateral', 'guarantor',
              'companyadmin', 'companystaff', 'role', 'note' ] 
         )
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-
-  
+    company = get_user_company(request) 
     roles = Role.objects.filter(company=company).order_by('date_added')
     form = RoleForm(request.POST) 
     context = {'roles': roles, 'form':form, 'permissions':permissions}
@@ -648,14 +573,8 @@ def rolesList(request):
 @login_required(login_url='login')
 @permission_required('user.delete_role')
 def deleteRole(request,pk):
-
-    if request.user.is_authenticated and request.user.is_active:
-        try:
-            companystaff = CompanyStaff.objects.get(username=request.user.username)
-            company = companystaff.company
-        except CompanyStaff.DoesNotExist:
-            company = None
-        role = Role.objects.get(id=pk, company=company)    
+    company = get_user_company(request) 
+    role = Role.objects.get(id=pk, company=company)    
     if request.method == 'POST':
         role.delete()
         messages.success(request, 'Role deleted successfully!')

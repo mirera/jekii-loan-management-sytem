@@ -14,7 +14,7 @@ def set_default_passport_photo(sender, instance, **kwargs):
 
 #func begins
 @receiver(post_save, sender=Member)
-def welcom_member_sms(sender, instance, created, **kwargs):
+def welcom_member_sms(sender, instance, created, **kwargs): 
     if created:
         sms_setting = SmsSetting.objects.get(company=instance.company)
         sender_id = sms_setting.sender_id
