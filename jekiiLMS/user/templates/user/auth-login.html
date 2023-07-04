@@ -9,9 +9,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="A powerful and conceptual apps base dashboard template that especially build for developers and programmers.">
     <!-- Fav Icon  -->
-    <link rel="shortcut icon" href="{% static 'assets/images/favicon.png' %}"> 
+    <link rel="shortcut icon" href="{% static 'assets/images/mdeni-favicon.svg' %}">
     <!-- Page Title  -->
-    <title>Login | Loginit MFMS </title>
+    <title>Login | Mdeni </title>
     <!-- StyleSheets  -->
     <link rel="stylesheet" href="{% static 'css/dashlite.css' %}">
     <link id="skin-default" rel="stylesheet" href="{% static 'css/dashlite.css' %}">
@@ -33,9 +33,9 @@
                             <div class="nk-block nk-block-middle nk-auth-body">
                                 <div class="brand-logo pb-5">
                                     <a href="{% url 'home' %}" class="logo-link">
-                                        <img class="" src="{% static 'assets/images/loginit.png' %}" alt="logo" style="width: auto 50%;">
-                                        <img class="logo-light logo-img logo-img-lg" src="{% static 'assets/images/loginit.png' %}" srcset="{% static 'assets/images/loginit.png' 2x %}" alt="logo">
-                                        <!-- <img class="logo-dark logo-img logo-img-lg" src="{% static 'assets/images/loginit.png' %}" srcset="{% static 'assets/images/loginit.png' 2x %}" alt="logo-dark"> -->
+                                        <img class="" src="{% static 'assets/images/mdeni-v1-black.png' %}" alt="logo" style="width: 30%;">
+                                        <img class="logo-light logo-img logo-img-lg" src="{% static 'assets/images/mdeni-v1.png' %}" srcset="{% static 'assets/images/mdeni-v1.png' 2x %}" alt="logo">
+                                        <!--<img class="logo-dark logo-img logo-img-lg" src="{% static 'assets/images/mdeni-v1' %}" srcset="{% static 'assets/images/mdeni-v1.png' 2x %}" alt="logo-dark"> -->
                                     </a>
                                 </div>
                                 <!-- django error messages starts here -->
@@ -94,7 +94,7 @@
                                     <li class="nav-item"><a class="nav-link" href="#">Google</a></li>
                                 </ul>
                                 <div class="text-center mt-5">
-                                    <span class="fw-500">I don't have an account? <a href="#">Try 15 days free</a></span>
+                                    <span class="fw-500">I don't have an account? <a href="{% url 'register' %}">Try 15 days free</a></span>
                                 </div> -->
                             </div><!-- .nk-block -->
                             <div class="nk-block nk-auth-footer">
@@ -153,33 +153,37 @@
                                     <div class="slider-item">
                                         <div class="nk-feature nk-feature-center">
                                             <div class="nk-feature-img">
-                                                <img class="round" src="{% static 'assets/images/promo-a.png' %}"  alt="">
+                                                <img class="round" src="{% static 'assets/images/hom.png' %}"  alt="">
                                             </div>
                                             <div class="nk-feature-content py-4 p-sm-5">
-                                                <h4>Jekii Capital</h4>
-                                                <p>You can start to create your products easily with its user-friendly design & most completed responsive layout.</p>
+                                                <h4>Mdeni Micro-Finance System</h4>
+                                                <p>Lending platform developed specially for the microfinance industry. Master operational and credit risk for the whole loan lifecycle.</p>
                                             </div>
                                         </div>
                                     </div><!-- .slider-item -->
                                     <div class="slider-item">
                                         <div class="nk-feature nk-feature-center">
                                             <div class="nk-feature-img">
-                                                <img class="round" src="{% static 'assets/images/promo-b.png' %}"  alt="">
+                                                <img class="round" src="{% static 'assets/images/loan-process.png' %}" srcset="{% static 'assets/images/loan-process.png' %} 2x" alt="">
                                             </div>
                                             <div class="nk-feature-content py-4 p-sm-5">
-                                                <h4>Jekii Capital</h4>
-                                                <p>You can start to create your products easily with its user-friendly design & most completed responsive layout.</p>
+                                                <h4>Loan Management & Processing</h4>
+                                                <p>Experience the ultimate control over your loan process .
+                                                    Access comprehensive loan details, including repayments, loan terms, schedule, collateral e.t.c.
+                                                    Easily communicate with borrowers through SMS and email, ensuring smooth and efficient loan management at every step.</p>
                                             </div>
                                         </div>
                                     </div><!-- .slider-item -->
                                     <div class="slider-item">
                                         <div class="nk-feature nk-feature-center">
                                             <div class="nk-feature-img">
-                                                <img class="round" src="{% static 'assets/images/promo-a.png' %}"  alt="">
+                                                <img class="round" src="{% static 'assets/images/charts.png' %}" srcset="{% static 'assets/images/charts.png' %} 2x" alt="">
                                             </div>
                                             <div class="nk-feature-content py-4 p-sm-5">
-                                                <h4>Jekii Capital</h4>
-                                                <p>You can start to create your products easily with its user-friendly design & most completed responsive layout.</p>
+                                                <h4>Reports & Analytics</h4>
+                                                <p>Gain valuable insights into your loan disbursements and repayments with Mdeni's reporting features.
+                                                    Visualize your financial data through detailed charts, track cash flow, and assess profit/loss statements.
+                                                    Make informed decisions and monitor your microfinance performance for greater success.</p>
                                             </div>
                                         </div>
                                     </div><!-- .slider-item -->
