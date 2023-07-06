@@ -1,8 +1,9 @@
 from celery import shared_task 
 from django.utils import timezone
+from datetime import timedelta
 from loan.models import Loan, Repayment
 from company.models import SmsSetting, SystemSetting
-from .loan_math import update_due_amount,get_previous_due_date, update_credit_score
+from .loan_math import update_due_amount,get_previous_due_date, update_credit_score, total_penalty,get_interval_period
 from .sms_messages import send_sms, send_email
 from .mpesa_api import disburse_loan 
 
@@ -23,19 +24,44 @@ def mark_loans_as_overdue():
             date_paid__gt=previous_due_date
         )
         total_repayments = sum(repayment.amount for repayment in repayments)
-        if total_repayments < loan.due_amount:
+
+        #include a case of mutiple missed payments
+        start_date = loan.approved_date + timedelta(days=1)
+        interval_period = get_interval_period(loan) #in timedelta(days=50) format
+        difference = (timezone.now() - start_date).days ##get difference between start date and current_date
+        expired_intervals = difference // interval_period.days #get expired payment intervals/installments
+        penalities = total_penalty(loan)
+        print(f'This is the penalty {penalities}')
+        if penalities is None:
+            penalities = 0
+        print(f'This is the penalty {penalities}')
+        print(f'This is the pased intervals {expired_intervals}')
+        print(f'This is the penalty {expired_intervals}')
+        missed_payments = expired_intervals * loan.due_amount + penalities
+
+        if total_repayments < missed_payments:
+        #if total_repayments < loan.due_amount:
             # Loan is overdue
             loan.status = 'overdue'
             loan.save()
             #update member credit score
             update_credit_score(loan)
 
-            system_settings = SystemSetting.objects.get(company=loan.company)
-            sms_settings = SmsSetting.objects.get(company=loan.company)
-            if system_settings.is_send_sms and sms_settings.api_token is not None and sms_settings.sender_id is not None:
-                # send sms
-                message = f"Dear {loan.member.first_name}, your loan installment of Ksh{loan.due_amount} is overdue. Make payment to avoid further penalties. Acc. 5840988 Paybill 522522"
-                send_sms(sms_settings.sender_id, sms_settings.api_token, loan.member.phone_no, message)
+            try:
+                system_settings = SystemSetting.objects.get(company=loan.company)
+            except SystemSetting.DoesNotExist:
+                system_settings = None
+
+            try:
+                sms_settings = SmsSetting.objects.get(company=loan.company)
+            except SmsSetting.DoesNotExist:
+                sms_settings = None
+
+            if sms_settings is not None:
+                if system_settings.is_send_sms and sms_settings.api_token is not None and sms_settings.sender_id is not None:
+                    # send sms
+                    message = f"Dear {loan.member.first_name}, your loan installment of Ksh{loan.due_amount} is overdue. Make payment to avoid further penalties. Acc. 5840988 Paybill 522522"
+                    send_sms(sms_settings.sender_id, sms_settings.api_token, loan.member.phone_no, message)
 
 @shared_task
 def hello_engima():
@@ -61,12 +87,18 @@ def send_loan_balance():
         try:
             system_settings = SystemSetting.objects.get(company=loan.company)
         except SystemSetting.DoesNotExist:
-            pass
-        sms_settings = SmsSetting.objects.get(company=loan.company)
-        if system_settings.is_send_sms and sms_settings.api_token is not None and sms_settings.sender_id is not None:
-            # send sms of loan balance
-            message = f"Dear {loan.member.first_name}, Your current loan balance is Ksh{balance}. Final payment date is {final_date}. Wishing you success in your business."
-            send_sms(sms_settings.sender_id, sms_settings.api_token, loan.member.phone_no, message)
+            system_settings = None
+
+        try:
+            sms_settings = SmsSetting.objects.get(company=loan.company)
+        except SmsSetting.DoesNotExist:
+            sms_settings = None
+
+        if sms_settings is not None:
+            if system_settings.is_send_sms and sms_settings.api_token is not None and sms_settings.sender_id is not None:
+                # send sms of loan balance
+                message = f"Dear {loan.member.first_name}, Your current loan balance is Ksh{balance}. Final payment date is {final_date}. Wishing you success in your business."
+                send_sms(sms_settings.sender_id, sms_settings.api_token, loan.member.phone_no, message)
 # --end
 
 @shared_task
