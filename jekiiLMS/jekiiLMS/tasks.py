@@ -58,7 +58,10 @@ def send_loan_balance():
         balance = loan.loan_balance()
         final_date = loan.final_payment_date().date().strftime('%Y-%m-%d')
 
-        system_settings = SystemSetting.objects.get(company=loan.company)
+        try:
+            system_settings = SystemSetting.objects.get(company=loan.company)
+        except SystemSetting.DoesNotExist:
+            pass
         sms_settings = SmsSetting.objects.get(company=loan.company)
         if system_settings.is_send_sms and sms_settings.api_token is not None and sms_settings.sender_id is not None:
             # send sms of loan balance
