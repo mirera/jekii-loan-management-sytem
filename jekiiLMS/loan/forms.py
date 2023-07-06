@@ -67,7 +67,7 @@ class RepaymentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         company = kwargs.pop('company', None)  # Get the company from kwargs, set default to None
         super(RepaymentForm, self).__init__(*args, **kwargs)
-        self.fields['member'].queryset = Member.objects.filter(company=company, status='active')
+        self.fields['member'].queryset = Member.objects.filter(company=company)
 
     class Meta:
         model = Repayment
@@ -77,11 +77,9 @@ class RepaymentForm(forms.ModelForm):
         
         widgets = {
             'transaction_id': forms.TextInput(attrs={'class': 'form-control'}),
-            #'loan_id': forms.Select(attrs={'class': 'form-select js-select2'}),
             'member': forms.Select(attrs={'class': 'form-select js-select2'}),
             'amount': forms.NumberInput(attrs={'class': 'form-control','placeholder':'1000'}),
-            'date_paid': forms.DateInput(attrs={'class': 'form-control date-picker-range', 'data-date-format':'yyyy-mm-dd'}),   
-            
+            'date_paid': forms.DateInput(attrs={'class': 'form-control date-picker-range', 'data-date-format':'yyyy-mm-dd'}),
         } 
 
 class GuarantorForm(forms.ModelForm):

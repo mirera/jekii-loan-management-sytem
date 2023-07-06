@@ -183,14 +183,3 @@ INITIATOR_NAME = 'MIRERA'
 SECURITY_CREDENTIAL = 'Somepassword'
 
 
-# Set the session cookie age to 5 minutes (300 seconds)
-SESSION_COOKIE_AGE = 1200
-
-# Expire the session when the user closes the browser
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-
-# Set whether the session cookie is secure (recommended for production)
-#SESSION_COOKIE_SECURE = True
-
-# Set whether the session cookie can be accessed by JavaScript
-SESSION_COOKIE_HTTPONLY = True

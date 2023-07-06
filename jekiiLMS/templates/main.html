@@ -188,7 +188,7 @@
         // Function to reset the session timeout on user activity
         function resetSessionTimeout() {
             clearTimeout(window.sessionTimeout);
-            window.sessionTimeout = setTimeout(redirectLogout, 1200000);  // 20 minutes in milliseconds
+            window.sessionTimeout = setTimeout(redirectLogout, 300000);  // 5 minutes in milliseconds
         }
     
         // Bind the resetSessionTimeout function to various user activities
@@ -198,7 +198,5 @@
         document.addEventListener("touchmove", resetSessionTimeout);
         document.addEventListener("scroll", resetSessionTimeout);
     </script>
-    
-
 </body>
-</html> 
+</html>
