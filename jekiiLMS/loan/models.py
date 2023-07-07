@@ -98,8 +98,7 @@ LOAN_STATUS = (
 )
 class Loan(models.Model):
     company = models.ForeignKey(Organization, on_delete=models.CASCADE)
-    #loan_id =models.CharField(max_length=50, unique=True) 
-    loan_id = models.IntegerField(unique=True) 
+    loan_id =models.CharField(max_length=50, unique=True)  
     loan_product = models.ForeignKey(LoanProduct, on_delete=models.SET_NULL, null=True)
     member = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True, related_name='loans_as_member')
     applied_amount = models.IntegerField()

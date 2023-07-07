@@ -2,7 +2,6 @@ import fitz
 import pandas as pd
 
 
-
 #prepare list of all creditors 
 known_creditors = ['KISMAT', 'FOURTH GENERATION CAPITAL', 'YEHU', 'MULLA PRIDE LIMITED',
                      'YESCASH', 'AZURA CREDIT LIMITED', 'LINK CASH', 'SURE CRED CAPITAL LIMITED', 

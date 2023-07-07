@@ -1,21 +1,25 @@
 from django.contrib.auth.hashers import make_password
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.contrib import messages
+from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from jekiiLMS.decorators import permission_required
 from datetime import datetime
 from django.core.mail import EmailMessage
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.template.loader import render_to_string
 from django.contrib.auth.models import User, Permission
 from jekiiLMS.format_inputs import format_phone_number, deformat_phone_no
 from .forms import CustomUserCreationForm, CompanyStaffForm , RoleForm
-from django.contrib import messages
 from .models import CompanyStaff, Role
 from branch.models import Branch 
 from user.models import Notification
 from company.models import Organization, Package, SmsSetting, SystemSetting
-from jekiiLMS.sms_messages import send_sms 
+from jekiiLMS.sms_messages import send_sms
+from jekiiLMS.tasks import send_email_task, send_sms_task
 from jekiiLMS.utils import get_user_company
 
 
@@ -74,14 +78,31 @@ def user_signup(request):
     form = CustomUserCreationForm(request.POST)
 
     if request.method == 'POST':
-
         company_name = request.POST.get('company_name')
         email = request.POST.get('email')
-        
+        # Check if email exists in the system
+        r = User.objects.filter(email=email)
+        if r.count():
+            messages.error(request, "Email already exists")
+
+        password1 = request.POST.get('password1')
+        password2 = request.POST.get('password2')
+        if password1 != password2:
+            messages.error(request, 'The passwords do not match! Try again.')
+        else:
+            # Check password strength
+            if len(password1) < 8:
+                messages.error(request, 'Your password must be at least 8 characters long.')
+            elif password1.isdigit():
+                messages.error(request, 'Your password must contain at least one letter.')
+            elif password1.isalpha():
+                messages.error(request, 'Your password must contain at least one digit.')
+            else:
+                # Hash the new password
+                password = make_password(password1)
 
         #performing validation
         if form.is_valid():
-
             #save user but no commit before lowercasing the username
             user = form.save(commit=False)
             user.username = user.username.lower()
@@ -140,7 +161,7 @@ def user_signup(request):
             role.permissions.set(permissions)
 
             #create a staff object of the admin
-            password = make_password(request.POST.get('password1'))
+            #password = make_password(request.POST.get('password1'))
             staff = CompanyStaff.objects.create(
                 company = organization,
                 username = request.POST.get('username'),
@@ -154,16 +175,15 @@ def user_signup(request):
             )
             #send email to for email verification 
             context = {'company_name':company_name}
-            template = render_to_string('user/company_welcome.html', context)
-            email = EmailMessage(
-                "Welcome to Loginit",
-                template,
-                #settings.EMAIL_HOST_USER  ,
-                f'Loginit mdeni <{settings.EMAIL_HOST_USER}>',
-                [email],
-                reply_to=[settings.EMAIL_HOST_USER],
+            send_email_task.delay(
+                context=context,
+                template_path='user/company_welcome.html',
+                from_name='Mdeni',
+                from_email=settings.EMAIL_HOST_USER,
+                subject='Welcome to Mdeni',
+                recipient_email=email,
+                replyto_email=settings.EMAIL_HOST_USER
             )
-            email.send(fail_silently=False)
 
             #redirect to update organization info
             messages.success(request, f'Account for {company_name} was created successfully. Check your email for verification instructions')
@@ -176,9 +196,111 @@ def user_signup(request):
     return render (request, 'user/auth-register.html', context)
 #--- ends---
 
-@login_required(login_url='login')
-def password_reset(request):
-    return render(request, 'user/auth-reset.html')
+#-- prompt user to enter email for resetting password
+def forgot_password(request):
+    return render(request,'user/reset-password.html')
+#--ends
+
+# Password reset token generator
+token_generator = PasswordResetTokenGenerator()
+
+#-- send change password instructions and link.
+def resetpass_email_send(request):
+    #get the user email from the POST request
+    if request.method == 'POST':
+        email = request.POST.get('email').lower()
+
+        #raise email/username do not exist in our database error
+        try:
+            user = User.objects.get(email=email)
+        except:
+            user = None
+            messages.error(request, 'This email does not exist in our database!')
+        if user is not None:
+            # Generate the password reset URL parameter user_id and token
+            reset_url = request.build_absolute_uri(reverse('password_reset', args=[user.id, token_generator.make_token(user)])) 
+
+            #send the user an email with instruction how to change password and a link 
+            context = {
+                "user":user.username,
+                "reset_url": reset_url
+                       }
+            send_email_task.delay(
+                context=context,
+                template_path='user/reset-instructions.html',
+                from_name='Mdeni',
+                from_email=settings.EMAIL_HOST_USER,
+                subject='Mdeni Password Reset',
+                recipient_email=email,
+                replyto_email=settings.EMAIL_HOST_USER
+            )
+            messages.success(request, 'Your request for a password reset has been received. Kindly check your email for further instructions.')
+            #return render(request,'user/reset-successful.html')
+    #return render success 
+    return render(request,'user/reset-password.html')
+#-- ends
+
+# reset password form
+def render_reset_form(request):
+    return render(request, 'user/reset-form.html')
+#-- ends
+
+# change password
+
+def password_reset(request, pk, token):
+    # Retrieve user based on id
+    try:
+        user = User.objects.get(id=pk)
+    except User.DoesNotExist:
+        user=None
+
+    if user is not None and token_generator.check_token(user, token):
+        if request.method == 'POST':
+            password1 = request.POST.get('password1')
+            password2 = request.POST.get('password2')
+            if password1 != password2:
+                messages.error(request, 'The passwords do not match! Try again.')
+            else:
+                # Check password strength
+                if len(password1) < 8:
+                    messages.error(request, 'Your password must be at least 8 characters long.')
+                elif password1.isdigit():
+                    messages.error(request, 'Your password must contain at least one letter.')
+                elif password1.isalpha():
+                    messages.error(request, 'Your password must contain at least one digit.')
+                else:
+                    # Hash the new password
+                    password = make_password(password1)
+                    user.password = password
+                    user.save()
+
+                    #send email to notify user their password was changed recently
+                    forgot_password_url = request.build_absolute_uri(reverse('forgot_password')) 
+                    context = {
+                        "user":user.username,
+                        "forgot_password_url": forgot_password_url
+                            }
+                    send_email_task.delay(
+                        context=context,
+                        template_path='user/reset-success-email.html',
+                        from_name='Mdeni',
+                        from_email=settings.EMAIL_HOST_USER,
+                        subject='Your Mdeni password has been updated',
+                        recipient_email=user.email,
+                        replyto_email=settings.EMAIL_HOST_USER
+                    )
+                    messages.success(request, 'Your password has been successfully reset.')
+                    return redirect('login')           
+    else:
+        messages.error(request, 'Invalid token!')
+        return redirect('forgot_password') 
+    context = {
+        "user":user,
+        "token":token
+    }
+    return render(request, 'user/reset-form.html', context)
+    
+#-- ends
 
 def user_logout(request):
     logout(request)
@@ -450,7 +572,7 @@ def activateStaff(request, pk):
     staff.save()
 
     company = staff.company
-    user = User.objects.get(username=staff.username)
+    user = User.objects.get(username=staff.username) 
     user.is_active= True
     user.save()
 

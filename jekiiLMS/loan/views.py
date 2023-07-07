@@ -688,7 +688,6 @@ def editRepayment(request,pk):
 
         member_id = request.POST.get('member')
         member = Member.objects.get(pk=member_id, company=company)
-
         loan = member.loans_as_member.get(status=('approved' or 'overdue'))
 
         date_paid_str = request.POST.get('date_paid')
@@ -700,6 +699,7 @@ def editRepayment(request,pk):
             repayment= form.save(commit=False)
             repayment.loan_id = loan
             repayment.company = company
+            repayment.member = repayment.member
             repayment.date_paid = utcz_datetime
             repayment.save()
 
@@ -994,7 +994,7 @@ def analyseStatement(request, pk):
     file_path = os.path.join(settings.BASE_DIR, 'static', 'media', file_path) #absolute path for the file
 
     file_password= statement.code
-    loan_table = get_loans_table(file_path, file_password)
+    loan_table = get_loans_table(file_path, file_password) 
        
     context= {'loan':loan,'file_path':file_path, 'loan_table':loan_table}
     return render(request,'loan/analysis.html', context)
