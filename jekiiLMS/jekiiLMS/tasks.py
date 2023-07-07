@@ -31,12 +31,8 @@ def mark_loans_as_overdue():
         difference = (timezone.now() - start_date).days ##get difference between start date and current_date
         expired_intervals = difference // interval_period.days #get expired payment intervals/installments
         penalities = total_penalty(loan)
-        print(f'This is the penalty {penalities}')
         if penalities is None:
             penalities = 0
-        print(f'This is the penalty {penalities}')
-        print(f'This is the pased intervals {expired_intervals}')
-        print(f'This is the penalty {expired_intervals}')
         missed_payments = expired_intervals * loan.due_amount + penalities
 
         if total_repayments < missed_payments:
