@@ -112,7 +112,8 @@ def homepage(request):
     staff_expense = staff_total_expense.aggregate(Sum('amount'))['amount__sum'] or 0
 
     #mature loan contexts
-    mature_loans = Loan.objects.filter(final_due_date__date__lt=today.date(), company=company) 
+    mature_loans = Loan.objects.filter(final_due_date__lt=today, company=company) 
+    print(f'This are matured loans {mature_loans}')
     amount_matured = mature_loans.aggregate(Sum('approved_amount'))['approved_amount__sum'] or 0
     if total_disbursed_amount != 0:
         matured_pc = round(amount_matured * 100 / total_disbursed_amount, 2)

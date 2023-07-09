@@ -3,7 +3,7 @@ from django import forms
 from pytz import all_timezones
 from iso4217 import Currency
 import pycountry
-from .models import Organization, Package, SmsSetting, MpesaSetting, EmailSetting, SystemSetting
+from .models import Organization, Package, SmsSetting, MpesaSetting, EmailSetting, SystemSetting, SecuritySetting
 from jekiiLMS.utils import phone_codes
 
 
@@ -114,4 +114,16 @@ class SystemSettingForm(forms.ModelForm):
             'is_auto_disburse': forms.CheckboxInput(attrs={'class': 'custom-control-input', 'id': 'auto_disburse'}),
             'is_send_sms': forms.CheckboxInput(attrs={'class': 'custom-control-input', 'id': 'send_sms'}), 
             'is_send_email': forms.CheckboxInput(attrs={'class': 'custom-control-input', 'id': 'send_email'}),    
+        }
+
+class SecuritySettingForm(forms.ModelForm):
+    class Meta:
+        model = SecuritySetting
+        fields = '__all__'
+        exclude = ['company']
+        
+        widgets = {
+            #'save_activity': forms.CheckboxInput(attrs={'class': 'custom-control-input', 'id': 'save_activity'}),
+            'two_fa_auth': forms.CheckboxInput(attrs={'class': 'custom-control-input', 'id': 'two_fa_auth'}), 
+            #'auto_logout': forms.CheckboxInput(attrs={'class': 'custom-control-input', 'id': 'auto_logout'}),    
         }

@@ -8,7 +8,7 @@ from .forms import OrganizationForm, PackageForm, SmsForm, MpesaSettingForm, Ema
 from user.models import CompanyStaff
 from branch.models import Branch
 from member.models import Member
-from company.models import SmsSetting, MpesaSetting, EmailSetting, SystemSetting
+from company.models import SmsSetting, MpesaSetting, EmailSetting, SystemSetting, SecuritySetting
 from jekiiLMS.cred_process import encrypt_secret
 from jekiiLMS.decorators import permission_required
 from jekiiLMS.format_inputs import format_phone_number, deformat_phone_no
@@ -49,9 +49,14 @@ def updateOrganization(request, pk):
         # create 
         preferences = SystemSetting.objects.create(company=organization)
 
+    try:
+        security_setting = SecuritySetting.objects.get(company=organization)
+    except SecuritySetting.DoesNotExist:
+        # create 
+        security_setting = SecuritySetting.objects.create(company=organization)
+
     old_phone_code = organization.phone_code
 
-    
     if request.method == 'POST':
         phone_no = request.POST.get('phone_no') 
         phone_code = request.POST.get('phone_code') 
@@ -148,7 +153,8 @@ def updateOrganization(request, pk):
             'form_email':form_email,
             'form_preferences':form_preferences,
             'organization':organization,
-            'admins':admins
+            'admins':admins,
+            'security_setting':security_setting
         }
        
     return render(request,'company/update-company.html', context)
@@ -390,3 +396,24 @@ def updatePreferences(request, pk):
     
     return render(request,'company/update-company.html', context) 
 # --ends
+
+#security setting views
+#disable two factor auth
+@login_required(login_url='login')
+def disable_2fa(request, pk):
+    organization = Organization.objects.get(id=pk)
+    security_setting, created = SecuritySetting.objects.get_or_create(company=organization)
+    security_setting.two_fa_auth = False
+    security_setting.save()
+    return redirect('update-organization', organization.id)
+
+#enable two factor auth
+@login_required(login_url='login')
+def enable_2fa(request, pk):
+    organization = Organization.objects.get(id=pk)
+    security_setting, created = SecuritySetting.objects.get_or_create(company=organization)
+    if security_setting.two_fa_auth == False:
+        security_setting.two_fa_auth = True
+        security_setting.save()
+    return redirect('update-organization', organization.id)
+

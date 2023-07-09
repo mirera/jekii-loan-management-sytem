@@ -2,12 +2,18 @@ import requests
 import json
 from django.conf import settings
 from django.core.mail import EmailMessage
-from django.template.loader import render_to_string
+from django.template.loader import render_to_string 
 from jekiiLMS.cred_process import decrypt_secret
 
 #sms
 def send_sms(sender_id, token, phone_no, message):
-    token_decrypted = decrypt_secret(token)
+    #if is loginit mdeni sending the sms 
+    #the token is not encrypted and stored on db instead 
+    #its on the env variables
+    if sender_id == 'JEKII_CPTL': #later change to Loginit or Mdeni sender id
+        token_decrypted = settings.SMS_API_TOKEN
+    else:
+        token_decrypted = decrypt_secret(token)
 
     url = 'https://sms.erranium.com/api/v3/sms/send'
     headers = {

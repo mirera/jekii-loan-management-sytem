@@ -12,7 +12,7 @@ dotenv_file = os.path.join(BASE_DIR, ".env")
 if os.path.isfile(dotenv_file):
     dotenv.load_dotenv(dotenv_file)
 
-ENCRYPTION_KEY = os.environ.get('ENCRYPTION_KEY') 
+ENCRYPTION_KEY = os.environ.get('ENCRYPTION_KEY')  
  
 
 #encrypt secret

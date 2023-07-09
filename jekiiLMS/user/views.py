@@ -7,6 +7,7 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from jekiiLMS.decorators import permission_required
 from datetime import datetime
+from django.shortcuts import get_object_or_404
 from django.core.mail import EmailMessage
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -21,10 +22,10 @@ from company.models import Organization, Package, SmsSetting, SystemSetting
 from jekiiLMS.sms_messages import send_sms
 from jekiiLMS.tasks import send_email_task, send_sms_task
 from jekiiLMS.utils import get_user_company
+import pyotp
 
 
 #---user login in logic starts here---
-
 def user_login(request):
     #preventing logged in users from logging in again
     if request.user.is_authenticated and request.user.is_active:
@@ -37,8 +38,7 @@ def user_login(request):
             return redirect('superadmin_dashboard')
         else:
             return redirect('home')
-       
-
+        
     #extracting login credential from login form
     if request.method == 'POST':
         username = request.POST.get('username').lower()
@@ -51,9 +51,56 @@ def user_login(request):
             messages.error(request, 'This username does not exist on our database!')
 
         # check if username and password match to autheticate
-        user = authenticate(username=username, password=password)
-
+        user = authenticate(username=username, password=password) 
         if user is not None:
+            # Generate the time-bound OTP
+            totp = pyotp.TOTP(settings.OTP_SECRET_KEY)
+            system_otp = totp.now()
+
+            #append otp and user id to the session
+            request.session['otp'] = system_otp
+            request.session['pk'] = user.id
+
+            #check is user is client-staff or loginit-staff
+            try:
+                staff = CompanyStaff.objects.get(username=user.username)#check if user is client-staff
+            except:
+                staff = 'something' # find out our to include the super user/staff with their phone no. 
+            #send OTP as SMS
+            sender_id = settings.SMS_SENDER_ID
+            token = settings.SMS_API_TOKEN
+            message = f"Your OTP is {system_otp}. It will be active for the next 02.00 minutes."
+            send_sms_task.delay(
+                sender_id,
+                token,
+                staff.phone_no, 
+                message,
+                )
+            #redirect user to Enter OTP form page
+            return redirect('input_otp')
+        else:
+            messages.error(request, 'The username or password is incorrect')
+    return render (request, 'user/auth-login.html')
+#---user login in logic ends here---
+
+#input OTP
+def input_otp(request):
+    return render(request,'user/input-otp.html')
+#-- ends
+
+#OTP verify
+def verify(request):
+    if request.method == 'POST':
+        #get the user pk from request.session('pk')
+        user = get_object_or_404(User, id=request.session['pk'])
+        otp = int(request.POST.get('otp')) 
+
+        #get system generated otp from session
+        totp = pyotp.TOTP(settings.OTP_SECRET_KEY)
+
+        #verify otp
+        if totp.verify(otp):
+            #login and redirect home page
             login(request, user)
             if request.user.is_authenticated and request.user.is_active:
                 try:
@@ -66,11 +113,11 @@ def user_login(request):
                 else:
                     return redirect('home')
         else:
-            messages.error(request, 'The username or password is incorrect')
-            
-    return render (request, 'user/auth-login.html')
-
-#---user login in logic ends here---
+            #else redirect Enter OTP page 
+            messages.error(request, 'Invalid OTP!')
+            return redirect('input_otp')
+    return render(request, 'user/input-otp.html')
+#-- ends
 
 #---user register  logic starts here---
 def user_signup(request):

@@ -104,3 +104,14 @@ class SystemSetting(models.Model):
     def __str__(self):
         return self.company.name
 # -- ends 
+
+#security setting model
+class SecuritySetting(models.Model):
+    company = models.ForeignKey(Organization, on_delete=models.SET_NULL, blank=True, null=True, )
+    #save_activity = models.BooleanField(default=True)
+    two_fa_auth = models.BooleanField(default=True)
+    #auto_logout = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.company.name
+# -- ends
