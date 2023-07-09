@@ -49,6 +49,7 @@ class CompanyAdmin(models.Model):
     profile_photo = models.ImageField(default='default.png', upload_to='profile_photos/')
     date_joined = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
+    is_verified = models.BooleanField(default=False)
 
     def __str__(self):
         return self.first_name + ' ' + self.last_name
@@ -81,7 +82,7 @@ STATUS = (
 )
 
 class CompanyStaff(models.Model):
-    company = models.ForeignKey(Organization, on_delete=models.CASCADE)
+    company = models.ForeignKey(Organization, on_delete=models.CASCADE) 
     username = models.CharField(max_length=10)
     password = models.CharField(max_length=200)
     email = models.EmailField()
@@ -95,6 +96,7 @@ class CompanyStaff(models.Model):
     profile_photo = models.ImageField(default='default.png', upload_to='profile_photos/')
     date_added = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=STATUS, default='active')
+    is_verified = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['-date_added']
