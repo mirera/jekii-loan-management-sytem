@@ -15,6 +15,10 @@ urlpatterns = [
     path('test-email/<str:pk>', views.sendTestEmail, name='test-email'),
     path('preferences/<str:pk>', views.updatePreferences, name='preferences'), 
 
+    #security settings
+    path('disable-2fa/<str:pk>', views.disable_2fa, name='disable-2fa'),
+    path('enable-2fa/<str:pk>', views.enable_2fa, name='enable-2fa'),  
+
 
     #package urls
     path('create-package', views.createPackage, name='create-package'),

@@ -49,6 +49,7 @@ class CompanyAdmin(models.Model):
     profile_photo = models.ImageField(default='default.png', upload_to='profile_photos/')
     date_joined = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
+    is_verified = models.BooleanField(default=False)
 
     def __str__(self):
         return self.first_name + ' ' + self.last_name
@@ -81,20 +82,21 @@ STATUS = (
 )
 
 class CompanyStaff(models.Model):
-    company = models.ForeignKey(Organization, on_delete=models.CASCADE)
+    company = models.ForeignKey(Organization, on_delete=models.CASCADE) 
     username = models.CharField(max_length=10)
     password = models.CharField(max_length=200)
     email = models.EmailField()
     first_name = models.CharField(max_length=20)
     last_name = models.CharField(max_length=20)
     id_no = models.CharField(max_length=10, blank=True)
-    phone_no = models.CharField(max_length=10, blank=True)
+    phone_no = models.CharField(max_length=12, blank=True)
     branch = models.ForeignKey(Branch, on_delete=models.SET_NULL, null= True)
     user_type = models.CharField(max_length=10, choices=USER_TYPE)
     staff_role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True, blank=True)
     profile_photo = models.ImageField(default='default.png', upload_to='profile_photos/')
     date_added = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=STATUS, default='active')
+    is_verified = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['-date_added']

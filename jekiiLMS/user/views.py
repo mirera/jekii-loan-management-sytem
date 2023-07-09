@@ -7,6 +7,7 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from jekiiLMS.decorators import permission_required
 from datetime import datetime
+from django.shortcuts import get_object_or_404
 from django.core.mail import EmailMessage
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -21,10 +22,10 @@ from company.models import Organization, Package, SmsSetting, SystemSetting
 from jekiiLMS.sms_messages import send_sms
 from jekiiLMS.tasks import send_email_task, send_sms_task
 from jekiiLMS.utils import get_user_company
+import pyotp
 
 
 #---user login in logic starts here---
-
 def user_login(request):
     #preventing logged in users from logging in again
     if request.user.is_authenticated and request.user.is_active:
@@ -37,8 +38,7 @@ def user_login(request):
             return redirect('superadmin_dashboard')
         else:
             return redirect('home')
-       
-
+        
     #extracting login credential from login form
     if request.method == 'POST':
         username = request.POST.get('username').lower()
@@ -53,7 +53,64 @@ def user_login(request):
         # check if username and password match to autheticate
         user = authenticate(username=username, password=password)
 
-        if user is not None:
+        #check if the user is email-verified
+        try:
+            staff = CompanyStaff.objects.get(username=user.username)#check if user is client-staff
+        except:
+            staff = 'something' # find out our to include the super user/staff with their phone no.
+
+        if staff.is_verified: 
+            if user is not None:
+                # Generate the time-bound OTP
+                totp = pyotp.TOTP(settings.OTP_SECRET_KEY)
+                system_otp = totp.now()
+
+                #append otp and user id to the session
+                request.session['otp'] = system_otp
+                request.session['pk'] = user.id
+
+                #check is user is client-staff or loginit-staff
+                try:
+                    staff = CompanyStaff.objects.get(username=user.username)#check if user is client-staff
+                except:
+                    staff = 'something' # find out our to include the super user/staff with their phone no. 
+                #send OTP as SMS
+                sender_id = settings.SMS_SENDER_ID
+                token = settings.SMS_API_TOKEN
+                message = f"Your OTP is {system_otp}. It will be active for the next 02.00 minutes."
+                send_sms_task.delay(
+                    sender_id,
+                    token,
+                    staff.phone_no, 
+                    message,
+                    )
+                #redirect user to Enter OTP form page
+                return redirect('input_otp')
+            else:
+                messages.error(request, 'The username or password is incorrect')
+        else:
+            messages.info(request, 'Your email is not verified. Check your email and verify.')
+    return render (request, 'user/auth-login.html')
+#---user login in logic ends here---
+
+#input OTP
+def input_otp(request):
+    return render(request,'user/input-otp.html')
+#-- ends
+
+#OTP verify
+def verify(request):
+    if request.method == 'POST':
+        #get the user pk from request.session('pk')
+        user = get_object_or_404(User, id=request.session['pk'])
+        otp = int(request.POST.get('otp')) 
+
+        #get system generated otp from session
+        totp = pyotp.TOTP(settings.OTP_SECRET_KEY)
+
+        #verify otp
+        if totp.verify(otp):
+            #login and redirect home page
             login(request, user)
             if request.user.is_authenticated and request.user.is_active:
                 try:
@@ -66,20 +123,22 @@ def user_login(request):
                 else:
                     return redirect('home')
         else:
-            messages.error(request, 'The username or password is incorrect')
-            
-    return render (request, 'user/auth-login.html')
-
-#---user login in logic ends here---
+            #else redirect Enter OTP page 
+            messages.error(request, 'Invalid OTP!')
+            return redirect('input_otp')
+    return render(request, 'user/input-otp.html')
+#-- ends
 
 #---user register  logic starts here---
 def user_signup(request):
-    #binding data from fields to the form
     form = CustomUserCreationForm(request.POST)
-
     if request.method == 'POST':
         company_name = request.POST.get('company_name')
+        #phone_no = request.POST.get('phone_no')
+        #formated_phone_no = format_phone_number(phone_no, company.phone_code)
+        
         email = request.POST.get('email')
+
         # Check if email exists in the system
         r = User.objects.filter(email=email)
         if r.count():
@@ -87,6 +146,7 @@ def user_signup(request):
 
         password1 = request.POST.get('password1')
         password2 = request.POST.get('password2')
+
         if password1 != password2:
             messages.error(request, 'The passwords do not match! Try again.')
         else:
@@ -117,11 +177,10 @@ def user_signup(request):
                                              'mpesasetting', 'emailsetting']
                 )
             user.user_permissions.add(*permissions)
-            login(request, user)
-            messages.success(request, 'User created successfully!')
 
             package_name = 'Free Trial'
             package = Package.objects.get(name=package_name)
+
             #create a company object 
             organization = Organization.objects.create(
                name = company_name,
@@ -139,7 +198,7 @@ def user_signup(request):
                 open_date = today,
                 capital = '2000000',
                 office = '123 HeadQuater Street',
-                notes = 'This is the default branch. Do not delete'
+                notes = 'This is the default branch. DO NOT DELETE!'
             )
 
             # Create default Role for Company admin, all permissions
@@ -161,20 +220,29 @@ def user_signup(request):
             role.permissions.set(permissions)
 
             #create a staff object of the admin
-            #password = make_password(request.POST.get('password1'))
             staff = CompanyStaff.objects.create(
                 company = organization,
                 username = request.POST.get('username'),
                 password = password,
                 email = email,
+                #phone_no = phone_no
                 first_name = request.POST.get('username'),
                 last_name = request.POST.get('username'),
                 branch = default_branch,
                 user_type = 'admin',
                 staff_role = role
             )
-            #send email to for email verification 
-            context = {'company_name':company_name}
+
+            # Password reset token generator
+            token_generator = PasswordResetTokenGenerator()
+            verify_email_url = request.build_absolute_uri(reverse('verify-email', args=[user.id, token_generator.make_token(user)])) 
+            context = {
+                'company_name':company_name,
+                'user':user.username,
+                'verify_email_url':verify_email_url
+                }
+            
+            #send welcome email 
             send_email_task.delay(
                 context=context,
                 template_path='user/company_welcome.html',
@@ -185,16 +253,56 @@ def user_signup(request):
                 replyto_email=settings.EMAIL_HOST_USER
             )
 
-            #redirect to update organization info
-            messages.success(request, f'Account for {company_name} was created successfully. Check your email for verification instructions')
-            return redirect('update-organization', pk = organization.id )
+            #send email for email verification 
+            send_email_task.delay(
+                context=context,
+                template_path='user/verify-emailtemplate.html',
+                from_name='Mdeni',
+                from_email=settings.EMAIL_HOST_USER,
+                subject='Verify Your Email',
+                recipient_email=email,
+                replyto_email=settings.EMAIL_HOST_USER
+            )
+            messages.success(request, 'User created successfully! Please check your email for acount verification.')
+            return render(request, 'user/verify-email.html')
         else:
-            #return error message
             messages.error(request, 'An error occured during regetration, please try again!')
 
     context= {'form':form}
     return render (request, 'user/auth-register.html', context)
 #--- ends---
+
+#--verify email view
+def verify_email(request, uid, token):
+    # Retrieve the user using the uid
+    try:
+        user = User.objects.get(id=uid)
+    except User.DoesNotExist:
+        user = None
+
+    if user is not None:
+        # Verify the token
+        token_generator = PasswordResetTokenGenerator()
+        if token_generator.check_token(user, token):
+            # Token is valid
+            try:
+                staff = CompanyStaff.objects.get(username=user.username)
+                staff.is_verified = True
+                staff.save()
+                messages.success(request, 'Account successfully verified. Please login.')
+                # Redirect to the desired page (e.g., update organization info)
+                return redirect('update-organization', pk=staff.company.id)
+            except CompanyStaff.DoesNotExist:
+                pass
+        else:
+            # Invalid token
+            messages.error(request, 'Invalid token! Please try again.')
+            return render(request, 'user/invalid-token.html')
+        
+    # Invalid user or other error
+    messages.error(request, 'Invalid user or other error! Please try again.')
+    return render(request, 'user/invalid-token.html')
+#-- ends
 
 #-- prompt user to enter email for resetting password
 def forgot_password(request):

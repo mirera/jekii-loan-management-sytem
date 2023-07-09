@@ -24,6 +24,13 @@ if os.path.isfile(dotenv_file):
 # UPDATE secret key
 SECRET_KEY = os.environ['SECRET_KEY'] 
 
+#secret key for otp 
+OTP_SECRET_KEY = os.environ['OTP_SECRET_KEY'] 
+
+#SMS secrets
+SMS_SENDER_ID = os.environ['SMS_SENDER_ID'] 
+SMS_API_TOKEN = os.environ['SMS_API_TOKEN'] 
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
