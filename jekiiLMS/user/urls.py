@@ -4,9 +4,12 @@ from . import views
 urlpatterns = [
     path('login', views.user_login, name='login'),
     path('input_otp', views.input_otp, name='input_otp'), 
+    path('resend-otp/<str:uid>', views.resend_otp, name='resend-otp'),
+    path('otp-to-email/<str:uid>', views.otp_to_email, name='otp-to-email'),
     path('verify', views.verify, name='verify'),  
     path('register', views.user_signup, name='register'),
     path('verify-email/<str:uid>/<str:token>', views.verify_email, name='verify-email'), 
+    path('resend_email_token/<str:uid>', views.resend_email_token, name='resend_email_token'), 
     path('forgot_password', views.forgot_password, name='forgot_password'),
     path('resetpass_email_send', views.resetpass_email_send, name='resetpass_email_send'),
     path('render_reset_form', views.render_reset_form, name='render_reset_form'),
