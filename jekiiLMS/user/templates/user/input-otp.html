@@ -67,7 +67,7 @@
                                 </form>
                                 <div class="form-note-s2 text-center pt-4">
                                     <span>Didn't receive SMS?</span> <br>
-                                    <a href="{% url 'resend-otp' uid=user.id %}"><strong>Resend OTP</strong></a> Or <a href="{% url 'login' %}"><strong>Send OTP to email</strong></a>
+                                    <a href="{% url 'resend-otp' uid=user.id %}"><strong>Resend OTP</strong></a> Or <a href="{% url 'otp-to-email' uid=user.id %}"><strong>Send OTP to email</strong></a>
                                 </div>
                             </div>
                         </div>

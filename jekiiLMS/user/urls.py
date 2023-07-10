@@ -5,6 +5,7 @@ urlpatterns = [
     path('login', views.user_login, name='login'),
     path('input_otp', views.input_otp, name='input_otp'), 
     path('resend-otp/<str:uid>', views.resend_otp, name='resend-otp'),
+    path('otp-to-email/<str:uid>', views.otp_to_email, name='otp-to-email'),
     path('verify', views.verify, name='verify'),  
     path('register', views.user_signup, name='register'),
     path('verify-email/<str:uid>/<str:token>', views.verify_email, name='verify-email'), 

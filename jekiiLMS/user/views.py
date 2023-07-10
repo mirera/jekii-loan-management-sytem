@@ -99,8 +99,29 @@ def input_otp(request):
 #-- ends
 
 #send OTP to email instead
-def otp_to_email(request):
-    pass
+def otp_to_email(request, uid):
+    # Generate the time-bound OTP
+    totp = pyotp.TOTP(settings.OTP_SECRET_KEY)
+    system_otp = totp.now()
+
+    user = get_object_or_404(User, id=request.session['pk'])
+
+    context = {
+        'otp':system_otp,
+        'user':user.username
+    }
+    #send email for email verification 
+    send_email_task.delay(
+        context=context,
+        template_path='user/to-email-otp.html',
+        from_name='Mdeni',
+        from_email=settings.EMAIL_HOST_USER,
+        subject='Mdeni OTP for Login',
+        recipient_email=user.email,
+        replyto_email=settings.EMAIL_HOST_USER
+    )
+    #redirect user to Enter OTP form page
+    return redirect('input_otp')
 #-- end
 
 #resend OTP to sms
@@ -119,7 +140,6 @@ def resend_otp(request, uid):
     #send OTP as SMS
     sender_id = settings.SMS_SENDER_ID
     token = settings.SMS_API_TOKEN
-    print(f'Here is the generated system OTP: {system_otp}')
     message = f"Your OTP is {system_otp}. It will be active for the next 02.00 minutes."
     send_sms_task.delay(
         sender_id,
