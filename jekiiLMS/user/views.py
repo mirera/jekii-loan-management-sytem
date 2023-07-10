@@ -98,6 +98,39 @@ def input_otp(request):
     return render(request,'user/input-otp.html')
 #-- ends
 
+#send OTP to email instead
+def otp_to_email(request):
+    pass
+#-- end
+
+#resend OTP to sms
+def resend_otp(request, uid):
+    # Generate the time-bound OTP
+    totp = pyotp.TOTP(settings.OTP_SECRET_KEY)
+    system_otp = totp.now()
+
+    user = get_object_or_404(User, id=request.session['pk'])
+
+    #check is user is client-staff or loginit-staff
+    try:
+        staff = CompanyStaff.objects.get(username=user.username)
+    except:
+        staff = 'something' # find out our to include the super user/staff with their phone no. 
+    #send OTP as SMS
+    sender_id = settings.SMS_SENDER_ID
+    token = settings.SMS_API_TOKEN
+    print(f'Here is the generated system OTP: {system_otp}')
+    message = f"Your OTP is {system_otp}. It will be active for the next 02.00 minutes."
+    send_sms_task.delay(
+        sender_id,
+        token,
+        staff.phone_no, 
+        message,
+        )
+    #redirect user to Enter OTP form page
+    return redirect('input_otp')
+#-- end
+
 #OTP verify
 def verify(request):
     if request.method == 'POST':
@@ -126,7 +159,8 @@ def verify(request):
             #else redirect Enter OTP page 
             messages.error(request, 'Invalid OTP!')
             return redirect('input_otp')
-    return render(request, 'user/input-otp.html')
+    
+    return redirect('login')
 #-- ends
 
 #---user register  logic starts here---
@@ -233,7 +267,7 @@ def user_signup(request):
                 staff_role = role
             )
 
-            # Password reset token generator
+            # activate email token generator
             token_generator = PasswordResetTokenGenerator()
             verify_email_url = request.build_absolute_uri(reverse('verify-email', args=[user.id, token_generator.make_token(user)])) 
             context = {
@@ -272,6 +306,33 @@ def user_signup(request):
     return render (request, 'user/auth-register.html', context)
 #--- ends---
 
+#-- resend email verification token incase it expires
+def resend_email_token(request, uid):
+    #retrieve the user requesting for resend
+    try:
+        user = User.objects.get(id=uid)
+    except:
+        user = None
+    #activate email token generator
+    token_generator = PasswordResetTokenGenerator()
+    verify_email_url = request.build_absolute_uri(reverse('verify-email', args=[user.id, token_generator.make_token(user)])) 
+    context = {
+        'user':user.username,
+        'verify_email_url':verify_email_url
+        }
+    #send email for email verification 
+    send_email_task.delay(
+        context=context,
+        template_path='user/verify-emailtemplate.html',
+        from_name='Mdeni',
+        from_email=settings.EMAIL_HOST_USER,
+        subject='Verify Your Email',
+        recipient_email=user.email,
+        replyto_email=settings.EMAIL_HOST_USER
+    )
+    messages.success(request, 'Please check your email for account verification.')
+    return render(request, 'user/verify-email.html') 
+#-- ends          
 #--verify email view
 def verify_email(request, uid, token):
     # Retrieve the user using the uid

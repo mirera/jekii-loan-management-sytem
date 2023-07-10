@@ -10,7 +10,7 @@
     <!-- Fav Icon  -->
     <link rel="shortcut icon" href="{% static 'assets/images/mdeni-favicon.svg' %}">
     <!-- Page Title  -->
-    <title>Verify OTP | Mdeni </title>
+    <title>Verify OTP | Mdeni </title> 
     <!-- StyleSheets  -->
     <link rel="stylesheet" href="{% static 'css/dashlite.css' %}">
     <link id="skin-default" rel="stylesheet" href="{% static 'css/dashlite.css' %}">
@@ -67,7 +67,7 @@
                                 </form>
                                 <div class="form-note-s2 text-center pt-4">
                                     <span>Didn't receive SMS?</span> <br>
-                                    <a href="{% url 'login' %}"><strong>Resend OTP</strong></a> Or <a href="{% url 'login' %}"><strong>Send OTP to email</strong></a>
+                                    <a href="{% url 'resend-otp' uid=user.id %}"><strong>Resend OTP</strong></a> Or <a href="{% url 'login' %}"><strong>Send OTP to email</strong></a>
                                 </div>
                             </div>
                         </div>
