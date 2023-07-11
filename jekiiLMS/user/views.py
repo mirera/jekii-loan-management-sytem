@@ -741,12 +741,12 @@ def deactivateStaff(request, pk):
         message = f"Dear {staff.first_name}, Your {company.name} user account has been deactivated. Contact your system admin"
         preferences = SystemSetting.objects.get(company=company)
         if preferences.is_send_sms and sender_id is not None and token is not None:
-            send_sms(
+            send_sms_task.delay(
                 sender_id,
                 token,
                 staff.phone_no, 
                 message,
-                )
+            )
 
     messages.info(request, 'Staff deactivated! The user will not be able to login in unless activated.')
     return redirect('staffs')
@@ -764,8 +764,6 @@ def activateStaff(request, pk):
     user = User.objects.get(username=staff.username) 
     user.is_active= True
     user.save()
-
-    system_preferences = SystemSetting.objects.get(company=company)
     #send sms
     sms_setting = SmsSetting.objects.get(company=company)
     sender_id = sms_setting.sender_id
@@ -774,12 +772,12 @@ def activateStaff(request, pk):
     
     preferences = SystemSetting.objects.get(company=company)
     if preferences.is_send_sms and sender_id is not None and token is not None:
-        send_sms(
-                sender_id,
-                token,
-                staff.phone_no, 
-                message,
-            )
+        send_sms_task.delay(
+        sender_id,
+        token,
+        staff.phone_no, 
+        message,
+        )
     messages.info(request, 'Staff activated!')
     return redirect('staffs')
 # -- ends

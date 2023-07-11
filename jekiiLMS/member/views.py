@@ -1,11 +1,15 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404 
 from django.contrib import messages
 from datetime import datetime
 from django.contrib.auth.decorators import login_required 
 from .models import Member, Branch
 from .forms import MemberForm
 from user.models import CompanyStaff
+from loan.models import Loan
+from company.models import SmsSetting
 from jekiiLMS.decorators import permission_required
+from jekiiLMS.tasks import send_email_task, send_sms_task
+from jekiiLMS.utils import get_user_company
 from jekiiLMS.format_inputs import format_phone_number, deformat_phone_no, user_local_time,to_utc
 
 
@@ -73,6 +77,23 @@ def listMembers(request):
 
     context = {'members': members, 'form':form}
     return render(request, 'member/members-list.html', context)
+# list member view ends
+
+# list blacklisted member  
+@login_required(login_url='login')
+@permission_required('member.view_member')
+def blacklisted_members(request):
+    company = get_user_company(request)
+    form = MemberForm(request.POST, company=company) 
+    members = Member.objects.filter(company=company, credit_score__lt=4).order_by('-date_joined')
+    loans = Loan.objects.filter(company=company)
+
+    context = {
+        'members': members,
+        'form':form, 
+        'loan':loans
+        }
+    return render(request, 'member/backlisted-members.html', context)
 # list member view ends
 
 # view member view starts 
@@ -171,5 +192,32 @@ def editMember(request,pk):
 
         form = MemberForm(initial=form_data, company=company )
         return render(request,'member/edit-member.html',{'form':form})
-
 #edit member view ends    
+
+# sms member
+@login_required(login_url='login')
+def sms_member(request, pk):
+    if request.method == 'POST':
+        #get the member to sms
+        try:
+            member = Member.objects.get(id=pk)
+        except:
+            member = None
+        #get message body
+        sms_message = request.POST.get('sms_message')
+        print(f'This is the selected member hould be mirera:{member}')
+        #send sms
+        sms_setting = SmsSetting.objects.get(company=member.company)
+        sender_id = sms_setting.sender_id
+        token = sms_setting.api_token         
+        if sender_id is not None and token is not None:
+            send_sms_task.delay(
+                sender_id,
+                token,
+                member.phone_no, 
+                message=sms_message,
+            )
+            messages.success(request, f'Message successful sent to {member.first_name}.')
+    return redirect('members')
+ 
+    
