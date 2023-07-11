@@ -100,6 +100,18 @@ class SystemSetting(models.Model):
     is_auto_disburse = models.BooleanField(default=False)
     is_send_sms = models.BooleanField(default=False)
     is_send_email = models.BooleanField(default=False)
+    #sms member
+    on_joining = models.BooleanField(default=False)
+    loan_pending = models.BooleanField(default=False)
+    before_due_date = models.BooleanField(default=False)
+    missed_payment = models.BooleanField(default=False)
+    loan_rejected = models.BooleanField(default=False)
+    #email member
+    monthly_loan_statement = models.BooleanField(default=False)
+    new_loan_products = models.BooleanField(default=False)
+    #email staff
+    monthly_portfolio_performance = models.BooleanField(default=False)
+   
 
     def __str__(self):
         return self.company.name

@@ -18,7 +18,7 @@ from .forms import CustomUserCreationForm, CompanyStaffForm , RoleForm
 from .models import CompanyStaff, Role
 from branch.models import Branch 
 from user.models import Notification
-from company.models import Organization, Package, SmsSetting, SystemSetting
+from company.models import Organization, Package, SmsSetting, SystemSetting, SecuritySetting
 from jekiiLMS.sms_messages import send_sms
 from jekiiLMS.tasks import send_email_task, send_sms_task
 from jekiiLMS.utils import get_user_company
@@ -61,31 +61,46 @@ def user_login(request):
 
         if staff.is_verified: 
             if user is not None:
-                # Generate the time-bound OTP
-                totp = pyotp.TOTP(settings.OTP_SECRET_KEY)
-                system_otp = totp.now()
+                security_settings = SecuritySetting.objects.get(company=staff.company)
+                if security_settings.two_fa_auth:
+                    # Generate the time-bound OTP
+                    totp = pyotp.TOTP(settings.OTP_SECRET_KEY)
+                    system_otp = totp.now()
 
-                #append otp and user id to the session
-                request.session['otp'] = system_otp
-                request.session['pk'] = user.id
+                    #append otp and user id to the session
+                    request.session['otp'] = system_otp
+                    request.session['pk'] = user.id
 
-                #check is user is client-staff or loginit-staff
-                try:
-                    staff = CompanyStaff.objects.get(username=user.username)#check if user is client-staff
-                except:
-                    staff = 'something' # find out our to include the super user/staff with their phone no. 
-                #send OTP as SMS
-                sender_id = settings.SMS_SENDER_ID
-                token = settings.SMS_API_TOKEN
-                message = f"Your OTP is {system_otp}. It will be active for the next 02.00 minutes."
-                send_sms_task.delay(
-                    sender_id,
-                    token,
-                    staff.phone_no, 
-                    message,
-                    )
-                #redirect user to Enter OTP form page
-                return redirect('input_otp')
+                    #check is user is client-staff or loginit-staff
+                    try:
+                        staff = CompanyStaff.objects.get(username=user.username)#check if user is client-staff
+                    except:
+                        staff = 'something' # find out our to include the super user/staff with their phone no. 
+                    #send OTP as SMS
+                    sender_id = settings.SMS_SENDER_ID
+                    token = settings.SMS_API_TOKEN
+                    message = f"Your OTP is {system_otp}. It will be active for the next 02.00 minutes."
+                    send_sms_task.delay(
+                        sender_id,
+                        token,
+                        staff.phone_no, 
+                        message,
+                        )
+                    #redirect user to Enter OTP form page
+                    return redirect('input_otp')
+                else:
+                    #login and redirect home page
+                    login(request, user)
+                    if request.user.is_authenticated and request.user.is_active:
+                        try:
+                            user = CompanyStaff.objects.get(username=request.user.username)
+                        except CompanyStaff.DoesNotExist:
+                            pass
+                            
+                        if request.user.is_superuser or request.user.is_staff: 
+                            return redirect('superadmin_dashboard')
+                        else:
+                            return redirect('home') 
             else:
                 messages.error(request, 'The username or password is incorrect')
         else:

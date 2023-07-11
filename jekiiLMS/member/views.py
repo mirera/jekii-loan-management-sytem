@@ -6,7 +6,7 @@ from .models import Member, Branch
 from .forms import MemberForm
 from user.models import CompanyStaff
 from loan.models import Loan
-from company.models import SmsSetting
+from company.models import SmsSetting, SystemSetting
 from jekiiLMS.decorators import permission_required
 from jekiiLMS.tasks import send_email_task, send_sms_task
 from jekiiLMS.utils import get_user_company
@@ -51,6 +51,18 @@ def createMember(request):
             address = request.POST.get('address'),
             passport_photo=request.FILES.get('passport_photo')
         )
+        preferences = SystemSetting.objects.get(company=company)
+        sms_setting = SmsSetting.objects.get(company=member.company)
+        sms_message = 'Some user customer SMS template'
+        sender_id = sms_setting.sender_id
+        token = sms_setting.api_token         
+        if sender_id is not None and token is not None and preferences.on_joining:
+            send_sms_task.delay(
+                sender_id,
+                token,
+                member.phone_no, 
+                message=sms_message,
+            )
 
         messages.success(request, 'Member added successfully.')
         return redirect('members')
@@ -86,12 +98,9 @@ def blacklisted_members(request):
     company = get_user_company(request)
     form = MemberForm(request.POST, company=company) 
     members = Member.objects.filter(company=company, credit_score__lt=4).order_by('-date_joined')
-    loans = Loan.objects.filter(company=company)
-
     context = {
         'members': members,
         'form':form, 
-        'loan':loans
         }
     return render(request, 'member/backlisted-members.html', context)
 # list member view ends

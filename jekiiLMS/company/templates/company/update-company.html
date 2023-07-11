@@ -221,12 +221,13 @@
                                                         <div class="custom-control custom-switch">
                                                             <!-- <input type="checkbox" class="custom-control-input" name="is_auto_disburse" id="auto_disburse"> -->
                                                             {{form_preferences.is_auto_disburse}}
-                                                            <label class="custom-control-label" for="auto_disburse">On</label>
+                                                            <label class="custom-control-label" for="auto_disburse">On</label> 
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div> <!-- .row -->
+                                        </div> <!-- .row --> 
+                                        <br>
                                         <div class="row g-gs">
                                             <div class="row g-3 align-center">
                                                 <div class="col-lg-5">
@@ -245,6 +246,7 @@
                                                 </div>
                                             </div>
                                         </div> <!-- .row -->
+                                        <br>
                                         <div class="row g-gs">
                                             <div class="row g-3 align-center">
                                                 <div class="col-lg-5">
@@ -263,6 +265,82 @@
                                                 </div>
                                             </div>
                                         </div> <!-- .row -->
+                                        <br>
+                                        <div class="row g-gs">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="form-label">SMS to Member</label>
+                                                    <ul class="custom-control-group g-3 align-center">
+                                                       <li>
+                                                            <div class="custom-control custom-control-sm custom-checkbox">
+                                                                {{form_preferences.on_joining}}
+                                                                <label class="custom-control-label" for="on_joining">On Joining </label>
+                                                            </div>
+                                                        </li> 
+                                                        <li>
+                                                            <div class="custom-control custom-control-sm custom-checkbox">
+                                                                {{form_preferences.loan_pending}}
+                                                                <label class="custom-control-label" for="loan-pending">Loan Pending</label>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="custom-control custom-control-sm custom-checkbox">
+                                                                {{form_preferences.before_due_date}}
+                                                                <label class="custom-control-label" for="before-due-date">Before Due Date</label>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="custom-control custom-control-sm custom-checkbox">
+                                                                {{form_preferences.missed_payment}}
+                                                                <label class="custom-control-label" for="missed-payment">Missed Repayment</label>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="custom-control custom-control-sm custom-checkbox">
+                                                                {{form_preferences.loan_rejected}}
+                                                                <label class="custom-control-label" for="loan-rejected">Loan Rejected</label>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div><!-- .col -->
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="form-label">E-mail to Members</label>
+                                                    <ul class="custom-control-group g-3 align-center">
+                                                        <li>
+                                                            <div class="custom-control custom-control-sm custom-checkbox">
+                                                                {{form_preferences.monthly_loan_statement}}
+                                                                <label class="custom-control-label" for="loan-statement">Monthly Loan Statements</label>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="custom-control custom-control-sm custom-checkbox">
+                                                                {{form_preferences.new_loan_products}}
+                                                                <label class="custom-control-label" for="new-product">New Loan Products</label>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div><!-- .col -->
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="form-label">E-mail to Staff</label>
+                                                    <ul class="custom-control-group g-3 align-center">
+                                                        <li>
+                                                            <div class="custom-control custom-control-sm custom-checkbox">
+                                                                {{form_preferences.monthly_portfolio_performance}}
+                                                                <label class="custom-control-label" for="portfolio-performance">Monthly Portfolio Performance</label>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div><!-- .col -->
+                                            <br>
+                                            <br>
+                                        </div> <!-- .row -->
+                                        <!-- ends -->
+                                        <br>
                                         <div class="row g-3">
                                             <div class="col-lg-7">
                                                 <div class="form-group mt-2">

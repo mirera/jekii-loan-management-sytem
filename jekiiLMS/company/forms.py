@@ -113,10 +113,21 @@ class SystemSettingForm(forms.ModelForm):
         widgets = {
             'is_auto_disburse': forms.CheckboxInput(attrs={'class': 'custom-control-input', 'id': 'auto_disburse'}),
             'is_send_sms': forms.CheckboxInput(attrs={'class': 'custom-control-input', 'id': 'send_sms'}), 
-            'is_send_email': forms.CheckboxInput(attrs={'class': 'custom-control-input', 'id': 'send_email'}),    
+            'is_send_email': forms.CheckboxInput(attrs={'class': 'custom-control-input', 'id': 'send_email'}), 
+            'on_joining': forms.CheckboxInput(attrs={'class': 'custom-control-input', 'id': 'on_joining'}),
+            'loan_pending': forms.CheckboxInput(attrs={'class': 'custom-control-input', 'id': 'loan-pending'}), 
+            'before_due_date': forms.CheckboxInput(attrs={'class': 'custom-control-input', 'id': 'before-due-date'}), 
+
+            'missed_payment': forms.CheckboxInput(attrs={'class': 'custom-control-input', 'id': 'missed-payment'}),
+
+            'loan_rejected': forms.CheckboxInput(attrs={'class': 'custom-control-input', 'id': 'loan-rejected'}),
+
+            'monthly_loan_statement': forms.CheckboxInput(attrs={'class': 'custom-control-input', 'id': 'loan-statement'}),
+            'new_loan_products': forms.CheckboxInput(attrs={'class': 'custom-control-input', 'id': 'new-product'}), 
+            'monthly_portfolio_performance': forms.CheckboxInput(attrs={'class': 'custom-control-input', 'id': 'portfolio-performance'}),  
         }
 
-class SecuritySettingForm(forms.ModelForm):
+class SecuritySettingForm(forms.ModelForm): 
     class Meta:
         model = SecuritySetting
         fields = '__all__'

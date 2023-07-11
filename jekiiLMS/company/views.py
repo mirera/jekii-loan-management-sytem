@@ -139,7 +139,15 @@ def updateOrganization(request, pk):
         form_data_preferences = {
             'is_auto_disburse': preferences.is_auto_disburse,
             'is_send_sms': preferences.is_send_sms,
-            'is_send_email': preferences.is_send_email
+            'is_send_email': preferences.is_send_email,
+            'on_joining': preferences.on_joining,
+            'loan_pending': preferences.loan_pending,
+            'before_due_date': preferences.before_due_date,
+            'missed_payment': preferences.missed_payment,
+            'loan_rejected': preferences.loan_rejected,
+            'monthly_loan_statement': preferences.monthly_loan_statement,
+            'new_loan_products': preferences.new_loan_products,
+            'monthly_portfolio_performance': preferences.monthly_portfolio_performance,
         }
         form_preferences = SystemSettingForm(initial=form_data_preferences)
         form_email = EmailSettingForm(initial=form_data_email)
@@ -371,12 +379,29 @@ def updatePreferences(request, pk):
         if form_preferences.is_valid():
             is_auto_disburse = request.POST.get('is_auto_disburse') == 'on'
             is_send_sms = request.POST.get('is_send_sms') == 'on' 
-            is_send_email = request.POST.get('is_send_email') == 'on' 
+            is_send_email = request.POST.get('is_send_email') == 'on'
+            on_joining = request.POST.get('on_joining') == 'on'
+            loan_pending = request.POST.get('loan_pending') == 'on'
+            before_due_date = request.POST.get('before_due_date') == 'on' 
+            missed_payment = request.POST.get('missed_payment') == 'on'
+            loan_rejected = request.POST.get('loan_rejected') == 'on' 
+            monthly_loan_statement = request.POST.get('monthly_loan_statement') == 'on' 
+            new_loan_products = request.POST.get('new_loan_products') == 'on'
+            monthly_portfolio_performance = request.POST.get('monthly_portfolio_performance') == 'on' 
+
             preferences = form_preferences.save(commit=False)
             preferences.company = organization
             preferences.is_auto_disburse = is_auto_disburse
             preferences.is_send_sms = is_send_sms
             preferences.is_send_email = is_send_email
+            preferences.on_joining = on_joining
+            preferences.loan_pending = loan_pending
+            preferences.before_due_date = before_due_date
+            preferences.missed_payment = missed_payment
+            preferences.loan_rejected = loan_rejected
+            preferences.monthly_loan_statement = monthly_loan_statement
+            preferences.new_loan_products = new_loan_products
+            preferences.monthly_portfolio_performance = monthly_portfolio_performance
             preferences.save()
         messages.success(request, 'System preferences updated successfully.')
         return redirect('update-organization', organization.id)
@@ -386,7 +411,15 @@ def updatePreferences(request, pk):
         form_data = {
             'is_auto_disburse': preferences.is_auto_disburse,
             'is_send_sms': preferences.is_send_sms,
-            'is_send_email': preferences.is_send_email
+            'is_send_email': preferences.is_send_email,
+            'on_joining': preferences.on_joining,
+            'loan_pending': preferences.loan_pending,
+            'before_due_date': preferences.before_due_date,
+            'missed_payment': preferences.missed_payment,
+            'loan_rejected': preferences.loan_rejected,
+            'monthly_loan_statement': preferences.monthly_loan_statement,
+            'new_loan_products': preferences.new_loan_products,
+            'monthly_portfolio_performance': preferences.monthly_portfolio_performance,
         }
         form_preferences = SystemSettingForm(initial=form_data)
  
