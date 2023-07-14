@@ -3,7 +3,7 @@ from django import forms
 from pytz import all_timezones
 from iso4217 import Currency
 import pycountry
-from .models import Organization, Package, SmsSetting, MpesaSetting, EmailSetting, SystemSetting, SecuritySetting
+from .models import Organization, Package, SmsSetting, MpesaSetting, EmailSetting, SystemSetting, SecuritySetting, TemplateSetting
 from jekiiLMS.utils import phone_codes
 
 
@@ -26,8 +26,6 @@ class OrganizationForm(forms.ModelForm):
         widget=forms.Select(attrs={'class': 'form-control'})
     )
 
-   
-
     phone_code = forms.ChoiceField(
         choices=phone_codes,
         widget=forms.Select(attrs={'class': 'form-control ', 'style':'background-color:#ebeef2;'})
@@ -47,9 +45,9 @@ class OrganizationForm(forms.ModelForm):
             'phone_no': forms.NumberInput(attrs={'class': 'form-control', 'minlength':'10'}),
             'logo': forms.FileInput(attrs={'class': 'form-file-input', 'id':'customFile', 'type':'file'}),
             'address': forms.TextInput(attrs={'class': 'form-control'}),
+            'paybill_no': forms.NumberInput(attrs={'class': 'form-control', 'placeholder':'522522'}),
+            'account_no': forms.NumberInput(attrs={'class': 'form-control', 'placeholder':'5840988'}),
         }
-
-    
 
 class PackageForm(forms.ModelForm):
     class Meta:
@@ -67,11 +65,12 @@ class PackageForm(forms.ModelForm):
 class SmsForm(forms.ModelForm):
     class Meta:
         model = SmsSetting
-        fields = ['sender_id', 'api_token']
+        fields = '__all__'
+        exclude = ['company']
         
         widgets = {
             'sender_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'loginit', 'required':'True'}),
-            'api_token': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': '9v38Dtu5u2BpsITPmLcXNWGMsjZRWSTG', 'required':'True'})
+            'api_token': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': '9v38Dtu5u2BpsITPmLcXNWGMsjZRWSTG', 'required':'True'}),
         }
 
 class MpesaSettingForm(forms.ModelForm):
@@ -137,4 +136,21 @@ class SecuritySettingForm(forms.ModelForm):
             #'save_activity': forms.CheckboxInput(attrs={'class': 'custom-control-input', 'id': 'save_activity'}),
             'two_fa_auth': forms.CheckboxInput(attrs={'class': 'custom-control-input', 'id': 'two_fa_auth'}), 
             #'auto_logout': forms.CheckboxInput(attrs={'class': 'custom-control-input', 'id': 'auto_logout'}),    
+        }
+
+class TemplateForm(forms.ModelForm):
+    class Meta:
+        model = TemplateSetting
+        fields = '__all__'
+        exclude = ['company']
+        
+        widgets = {
+            'member_welcome': forms.Textarea(attrs={'class': 'form-control', 'required':'True', 'rows': 3, 'cols': 40}),
+            'loan_applied': forms.Textarea(attrs={'class': 'form-control', 'required':'True', 'rows': 3, 'cols': 40}),
+            'loan_rejected': forms.Textarea(attrs={'class': 'form-control', 'required':'True', 'rows': 3, 'cols': 40}),
+            'loan_approved': forms.Textarea(attrs={'class': 'form-control', 'required':'True', 'rows': 3, 'cols': 40}),
+            'loan_cleared': forms.Textarea(attrs={'class': 'form-control', 'required':'True', 'rows': 3, 'cols': 40}),
+            'loan_overdue': forms.Textarea(attrs={'class': 'form-control',  'required':'True', 'rows': 3, 'cols': 40}),
+            'loan_balance': forms.Textarea(attrs={'class': 'form-control', 'required':'True', 'rows': 3, 'cols': 40}),
+            'after_payment': forms.Textarea(attrs={'class': 'form-control', 'required':'True', 'rows': 3, 'cols': 40}),
         }

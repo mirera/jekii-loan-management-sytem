@@ -19,9 +19,8 @@ from .models import CompanyStaff, Role
 from branch.models import Branch 
 from user.models import Notification
 from company.models import Organization, Package, SmsSetting, SystemSetting, SecuritySetting
-from jekiiLMS.sms_messages import send_sms
 from jekiiLMS.tasks import send_email_task, send_sms_task
-from jekiiLMS.utils import get_user_company
+from jekiiLMS.utils import get_user_company, activate_user, deactivate_user, delete_staff
 import pyotp
 
 
@@ -44,23 +43,26 @@ def user_login(request):
         username = request.POST.get('username').lower()
         password = request.POST.get('password')
 
-        #raise username do not exist in our databse error
+        #raise username do not exist in our database error
         try:
             user = User.objects.get(username=username)
         except:
-            messages.error(request, 'This username does not exist on our database!')
+            pass
 
         # check if username and password match to autheticate
         user = authenticate(username=username, password=password)
 
-        #check if the user is email-verified
-        try:
-            staff = CompanyStaff.objects.get(username=user.username)#check if user is client-staff
-        except:
-            staff = 'something' # find out our to include the super user/staff with their phone no.
+        if user == None:
+            messages.error(request, 'Invalid credentials or user deactivated!') 
+        else:
+            #check if the user is a client staff or loginit staff
+            try:
+                staff = CompanyStaff.objects.get(username=user.username)
+            except:
+                #then the user is a Loginit staff
+                staff = 'something' # find out our to include the super user/staff with their phone no.
 
-        if staff.is_verified: 
-            if user is not None:
+            if staff.is_verified: 
                 security_settings = SecuritySetting.objects.get(company=staff.company)
                 if security_settings.two_fa_auth:
                     # Generate the time-bound OTP
@@ -101,10 +103,9 @@ def user_login(request):
                             return redirect('superadmin_dashboard')
                         else:
                             return redirect('home') 
+
             else:
-                messages.error(request, 'The username or password is incorrect')
-        else:
-            messages.info(request, 'Your email is not verified. Check your email and verify.')
+                messages.info(request, 'Your email is not verified. Check your email and verify.')
     return render (request, 'user/auth-login.html')
 #---user login in logic ends here---
 
@@ -514,10 +515,10 @@ def user_logout(request):
 @login_required(login_url='login') 
 def listStaff(request):
     company = get_user_company(request)  
-    staffs = CompanyStaff.objects.filter(company=company).order_by('date_added')[1:] #xclude main admin
+    admins = CompanyStaff.objects.filter(company=company).order_by('date_added')[1:] #xclude main admin
     form = CompanyStaffForm(request.POST, company=company) 
 
-    context = {'staffs': staffs, 'form':form}
+    context = {'admins': admins, 'form':form}
     return render(request, 'user/users-list.html', context)
 #-- end -- 
 
@@ -617,12 +618,8 @@ def view_staff(request,pk):
 @login_required(login_url='login')
 @permission_required('user.delete_companystaff')
 def deleteStaff(request,pk):
-    company = get_user_company(request)      
     if request.method == 'POST':
-        staff = CompanyStaff.objects.get(id=pk, company=company)
-        user = User.objects.get(username=staff.username)
-        staff.delete()
-        user.delete()
+        delete_staff(uid=pk)
         messages.success(request, 'Staff & User deleted successfully!')
         return redirect('staffs')
 
@@ -739,30 +736,7 @@ def updateStaff(request, pk):
 @login_required(login_url='login')
 @permission_required('user.deactivate_user')
 def deactivateStaff(request, pk):
-    staff = CompanyStaff.objects.get(id=pk)
-    user = User.objects.get(username=staff.username)
-    company = staff.company
-    system_preferences = SystemSetting.objects.get(company=company)
-    staff.status = 'inactive'
-    user.is_active= False
-    user.save()
-    staff.save()
-    
-    if system_preferences.is_send_sms:
-        #send sms
-        sms_setting = SmsSetting.objects.get(company=company) 
-        sender_id = sms_setting.sender_id
-        token = sms_setting.api_token 
-        message = f"Dear {staff.first_name}, Your {company.name} user account has been deactivated. Contact your system admin"
-        preferences = SystemSetting.objects.get(company=company)
-        if preferences.is_send_sms and sender_id is not None and token is not None:
-            send_sms_task.delay(
-                sender_id,
-                token,
-                staff.phone_no, 
-                message,
-            )
-
+    deactivate_user(uid=pk)
     messages.info(request, 'Staff deactivated! The user will not be able to login in unless activated.')
     return redirect('staffs')
 # -- ends
@@ -771,28 +745,7 @@ def deactivateStaff(request, pk):
 @login_required(login_url='login')
 @permission_required('user.activate_user')
 def activateStaff(request, pk):
-    staff = CompanyStaff.objects.get(id=pk)
-    staff.status = 'active'
-    staff.save()
-
-    company = staff.company
-    user = User.objects.get(username=staff.username) 
-    user.is_active= True
-    user.save()
-    #send sms
-    sms_setting = SmsSetting.objects.get(company=company)
-    sender_id = sms_setting.sender_id
-    token = sms_setting.api_token 
-    message = f"Dear {staff.first_name}, Your {company.name} user account has been activated. You can now login"
-    
-    preferences = SystemSetting.objects.get(company=company)
-    if preferences.is_send_sms and sender_id is not None and token is not None:
-        send_sms_task.delay(
-        sender_id,
-        token,
-        staff.phone_no, 
-        message,
-        )
+    activate_user(uid=pk)
     messages.info(request, 'Staff activated!')
     return redirect('staffs')
 # -- ends
@@ -917,5 +870,73 @@ def mark_notfications_read(request, pk):
         notification.save()
     return redirect('home')
 
+#staff bulky actions - in the user/staff table
+@login_required(login_url='login')
+def staffs_bulky_action(request):
+    company=get_user_company(request)
+    if request.method == 'POST':
+        # Retrieve the selected option from the form data
+        bulk_action = request.POST.get('bulk-action')
+        selected_ids = request.POST.getlist('selected_ids')
+        selected_staffs = []
+        for staff_id in selected_ids:
+            staff = CompanyStaff.objects.get(id=staff_id)
+            selected_staffs.append(staff)
+        if bulk_action == 'sms':
+            #get message from POST Request
+            sms_message_raw = request.POST.get('sms_message')
+            system_preferences = SystemSetting.objects.get(company=company)
+
+            for staff in selected_staffs:
+                if system_preferences.is_send_sms:
+                    #available tags
+                    first_name = staff.first_name
+                    last_name = staff.last_name
+                    organization_name = staff.company.name
+
+                    #format raw message template 
+                    message = sms_message_raw.format(
+                        first_name=first_name, 
+                        last_name=last_name, 
+                        organization_name=organization_name, 
+                    )
+                    #send sms
+                    sms_setting = SmsSetting.objects.get(company=staff.company) 
+                    sender_id = sms_setting.sender_id
+                    token = sms_setting.api_token 
+                    preferences = SystemSetting.objects.get(company=staff.company)
+
+                    if preferences.is_send_sms and sender_id is not None and token is not None:
+                        send_sms_task.delay(
+                            sender_id,
+                            token,
+                            staff.phone_no, 
+                            message,
+                        )
+
+            messages.success(request, 'Messages sent.')
+            return redirect('staffs')
+
+        elif bulk_action == 'activate':
+            for staff in selected_staffs:
+                #activate
+                activate_user(uid=staff.id)
+            messages.success(request, 'Selected staffs activated.')
+            return redirect('staffs')
+        
+        elif bulk_action == 'deactivate':
+            for staff in selected_staffs:
+                #deactivate
+                deactivate_user(uid=staff.id)
+            messages.success(request, 'Selected staffs deactivated.')
+            return redirect('staffs')
+        
+        elif bulk_action == 'delete':
+            #delete users
+            delete_staff(uid=staff.id)
+            messages.success(request, 'Selected staffs deleted.')
+            return redirect('staffs')
+
+    return redirect('staffs')
 
 

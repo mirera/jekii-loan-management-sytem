@@ -1,4 +1,9 @@
 from user.models import CompanyStaff
+from django.contrib.auth.models import User
+from member.models import Member
+from company.models import Organization, Package, SmsSetting, SystemSetting, SecuritySetting
+from jekiiLMS.tasks import send_email_task, send_sms_task
+
 
 #get the company of a user.
 def get_user_company(request): 
@@ -13,6 +18,68 @@ def get_user_company(request):
 
     return company
 
+# activate staff/user
+def activate_user(uid):
+    staff = CompanyStaff.objects.get(id=uid)
+    staff.status = 'active'
+    staff.save()
+
+    company = staff.company
+    user = User.objects.get(username=staff.username) 
+    user.is_active= True
+    user.save()
+    #send sms
+    sms_setting = SmsSetting.objects.get(company=company)
+    sender_id = sms_setting.sender_id
+    token = sms_setting.api_token 
+    message = f"Dear {staff.first_name}, Your {company.name} user account has been activated. You can now login"
+    
+    preferences = SystemSetting.objects.get(company=company)
+    if preferences.is_send_sms and sender_id is not None and token is not None:
+        send_sms_task.delay(
+        sender_id,
+        token,
+        staff.phone_no, 
+        message,
+        )
+
+# deactivate staff/user
+def deactivate_user(uid):
+    staff = CompanyStaff.objects.get(id=uid)
+    user = User.objects.get(username=staff.username)
+    company = staff.company
+    system_preferences = SystemSetting.objects.get(company=company)
+    staff.status = 'inactive'
+    user.is_active= False
+    user.save()
+    staff.save()
+    
+    if system_preferences.is_send_sms:
+        #send sms
+        sms_setting = SmsSetting.objects.get(company=company) 
+        sender_id = sms_setting.sender_id
+        token = sms_setting.api_token 
+        message = f"Dear {staff.first_name}, Your {company.name} user account has been deactivated. Contact your system admin"
+        preferences = SystemSetting.objects.get(company=company)
+        if preferences.is_send_sms and sender_id is not None and token is not None:
+            send_sms_task.delay(
+                sender_id,
+                token,
+                staff.phone_no, 
+                message,
+            )
+
+# delete staff
+def delete_staff(uid):
+    staff = CompanyStaff.objects.get(id=uid)
+    user = User.objects.get(username=staff.username)
+    staff.delete()
+    user.delete()
+
+# delete member
+def delete_member(uid):
+    member = Member.objects.get(id=uid)
+    member.delete()
 
 phone_codes = [
     ('+93', 'AF +93'),

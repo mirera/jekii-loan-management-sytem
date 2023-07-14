@@ -41,6 +41,8 @@ class Organization(models.Model):
     currency = models.CharField(max_length=10, default='USD')
     country = models.CharField(max_length=30, default='Kenya')
     phone_code = models.CharField(max_length=5, default='1') 
+    paybill_no = models.CharField(max_length=12, blank=True, null=True)
+    account_no = models.CharField(max_length=15, blank=True, null=True)
  
 
     def get_localized_datetime(self, datetime_value):
@@ -127,3 +129,20 @@ class SecuritySetting(models.Model):
     def __str__(self):
         return self.company.name
 # -- ends
+
+
+#template setting model
+class TemplateSetting(models.Model): 
+    company = models.ForeignKey(Organization, on_delete=models.SET_NULL, blank=True, null=True)
+    member_welcome = models.TextField(default="Dear {first_name} {last_name}, welcome to {organization_name}. Access business loans & scale your business.")
+    loan_applied = models.TextField(default="Dear {first_name} {last_name}, Your loan request as been received and its under review. Regards {organization_name}")
+    loan_rejected = models.TextField(default="Dear {first_name}, we regret to inform you that we are unable to approve your loan request of {currency}{applied_amount} at this time. ")
+    loan_approved = models.TextField(default="Dear {first_name}, Your loan request has been approved and queued for disbursal. The next payment date {due_date}, amount {currency}{due_amount}. Acc. {account_no} Paybill {paybill_no}")
+    loan_cleared = models.TextField(default="Dear {first_name} {last_name}, You have successfully cleared your loan. Success in your business. {organization_name}")
+    loan_overdue = models.TextField(default="Dear {first_name}, your loan installment of {currency}{due_amount} is overdue. Make payment to avoid further penalties. Acc. no: {account_no} Paybill:{paybill_no}")
+    loan_balance = models.TextField(default="Dear {first_name}, your next payment is on {due_date}. Due amount: {currency}{due_amount} . Loan balance: {currency}{loan_balance}. Acc. No: {account_no} Paybill:{paybill_no}")
+    after_payment = models.TextField(default="Dear {first_name}, your next payment is on {due_date}. Due amount: {currency}{due_amount} . Loan balance: {currency}{loan_balance}. Acc. no: {account_no} Paybill:{paybill_no}")
+
+    def __str__(self):
+        return self.company.name
+# -- ends 

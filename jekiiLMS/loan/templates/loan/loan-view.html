@@ -21,7 +21,7 @@
                             <h3 class="nk-block-title page-title">{{loan.loan_id}} / <strong class="text-primary small">{{loan.member.first_name}} {{loan.member.last_name}}</strong></h3>
                             <div class="nk-block-des text-soft">
                                 <ul class="list-inline">
-                                    {% if loan.status != 'pending' %}
+                                    {% if loan.status != 'pending' and loan.status != 'rejected' %}
                                     <li>Total Payable: <span class="text-base">{{loan.total_payable}}</span></li>
                                     <li>Loan Balance: <span class="text-base">{{loan.loan_balance}}</span></li>
                                     {% endif %}

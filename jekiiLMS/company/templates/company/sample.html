@@ -7,811 +7,531 @@
             {{ message }}
         </div>
     {% endfor %}
-{% endif %}  
+{% endif %}   
 <!-- content @s -->
 <div class="nk-content ">
     <div class="container-fluid">
         <div class="nk-content-inner">
             <div class="nk-content-body">
-                <div class="nk-block-head nk-block-head-sm">
-                    <div class="nk-block-between">
-                        <div class="nk-block-head-content">
-                            <h3 class="nk-block-title page-title">General Settings</h3>
-                        </div><!-- .nk-block-head-content -->
-                    </div><!-- .nk-block-between -->
-                </div><!-- .nk-block-head -->
-                <div class="nk-block nk-block-lg">
-                    <div class="card card-bordered card-stretch">
-                        <ul class="nav nav-tabs nav-tabs-mb-icon nav-tabs-card">
-                            <li class="nav-item">
-                                <a class="nav-link active" data-bs-toggle="tab" href="#site"><em class="icon ni ni-laptop"></em><span>General settings</span></a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" data-bs-toggle="tab" href="#admin"><em class="icon ni ni-user-alt"></em><span>Admin Settings</span></a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" data-bs-toggle="tab" href="#theme"><em class="icon ni ni-color-palette-fill"></em><span>Theme setting </span></a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" data-bs-toggle="tab" href="#email"><em class="icon ni ni-mail-fill"></em><span>Email settings </span> </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" data-bs-toggle="tab" href="#system"><em class="icon ni ni-color-palette-fill"></em><span>System setting </span></a>
-                            </li>
-                        </ul>
-                        <div class="tab-content">
-                            <div class="tab-pane active" id="site">
-                                <div class="card-inner pt-0">
-                                    <h4 class="title nk-block-title">General setting</h4>
-                                    <p>Set the organization details.</p>
-                                    <form action=" " class="gy-3 form-settings" method="POST" enctype="multipart/form-data">
-                                        {% csrf_token %}
-                                        <div class="row g-3 align-center">
-                                            <div class="col-lg-5">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="site-name">Organization Name</label>
-                                                    <span class="form-note">Type the name of your Organization.</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-7">
-                                                <div class="form-group">
-                                                    <div class="form-control-wrap">
-                                                        {{form.name}}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row g-3 align-center">
-                                            <div class="col-lg-5">
-                                                <div class="form-group">
-                                                    <label class="form-label">Organization Logo</label>
-                                                    <span class="form-note">The logo of your Organization</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-7">
-                                                <div class="form-group">
-                                                    <div class="form-control-wrap">
-                                                        <div class="form-file">
-                                                            {{form.logo}}
-                                                            <label class="form-file-label" for="customFile">Choose file</label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row g-3 align-center">
-                                            <div class="col-lg-5">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="site-copyright">Organization Telephone No.</label>
-                                                    <span class="form-note">Contact for your organization.</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-7">
-                                                <div class="form-group">
-                                                    <div class="form-control-wrap">
-                                                        {{form.phone_no}}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row g-3 align-center">
-                                            <div class="col-lg-5">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="site-copyright">Organization Email</label>
-                                                    <span class="form-note">Contact email for your organization.</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-7">
-                                                <div class="form-group">
-                                                    <div class="form-control-wrap">
-                                                        {{form.email}}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row g-3 align-center">
-                                            <div class="col-lg-5">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="site-address">Organization Address</label>
-                                                    <span class="form-note">Specify your organization address.</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-7">
-                                                <div class="form-group">
-                                                    <div class="form-control-wrap">
-                                                        {{form.address}}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                      <!--  <div class="row g-3 align-center">
-                                            <div class="col-lg-5">
-                                                <div class="form-group">
-                                                    <label class="form-label">Main Site</label>
-                                                    <span class="form-note">Specify the URL if your main website.</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-7">
-                                                <div class="form-group">
-                                                    <div class="form-control-wrap">
-                                                        <input type="text" class="form-control" name="site-url" value="https://www.softnio.com">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row g-3 align-center">
-                                            <div class="col-lg-5">
-                                                <div class="form-group">
-                                                    <label class="form-label">Facebook</label>
-                                                    <span class="form-note">Specify the URL if your facebook page.</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-7">
-                                                <div class="form-group">
-                                                    <div class="form-control-wrap">
-                                                        <input type="text" class="form-control" name="fb-site-url" value="https://www.facebook.com">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row g-3 align-center">
-                                            <div class="col-lg-5">
-                                                <div class="form-group">
-                                                    <label class="form-label">Instagram</label>
-                                                    <span class="form-note">Specify the URL if your instagram page.</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-7">
-                                                <div class="form-group">
-                                                    <div class="form-control-wrap">
-                                                        <input type="text" class="form-control" name="insta-site-url" value="https://www.instagram.com">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row g-3 align-center">
-                                            <div class="col-lg-5">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="site-off">Maintanance Mode</label>
-                                                    <span class="form-note">Enable to make Project make offline.</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-7">
-                                                <div class="form-group">
-                                                    <div class="custom-control custom-switch">
-                                                        <input type="checkbox" class="custom-control-input" name="reg-public" id="site-off">
-                                                        <label class="custom-control-label" for="site-off">Offline</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div> -->
-                                        <div class="row g-3">
-                                            <div class="col-lg-7">
-                                                <div class="form-group mt-2">
-                                                    <button type="submit" class="btn btn-lg btn-primary">Update</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                            <!--tab pan -->
-                            <div class="tab-pane" id="admin">
-                                <div class="card-inner position-relative card-tools-toggle pt-0">
-                                    <div class="nk-block-between g-3">
-                                        <div class="nk-block-head-content">
-                                            <h4 class="nk-block-title title">Admin List</h4>
-                                        </div><!-- .nk-block-head-content -->
-                                        <div class="nk-block-head-content">
-                                            <div class="toggle-wrap nk-block-tools-toggle">
-                                                <a href="#" class="btn btn-icon btn-trigger toggle-expand me-n1" data-target="pageMenu"><em class="icon ni ni-menu-alt-r"></em></a>
-                                                <div class="toggle-expand-content" data-content="pageMenu">
-                                                    <ul class="nk-block-tools g-3">
-                                                        <li><a href="#" class="btn btn-white btn-outline-light"><em class="icon ni ni-download-cloud"></em><span>Export</span></a></li>
-                                                        <li class="nk-block-tools-opt"><a data-bs-toggle="modal" href="#addAdmin" class="btn text-white bg-primary"><em class="icon ni ni-plus"></em><span>Add Admin</span></a></li>
+                <div class="components-preview wide-md mx-auto">
+                    <!-- .nk-block-head -->
+                    <div class="nk-block nk-block-lg">
+                        <div class="nk-block-head nk-block-head-sm">
+                            <div class="nk-block-between g-3">
+                                <div class="nk-block-head-content">
+                                    <h3 class="nk-block-title page-title">Members</h3>
+                                    
+                                </div><!-- .nk-block-head-content -->
+                                {% if user.user_type == 'admin' %}
+                                <div class="nk-block-head-content">
+                                    <ul class="nk-block-tools g-3">
+                                        <li>
+                                            <div class="drodown">
+                                                <a href="#" class="dropdown-toggle btn btn-icon btn-primary" data-bs-toggle="dropdown"><em class="icon ni ni-plus"></em></a>
+                                                <div class="dropdown-menu dropdown-menu-end">
+                                                    <ul class="link-list-opt no-bdr">
+                                                        <li><a data-bs-toggle="modal"  href="#addMember"><span>Add Member</span></a></li>
                                                     </ul>
                                                 </div>
-                                            </div><!-- .toggle-wrap -->
-                                        </div><!-- .nk-block-head-content -->
-                                    </div><!-- .nk-block-between -->
-                                </div>
-                                <div class="nk-block">
-                                    <div class="card card-bordered border-left-0 border-right-0">
-                                        <div class="card-inner-group">
-                                            <div class="card-inner position-relative card-tools-toggle">
-                                                <div class="card-title-group">
-                                                    <div class="card-tools">
-                                                        <div class="form-inline flex-nowrap gx-3">
-                                                            <div class="form-wrap w-150px">
-                                                                <select class="form-select js-select2" data-search="off" data-placeholder="Bulk Action">
-                                                                    <option value="">Bulk Action</option>
-                                                                    <option value="email">Send Email</option>
-                                                                    <option value="group">Change Group</option>
-                                                                    <option value="delete">Delete</option>
-                                                                </select>
-                                                            </div>
-                                                            <div class="btn-wrap">
-                                                                <span class="d-none d-md-block"><button class="btn btn-dim btn-outline-light disabled">Apply</button></span>
-                                                                <span class="d-md-none"><button class="btn btn-dim btn-outline-light btn-icon disabled"><em class="icon ni ni-arrow-right"></em></button></span>
-                                                            </div>
-                                                        </div><!-- .form-inline -->
-                                                    </div><!-- .card-tools -->
-                                                    <div class="card-tools me-n1">
-                                                        <ul class="btn-toolbar gx-1">
-                                                            <li>
-                                                                <a href="#" class="btn btn-icon search-toggle toggle-search" data-target="search"><em class="icon ni ni-search"></em></a>
-                                                            </li><!-- li -->
-                                                            <li class="btn-toolbar-sep"></li><!-- li -->
-                                                            <li>
-                                                                <div class="toggle-wrap">
-                                                                    <a href="#" class="btn btn-icon btn-trigger toggle" data-target="cardTools"><em class="icon ni ni-menu-right"></em></a>
-                                                                    <div class="toggle-content" data-content="cardTools">
-                                                                        <ul class="btn-toolbar gx-1">
-                                                                            <li class="toggle-close">
-                                                                                <a href="#" class="btn btn-icon btn-trigger toggle" data-target="cardTools"><em class="icon ni ni-arrow-left"></em></a>
-                                                                            </li><!-- li -->
-                                                                            <li>
-                                                                                <div class="dropdown">
-                                                                                    <a href="#" class="btn btn-trigger btn-icon dropdown-toggle" data-bs-toggle="dropdown">
-                                                                                        <div class="dot dot-primary"></div>
-                                                                                        <em class="icon ni ni-filter-alt"></em>
-                                                                                    </a>
-                                                                                    <div class="filter-wg dropdown-menu dropdown-menu-xl dropdown-menu-end">
-                                                                                        <div class="dropdown-head">
-                                                                                            <span class="sub-title dropdown-title">Filter Users</span>
-                                                                                            <div class="dropdown">
-                                                                                                <a href="#" class="btn btn-sm btn-icon">
-                                                                                                    <em class="icon ni ni-more-h"></em>
-                                                                                                </a>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                        <div class="dropdown-body dropdown-body-rg">
-                                                                                            <div class="row gx-6 gy-3">
-                                                                                                <div class="col-6">
-                                                                                                    <div class="form-group">
-                                                                                                        <label class="overline-title overline-title-alt">Role</label>
-                                                                                                        <select class="form-select js-select2">
-                                                                                                            <option value="any">Any Role</option>
-                                                                                                            <option value="investor">Admin</option>
-                                                                                                            <option value="seller">Co-admin</option>
-                                                                                                            <option value="buyer">Moderator</option>
-                                                                                                        </select>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                                <div class="col-6">
-                                                                                                    <div class="form-group">
-                                                                                                        <label class="overline-title overline-title-alt">Status</label>
-                                                                                                        <select class="form-select js-select2">
-                                                                                                            <option value="any">Any Status</option>
-                                                                                                            <option value="active">Active</option>
-                                                                                                            <option value="pending">Pending</option>
-                                                                                                            <option value="suspend">Suspend</option>
-                                                                                                            <option value="deleted">Deleted</option>
-                                                                                                        </select>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                                <div class="col-12">
-                                                                                                    <div class="form-group">
-                                                                                                        <button type="button" class="btn btn-secondary">Filter</button>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                        <div class="dropdown-foot between">
-                                                                                            <a class="clickable" href="#">Reset Filter</a>
-                                                                                            <a href="#">Save Filter</a>
-                                                                                        </div>
-                                                                                    </div><!-- .filter-wg -->
-                                                                                </div><!-- .dropdown -->
-                                                                            </li><!-- li -->
-                                                                            <li>
-                                                                                <div class="dropdown">
-                                                                                    <a href="#" class="btn btn-trigger btn-icon dropdown-toggle" data-bs-toggle="dropdown">
-                                                                                        <em class="icon ni ni-setting"></em>
-                                                                                    </a>
-                                                                                    <div class="dropdown-menu dropdown-menu-xs dropdown-menu-end">
-                                                                                        <ul class="link-check">
-                                                                                            <li><span>Show</span></li>
-                                                                                            <li class="active"><a href="#">10</a></li>
-                                                                                            <li><a href="#">20</a></li>
-                                                                                            <li><a href="#">50</a></li>
-                                                                                        </ul>
-                                                                                        <ul class="link-check">
-                                                                                            <li><span>Order</span></li>
-                                                                                            <li class="active"><a href="#">DESC</a></li>
-                                                                                            <li><a href="#">ASC</a></li>
-                                                                                        </ul>
-                                                                                    </div>
-                                                                                </div><!-- .dropdown -->
-                                                                            </li><!-- li -->
-                                                                        </ul><!-- .btn-toolbar -->
-                                                                    </div><!-- .toggle-content -->
-                                                                </div><!-- .toggle-wrap -->
-                                                            </li><!-- li -->
-                                                        </ul><!-- .btn-toolbar -->
-                                                    </div><!-- .card-tools -->
-                                                </div><!-- .card-title-group -->
-                                                <div class="card-search search-wrap" data-search="search">
-                                                    <div class="card-body">
-                                                        <div class="search-content">
-                                                            <a href="#" class="search-back btn btn-icon toggle-search" data-target="search"><em class="icon ni ni-arrow-left"></em></a>
-                                                            <input type="text" class="form-control border-transparent form-focus-none" placeholder="Search by user or email">
-                                                            <button class="search-submit btn btn-icon"><em class="icon ni ni-search"></em></button>
-                                                        </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div><!-- .nk-block-head-content -->
+                                {% endif %}
+                            </div><!-- .nk-block-between -->
+                        </div><!-- .nk-block-head -->
+                          
+                        <div class="card card-bordered card-preview">
+                            <div class="card-inner">
+                                <table class="datatable-init nowrap nk-tb-list nk-tb-ulist" data-auto-responsive="false">
+                                    <thead>
+                                        <tr class="nk-tb-item nk-tb-head">
+                                            <th class="nk-tb-col nk-tb-col-check">
+                                                <div class="custom-control custom-control-sm custom-checkbox notext">
+                                                    <input type="checkbox" class="custom-control-input" id="uid">
+                                                    <label class="custom-control-label" for="uid"></label>
+                                                </div>
+                                            </th>
+                                            <th class="nk-tb-col"><span class="sub-text">Name</span></th>
+                                            <th class="nk-tb-col tb-col-mb"><span class="sub-text">Id No.</span></th>
+                                            <th class="nk-tb-col tb-col-md"><span class="sub-text">Phone</span></th>
+                                            <th class="nk-tb-col tb-col-md"><span class="sub-text">ID</span></th>
+                                            <th class="nk-tb-col tb-col-lg"><span class="sub-text">C.Score</span></th>
+                                            <th class="nk-tb-col tb-col-lg"><span class="sub-text">P.C.S</span></th>
+                                            <th class="nk-tb-col tb-col-lg"><span class="sub-text">Status</span></th>
+                                            <th class="nk-tb-col tb-col-md"><span class="sub-text">Branch</span></th>
+                                            <th class="nk-tb-col nk-tb-col-tools text-end">
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for member in members %}
+                                        
+                                        <tr class="nk-tb-item">
+                                            <td class="nk-tb-col nk-tb-col-check">
+                                                <div class="custom-control custom-control-sm custom-checkbox notext">
+                                                    <input type="checkbox" class="custom-control-input" id="uid1">
+                                                    <label class="custom-control-label" for="uid1"></label>
+                                                </div>
+                                            </td>
+                                            <td class="nk-tb-col">
+                                                <div class="user-card">
+                                                    <div class="user-avatar bg-dim-primary d-none d-sm-flex">
+                                                        <img src="{{ member.passport_photo.url }}" >
                                                     </div>
-                                                </div><!-- .card-search -->
-                                            </div><!-- .card-inner -->
-                                            <div class="card-inner p-0">
-                                                <div class="nk-tb-list nk-tb-ulist">
-                                                    <div class="nk-tb-item nk-tb-head">
-                                                        <div class="nk-tb-col nk-tb-col-check">
-                                                            <div class="custom-control custom-control-sm custom-checkbox notext">
-                                                                <input type="checkbox" class="custom-control-input" id="uid">
-                                                                <label class="custom-control-label" for="uid"></label>
+                                                    <div class="user-info">
+                                                        <span class="tb-lead">{{member.first_name}} {{member.last_name}}<span class="dot dot-success d-md-none ms-1"></span></span>
+                                                        <span>{{member.email}}</span>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="nk-tb-col tb-col-md">
+                                                <span>{{member.id_no}}</span>
+                                            </td>
+                                            <td class="nk-tb-col tb-col-md">
+                                                <span>{{member.phone_no}}</span>
+                                            </td>
+                                            
+                                            <td class="nk-tb-col tb-col-mb" data-order="35040.34">
+                                                <span class="tb-amount">{{member.credit_score}}</span>
+                                            </td>
+                                            <td class="nk-tb-col tb-col-mb" data-order="35040.34">
+                                                <span class="tb-amount">{{member.previous_credit_score}}</span>
+                                            </td>
+                                            <td class="nk-tb-col tb-col-lg">
+                                                {% if status == 'active' %}
+                                                <span class="badge text-medium text-primary">{{member.status}}</span>
+                                                {% else %}
+                                                <span class="badge text-medium text-secondary">{{member.status}}</span>
+                                                {% endif %}
+                                            </td>
+
+                                            <td class="nk-tb-col tb-col-md">
+                                                <span>{{member.branch}}</span>
+                                            </td>
+                                            <td class="nk-tb-col nk-tb-col-tools">
+                                                <ul class="nk-tb-actions gx-1">
+                                                    <li>
+                                                        <div class="drodown">
+                                                            <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
+                                                            <div class="dropdown-menu dropdown-menu-end">
+                                                                <ul class="link-list-opt no-bdr">
+                                                                    <li><a href="{% url 'edit-member' member.id %}"><em class="icon ni ni-edit-alt"></em><span>Update Member </span></a></li>
+                                                                    <li><a href="{% url 'view-member' member.id %}"><em class="icon ni ni-eye"></em><span>View Details</span></a></li>
+                                                                    <li><a data-bs-toggle="modal" href="#smsMember" data-member-id="{{ member.id }}"><em class="icon ni ni-mail"></em><span>Send SMS</span></a></li> 
+                                                                    <!-- <li><a href="#"><em class="icon ni ni-activity-round"></em><span>Activities</span></a></li> -->
+                                                                    <li class="divider"></li>
+                                                                    {% if user.user_type == 'admin' %}
+                                                                    <li><a data-bs-toggle="modal" class="delete-button" href="#deleteMember" data-pk="{{ member.id }}"><em class="icon ni ni-trash"></em><span>Delete Member</span></a></li>
+                                                                    {% endif %}
+                                                                    
+                                                                </ul>
                                                             </div>
                                                         </div>
-                                                        <div class="nk-tb-col tb-col-lg"><span class="sub-text">ID</span></div>
-                                                        <div class="nk-tb-col"><span class="sub-text">Name</span></div>
-                                                        <div class="nk-tb-col"><span class="sub-text">Role</span></div>
-                                                        <div class="nk-tb-col tb-col-sm"><span class="sub-text">Status</span></div>
-                                                        <div class="nk-tb-col nk-tb-col-tools text-end">
-                                                            <div class="dropdown">
-                                                                <a href="#" class="btn btn-xs btn-outline-light btn-icon dropdown-toggle" data-bs-toggle="dropdown" data-offset="0,5"><em class="icon ni ni-plus"></em></a>
-                                                                <div class="dropdown-menu dropdown-menu-xs dropdown-menu-end">
-                                                                    <ul class="link-tidy sm no-bdr">
-                                                                        <li>
-                                                                            <div class="custom-control custom-control-sm custom-checkbox">
-                                                                                <input type="checkbox" class="custom-control-input" id="inv">
-                                                                                <label class="custom-control-label" for="inv">Invoice ID</label>
-                                                                            </div>
-                                                                        </li>
-                                                                        <li>
-                                                                            <div class="custom-control custom-control-sm custom-checkbox">
-                                                                                <input type="checkbox" class="custom-control-input" id="st">
-                                                                                <label class="custom-control-label" for="st">Status</label>
-                                                                            </div>
-                                                                        </li>
-                                                                    </ul>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div><!-- .nk-tb-item -->
-                                                    <div class="nk-tb-item">
-                                                        <div class="nk-tb-col nk-tb-col-check">
-                                                            <div class="custom-control custom-control-sm custom-checkbox notext">
-                                                                <input type="checkbox" class="custom-control-input" id="uid1">
-                                                                <label class="custom-control-label" for="uid1"></label>
-                                                            </div>
-                                                        </div>
-                                                        <div class="nk-tb-col tb-col-lg">
-                                                            <a href="#">#456</a>
-                                                        </div>
-                                                        <div class="nk-tb-col">
-                                                            <div class="user-card">
-                                                                <div class="user-avatar sm bg-primary">
-                                                                    <span>AB</span>
-                                                                </div>
-                                                                <div class="user-name">
-                                                                    <span class="tb-lead">Abu Bin Ishtiyak</span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="nk-tb-col">
-                                                            <span class="badge text-medium text-success">Admin</span>
-                                                        </div>
-                                                        <div class="nk-tb-col tb-col-sm">
-                                                            <span class="tb-status bg-success badge badge-dot">Active</span>
-                                                        </div>
-                                                        <div class="nk-tb-col nk-tb-col-tools">
-                                                            <ul class="nk-tb-actions gx-2">
-                                                                <li class="nk-tb-action-hidden">
-                                                                    <a href="#" class="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Send Email">
-                                                                        <em class="icon ni ni-mail-fill"></em>
-                                                                    </a>
-                                                                </li>
-                                                                <li class="nk-tb-action-hidden">
-                                                                    <a href="#" class="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Delete">
-                                                                        <em class="icon ni ni-user-cross-fill"></em>
-                                                                    </a>
-                                                                </li>
-                                                                <li>
-                                                                    <div class="drodown">
-                                                                        <a href="#" class="btn btn-sm btn-icon btn-trigger dropdown-toggle" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
-                                                                        <div class="dropdown-menu dropdown-menu-end">
-                                                                            <ul class="link-list-opt no-bdr">
-                                                                                <li><a href="#"><em class="icon ni ni-eye"></em><span>View Details</span></a></li>
-                                                                                <li><a data-bs-toggle="modal" href="#editAdmin"><em class="icon ni ni-edit"></em><span>Edit</span></a></li>
-                                                                                <li><a data-bs-toggle="modal" href="#removeAdmin"><em class="icon ni ni-delete"></em><span>Delete</span></a></li>
-                                                                            </ul>
-                                                                        </div>
-                                                                    </div>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                    </div><!-- .nk-tb-item -->
-                                                    <div class="nk-tb-item">
-                                                        <div class="nk-tb-col nk-tb-col-check">
-                                                            <div class="custom-control custom-control-sm custom-checkbox notext">
-                                                                <input type="checkbox" class="custom-control-input" id="uid2">
-                                                                <label class="custom-control-label" for="uid2"></label>
-                                                            </div>
-                                                        </div>
-                                                        <div class="nk-tb-col tb-col-lg">
-                                                            <a href="#">#457</a>
-                                                        </div>
-                                                        <div class="nk-tb-col">
-                                                            <div class="user-card">
-                                                                <div class="user-avatar sm bg-dark">
-                                                                    <span>BW</span>
-                                                                </div>
-                                                                <div class="user-name">
-                                                                    <span class="tb-lead">Bruce Wayne</span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="nk-tb-col">
-                                                            <span class="badge text-medium text-primary">Co-Admin</span>
-                                                        </div>
-                                                        <div class="nk-tb-col tb-col-sm">
-                                                            <span class="tb-status bg-success badge badge-dot">Active</span>
-                                                        </div>
-                                                        <div class="nk-tb-col nk-tb-col-tools">
-                                                            <ul class="nk-tb-actions gx-2">
-                                                                <li class="nk-tb-action-hidden">
-                                                                    <a href="#" class="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Send Email">
-                                                                        <em class="icon ni ni-mail-fill"></em>
-                                                                    </a>
-                                                                </li>
-                                                                <li class="nk-tb-action-hidden">
-                                                                    <a href="#" class="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Delete">
-                                                                        <em class="icon ni ni-user-cross-fill"></em>
-                                                                    </a>
-                                                                </li>
-                                                                <li>
-                                                                    <div class="drodown">
-                                                                        <a href="#" class="btn btn-sm btn-icon btn-trigger dropdown-toggle" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
-                                                                        <div class="dropdown-menu dropdown-menu-end">
-                                                                            <ul class="link-list-opt no-bdr">
-                                                                                <li><a href="#"><em class="icon ni ni-eye"></em><span>View Details</span></a></li>
-                                                                                <li><a data-bs-toggle="modal" href="#editAdmin"><em class="icon ni ni-edit"></em><span>Edit</span></a></li>
-                                                                                <li><a data-bs-toggle="modal" href="#removeAdmin"><em class="icon ni ni-delete"></em><span>Delete</span></a></li>
-                                                                            </ul>
-                                                                        </div>
-                                                                    </div>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                    </div><!-- .nk-tb-item -->
-                                                    <div class="nk-tb-item">
-                                                        <div class="nk-tb-col nk-tb-col-check">
-                                                            <div class="custom-control custom-control-sm custom-checkbox notext">
-                                                                <input type="checkbox" class="custom-control-input" id="uid3">
-                                                                <label class="custom-control-label" for="uid3"></label>
-                                                            </div>
-                                                        </div>
-                                                        <div class="nk-tb-col tb-col-lg">
-                                                            <a href="#">#496</a>
-                                                        </div>
-                                                        <div class="nk-tb-col">
-                                                            <div class="user-card">
-                                                                <div class="user-avatar sm bg-success">
-                                                                    <span>TI</span>
-                                                                </div>
-                                                                <div class="user-name">
-                                                                    <span class="tb-lead">Iliash Hossain</span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="nk-tb-col">
-                                                            <span class="badge text-medium text-info">Co-admin</span>
-                                                        </div>
-                                                        <div class="nk-tb-col tb-col-sm">
-                                                            <span class="tb-status bg-warning badge badge-dot">Inactive</span>
-                                                        </div>
-                                                        <div class="nk-tb-col nk-tb-col-tools">
-                                                            <ul class="nk-tb-actions gx-2">
-                                                                <li class="nk-tb-action-hidden">
-                                                                    <a href="#" class="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Send Email">
-                                                                        <em class="icon ni ni-mail-fill"></em>
-                                                                    </a>
-                                                                </li>
-                                                                <li class="nk-tb-action-hidden">
-                                                                    <a href="#" class="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Delete">
-                                                                        <em class="icon ni ni-user-cross-fill"></em>
-                                                                    </a>
-                                                                </li>
-                                                                <li>
-                                                                    <div class="drodown">
-                                                                        <a href="#" class="btn btn-sm btn-icon btn-trigger dropdown-toggle" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
-                                                                        <div class="dropdown-menu dropdown-menu-end">
-                                                                            <ul class="link-list-opt no-bdr">
-                                                                                <li><a href="#"><em class="icon ni ni-eye"></em><span>View Details</span></a></li>
-                                                                                <li><a data-bs-toggle="modal" href="#editAdmin"><em class="icon ni ni-edit"></em><span>Edit</span></a></li>
-                                                                                <li><a data-bs-toggle="modal" href="#removeAdmin"><em class="icon ni ni-delete"></em><span>Delete</span></a></li>
-                                                                            </ul>
-                                                                        </div>
-                                                                    </div>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                    </div><!-- .nk-tb-item -->
-                                                    <div class="nk-tb-item">
-                                                        <div class="nk-tb-col nk-tb-col-check">
-                                                            <div class="custom-control custom-control-sm custom-checkbox notext">
-                                                                <input type="checkbox" class="custom-control-input" id="uid4">
-                                                                <label class="custom-control-label" for="uid4"></label>
-                                                            </div>
-                                                        </div>
-                                                        <div class="nk-tb-col tb-col-lg">
-                                                            <a href="#">#458</a>
-                                                        </div>
-                                                        <div class="nk-tb-col">
-                                                            <div class="user-card">
-                                                                <div class="user-avatar sm bg-info">
-                                                                    <span>JA</span>
-                                                                </div>
-                                                                <div class="user-name">
-                                                                    <span class="tb-lead">Jahangir Alom</span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="nk-tb-col">
-                                                            <span class="badge text-medium text-warning">Moderator</span>
-                                                        </div>
-                                                        <div class="nk-tb-col tb-col-sm">
-                                                            <span class="tb-status bg-success badge badge-dot">Active</span>
-                                                        </div>
-                                                        <div class="nk-tb-col nk-tb-col-tools">
-                                                            <ul class="nk-tb-actions gx-2">
-                                                                <li class="nk-tb-action-hidden">
-                                                                    <a href="#" class="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Send Email">
-                                                                        <em class="icon ni ni-mail-fill"></em>
-                                                                    </a>
-                                                                </li>
-                                                                <li class="nk-tb-action-hidden">
-                                                                    <a href="#" class="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Delete">
-                                                                        <em class="icon ni ni-user-cross-fill"></em>
-                                                                    </a>
-                                                                </li>
-                                                                <li>
-                                                                    <div class="drodown">
-                                                                        <a href="#" class="btn btn-sm btn-icon btn-trigger dropdown-toggle" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
-                                                                        <div class="dropdown-menu dropdown-menu-end">
-                                                                            <ul class="link-list-opt no-bdr">
-                                                                                <li><a href="#"><em class="icon ni ni-eye"></em><span>View Details</span></a></li>
-                                                                                <li><a data-bs-toggle="modal" href="#editAdmin"><em class="icon ni ni-edit"></em><span>Edit</span></a></li>
-                                                                                <li><a data-bs-toggle="modal" href="#removeAdmin"><em class="icon ni ni-delete"></em><span>Delete</span></a></li>
-                                                                            </ul>
-                                                                        </div>
-                                                                    </div>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                    </div><!-- .nk-tb-item -->
-                                                    <div class="nk-tb-item">
-                                                        <div class="nk-tb-col nk-tb-col-check">
-                                                            <div class="custom-control custom-control-sm custom-checkbox notext">
-                                                                <input type="checkbox" class="custom-control-input" id="uid5">
-                                                                <label class="custom-control-label" for="uid5"></label>
-                                                            </div>
-                                                        </div>
-                                                        <div class="nk-tb-col tb-col-lg">
-                                                            <a href="#">#459</a>
-                                                        </div>
-                                                        <div class="nk-tb-col">
-                                                            <div class="user-card">
-                                                                <div class="user-avatar sm bg-danger">
-                                                                    <span>FA</span>
-                                                                </div>
-                                                                <div class="user-name">
-                                                                    <span class="tb-lead">Fuad Alom</span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="nk-tb-col">
-                                                            <span class="badge text-medium text-primary">Moderator</span>
-                                                        </div>
-                                                        <div class="nk-tb-col tb-col-sm">
-                                                            <span class="tb-status bg-danger badge badge-dot">Suspended</span>
-                                                        </div>
-                                                        <div class="nk-tb-col nk-tb-col-tools">
-                                                            <ul class="nk-tb-actions gx-2">
-                                                                <li class="nk-tb-action-hidden">
-                                                                    <a href="#" class="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Send Email">
-                                                                        <em class="icon ni ni-mail-fill"></em>
-                                                                    </a>
-                                                                </li>
-                                                                <li class="nk-tb-action-hidden">
-                                                                    <a href="#" class="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Delete">
-                                                                        <em class="icon ni ni-user-cross-fill"></em>
-                                                                    </a>
-                                                                </li>
-                                                                <li>
-                                                                    <div class="drodown">
-                                                                        <a href="#" class="btn btn-sm btn-icon btn-trigger dropdown-toggle" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
-                                                                        <div class="dropdown-menu dropdown-menu-end">
-                                                                            <ul class="link-list-opt no-bdr">
-                                                                                <li><a href="#"><em class="icon ni ni-eye"></em><span>View Details</span></a></li>
-                                                                                <li><a data-bs-toggle="modal" href="#editAdmin"><em class="icon ni ni-edit"></em><span>Edit</span></a></li>
-                                                                                <li><a data-bs-toggle="modal" href="#removeAdmin"><em class="icon ni ni-delete"></em><span>Delete</span></a></li>
-                                                                            </ul>
-                                                                        </div>
-                                                                    </div>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                    </div><!-- .nk-tb-item -->
-                                                </div><!-- .nk-tb-list -->
-                                            </div><!-- .card-inner -->
-                                            <div class="card-inner">
-                                                <ul class="pagination justify-content-center justify-content-md-start">
-                                                    <li class="page-item"><a class="page-link" href="#">Prev</a></li>
-                                                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                                    <li class="page-item"><span class="page-link"><em class="icon ni ni-more-h"></em></span></li>
-                                                    <li class="page-item"><a class="page-link" href="#">6</a></li>
-                                                    <li class="page-item"><a class="page-link" href="#">7</a></li>
-                                                    <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                                                </ul><!-- .pagination -->
-                                            </div><!-- .card-inner -->
-                                        </div><!-- .card-inner-group -->
-                                    </div><!-- .card -->
-                                </div>
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                            
+                                        <!-- .nk-tb-item  -->
+                                        {% endfor %}
+                                        
+                                    </tbody>
+                                </table>
                             </div>
-                            <!--tab pan -->
-                            <div class="tab-pane" id="theme">
-                                <div class="card-inner pt-0">
-                                    <div class="nk-block-head">
-                                        <div class="nk-block-head-content">
-                                            <h4 class="title nk-block-title">Theme Installed</h4>
-                                            <p>Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet.</p>
-                                        </div>
-                                    </div>
-                                    <div class="row g-gs">
-                                        <div class="col-lg-4 col-xxl-3 col-sm-6">
-                                            <div class="card shadow-none">
-                                                <img src="./images/crm/theme/a.jpg" class="border border-light rounded" alt="">
-                                                <div class="card-inner pt-3 p-0">
-                                                    <p class="card-text">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Expedita, sapiente!</p>
-                                                    <a href="#" class="btn btn-primary"> Active Theme</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-4 col-xxl-3 col-sm-6">
-                                            <div class="card shadow-none">
-                                                <img src="./images/crm/theme/b.jpg" class="border border-light rounded" alt="">
-                                                <div class="card-inner pt-3 p-0">
-                                                    <p class="card-text">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Expedita, sapiente!</p>
-                                                    <a href="#" class="btn btn-primary disabled"> Current theme</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-4 col-xxl-3 col-sm-6">
-                                            <div class="card shadow-none">
-                                                <img src="./images/crm/theme/c.jpg" class="border border-light rounded" alt="">
-                                                <div class="card-inner pt-3 p-0">
-                                                    <p class="card-text">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Expedita, sapiente!</p>
-                                                    <a href="#" class="btn btn-primary"> Active theme</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div> <!-- .tab-pane -->
-                            <div class="tab-pane" id="email">
-                                <div class="card-inner pt-0">
-                                    <div class="nk-block-head">
-                                        <div class="nk-block-head-content">
-                                            <h4 class="title nk-block-title">Email-Settings</h4>
-                                            <p>Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet.</p>
-                                        </div>
-                                    </div>
-                                    <div class="row g-gs">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label class="form-label">E-mail to Lead</label>
-                                                <ul class="custom-control-group g-3 align-center">
-                                                    <li>
-                                                        <div class="custom-control custom-control-sm custom-checkbox">
-                                                            <input type="checkbox" class="custom-control-input" id="lead-dis">
-                                                            <label class="custom-control-label" for="lead-dis">About Discount</label>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="custom-control custom-control-sm custom-checkbox">
-                                                            <input type="checkbox" class="custom-control-input" id="lead-pro">
-                                                            <label class="custom-control-label" for="lead-pro">About Product</label>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="custom-control custom-control-sm custom-checkbox">
-                                                            <input type="checkbox" class="custom-control-input" id="lead-det">
-                                                            <label class="custom-control-label" for="lead-det">Product Details</label>
-                                                        </div>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div><!-- .col -->
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label class="form-label">E-mail to Customers</label>
-                                                <ul class="custom-control-group g-3 align-center">
-                                                    <li>
-                                                        <div class="custom-control custom-control-sm custom-checkbox">
-                                                            <input type="checkbox" class="custom-control-input" id="cus-dis">
-                                                            <label class="custom-control-label" for="cus-dis">About Discount</label>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="custom-control custom-control-sm custom-checkbox">
-                                                            <input type="checkbox" class="custom-control-input" id="cus-pro">
-                                                            <label class="custom-control-label" for="cus-pro">About Product</label>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="custom-control custom-control-sm custom-checkbox">
-                                                            <input type="checkbox" class="custom-control-input" id="cus-det">
-                                                            <label class="custom-control-label" for="cus-det">Product Details</label>
-                                                        </div>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div><!-- .col -->
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label class="form-label">E-mail to Employee</label>
-                                                <ul class="custom-control-group g-3 align-center">
-                                                    <li>
-                                                        <div class="custom-control custom-control-sm custom-checkbox">
-                                                            <input type="checkbox" class="custom-control-input" id="emp-holiday">
-                                                            <label class="custom-control-label" for="emp-holiday">Holiday</label>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="custom-control custom-control-sm custom-checkbox">
-                                                            <input type="checkbox" class="custom-control-input" id="emp-policy">
-                                                            <label class="custom-control-label" for="emp-policy">Updated Policy</label>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="custom-control custom-control-sm custom-checkbox">
-                                                            <input type="checkbox" class="custom-control-input" id="emp-salary">
-                                                            <label class="custom-control-label" for="emp-salary">About Salary</label>
-                                                        </div>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div><!-- .col -->
-                                        <div class="col-sm-6 col-lg-4">
-                                            <div class="form-group">
-                                                <div class="form-control-wrap">
-                                                    <div class="form-icon form-icon-right">
-                                                        <em class="icon ni ni-search"></em>
-                                                    </div>
-                                                    <input type="text" class="form-control" id="default-04" placeholder="E-mail from a name">
-                                                </div>
-                                            </div>
-                                        </div><!-- .col -->
-                                    </div> <!-- .row -->
-                                    <div class="row g-3">
-                                        <div class="col-lg-7">
-                                            <div class="form-group mt-2">
-                                                <button type="submit" class="btn btn-lg btn-primary">Update</button>
-                                            </div>
-                                        </div><!-- .col -->
-                                    </div><!-- .row -->
-                                </div>
-                            </div><!-- .tab-pane -->
-                        </div><!-- .tab-content -->
-                    </div>
-                    <!--card-->
-                </div>
-                <!--nk-block-->
+                        </div><!-- .card-preview -->
+                    </div> <!-- nk-block -->
+                </div><!-- .components-preview -->
             </div>
         </div>
     </div>
 </div>
 <!-- content @e -->
+
+<div class="modal fade" id="deleteMember">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-bs-dismiss="modal"><em class="icon ni ni-cross"></em></a>
+            <div class="modal-body modal-body-sm text-center">
+                <div class="nk-modal py-4">
+                    <em class="nk-modal-icon icon icon-circle icon-circle-xxl ni ni-cross bg-danger"></em>
+                    <h4 class="nk-modal-title">Are You Sure ?</h4>
+                    <div class="nk-modal-text mt-n2">
+                        <p class="text-soft">This member will be removed permanently.</p>
+                    </div>
+                    <ul class="d-flex justify-content-center gx-4 mt-4">
+                        <form id="delete-form" method="POST">
+                            {% csrf_token %}
+                        <li>
+                            <button type="submit" data-bs-dismiss="modal" id="deleteObj" class="btn btn-primary">Yes, Delete it</button>
+                        </li>
+                        </form>
+                        <li>
+                            <button data-bs-dismiss="modal" data-toggle="modal" data-target="#editEventPopup" class="btn btn-danger btn-dim">Cancel</button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div><!-- .Delete member Modal-content -->
+
+<div class="modal fade" id="addMember">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <em class="icon ni ni-cross-sm"></em>
+            </a>
+            <div class="modal-body modal-body-md">
+                <h5 class="modal-title">Add Member </h5><br>
+            
+                <form action="{% url 'create-member' %}" class="form-validate" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row g-4">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-label" for="full-name-1">First Name</label>
+                                <div class="form-control-wrap">
+                                    <!-- <input type="text" class="form-control" id="full-name-1" name="name"> -->
+                                    {{form.first_name}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-label" for="full-name-1">Last Name</label>
+                                <div class="form-control-wrap">
+                                    <!-- <input type="text" class="form-control" id="full-name-1" name="name"> -->
+                                    {{form.last_name}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-label" for="full-name-1">ID No.</label>
+                                <div class="form-control-wrap">
+                                    <!-- <input type="text" class="form-control" id="full-name-1" name="name"> -->
+                                    {{form.id_no}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="fv-phone">Phone</label>
+                                <div class="form-control-wrap">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="fv-phone">{{company_phone_code}}</span>
+                                        </div>
+                                        {{form.phone_no}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="fv-email">Contact Email</label>
+                                <div class="form-control-wrap">
+                                    <div class="form-icon form-icon-right">
+                                        <em class="icon ni ni-mail"></em>
+                                    </div>
+                                   <!-- <input type="email" class="form-control" id="fv-email" name="fv-email" name="email" required> -->
+                                    {{form.email}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="form-label">Date Joined</label>
+                                <div class="form-control-wrap">
+                                    <div class="form-icon form-icon-left">
+                                        <em class="icon ni ni-calendar"></em>
+                                    </div>
+                                    {{form.date_joined}}
+                                </div>
+                                <div class="form-note">Date format <code>yyyy-mm-dd</code></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="fv-phone">Branch</label>
+                                <div class="form-control-wrap">
+                                    <div class="input-group">
+                                        {{form.branch}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="fv-phone">Business Name</label>
+                                <div class="form-control-wrap">
+                                    <div class="input-group">
+                                        {{form.business_name}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="fv-phone">Business Address</label>
+                                <div class="form-control-wrap">
+                                    <div class="input-group">
+                                        {{form.address}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="fv-phone">Industry</label>
+                                <div class="form-control-wrap">
+                                    <div class="input-group">
+                                        {{form.industry}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="fv-phone">Passport Photo</label>
+                                <div class="form-control-wrap">
+                                    <div class="input-group">
+                                        {{form.passport_photo}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-lg btn-primary">Create Member</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div><!-- .Add Member  Modal-Content -->
+
+<div class="modal fade" id="editMember">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <em class="icon ni ni-cross-sm"></em>
+            </a>
+            <div class="modal-body modal-body-md">
+                <h5 class="modal-title">Add Branch</h5>
+                {% for branch in branches %}
+                <form action="{% url 'edit' branch.id %}" class="form-validate" method="POST">
+                {% endfor %}
+                    {% csrf_token %}
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="fv-email">Branch Name</label>
+                                <div class="form-control-wrap">
+                                    <!-- <div class="form-icon form-icon-right">
+                                        <em class="icon ni ni-mail"></em>
+                                    </div> -->
+                                    <!-- <input type="email" class="form-control" id="fv-email" name="fv-email" name="email" required> -->
+                                    {{form_data.name}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="fv-email">Office</label>
+                                <div class="form-control-wrap">
+                                    <!-- <input type="email" class="form-control" id="fv-email" name="fv-email" name="email" required> -->
+                                    {{form.office}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="fv-email">Email address</label>
+                                <div class="form-control-wrap">
+                                    <div class="form-icon form-icon-right">
+                                        <em class="icon ni ni-mail"></em>
+                                    </div>
+                                    <!-- <input type="email" class="form-control" id="fv-email" name="fv-email" name="email" required> -->
+                                    {{form.email}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="fv-phone">Phone</label>
+                                <div class="form-control-wrap">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="fv-phone">+254</span>
+                                        </div>
+                                        <!-- <input type="number" class="form-control" name="phone" required> -->
+                                        {{form.phone}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-label" for="pay-amount-1">Capital Amount</label>
+                                <div class="form-control-wrap">
+                                    <!-- <input type="number" class="form-control" id="pay-amount-1" name="capital"> -->
+                                    {{form.capital}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="form-label">Date Opened</label>
+                                <div class="form-control-wrap">
+                                    <div class="form-icon form-icon-left">
+                                        <em class="icon ni ni-calendar"></em>
+                                    </div>
+                                    <!-- <input type="date" class="form-control date-picker" name="date_opened" data-date-format="yyyy-mm-dd"> -->
+                                    {{form.open_date}}
+                                </div>
+                                <!-- <div class="form-note">Date format <code>yyyy-mm-dd</code></div> -->
+                            </div>
+                        </div>
+                        <div class="col-lg-7">
+                            <ul class="custom-control-group g-3 align-center flex-wrap"> 
+                                <li>
+                                    <div class="custom-control custom-radio">
+                                        <input type="radio" class="custom-control-input" id="reg-enable" name="status" value="active" {% if form.status.value == 'active' %}checked{% endif %}>
+                                        <label class="custom-control-label tb-status text-success" for="reg-enable">Active</label>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="custom-control custom-radio">
+                                        <input type="radio" class="custom-control-input" id="reg-disable" name="status" value="inactive" {% if form.status.value == 'inactive' %}checked{% endif %}>
+                                        <label class=" custom-control-label tb-status text-danger" for="reg-disable">Inactive</label>
+                                    </div>
+                                </li>
+                                
+                            </ul>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="cf-default-textarea">Notes</label>
+                            <div class="form-control-wrap">
+                                <!-- <textarea class="form-control form-control-sm" id="cf-default-textarea" placeholder="Write your message" name="notes"></textarea> -->
+                                {{form.notes}}
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-lg btn-primary">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div><!-- .Edit Member  Modal-Content -->
+
+<!-- Modal Form -->
+<div class="modal fade" id="smsMember">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">SMS Member</h5>
+                <a href="#" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <em class="icon ni ni-cross"></em>
+                </a>
+            </div>
+            <div class="modal-body">
+                {% for member in members %}
+                <form action="{% url 'sms-member' pk=member.id %}" class="form-validate is-alter" method="POST">
+                {% endfor %}
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label class="form-label" for="sms-message">Message</label>
+                        <div class="form-control-wrap">
+                            <textarea type="text" class="form-control" name="sms-message" placeholder="Write your message.." required></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-lg btn-primary">Send SMS</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Tabs -->
+
+<!--
+    rendering the modal dynamically using JavaScript/jQuery to add 
+    the branch.id to the form action URL when the user clicks on 
+    the "Delete Branch" button.
+-->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+//-- deleteRole modal script
+function showDeleteModalForm() {
+    // Implementation of showModalForm() to display the modal
+    $('#deleteMember').modal('show');
+}
+
+    $(document).ready(function() {
+    // Get all the delete buttons
+    var deleteButtons = document.getElementsByClassName('delete-button');
+
+    // Loop through each delete button
+    for (var i = 0; i < deleteButtons.length; i++) {
+        // Add click event listener
+        deleteButtons[i].addEventListener('click', function() {
+            // Get the pk from the data attribute
+            var pk = this.dataset.pk;
+
+            // Update the form's action with the correct URL
+            // Replace '0' with the actual value of pk from your Django template context
+            var form = document.getElementById('delete-form');
+            form.action = '{% url "delete-member" 0 %}'.replace('0', pk);
+
+            // Display the modal form
+            // Assuming you have code to display the modal form
+            showDeleteModalForm();
+
+            // You can add additional logic here if needed, e.g., pre-fill form fields, etc.
+
+            // Let the user manually click the submit button
+            // Assuming you have a submit button with id 'delete-submit-button'
+            document.getElementById('deleteObj').addEventListener('click', function() {
+                // Submit the form
+                form.submit();
+            });
+        });
+    }
+});
+//-- ends
+</script> 
+
+<script>
+    // Get the modal element
+    var smsMemberModal = document.getElementById('smsMember');
+
+    // Event listener for button click
+    smsMemberModal.addEventListener('show.bs.modal', function (event) {
+        // Get the button that triggered the modal
+        var button = event.relatedTarget;
+        
+        // Get the member ID from the button's data attribute
+        var memberId = button.getAttribute('data-member-id');
+        
+        // Get the form element inside the modal
+        var form = smsMemberModal.querySelector('form');
+        
+        // Update the form action with the member ID
+        var action = form.getAttribute('action');
+        form.setAttribute('action', action.replace('member.id', memberId));
+    });
+</script>
+
 <script>
     setTimeout(function(){
         if ($('#msg').length > 0) {
@@ -819,4 +539,4 @@
         }
     }, 6000)    // 2000 millisecond
 </script>
-{% endblock content %}  
+{% endblock content %}

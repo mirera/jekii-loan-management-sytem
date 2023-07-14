@@ -30,9 +30,6 @@
                                 <a class="nav-link" data-bs-toggle="tab" href="#system"><em class="icon ni ni-setting"></em><span>Preferences</span></a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" data-bs-toggle="tab" href="#admin"><em class="icon ni ni-user-alt"></em><span>Admin </span></a>
-                            </li>
-                            <li class="nav-item">
                                 <a class="nav-link" data-bs-toggle="tab" href="#email"><em class="icon ni ni-mail-fill"></em><span>Email</span> </a>
                             </li>
                             <li class="nav-item">
@@ -43,6 +40,9 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" data-bs-toggle="tab" href="#security"><em class="icon ni ni-cc-secure-fill"></em><span>Security</span></a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#templates"><em class="icon ni ni-cc-alt2-fill"></em><span>Templates</span></a>
                             </li>
                         </ul>
                         <div class="tab-content">
@@ -149,6 +149,36 @@
                                                 <div class="form-group">
                                                     <div class="form-control-wrap">
                                                         {{form.address}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row g-3 align-center">
+                                            <div class="col-lg-5">
+                                                <div class="form-group">
+                                                    <label class="form-label">Paybill </label>
+                                                    <span class="form-note"> Provide paybill number for your members if any.</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-7">
+                                                <div class="form-group">
+                                                    <div class="form-control-wrap">
+                                                        {{form.paybill_no}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row g-3 align-center">
+                                            <div class="col-lg-5">
+                                                <div class="form-group">
+                                                    <label class="form-label">Account No </label>
+                                                    <span class="form-note"> Provide account number for your members if any.</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-7">
+                                                <div class="form-group">
+                                                    <div class="form-control-wrap">
+                                                        {{form.account_no}}
                                                     </div>
                                                 </div>
                                             </div>
@@ -351,259 +381,6 @@
                                     </div>
                                 </form>
                             </div><!-- .tab-pane -->
-                            <div class="tab-pane" id="admin">
-                                <div class="card-inner position-relative card-tools-toggle pt-0">
-                                    <div class="nk-block-between g-3">
-                                        <div class="nk-block-head-content">
-                                            <h4 class="nk-block-title title">Admin List</h4>
-                                        </div><!-- .nk-block-head-content -->
-                                        <div class="nk-block-head-content">
-                                            <div class="toggle-wrap nk-block-tools-toggle">
-                                                <a href="#" class="btn btn-icon btn-trigger toggle-expand me-n1" data-target="pageMenu"><em class="icon ni ni-menu-alt-r"></em></a>
-                                                <div class="toggle-expand-content" data-content="pageMenu">
-                                                    <ul class="nk-block-tools g-3">
-                                                        <li><a href="#" class="btn btn-white btn-outline-light"><em class="icon ni ni-download-cloud"></em><span>Export</span></a></li>
-                                                        <li class="nk-block-tools-opt"><a data-bs-toggle="modal" href="#addAdmin" class="btn text-white bg-primary"><em class="icon ni ni-plus"></em><span>Add Admin</span></a></li>
-                                                    </ul>
-                                                </div>
-                                            </div><!-- .toggle-wrap -->
-                                        </div><!-- .nk-block-head-content -->
-                                    </div><!-- .nk-block-between -->
-                                </div>
-                                <div class="nk-block">
-                                    <div class="card card-bordered border-left-0 border-right-0">
-                                        <div class="card-inner-group">
-                                            <div class="card-inner position-relative card-tools-toggle">
-                                                <div class="card-title-group">
-                                                    <div class="card-tools">
-                                                        <div class="form-inline flex-nowrap gx-3">
-                                                            <div class="form-wrap w-150px">
-                                                                <select class="form-select js-select2" data-search="off" data-placeholder="Bulk Action">
-                                                                    <option value="">Bulk Action</option>
-                                                                    <option value="email">Send Email</option>
-                                                                    <option value="group">Change Group</option>
-                                                                    <option value="delete">Delete</option>
-                                                                </select>
-                                                            </div>
-                                                            <div class="btn-wrap">
-                                                                <span class="d-none d-md-block"><button class="btn btn-dim btn-outline-light disabled">Apply</button></span>
-                                                                <span class="d-md-none"><button class="btn btn-dim btn-outline-light btn-icon disabled"><em class="icon ni ni-arrow-right"></em></button></span>
-                                                            </div>
-                                                        </div><!-- .form-inline -->
-                                                    </div><!-- .card-tools -->
-                                                    <div class="card-tools me-n1">
-                                                        <ul class="btn-toolbar gx-1">
-                                                            <li>
-                                                                <a href="#" class="btn btn-icon search-toggle toggle-search" data-target="search"><em class="icon ni ni-search"></em></a>
-                                                            </li><!-- li -->
-                                                            <li class="btn-toolbar-sep"></li><!-- li -->
-                                                            <li>
-                                                                <div class="toggle-wrap">
-                                                                    <a href="#" class="btn btn-icon btn-trigger toggle" data-target="cardTools"><em class="icon ni ni-menu-right"></em></a>
-                                                                    <div class="toggle-content" data-content="cardTools">
-                                                                        <ul class="btn-toolbar gx-1">
-                                                                            <li class="toggle-close">
-                                                                                <a href="#" class="btn btn-icon btn-trigger toggle" data-target="cardTools"><em class="icon ni ni-arrow-left"></em></a>
-                                                                            </li><!-- li -->
-                                                                            <li>
-                                                                                <div class="dropdown">
-                                                                                    <a href="#" class="btn btn-trigger btn-icon dropdown-toggle" data-bs-toggle="dropdown">
-                                                                                        <div class="dot dot-primary"></div>
-                                                                                        <em class="icon ni ni-filter-alt"></em>
-                                                                                    </a>
-                                                                                    <div class="filter-wg dropdown-menu dropdown-menu-xl dropdown-menu-end">
-                                                                                        <div class="dropdown-head">
-                                                                                            <span class="sub-title dropdown-title">Filter Users</span>
-                                                                                            <div class="dropdown">
-                                                                                                <a href="#" class="btn btn-sm btn-icon">
-                                                                                                    <em class="icon ni ni-more-h"></em>
-                                                                                                </a>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                        <div class="dropdown-body dropdown-body-rg">
-                                                                                            <div class="row gx-6 gy-3">
-                                                                                                <div class="col-6">
-                                                                                                    <div class="form-group">
-                                                                                                        <label class="overline-title overline-title-alt">Role</label>
-                                                                                                        <select class="form-select js-select2">
-                                                                                                            <option value="any">Any Role</option>
-                                                                                                            <option value="investor">Admin</option>
-                                                                                                            <option value="seller">Co-admin</option>
-                                                                                                            <option value="buyer">Moderator</option>
-                                                                                                        </select>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                                <div class="col-6">
-                                                                                                    <div class="form-group">
-                                                                                                        <label class="overline-title overline-title-alt">Status</label>
-                                                                                                        <select class="form-select js-select2">
-                                                                                                            <option value="any">Any Status</option>
-                                                                                                            <option value="active">Active</option>
-                                                                                                            <option value="pending">Pending</option>
-                                                                                                            <option value="suspend">Suspend</option>
-                                                                                                            <option value="deleted">Deleted</option>
-                                                                                                        </select>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                                <div class="col-12">
-                                                                                                    <div class="form-group">
-                                                                                                        <button type="button" class="btn btn-secondary">Filter</button>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                        <div class="dropdown-foot between">
-                                                                                            <a class="clickable" href="#">Reset Filter</a>
-                                                                                            <a href="#">Save Filter</a>
-                                                                                        </div>
-                                                                                    </div><!-- .filter-wg -->
-                                                                                </div><!-- .dropdown -->
-                                                                            </li><!-- li -->
-                                                                            <li>
-                                                                                <div class="dropdown">
-                                                                                    <a href="#" class="btn btn-trigger btn-icon dropdown-toggle" data-bs-toggle="dropdown">
-                                                                                        <em class="icon ni ni-setting"></em>
-                                                                                    </a>
-                                                                                    <div class="dropdown-menu dropdown-menu-xs dropdown-menu-end">
-                                                                                        <ul class="link-check">
-                                                                                            <li><span>Show</span></li>
-                                                                                            <li class="active"><a href="#">10</a></li>
-                                                                                            <li><a href="#">20</a></li>
-                                                                                            <li><a href="#">50</a></li>
-                                                                                        </ul>
-                                                                                        <ul class="link-check">
-                                                                                            <li><span>Order</span></li>
-                                                                                            <li class="active"><a href="#">DESC</a></li>
-                                                                                            <li><a href="#">ASC</a></li>
-                                                                                        </ul>
-                                                                                    </div>
-                                                                                </div><!-- .dropdown -->
-                                                                            </li><!-- li -->
-                                                                        </ul><!-- .btn-toolbar -->
-                                                                    </div><!-- .toggle-content -->
-                                                                </div><!-- .toggle-wrap -->
-                                                            </li><!-- li -->
-                                                        </ul><!-- .btn-toolbar -->
-                                                    </div><!-- .card-tools -->
-                                                </div><!-- .card-title-group -->
-                                                <div class="card-search search-wrap" data-search="search">
-                                                    <div class="card-body">
-                                                        <div class="search-content">
-                                                            <a href="#" class="search-back btn btn-icon toggle-search" data-target="search"><em class="icon ni ni-arrow-left"></em></a>
-                                                            <input type="text" class="form-control border-transparent form-focus-none" placeholder="Search by user or email">
-                                                            <button class="search-submit btn btn-icon"><em class="icon ni ni-search"></em></button>
-                                                        </div>
-                                                    </div>
-                                                </div><!-- .card-search -->
-                                            </div><!-- .card-inner -->
-                                            <div class="card-inner p-0">
-                                                <div class="nk-tb-list nk-tb-ulist">
-                                                    <div class="nk-tb-item nk-tb-head">
-                                                        <div class="nk-tb-col nk-tb-col-check">
-                                                            <div class="custom-control custom-control-sm custom-checkbox notext">
-                                                                <input type="checkbox" class="custom-control-input" id="uid">
-                                                                <label class="custom-control-label" for="uid"></label>
-                                                            </div>
-                                                        </div>
-                                                        <div class="nk-tb-col tb-col-lg"><span class="sub-text">ID</span></div>
-                                                        <div class="nk-tb-col"><span class="sub-text">Name</span></div>
-                                                        <div class="nk-tb-col"><span class="sub-text">Role</span></div>
-                                                        <div class="nk-tb-col tb-col-sm"><span class="sub-text">Status</span></div>
-                                                        <div class="nk-tb-col nk-tb-col-tools text-end">
-                                                            <div class="dropdown">
-                                                                <a href="#" class="btn btn-xs btn-outline-light btn-icon dropdown-toggle" data-bs-toggle="dropdown" data-offset="0,5"><em class="icon ni ni-plus"></em></a>
-                                                                <div class="dropdown-menu dropdown-menu-xs dropdown-menu-end">
-                                                                    <ul class="link-tidy sm no-bdr">
-                                                                        <li>
-                                                                            <div class="custom-control custom-control-sm custom-checkbox">
-                                                                                <input type="checkbox" class="custom-control-input" id="inv">
-                                                                                <label class="custom-control-label" for="inv">Invoice ID</label>
-                                                                            </div>
-                                                                        </li>
-                                                                        <li>
-                                                                            <div class="custom-control custom-control-sm custom-checkbox">
-                                                                                <input type="checkbox" class="custom-control-input" id="st">
-                                                                                <label class="custom-control-label" for="st">Status</label>
-                                                                            </div>
-                                                                        </li>
-                                                                    </ul>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div><!-- .nk-tb-item -->
-                                                    {% for admin in admins %}
-                                                    <div class="nk-tb-item">
-                                                        <div class="nk-tb-col nk-tb-col-check">
-                                                            <div class="custom-control custom-control-sm custom-checkbox notext">
-                                                                <input type="checkbox" class="custom-control-input" id="uid1">
-                                                                <label class="custom-control-label" for="uid1"></label>
-                                                            </div>
-                                                        </div>
-                                                        <div class="nk-tb-col tb-col-lg">
-                                                            <a href="#">{{admin.id}}</a>
-                                                        </div>
-                                                        <div class="nk-tb-col">
-                                                            <div class="user-card">
-                                                                <div class="user-avatar sm bg-white">
-                                                                    <img src="{{ admin.profile_photo.url }}" >
-                                                                </div>
-                                                                <div class="user-name">
-                                                                    <span class="tb-lead">{{admin.first_name}} {{admin.last_name}}</span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="nk-tb-col">
-                                                            <span class="badge text-medium text-success">{{admin.staff_role}}</span>
-                                                        </div>
-                                                        <div class="nk-tb-col tb-col-sm">
-                                                            <span class="tb-status bg-success badge badge-dot">{{admin.status}}</span>
-                                                        </div>
-                                                        <div class="nk-tb-col nk-tb-col-tools">
-                                                            <ul class="nk-tb-actions gx-2">
-                                                                <li class="nk-tb-action-hidden">
-                                                                    <a href="#" class="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Send Email">
-                                                                        <em class="icon ni ni-mail-fill"></em>
-                                                                    </a>
-                                                                </li>
-                                                                <li class="nk-tb-action-hidden">
-                                                                    <a href="#" class="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Delete">
-                                                                        <em class="icon ni ni-user-cross-fill"></em>
-                                                                    </a>
-                                                                </li>
-                                                                <li>
-                                                                    <div class="drodown">
-                                                                        <a href="#" class="btn btn-sm btn-icon btn-trigger dropdown-toggle" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
-                                                                        <div class="dropdown-menu dropdown-menu-end">
-                                                                            <ul class="link-list-opt no-bdr">
-                                                                                <li><a href="#"><em class="icon ni ni-eye"></em><span>View Details</span></a></li>
-                                                                                <li><a data-bs-toggle="modal" href="#editAdmin"><em class="icon ni ni-edit"></em><span>Edit</span></a></li>
-                                                                                <li><a data-bs-toggle="modal" href="#removeAdmin"><em class="icon ni ni-delete"></em><span>Delete</span></a></li>
-                                                                            </ul>
-                                                                        </div>
-                                                                    </div>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                    </div><!-- .nk-tb-item -->
-                                                    {% endfor %}
-                                                   
-                                                </div><!-- .nk-tb-list -->
-                                            </div><!-- .card-inner -->
-                                            <div class="card-inner">
-                                                <ul class="pagination justify-content-center justify-content-md-start">
-                                                    <li class="page-item"><a class="page-link" href="#">Prev</a></li>
-                                                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                                    <li class="page-item"><span class="page-link"><em class="icon ni ni-more-h"></em></span></li>
-                                                    <li class="page-item"><a class="page-link" href="#">6</a></li>
-                                                    <li class="page-item"><a class="page-link" href="#">7</a></li>
-                                                    <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                                                </ul><!-- .pagination -->
-                                            </div><!-- .card-inner -->
-                                        </div><!-- .card-inner-group -->
-                                    </div><!-- .card -->
-                                </div>
-                            </div>
                             <!--tab pan -->
                             <div class="tab-pane" id="email">
                                 <form action="{% url 'update-email' organization.id %}" method="POST" class="form-validate">
@@ -1040,6 +817,155 @@
                                     </div><!-- .nk-block -->
                                 </div><!-- .card-inner -->
                             </div><!-- .tab-pane -->
+                            <div class="tab-pane" id="templates" data-company-id="{{organization.id}}">
+                                <form action="{% url 'update-template' organization.id %}" method="POST" >
+                                    {% csrf_token %}
+                                    <div class="card-inner pt-0">
+                                        <div class="nk-block-head">
+                                            <div class="nk-block-head-content">
+                                                <h4 class="title nk-block-title">Templates</h4>
+                                            </div>
+                                        </div>
+                                        <div class="row g-gs">
+                                            <div class="row g-3 align-center">
+                                                <div class="col-lg-5">
+                                                    <div class="form-group">
+                                                        <label class="form-label" for="site-copyright">Member Welcome Template</label>
+                                                        <span class="form-note">SMS sent to a member after registration. Use any of tags below:</span>
+                                                        <span class="form-note">{first_name}, {last_name}, {organization_name} <span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-7">
+                                                    <div class="form-group">
+                                                        <div class="form-control-wrap">
+                                                            {{form_template.member_welcome}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row g-3 align-center">
+                                                <div class="col-lg-5">
+                                                    <div class="form-group">
+                                                        <label class="form-label" for="site-copyright">Loan Application Template</label>
+                                                        <span class="form-note">SMS sent to a member after loan application waiting approval. Use any of tags below:</span>
+                                                        <span class="form-note">{first_name}, {last_name}, {organization_name}, {applied_amount}, {currency} <span></span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-7">
+                                                    <div class="form-group">
+                                                        <div class="form-control-wrap">
+                                                            {{form_template.loan_applied}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row g-3 align-center">
+                                                <div class="col-lg-5">
+                                                    <div class="form-group">
+                                                        <label class="form-label" for="site-copyright">Loan Rejected Template</label>
+                                                        <span class="form-note">SMS sent to a member after loan application is rejected. Use any of tags below:</span>
+                                                        <span class="form-note">{first_name}, {last_name}, {organization_name}, {applied_amount}, {currency}<span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-7">
+                                                    <div class="form-group">
+                                                        <div class="form-control-wrap">
+                                                            {{form_template.loan_rejected}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row g-3 align-center">
+                                                <div class="col-lg-5">
+                                                    <div class="form-group">
+                                                        <label class="form-label" for="site-copyright">Loan Approved Template</label>
+                                                        <span class="form-note">SMS sent to a member after loan approval. Use any of tags below:</span>
+                                                        <span class="form-note">{first_name}, {last_name}, {organization_name}, {due_date}, {currency}, {due_amount}, {paybill_no}, {account_no},  </span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-7">
+                                                    <div class="form-group">
+                                                        <div class="form-control-wrap">
+                                                            {{form_template.loan_approved}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row g-3 align-center">
+                                                <div class="col-lg-5">
+                                                    <div class="form-group">
+                                                        <label class="form-label" for="site-copyright">Loan Cleared Template</label>
+                                                        <span class="form-note">SMS sent to a member after clearing loan. Use any of tags below:</span>
+                                                        <span class="form-note">{first_name}, {last_name}, {organization_name} </span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-7">
+                                                    <div class="form-group">
+                                                        <div class="form-control-wrap">
+                                                            {{form_template.loan_cleared}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row g-3 align-center">
+                                                <div class="col-lg-5">
+                                                    <div class="form-group">
+                                                        <label class="form-label" for="site-copyright">Loan Overdue Template</label>
+                                                        <span class="form-note">SMS sent to a member after loan is overdue. Use any of tags below:</span>
+                                                        <span class="form-note">{first_name}, {last_name}, {organization_name}, {paybill_no}, {account_no}, {currency}</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-7">
+                                                    <div class="form-group">
+                                                        <div class="form-control-wrap">
+                                                            {{form_template.loan_overdue}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row g-3 align-center">
+                                                <div class="col-lg-5">
+                                                    <div class="form-group">
+                                                        <label class="form-label" for="site-copyright">Loan Balance Template</label>
+                                                        <span class="form-note">SMS sent to a member after payment or for balance reminders. Use any of tags below:</span>
+                                                        <span class="form-note">{first_name}, {last_name}, {organization_name}, {paybill_no}, {account_no}, {currency}, {loan_balance} </span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-7">
+                                                    <div class="form-group">
+                                                        <div class="form-control-wrap">
+                                                            {{form_template.loan_balance}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row g-3 align-center">
+                                                <div class="col-lg-5">
+                                                    <div class="form-group">
+                                                        <label class="form-label" for="site-copyright">Loan Payment Template</label>
+                                                        <span class="form-note">SMS sent to a member when they make a payment towards their loan. Use any of tags below:</span>
+                                                        <span class="form-note">{first_name}, {last_name}, {organization_name}, {paybill_no}, {account_no}, {currency}, {loan_balance}, {due_amount} </span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-7">
+                                                    <div class="form-group">
+                                                        <div class="form-control-wrap">
+                                                            {{form_template.after_payment}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div> <!-- .row -->
+                                        <div class="row g-3">
+                                            <div class="col-lg-7">
+                                                <div class="form-group mt-2">
+                                                    <button type="submit" class="btn btn-lg btn-primary">Update</button>
+                                                </div>
+                                            </div><!-- .col -->
+                                        </div><!-- .row -->
+                                    </div>
+                                </form>
+                            </div><!-- .tab-pane -->
                         </div><!-- .tab-content -->
                     </div>
                     <!--card-->
@@ -1050,6 +976,28 @@
     </div>
 </div>
 <!-- content @e -->
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!--bulk action select option and enable apply-->
+<script>
+    $(document).ready(function() {
+        $('#bulk-action-select').change(function() {
+            var selectedOption = $(this).val();
+            var placeholderText = $(this).find('option:selected').text();
+
+            if (selectedOption !== "") {
+                $('#bulk-action-select').data('placeholder', placeholderText);
+                console.log('I am the option', placeholderText)
+                $('#apply-btn').removeClass('disabled').prop('disabled', false);
+            } else {
+                $('#bulk-action-select').data('placeholder', placeholderText);
+                $('#apply-btn').addClass('disabled').prop('disabled', true);
+            }
+        });
+    });
+</script>
+
 <script>
     setTimeout(function(){
         if ($('#msg').length > 0) {
@@ -1057,5 +1005,10 @@
         }
     }, 6000)    // 2000 millisecond
 </script>
+
 {% endblock content %}  
+
+
+
+
 

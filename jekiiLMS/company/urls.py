@@ -14,6 +14,7 @@ urlpatterns = [
     path('email/<str:pk>', views.updateEmail, name='update-email'),
     path('test-email/<str:pk>', views.sendTestEmail, name='test-email'),
     path('preferences/<str:pk>', views.updatePreferences, name='preferences'), 
+    path('template/<str:pk>', views.updateTemplate, name='update-template'),
 
     #security settings
     path('disable-2fa/<str:pk>', views.disable_2fa, name='disable-2fa'),
@@ -25,4 +26,4 @@ urlpatterns = [
     #path('edit-package', views.editPackage, name='edit-package'),
     #path('remove-package', views.removePackage, name='remove-package'),
     path('packages', views.listPackages, name='packages'),
-] 
+]  

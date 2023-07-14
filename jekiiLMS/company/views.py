@@ -4,11 +4,11 @@ from django.contrib.auth.decorators import login_required
 from django.core.mail import EmailMessage
 from django.contrib import messages
 from .models import Organization, Package
-from .forms import OrganizationForm, PackageForm, SmsForm, MpesaSettingForm, EmailSettingForm, SystemSettingForm
+from .forms import OrganizationForm, PackageForm, SmsForm, MpesaSettingForm, EmailSettingForm, SystemSettingForm, TemplateForm
 from user.models import CompanyStaff
 from branch.models import Branch
 from member.models import Member
-from company.models import SmsSetting, MpesaSetting, EmailSetting, SystemSetting, SecuritySetting
+from company.models import SmsSetting, MpesaSetting, EmailSetting, SystemSetting, SecuritySetting, TemplateSetting
 from jekiiLMS.cred_process import encrypt_secret
 from jekiiLMS.decorators import permission_required
 from jekiiLMS.format_inputs import format_phone_number, deformat_phone_no
@@ -18,7 +18,7 @@ from jekiiLMS.format_inputs import format_phone_number, deformat_phone_no
 @permission_required('company.change_organization') 
 def updateOrganization(request, pk):
     organization = Organization.objects.get(id=pk)
-    admins = CompanyStaff.objects.filter(company=organization, user_type='admin')
+    admins = CompanyStaff.objects.filter(company=organization).order_by('date_added')
 
     #check if sms_setting instance exist, if none, create
     try:
@@ -55,6 +55,14 @@ def updateOrganization(request, pk):
         # create 
         security_setting = SecuritySetting.objects.create(company=organization)
 
+    #check if template_setting instance exist, if none, create
+    try:
+        template_setting = TemplateSetting.objects.get(company=organization)
+    except TemplateSetting.DoesNotExist:
+        # create new TemplateSetting object for the organization
+        template_setting = TemplateSetting.objects.create(company=organization)
+
+
     old_phone_code = organization.phone_code
 
     if request.method == 'POST':
@@ -69,6 +77,8 @@ def updateOrganization(request, pk):
         organization.email = request.POST.get('email')
         organization.logo = request.FILES.get('logo')
         organization.address = request.POST.get('address')
+        organization.paybill_no = request.POST.get('paybill_no')
+        organization.account_no = request.POST.get('account_no')
         organization.currency = request.POST.get('currency')
         organization.timezone = request.POST.get('timezone')
         organization.phone_code = request.POST.get('phone_code')
@@ -108,6 +118,8 @@ def updateOrganization(request, pk):
             'email': organization.email,
             'logo': organization.logo, 
             'address': organization.address,
+            'paybill_no': organization.paybill_no,
+            'account_no': organization.account_no,
             'currency': organization.currency,
             'timezone': organization.timezone,
             'phone_code': organization.phone_code,
@@ -115,7 +127,7 @@ def updateOrganization(request, pk):
         # prefill the sms form 
         form_data_sms = {
             'sender_id': sms_setting.sender_id,
-            'api_token': sms_setting.api_token
+            'api_token': sms_setting.api_token,
         }
         # prefill the mpesa form 
         form_data_mpesa = {
@@ -149,6 +161,18 @@ def updateOrganization(request, pk):
             'new_loan_products': preferences.new_loan_products,
             'monthly_portfolio_performance': preferences.monthly_portfolio_performance,
         }
+        # prefill the template form 
+        form_data_template = {
+            'member_welcome': template_setting.member_welcome,
+            'loan_applied':template_setting.loan_applied,
+            'loan_rejected': template_setting.loan_rejected,
+            'loan_approved':template_setting.loan_approved,
+            'loan_cleared': template_setting.loan_cleared,
+            'loan_overdue':template_setting.loan_overdue,
+            'loan_balance': template_setting.loan_balance,
+            'loan_rolled_over':template_setting.after_payment,
+        }
+        form_template = TemplateForm(initial=form_data_template)
         form_preferences = SystemSettingForm(initial=form_data_preferences)
         form_email = EmailSettingForm(initial=form_data_email)
         form_mpesa = MpesaSettingForm(initial=form_data_mpesa)
@@ -162,7 +186,8 @@ def updateOrganization(request, pk):
             'form_preferences':form_preferences,
             'organization':organization,
             'admins':admins,
-            'security_setting':security_setting
+            'security_setting':security_setting,
+            'form_template':form_template,
         }
        
     return render(request,'company/update-company.html', context)
@@ -233,7 +258,7 @@ def updateSms(request, pk):
         # prepopulate the form with existing data
         form_data = {
             'sender_id': sms_setting.sender_id,
-            'api_token': sms_setting.api_token
+            'api_token': sms_setting.api_token,
         }
         form_sms = SmsForm(initial=form_data)
  
@@ -404,7 +429,7 @@ def updatePreferences(request, pk):
             preferences.monthly_portfolio_performance = monthly_portfolio_performance
             preferences.save()
         messages.success(request, 'System preferences updated successfully.')
-        return redirect('update-organization', organization.id)
+        return redirect('update-organization', organization.id) 
     else:
 
         # prepopulate the form with existing data
@@ -430,6 +455,49 @@ def updatePreferences(request, pk):
     return render(request,'company/update-company.html', context) 
 # --ends
 
+# -- view to add template setting
+@login_required(login_url='login')
+#@permission_required('company.change_templatesetting')
+def updateTemplate(request, pk):
+    organization = Organization.objects.get(id=pk)
+    template_setting = TemplateSetting.objects.get(company=organization)
+    form_template = TemplateForm()
+
+    if request.method == 'POST':
+
+        template_setting.company = organization
+        template_setting.member_welcome = request.POST.get('member_welcome')
+        template_setting.loan_applied = request.POST.get('loan_applied')
+        template_setting.loan_rejected = request.POST.get('loan_rejected')
+        template_setting.loan_approved = request.POST.get('loan_approved')
+        template_setting.loan_cleared = request.POST.get('loan_cleared')
+        template_setting.loan_overdue = request.POST.get('loan_overdue')
+        template_setting.loan_balance = request.POST.get('loan_balance')
+        template_setting.after_payment = request.POST.get('after_payment')
+        template_setting.save()
+        
+        messages.success(request, 'Templates updated successfully.')
+        return redirect('update-organization', organization.id)
+    else:
+        # prepopulate the form with existing data
+        form_data = {
+            'member_welcome': template_setting.member_welcome,
+            'loan_applied': template_setting.loan_applied,
+            'loan_rejected': template_setting.loan_rejected,
+            'loan_approved': template_setting.loan_approved,
+            'loan_cleared': template_setting.loan_cleared,
+            'loan_overdue': template_setting.loan_overdue,
+            'loan_balance': template_setting.loan_balance,
+            'after_payment': template_setting.after_payment,
+        }
+        form_template = TemplateForm(initial=form_data)
+ 
+    context = {
+            'form_template':form_template
+        }
+    return render(request,'company/update-company.html', context)
+# -- ends 
+
 #security setting views
 #disable two factor auth
 @login_required(login_url='login')
@@ -450,3 +518,4 @@ def enable_2fa(request, pk):
         security_setting.save()
     return redirect('update-organization', organization.id)
 
+ 

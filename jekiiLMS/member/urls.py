@@ -9,7 +9,8 @@ urlpatterns = [
     path('members', views.listMembers, name='members'),
     path('blacklisted-members', views.blacklisted_members, name='blacklisted-members'),
     path('delete-member/<str:pk>', views.deleteMember, name='delete-member'), 
-    path('sms-member/<str:pk>', views.sms_member, name='sms-member'),    
+    path('sms-member/<str:pk>', views.sms_member, name='sms-member'),  
+    path('members-bulky-action', views.members_bulky_action, name='members-bulky-action'),  
 
 ]
 
