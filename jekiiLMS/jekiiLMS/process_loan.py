@@ -8,7 +8,7 @@ from loan.models import Collateral
 from branch.models import Expense, ExpenseCategory
 from loan.models import Loan, Repayment
 from user.models import RecentActivity, Notification
-from company.models import SmsSetting, SystemSetting
+from company.models import SmsSetting, SystemSetting, TemplateSetting
 from jekiiLMS.loan_math import loan_due_date, save_due_amount, get_previous_due_date , get_interval_period, update_credit_score, installments, total_payable_amount
 from jekiiLMS.tasks import send_email_task, send_sms_task
 
@@ -100,16 +100,32 @@ def clear_loan(loan):
                 #send sms
                 sms_setting = SmsSetting.objects.get(company=loan.company)
                 system_setting = SystemSetting.objects.get(company=loan.company)
+                template_setting = TemplateSetting.objects.get(company=loan.company)
                 sender_id = sms_setting.sender_id
                 token = sms_setting.api_token 
-                message = f"Dear {loan.member.first_name}, You have successfully cleared your loan. Success in your business."
+                
+
+                #available tags 
+                first_name = loan.member.first_name
+                last_name = loan.member.last_name
+                organization_name = loan.company.name
+
+                #format raw message template 
+                message_raw = template_setting.loan_cleared
+
+                message = message_raw.format(
+                    first_name=first_name, 
+                    last_name=last_name, 
+                    organization_name=organization_name, 
+                )
+
                 if system_setting.is_send_sms and token is not None and sender_id is not None:
                     send_sms_task.delay(
-                                sender_id, 
-                                token, 
-                                loan.member.phone_no, 
-                                message
-                            ) 
+                        sender_id, 
+                        token, 
+                        loan.member.phone_no, 
+                        message
+                    ) 
 
 #update member details after loan cleared               
 def update_member_data(loan):
@@ -235,6 +251,7 @@ This code updates due date once repayment made
 def update_due_date(loan):
     sms_setting = SmsSetting.objects.get(company=loan.company)
     system_setting = SystemSetting.objects.get(company=loan.company)
+    template_setting = TemplateSetting.objects.get(company=loan.company)
     interval_period = get_interval_period(loan)
     last_due_date = get_previous_due_date(loan)
     current_date = timezone.now()
@@ -301,10 +318,32 @@ def update_due_date(loan):
                         break
 
                 if total_repayments >= loan.due_amount and loan.loan_balance() > 0:
+                    #available tags 
+                    first_name = loan.member.first_name
+                    last_name = loan.member.last_name
+                    organization_name = loan.member.company.name
+                    currency = loan.company.currency
+                    due_amount = loan.due_amount
+                    loan_balance = loan.loan_balance()
+                    account_no = loan.company.account_no
+                    paybill_no = loan.company.paybill_no
+
+                    #format raw message template 
+                    message_raw = template_setting.after_payment 
+                    message = message_raw.format(
+                        first_name=first_name, 
+                        last_name=last_name, 
+                        organization_name=organization_name, 
+                        currency=currency,
+                        due_amount=due_amount,
+                        loan_balance=loan_balance,
+                        account_no=account_no,
+                        paybill_no=paybill_no,
+                    )
                     #send sms
                     sender_id = sms_setting.sender_id
                     token = sms_setting.api_token 
-                    message = f"Dear {loan.member.first_name}, You next payment is on {loan.due_date.date()}. Due amount:{loan.due_amount} ."
+                    
                     if system_setting.is_send_sms and token is not None and sender_id is not None:
                         send_sms_task.delay(
                                     sender_id, 
@@ -369,15 +408,40 @@ def update_due_date(loan):
         if total_repayments >= loan.due_amount and loan.loan_balance() > 0:
             sender_id = sms_setting.sender_id
             token = sms_setting.api_token 
-            message = f"Dear {loan.member.first_name}, You next payment is on {loan.due_date.date()}. Due amount:{loan.due_amount} ."
+            #available tags 
+            first_name = loan.member.first_name
+            last_name = loan.member.last_name
+            organization_name = loan.member.company.name
+            currency = loan.company.currency
+            due_amount = loan.due_amount
+            loan_balance = loan.loan_balance()
+            account_no = loan.company.account_no
+            paybill_no = loan.company.paybill_no
+
+            #format raw message template 
+            message_raw = template_setting.after_payment 
+            message = message_raw.format(
+                first_name=first_name, 
+                last_name=last_name, 
+                organization_name=organization_name, 
+                currency=currency,
+                due_amount=due_amount,
+                loan_balance=loan_balance,
+                account_no=account_no,
+                paybill_no=paybill_no,
+            )
+            #send sms
+            sender_id = sms_setting.sender_id
+            token = sms_setting.api_token 
+            
             if system_setting.is_send_sms and token is not None and sender_id is not None:
                 send_sms_task.delay(
                             sender_id, 
                             token, 
                             loan.member.phone_no, 
                             message
-                        )   
-    
+                        ) 
+              
 # -- ends
 
  

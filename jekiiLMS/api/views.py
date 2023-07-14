@@ -6,8 +6,8 @@ from django.db.models.functions import TruncMonth
 from member.models import Member
 from .serializers import MemberSerializer
 from loan.models import Loan
-from .serializers import LoanSerializer, OrganizationSerializer, ExpenseSerializer
-from company.models import Organization
+from .serializers import LoanSerializer, OrganizationSerializer, ExpenseSerializer, TemplateSettingSerializer
+from company.models import Organization, TemplateSetting
 from branch.models import Expense
 
 
@@ -22,6 +22,7 @@ def apiEndpoints(request):
         'Get income':'http://127.0.0.1:8000/api/companies',
         #company specific endpoints
         'Get company loans':'http://127.0.0.1:8000/api/loans/1',
+        'Get company sms-templates':'http://127.0.0.1:8000/api/company/sms-templates/1',
         'Get company members':'http://127.0.0.1:8000/api/members/1',
         'Get company expenses':'http://127.0.0.1:8000/api/expenses/1',
         'Get company income-income':'http://127.0.0.1:8000/api/income-expense/1',
@@ -54,6 +55,25 @@ def getCompanyLoans(request, company_id):
     loans = Loan.objects.filter(company=company_id)
     serializer = LoanSerializer(loans, many=True)
     return Response(serializer.data)
+
+@api_view(['GET'])
+def getCompanySmsTemplates(request, company_id):
+    company = Organization.objects.get(id=company_id)
+    template_setting = TemplateSetting.objects.get(company=company)
+
+    sms_templates = {
+        "member_welcome": template_setting.member_welcome,
+        "loan_applied": template_setting.loan_applied,
+        "loan_rejected": template_setting.loan_rejected,
+        "loan_approved": template_setting.loan_approved,
+        "loan_cleared": template_setting.loan_cleared,
+        "loan_overdue": template_setting.loan_overdue,
+        "loan_balance": template_setting.loan_balance,
+        "after_payment": template_setting.after_payment
+    }
+
+    return Response(sms_templates)
+
 
 @api_view(['GET'])
 def getCompanyMembers(request, company_id):

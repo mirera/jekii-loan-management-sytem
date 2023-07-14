@@ -1,5 +1,5 @@
 {% extends 'main.html' %}
-
+ 
 {% block content %}
 {% if messages %}
     {% for message in messages %}
@@ -16,126 +16,290 @@
                 <div class="components-preview wide-md mx-auto">
                     <!-- .nk-block-head -->
                     <div class="nk-block nk-block-lg">
-                        <div class="nk-block-head nk-block-head-sm">
-                            <div class="nk-block-between g-3">
-                                <div class="nk-block-head-content">
-                                    <h3 class="nk-block-title page-title">Staff</h3>
-                                    
-                                </div><!-- .nk-block-head-content -->
-                                <div class="nk-block-head-content">
-                                    <ul class="nk-block-tools g-3">
-                                        <li>
-                                            <div class="drodown">
-                                                <a href="#" class="dropdown-toggle btn btn-icon btn-primary" data-bs-toggle="dropdown"><em class="icon ni ni-plus"></em></a>
-                                                <div class="dropdown-menu dropdown-menu-end">
-                                                    <ul class="link-list-opt no-bdr">
-                                                        <li><a data-bs-toggle="modal"  href="#addStaff"><span>Add Staff</span></a></li>
-                                                        
-                                                    </ul>
-                                                </div>
+                        <div class="" id="templates" data-company-id="{{organization.id}}">
+                            <div class="card-inner position-relative card-tools-toggle pt-0">
+                                <div class="nk-block-between g-3">
+                                    <div class="nk-block-head-content">
+                                        <h4 class="nk-block-title title">Staff List</h4>
+                                    </div><!-- .nk-block-head-content -->
+                                    <div class="nk-block-head-content">
+                                        <div class="toggle-wrap nk-block-tools-toggle">
+                                            <a href="#" class="btn btn-icon btn-trigger toggle-expand me-n1" data-target="pageMenu"><em class="icon ni ni-menu-alt-r"></em></a>
+                                            <div class="toggle-expand-content" data-content="pageMenu">
+                                                <ul class="nk-block-tools g-3">
+                                                    <li><a href="#" class="btn btn-white btn-outline-light"><em class="icon ni ni-download-cloud"></em><span>Export</span></a></li>
+                                                    <li class="nk-block-tools-opt"><a data-bs-toggle="modal"  href="#addStaff" class="btn text-white bg-primary"><em class="icon ni ni-plus"></em><span>Add Staff</span></a></li>
+                                                </ul>
                                             </div>
-                                        </li>
-                                    </ul>
-                                </div><!-- .nk-block-head-content -->
-                            </div><!-- .nk-block-between -->
-                        </div><!-- .nk-block-head -->
-                          
-                        <div class="card card-bordered card-preview">
-                            <div class="card-inner">
-                                <table class="datatable-init nowrap nk-tb-list nk-tb-ulist" data-auto-responsive="false">
-                                    <thead>
-                                        <tr class="nk-tb-item nk-tb-head">
-                                            <th class="nk-tb-col nk-tb-col-check">
-                                                <div class="custom-control custom-control-sm custom-checkbox notext">
-                                                    <input type="checkbox" class="custom-control-input" id="uid">
-                                                    <label class="custom-control-label" for="uid"></label>
-                                                </div>
-                                            </th>
-                                            <th class="nk-tb-col"><span class="sub-text">Name</span></th>
-                                            <th class="nk-tb-col tb-col-mb"><span class="sub-text">Email</span></th>
-                                            <th class="nk-tb-col tb-col-md"><span class="sub-text">Phone No.</span></th>
-                                            <th class="nk-tb-col tb-col-lg"><span class="sub-text">User Type</span></th>
-                                            <th class="nk-tb-col tb-col-lg"><span class="sub-text">Role</span></th>
-                                            <th class="nk-tb-col tb-col-md"><span class="sub-text">Status</span></th>
-                                            <th class="nk-tb-col nk-tb-col-tools text-end">
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for staff in staffs %}
-                                        
-                                        <tr class="nk-tb-item">
-                                            <td class="nk-tb-col nk-tb-col-check">
-                                                <div class="custom-control custom-control-sm custom-checkbox notext">
-                                                    <input type="checkbox" class="custom-control-input" id="uid1">
-                                                    <label class="custom-control-label" for="uid1"></label>
-                                                </div>
-                                            </td>
-                                            <td class="nk-tb-col">
-                                                <div class="user-card">
-                                                    <div class="user-avatar bg-dim-primary d-none d-sm-flex">
-                                                        <img src="{{ staff.profile_photo.url }}" > 
+                                        </div><!-- .toggle-wrap -->
+                                    </div><!-- .nk-block-head-content -->
+                                </div><!-- .nk-block-between -->
+                            </div>
+                            <div class="nk-block">
+                                <div class="card card-bordered border-left-0 border-right-0">
+                                    <div class="card-inner-group">
+                                        <div class="card-inner position-relative card-tools-toggle">
+                                            <div class="card-title-group">
+                                                <div class="card-tools">
+                                                    <div class="form-inline flex-nowrap gx-3">
+                                                        <form method="POST" action="{% url 'staffs-bulky-action' %}" id="bulk-action-form">
+                                                            {% csrf_token %}
+                                                            <div class="form-wrap w-150px">
+                                                                <select class="form-select js-select2" data-search="off" data-placeholder="Bulk Action" name="bulk-action" id="bulk-action-select">
+                                                                    <option value="">Bulk Action</option>
+                                                                    <option value="sms">Send SMS</option>
+                                                                    <option value="activate">Activate</option>
+                                                                    <option value="deactivate">Deactivate</option>
+                                                                    <option value="delete">Delete</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="btn-wrap">
+                                                                <span class="d-none d-md-block">
+                                                                    <button type="submit" class="btn btn-dim btn-outline-light disabled" id="apply-btn">Apply</button>
+                                                                </span>
+                                                                <span class="d-md-none">
+                                                                    <button type="submit" class="btn btn-dim btn-outline-light btn-icon disabled">
+                                                                        <em class="icon ni ni-arrow-right"></em>
+                                                                    </button>
+                                                                </span>
+                                                            </div>
+                                                        </form>
+                                                        <!-- <div class="btn-wrap">
+                                                            <span class="d-none d-md-block"><button class="btn btn-dim btn-outline-light disabled">Apply</button></span>
+                                                            <span class="d-md-none"><button class="btn btn-dim btn-outline-light btn-icon disabled"><em class="icon ni ni-arrow-right"></em></button></span>
+                                                        </div> -->
+                                                    </div><!-- .form-inline -->
+                                                </div><!-- .card-tools -->
+                                                <div class="card-tools me-n1">
+                                                    <ul class="btn-toolbar gx-1">
+                                                        <li>
+                                                            <a href="#" class="btn btn-icon search-toggle toggle-search" data-target="search"><em class="icon ni ni-search"></em></a>
+                                                        </li><!-- li -->
+                                                        <li class="btn-toolbar-sep"></li><!-- li -->
+                                                        <li>
+                                                            <div class="toggle-wrap">
+                                                                <a href="#" class="btn btn-icon btn-trigger toggle" data-target="cardTools"><em class="icon ni ni-menu-right"></em></a>
+                                                                <div class="toggle-content" data-content="cardTools">
+                                                                    <ul class="btn-toolbar gx-1">
+                                                                        <li class="toggle-close">
+                                                                            <a href="#" class="btn btn-icon btn-trigger toggle" data-target="cardTools"><em class="icon ni ni-arrow-left"></em></a>
+                                                                        </li><!-- li -->
+                                                                        <li>
+                                                                            <div class="dropdown">
+                                                                                <a href="#" class="btn btn-trigger btn-icon dropdown-toggle" data-bs-toggle="dropdown">
+                                                                                    <div class="dot dot-primary"></div>
+                                                                                    <em class="icon ni ni-filter-alt"></em>
+                                                                                </a>
+                                                                                <div class="filter-wg dropdown-menu dropdown-menu-xl dropdown-menu-end">
+                                                                                    <div class="dropdown-head">
+                                                                                        <span class="sub-title dropdown-title">Filter Staffs</span>
+                                                                                        <!--
+                                                                                        <div class="dropdown">
+                                                                                            <a href="#" class="btn btn-sm btn-icon">
+                                                                                                <em class="icon ni ni-more-h"></em>
+                                                                                            </a>
+                                                                                        </div>
+                                                                                        -->
+                                                                                    </div>
+                                                                                    <div class="dropdown-body dropdown-body-rg">
+                                                                                        <div class="row gx-6 gy-3">
+                                                                                            <div class="col-6">
+                                                                                                <div class="form-group">
+                                                                                                    <label class="overline-title overline-title-alt" for="template-select">Role</label>
+                                                                                                    <select class="form-select js-select2" id="role-select">
+                                                                                                        <!-- Roles will be populated dynamically depending with organization -->
+                                                                                                    </select>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-6">
+                                                                                                <div class="form-group">
+                                                                                                    <label class="overline-title overline-title-alt" for="status-select">Status</label>
+                                                                                                    <select class="form-select js-select2" id="status-select">
+                                                                                                        <option value="any">Any Status</option>
+                                                                                                        <option value="active">Active</option>
+                                                                                                        <option value="pending">inactive</option>
+                                                                                                    </select>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-12">
+                                                                                                <div class="form-group">
+                                                                                                    <button type="button" class="btn btn-secondary">Filter</button>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="dropdown-foot between">
+                                                                                        <a class="clickable" href="#">Reset Filter</a>
+                                                                                        <a href="#">Save Filter</a>
+                                                                                    </div>
+                                                                                </div><!-- .filter-wg -->
+                                                                            </div><!-- .dropdown -->
+                                                                        </li><!-- li -->
+                                                                        <li>
+                                                                            <div class="dropdown">
+                                                                                <a href="#" class="btn btn-trigger btn-icon dropdown-toggle" data-bs-toggle="dropdown">
+                                                                                    <em class="icon ni ni-setting"></em>
+                                                                                </a>
+                                                                                <div class="dropdown-menu dropdown-menu-xs dropdown-menu-end">
+                                                                                    <ul class="link-check">
+                                                                                        <li><span>Show</span></li>
+                                                                                        <li class="active"><a href="#">10</a></li>
+                                                                                        <li><a href="#">20</a></li>
+                                                                                        <li><a href="#">50</a></li>
+                                                                                    </ul>
+                                                                                    <ul class="link-check">
+                                                                                        <li><span>Order</span></li>
+                                                                                        <li class="active"><a href="#">DESC</a></li>
+                                                                                        <li><a href="#">ASC</a></li>
+                                                                                    </ul>
+                                                                                </div>
+                                                                            </div><!-- .dropdown -->
+                                                                        </li><!-- li -->
+                                                                    </ul><!-- .btn-toolbar -->
+                                                                </div><!-- .toggle-content -->
+                                                            </div><!-- .toggle-wrap -->
+                                                        </li><!-- li -->
+                                                    </ul><!-- .btn-toolbar -->
+                                                </div><!-- .card-tools -->
+                                            </div><!-- .card-title-group -->
+                                            <div class="card-search search-wrap" data-search="search">
+                                                <div class="card-body">
+                                                    <div class="search-content">
+                                                        <a href="#" class="search-back btn btn-icon toggle-search" data-target="search"><em class="icon ni ni-arrow-left"></em></a>
+                                                        <input type="text" class="form-control border-transparent form-focus-none" placeholder="Search by user or email">
+                                                        <button class="search-submit btn btn-icon"><em class="icon ni ni-search"></em></button>
                                                     </div>
-                                                    <div class="user-info">
-                                                        <span class="tb-lead">{{staff.first_name}} {{staff.last_name}}<span class="dot dot-success d-md-none ms-1"></span></span>
-                                                        <span>@{{staff.username}}</span>
-                                                    </div>
                                                 </div>
-                                            </td>
-                                            <td class="nk-tb-col tb-col-md">
-                                                <span>{{staff.email}}</span>
-                                            </td>
-                                            <td class="nk-tb-col tb-col-md">
-                                                <span>{{staff.phone_no}}</span>
-                                            </td>
-                                            <td class="nk-tb-col tb-col-mb" data-order="35040.34">
-                                                <span class="tb-amount">{{staff.user_type}}</span>
-                                            </td>
-                                            <td class="nk-tb-col tb-col-lg">
-                                                <span>{{staff.staff_role}}</span>
-                                            </td>
-                                            <td class="nk-tb-col tb-col-md">
-                                                {% if staff.status == 'active' %}
-                                                <span class="text-success">{{staff.status}}</span>
-                                                {% else %}
-                                                <span class="text-danger">{{staff.status}}</span>
-                                                {% endif %}
-                                            </td>
-                                            {% if user.user_type == 'admin' %}
-                                            <td class="nk-tb-col nk-tb-col-tools">
-                                                <ul class="nk-tb-actions gx-1">
-                                                    <li>
-                                                        <div class="drodown">
-                                                            <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
-                                                            <div class="dropdown-menu dropdown-menu-end">
-                                                                <ul class="link-list-opt no-bdr">
-                                                                    <li><a href="{% url 'view-staff' staff.id %}"><em class="icon ni ni-eye"></em><span>View Profile</span></a></li>
-                                                                    
-                                                                    <li><a href="{% url 'update-staff' staff.id %}"><em class="icon ni ni-edit-alt"></em><span>Update Staff </span></a></li>
-                                                                    <li class="divider"></li>
-                                                                    <li><a href="#"><em class="icon ni ni-shield-star"></em><span>Reset Password</span></a></li>
-                                                                    {% if staff.status == 'active' %}
-                                                                    <li><a href="{% url 'deactivate-staff' staff.id %}"><em class="icon ni ni-shield-star"></em><span>Deactivate</span></a></li>
-                                                                    {% else %}
-                                                                    <li><a href="{% url 'activate-staff' staff.id %}"><em class="icon ni ni-shield-star"></em><span>Activate</span></a></li>
-                                                                    {% endif %}
-                                                                    <li><a data-bs-toggle="modal" class="delete-button" href="#deleteStaff" data-pk="{{ staff.id }}"><em class="icon ni ni-trash"></em><span>Delete Staff</span></a></li>                                                                    
+                                            </div><!-- .card-search -->
+                                        </div><!-- .card-inner -->
+                                        <div class="card-inner p-0">
+                                            <div class="nk-tb-list nk-tb-ulist">
+                                                <div class="nk-tb-item nk-tb-head">
+                                                    <div class="nk-tb-col nk-tb-col-check">
+                                                        <div class="custom-control custom-control-sm custom-checkbox notext">
+                                                            <input type="checkbox" class="custom-control-input" id="check-all">
+                                                            <label class="custom-control-label" for="check-all"></label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="nk-tb-col tb-col-lg"><span class="sub-text">ID</span></div>
+                                                    <div class="nk-tb-col"><span class="sub-text">Name</span></div>
+                                                    <div class="nk-tb-col"><span class="sub-text">Phone</span></div>
+                                                    <div class="nk-tb-col"><span class="sub-text">Branch</span></div>
+                                                    <div class="nk-tb-col"><span class="sub-text">Role</span></div>
+                                                    <div class="nk-tb-col tb-col-sm"><span class="sub-text">Status</span></div>
+                                                    <div class="nk-tb-col nk-tb-col-tools text-end">
+                                                        <div class="dropdown">
+                                                            <a href="#" class="btn btn-xs btn-outline-light btn-icon dropdown-toggle" data-bs-toggle="dropdown" data-offset="0,5"><em class="icon ni ni-plus"></em></a>
+                                                            <div class="dropdown-menu dropdown-menu-xs dropdown-menu-end">
+                                                                <ul class="link-tidy sm no-bdr">
+                                                                    <li>
+                                                                        <div class="custom-control custom-control-sm custom-checkbox">
+                                                                            <input type="checkbox" class="custom-control-input" id="inv">
+                                                                            <label class="custom-control-label" for="inv">Invoice ID</label>
+                                                                        </div>
+                                                                    </li>
+                                                                    <li>
+                                                                        <div class="custom-control custom-control-sm custom-checkbox">
+                                                                            <input type="checkbox" class="custom-control-input" id="st">
+                                                                            <label class="custom-control-label" for="st">Status</label>
+                                                                        </div>
+                                                                    </li>
                                                                 </ul>
                                                             </div>
                                                         </div>
-                                                    </li>
-                                                </ul>
-                                            </td>
-                                            {% endif %}
-                                        </tr>
-                            
-                                        <!-- .nk-tb-item  -->
-                                        {% endfor %}
-                                        
-                                    </tbody>
-                                </table>
+                                                    </div>
+                                                </div><!-- .nk-tb-item -->
+                                                {% for admin in admins %}
+                                                <div class="nk-tb-item">
+                                                    <div class="nk-tb-col nk-tb-col-check">
+                                                        <div class="custom-control custom-control-sm custom-checkbox notext">
+                                                            <input type="checkbox" class="custom-control-input staff-checkbox" id="{{admin.id}}">
+                                                            <label class="custom-control-label" for="{{admin.id}}"></label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="nk-tb-col tb-col-lg">
+                                                        <a href="{% url 'view-staff' admin.id %}">{{admin.id}}</a>
+                                                    </div>
+                                                    <div class="nk-tb-col">
+                                                        <div class="user-card">
+                                                            <div class="user-avatar sm bg-white">
+                                                                <img src="{{ admin.profile_photo.url }}" >
+                                                            </div>
+                                                            <div class="user-name">
+                                                                <span class="tb-lead">{{admin.first_name}} {{admin.last_name}}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="nk-tb-col">
+                                                        <span class=" text-soft">{{admin.phone_no}}</span>
+                                                    </div>
+                                                    <div class="nk-tb-col">
+                                                        <span class=" text-soft">{{admin.branch}}</span>
+                                                    </div>
+                                                    <div class="nk-tb-col">
+                                                        <span class="tb-status bg-secondary badge badge-dot">{{admin.staff_role}}</span>
+                                                    </div>
+                                                    <div class="nk-tb-col tb-col-sm">
+                                                        {% if admin.status == 'active' %}
+                                                        <span class="badge text-medium text-success">{{admin.status}}</span> 
+                                                        {% else %}
+                                                        <span class="badge text-medium text-soft">{{admin.status}}</span> 
+                                                        {% endif %}
+                                                    </div>
+                                                    {% if user.user_type == 'admin' %}
+                                                    <div class="nk-tb-col nk-tb-col-tools">
+                                                        <ul class="nk-tb-actions gx-2">
+                                                            <li class="nk-tb-action-hidden">
+                                                                <a href="#" class="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Send Email">
+                                                                    <em class="icon ni ni-mail-fill"></em>
+                                                                </a>
+                                                            </li>
+                                                            <li class="nk-tb-action-hidden">
+                                                                <a data-bs-toggle="modal" href="#deleteStaff" data-pk="{{ admin.id }}" class="btn btn-sm btn-icon btn-trigger delete-button" data-toggle="tooltip" data-placement="top" title="Delete Staff">
+                                                                    <em class="icon ni ni-user-cross-fill"></em>
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <div class="drodown">
+                                                                    <a href="#" class="btn btn-sm btn-icon btn-trigger dropdown-toggle" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
+                                                                    <div class="dropdown-menu dropdown-menu-end">
+                                                                        <ul class="link-list-opt no-bdr">
+                                                                            <li><a href="{% url 'view-staff' admin.id %}"><em class="icon ni ni-eye"></em><span>View Details</span></a></li>
+                                                                            <li><a href="{% url 'update-staff' admin.id %}"><em class="icon ni ni-edit"></em><span>Update Staff</span></a></li>
+                                                                            <li class="divider"></li>
+                                                                            {% if admin.status == 'active' %}
+                                                                            <li><a href="{% url 'deactivate-staff' admin.id %}"><em class="icon ni ni-shield-star"></em><span>Deactivate</span></a></li>
+                                                                            {% else %}
+                                                                            <li><a href="{% url 'activate-staff' admin.id %}"><em class="icon ni ni-shield-star"></em><span>Activate</span></a></li>
+                                                                            {% endif %}
+                                                                            <li><a data-bs-toggle="modal" class="delete-button" href="#deleteStaff" data-pk="{{ admin.id }}"><em class="icon ni ni-delete"></em><span>Delete Staff</span></a></li>
+                                                                        </ul>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                    {% endif %}
+                                                </div><!-- .nk-tb-item -->
+                                                {% endfor %}
+                                               
+                                            </div><!-- .nk-tb-list -->
+                                        </div><!-- .card-inner -->
+                                        <div class="card-inner">
+                                            <ul class="pagination justify-content-center justify-content-md-start">
+                                                <li class="page-item"><a class="page-link" href="#">Prev</a></li>
+                                                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                                <li class="page-item"><span class="page-link"><em class="icon ni ni-more-h"></em></span></li>
+                                                <li class="page-item"><a class="page-link" href="#">6</a></li>
+                                                <li class="page-item"><a class="page-link" href="#">7</a></li>
+                                                <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                                            </ul><!-- .pagination -->
+                                        </div><!-- .card-inner -->
+                                    </div><!-- .card-inner-group -->
+                                </div><!-- .card -->
                             </div>
-                        </div><!-- .card-preview -->
+                        </div>
                     </div> <!-- nk-block -->
                 </div><!-- .components-preview -->
             </div>
@@ -144,6 +308,44 @@
 </div>
 <!-- content @e -->
 
+<!-- Send Bulk SMS Modal Form -->
+<div class="modal fade" id="sms-modal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Bulk SMS</h5>
+                <a href="#" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <em class="icon ni ni-cross"></em>
+                </a>
+            </div>
+            <div class="modal-body">
+                <form id="sms-modal-form" class="form-validate is-alter">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label class="form-label" for="template-select">Select Template</label>
+                        <div class="form-control-wrap">
+                            <select id="template-select" class="form-control" name="template">
+                                <!-- Options will be populated dynamically -->
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="sms-message-input">Message</label>
+                        <div class="form-control-wrap">
+                            <textarea id="sms-message-input" class="form-control" name="sms-message" placeholder="Write your message.." required></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-lg btn-primary">Send SMS</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal ends -->
+
+<!--Delete staff modal-->
 <div class="modal fade" id="deleteStaff">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -426,10 +628,210 @@
 
 <!--
     rendering the modal dynamically using JavaScript/jQuery to add 
-    the branch.id to the form action URL when the user clicks on 
+    the staff.id to the form action URL when the user clicks on 
     the "Delete Branch" button.
 -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!--check all checkboxes-->
+<script>
+    $(document).ready(function() {
+        $('#check-all').change(function() {
+            var isChecked = $(this).prop('checked');
+            $('.nk-tb-col-check input[type="checkbox"]').prop('checked', isChecked);
+        });
+    });
+</script>
+
+<!--bulk action select option and enable apply-->
+<script>
+    $(document).ready(function() {
+        $('#bulk-action-select').change(function() {
+            var selectedOption = $(this).val();
+            var placeholderText = $(this).find('option:selected').text();
+
+            if (selectedOption !== "") {
+                $('#bulk-action-select').data('placeholder', placeholderText);
+                console.log('I am the option', placeholderText)
+                $('#apply-btn').removeClass('disabled').prop('disabled', false);
+            } else {
+                $('#bulk-action-select').data('placeholder', placeholderText);
+                $('#apply-btn').addClass('disabled').prop('disabled', true);
+            }
+        });
+    });
+</script>
+
+<!--get all checked ids if the option is a sms , launch a modal -->
+<script>
+    $(document).ready(function() {
+        // Retrieve the roles from the backend and populate the roles select options
+        function fetchRoles() {
+            var companyId = $('#templates').data('company-id');
+
+            $.ajax({
+                url: 'http://127.0.0.1:8000/api/company/sms-templates/' + companyId + '/', //prep api
+                method: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    if (response) {
+                        var roles = response;
+
+                        // Populate the roles select options
+                        var roleSelect = $('#role-select');
+                        $.each(roles, function(key, value) {
+                            roleSelect.append($('<option>', {
+                                value: key,
+                                text: key
+                            }));
+                        });
+                    }
+                },
+                error: function(error) {
+                    console.error('Failed to fetch Roles :', error);
+                }
+            });
+        }
+
+        fetchRoles();
+        
+        // Retrieve the SMS templates from the backend and populate the template select options
+        function fetchSMSTemplates() {
+            var companyId = $('#templates').data('company-id');
+
+            $.ajax({
+                url: 'http://127.0.0.1:8000/api/company/sms-templates/' + companyId + '/',
+                method: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    if (response) {
+                        var smsTemplates = response;
+
+                        // Populate the template select options
+                        var templateSelect = $('#template-select');
+                        $.each(smsTemplates, function(key, value) {
+                            templateSelect.append($('<option>', {
+                                value: key,
+                                text: key
+                            }));
+                        });
+                    }
+                },
+                error: function(error) {
+                    console.error('Failed to fetch SMS templates:', error);
+                }
+            });
+        }
+
+        fetchSMSTemplates();
+
+
+        // Handle template selection change
+        $('#template-select').change(function() {
+            var selectedTemplateName = $(this).val();
+
+            if (selectedTemplateName) {
+                var companyId = $('#templates').data('company-id');
+                $.ajax({
+                    url: 'http://127.0.0.1:8000/api/company/sms-templates/' + companyId + '/',
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response) {
+                            var smsTemplates = response;
+                            var selectedTemplate = smsTemplates[selectedTemplateName];
+
+                            if (selectedTemplate) {
+                                var templateContent = selectedTemplate;
+                                $('#sms-message-input').val(templateContent);
+                            }
+                        }
+                    },
+                    error: function(error) {
+                        console.error('Failed to fetch selected SMS template:', error);
+                    }
+                });
+            }
+        });
+
+        // Handle form submission
+        $('#bulk-action-form').submit(function(event) {
+            event.preventDefault();
+
+            var checkedIds = [];
+            var selectedOption = $('#bulk-action-select').val();
+
+            $('.staff-checkbox:checked').each(function() {
+                var adminId = $(this).attr('id');
+                checkedIds.push(adminId);
+            });
+
+            // Check if the selected option is 'sms'
+            if (selectedOption === 'sms') {
+                // Open the modal for message input
+                $('#sms-modal').modal('show');
+            } else {
+                // Add the selected IDs as hidden inputs to the form
+                checkedIds.forEach(function(id) {
+                    $('<input>').attr({
+                        type: 'hidden',
+                        name: 'selected_ids',
+                        value: id
+                    }).appendTo('#bulk-action-form');
+                });
+
+                // Add the selected bulk action to the form
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: 'bulk-action',
+                    value: selectedOption
+                }).appendTo('#bulk-action-form');
+
+                // Submit the form
+                $(this).unbind('submit').submit();
+            }
+        });
+
+        // Handle submission of the SMS modal form
+        $('#sms-modal-form').submit(function(event) {
+            event.preventDefault();
+
+            var smsMessage = $('#sms-message-input').val();
+            var selectedOption = $('#bulk-action-select').val();
+
+            // Add the selected IDs, selected bulk action, and SMS message as hidden inputs to the form
+            $('.staff-checkbox:checked').each(function() {
+                var adminId = $(this).attr('id');
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: 'selected_ids',
+                    value: adminId
+                }).appendTo('#bulk-action-form');
+
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: 'sms_message',
+                    value: smsMessage
+                }).appendTo('#bulk-action-form');
+            });
+
+            // Add the selected bulk action to the form
+            $('<input>').attr({
+                type: 'hidden',
+                name: 'bulk-action',
+                value: selectedOption
+            }).appendTo('#bulk-action-form');
+
+            // Submit the form
+            $('#bulk-action-form').unbind('submit').submit();
+
+            // Close the modal
+            $('#sms-modal').modal('hide');
+        });
+    });
+</script>
+
+<!--Delete staff script-->
 <script>
 //-- deleteRole modal script
 function showDeleteModalForm() {
@@ -470,6 +872,7 @@ function showDeleteModalForm() {
 });
 //-- ends
 </script> 
+<!--close messages notification after 2000 ms-->
 <script>
     setTimeout(function(){
         if ($('#msg').length > 0) {

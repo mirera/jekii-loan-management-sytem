@@ -41,10 +41,18 @@
                     </li><!-- .nk-menu-item -->
                     {% endif %}
                     <li class="nk-menu-item has-sub">
-                        <a href="{% url 'members' %}" class="nk-menu-link">
+                        <a href="#" class="nk-menu-link nk-menu-toggle">
                             <span class="nk-menu-icon"><em class="icon ni ni-users"></em></span>
                             <span class="nk-menu-text">Members</span>
                         </a>   
+                        <ul class="nk-menu-sub">
+                            <li class="nk-menu-item">
+                                <a href="{% url 'members' %}" class="nk-menu-link"><span class="nk-menu-text">All Members</span></a>
+                            </li>
+                            <li class="nk-menu-item">
+                                <a href="{% url 'blacklisted-members' %}" class="nk-menu-link"><span class="nk-menu-text">Blacklisted</span></a>
+                            </li>
+                        </ul><!-- .nk-menu-sub -->
                     </li><!-- .nk-menu-item -->
 
                     <li class="nk-menu-item has-sub">
@@ -176,13 +184,6 @@
                             <li class="nk-menu-item">
                                 <a href="#" class="nk-menu-link"><span class="nk-menu-text">Logo & Favicon</span></a>
                             </li>
-                        </ul> .nk-menu-sub -->
-                    </li><!-- .nk-menu-item -->
-                    <!--<li class="nk-menu-item has-sub">
-                        <a href="#" class="nk-menu-link ">
-                            <span class="nk-menu-icon"><em class="icon ni ni-db"></em></span>
-                            <span class="nk-menu-text">Database Backup</span>
-                        </a>
                         </ul> .nk-menu-sub -->
                     </li><!-- .nk-menu-item -->
                     {% endif %}

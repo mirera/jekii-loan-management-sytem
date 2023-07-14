@@ -16,7 +16,7 @@ from .forms import LoanProductForm, LoanForm, RepaymentForm, GuarantorForm, Coll
 from member.models import Member
 from user.models import RecentActivity, Notification
 from user.models import CompanyStaff
-from company.models import Organization, SmsSetting, MpesaSetting, EmailSetting, SystemSetting
+from company.models import Organization, SmsSetting, MpesaSetting, EmailSetting, SystemSetting, TemplateSetting
 from jekiiLMS.process_loan import is_sufficient_collateral, get_amount_to_disburse, clear_loan, update_member_data, write_loan_off, roll_over, update_due_date, overdue_to_approved, change_due_amount
 from jekiiLMS.mpesa_statement import get_loans_table
 from jekiiLMS.loan_math import loan_due_date, save_due_amount, total_interest, installments
@@ -189,6 +189,37 @@ def createLoan(request):
                 attachments = request.FILES.get('attachments'),
             )
         
+        sms_setting = SmsSetting.objects.get(company=company)
+        template_setting = TemplateSetting.objects.get(company=company)
+        preferences = SystemSetting.objects.get(company=company)
+        sender_id = sms_setting.sender_id
+        token = sms_setting.api_token
+
+        #available tags 
+        first_name = member.first_name
+        last_name = member.last_name
+        organization_name = member.company.name
+        applied_amount = loan.applied_amount
+        currency = company.currency
+
+        #format raw message template 
+        message_raw = template_setting.loan_applied 
+        message = message_raw.format(
+            first_name=first_name, 
+            last_name=last_name, 
+            organization_name=organization_name, 
+            applied_amount=applied_amount,
+            currency=currency,
+        )
+
+        if preferences.is_send_sms and preferences.loan_pending and sender_id is not None and token is not None:
+            send_sms_task.delay(
+                sender_id,
+                token,
+                member.phone_no,
+                message
+            )
+
         messages.success(request, f'The loan application for {loan.member.first_name} {loan.member.last_name} is successful!')
         return redirect('loans')
     context= {'form':form}
@@ -327,13 +358,39 @@ def approveLoan(request,pk):
                     replyto_email = company.email
 
                     #send sms aurguments
+                    system_setting = SystemSetting.objects.get(company=company)
                     sms_setting = SmsSetting.objects.get(company=company) 
+                    template_setting = TemplateSetting.objects.get(company=company) 
+
                     sender_id = sms_setting.sender_id
                     token = sms_setting.api_token 
-                    date = loan.due_date.date().strftime('%Y-%m-%d')
-                    message = f"Dear {borrower.first_name}, Your loan request has been approved and queued for disbursal. The next payment date {date}, amount Ksh{loan.due_amount}. Acc. 5840988 Paybill 522522"  
+                    
 
-                    system_setting = SystemSetting.objects.get(company=company)
+                    #available tags 
+                    first_name = loan.member.first_name
+                    last_name = loan.member.last_name
+                    organization_name = loan.member.company.name
+                    applied_amount = loan.applied_amount
+                    currency = company.currency
+                    due_date = loan.due_date.date().strftime('%Y-%m-%d')
+                    due_amount = loan.due_amount #finish add a attribute to a organization model
+                    account_no = company.account_no
+                    paybill_no = company.paybill_no
+
+                    #format raw message template 
+                    message_raw = template_setting.loan_approved 
+                    message = message_raw.format(
+                        first_name=first_name, 
+                        last_name=last_name, 
+                        organization_name=organization_name, 
+                        applied_amount=applied_amount,
+                        currency=currency,
+                        due_date=due_date,
+                        due_amount=due_amount,
+                        account_no=account_no, 
+                        paybill_no=paybill_no
+                    )
+                    
                     if system_setting.is_auto_disburse and mpesa_setting.online_passkey is not None:
                         #disburse loan
                         consumer_key = mpesa_setting.app_consumer_key
@@ -460,21 +517,40 @@ def rejectLoan(request,pk):
                 state='danger',
                 message = f'Loan for {loan.member.first_name} {loan.member.last_name} has been rejected.'
             )
-
-            #send sms
+            
             sms_setting = SmsSetting.objects.get(company=company)
+            template_setting = TemplateSetting.objects.get(company=company)
+            system_setting = SystemSetting.objects.get(company=company)
+
             sender_id = sms_setting.sender_id
-            token = sms_setting.api_token 
-            message = f"Dear {borrower.first_name}, we regret to inform you that we are unable to approve your loan request at this time."
+            token = sms_setting.api_token
+
+            #available tags 
+            first_name = loan.member.first_name
+            last_name = loan.member.last_name
+            organization_name = loan.member.company.name
+            applied_amount = loan.applied_amount
+            currency = company.currency
+
+            #format raw message template 
+            message_raw = template_setting.loan_rejected 
+            message = message_raw.format(
+                first_name=first_name, 
+                last_name=last_name, 
+                organization_name=organization_name, 
+                applied_amount=applied_amount,
+                currency=currency,
+            )
+
             #Enqueue
-            system_setting = SystemSetting.objects.get(company=company) 
-            if system_setting.is_send_sms and sender_id is not None and token is not None:
+            if system_setting.is_send_sms  and system_setting.loan_rejected and sender_id is not None and token is not None:
                 send_sms_task.delay(
                     sender_id, 
                     token, 
                     borrower.phone_no, 
                     message
                 )
+
             #send email
             email_setting = EmailSetting.objects.get(company=company)
             context = {

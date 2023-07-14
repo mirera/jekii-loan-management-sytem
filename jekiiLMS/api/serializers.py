@@ -1,11 +1,12 @@
 from rest_framework import serializers
 from member.models import Member
 from loan.models import Loan
-from company.models import Organization
+from company.models import Organization, TemplateSetting
 from branch.models import Expense
 
+
 class MemberSerializer(serializers.ModelSerializer):
-     class Meta:
+     class Meta: 
         model = Member
         fields = '__all__'
 
@@ -22,4 +23,9 @@ class OrganizationSerializer(serializers.ModelSerializer):
 class ExpenseSerializer(serializers.ModelSerializer):
      class Meta:
         model = Expense
+        fields = '__all__'
+
+class TemplateSettingSerializer(serializers.ModelSerializer):
+     class Meta:
+        model = TemplateSetting
         fields = '__all__'

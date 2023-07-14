@@ -26,6 +26,7 @@ urlpatterns = [
     path('deactivate-staff/<str:pk>', views.deactivateStaff, name='deactivate-staff'),
     path('activate-staff/<str:pk>', views.activateStaff, name='activate-staff'),
     path('change-photo', views.change_photo, name='change-photo'),
+    path('staffs-bulky-action', views.staffs_bulky_action, name='staffs-bulky-action'),
 
     #-- roles url
     path('add-role', views.addRole, name='add-role'),
