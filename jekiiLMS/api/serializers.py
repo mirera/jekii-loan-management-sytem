@@ -3,6 +3,7 @@ from member.models import Member
 from loan.models import Loan
 from company.models import Organization, TemplateSetting
 from branch.models import Expense
+from user.models import Role
 
 
 class MemberSerializer(serializers.ModelSerializer):
@@ -28,4 +29,9 @@ class ExpenseSerializer(serializers.ModelSerializer):
 class TemplateSettingSerializer(serializers.ModelSerializer):
      class Meta:
         model = TemplateSetting
+        fields = '__all__'
+
+class RoleSerializer(serializers.ModelSerializer):
+     class Meta:
+        model = Role
         fields = '__all__'

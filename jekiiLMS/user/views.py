@@ -1,5 +1,6 @@
 from django.contrib.auth.hashers import make_password
 from django.shortcuts import render, redirect
+from django.db.models import Sum
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.contrib import messages
@@ -17,6 +18,7 @@ from jekiiLMS.format_inputs import format_phone_number, deformat_phone_no
 from .forms import CustomUserCreationForm, CompanyStaffForm , RoleForm
 from .models import CompanyStaff, Role
 from branch.models import Branch 
+from loan.models import Loan
 from user.models import Notification
 from company.models import Organization, Package, SmsSetting, SystemSetting, SecuritySetting
 from jekiiLMS.tasks import send_email_task, send_sms_task
@@ -609,7 +611,14 @@ def addStaff(request):
 def view_staff(request,pk):
     company = get_user_company(request)        
     staff_user = CompanyStaff.objects.get(id=pk, company=company)
-    context = {'staff_user':staff_user}
+    loans_disbursed = Loan.objects.filter(company=company, loan_officer=staff_user) 
+    number_loans_disbursed = loans_disbursed.count()
+    total_disbursed = loans_disbursed.aggregate(Sum('approved_amount'))['approved_amount__sum'] or 0
+    context = {
+        'staff_user':staff_user,
+        'number_loans_disbursed': number_loans_disbursed,
+        'total_disbursed': total_disbursed,
+        }
     return render(request, 'user/view-staff.html', context)
 # -- ends --
 
@@ -655,7 +664,18 @@ def update_user_profile(request):
         }
 
         form = CompanyStaffForm(initial=form_data)
-        return render(request,'user/user-profile.html',{'form':form, 'user':user})
+
+        loans_disbursed = Loan.objects.filter(company=company, loan_officer=user) 
+        number_loans_disbursed = loans_disbursed.count()
+        total_disbursed = loans_disbursed.aggregate(Sum('approved_amount'))['approved_amount__sum'] or 0
+
+        context = {
+            'form':form,
+            'user':user,
+            'number_loans_disbursed':number_loans_disbursed,
+            'total_disbursed':total_disbursed
+            }
+        return render(request,'user/user-profile.html', context)
 # -- ends
 
 # --  user change photo
@@ -914,7 +934,7 @@ def staffs_bulky_action(request):
                             message,
                         )
 
-            messages.success(request, 'Messages sent.')
+            messages.success(request, 'Messages sent.') 
             return redirect('staffs')
 
         elif bulk_action == 'activate':

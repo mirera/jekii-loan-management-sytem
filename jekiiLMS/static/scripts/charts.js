@@ -527,8 +527,11 @@ NioApp.coms.docReady.push(function () {
     });
   } // init chart
 
-
   NioApp.coms.docReady.push(function () {
     ivDataChart();
   });
+
+  //reports and analytics scirpts starts here
+
+  
 }(NioApp, jQuery);

@@ -97,6 +97,8 @@ class CompanyStaff(models.Model):
     date_added = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=STATUS, default='active')
     is_verified = models.BooleanField(default=False)
+    #dark_mode = models.BooleanField(default=False)
+    #last_login = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ['-date_added']
@@ -107,7 +109,6 @@ class CompanyStaff(models.Model):
 
     def __str__(self):
         return self.first_name + ' ' + self.last_name
-
 
 class RecentActivity(models.Model):
     EVENT_CHOICES = (

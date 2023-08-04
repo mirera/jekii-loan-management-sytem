@@ -125,19 +125,28 @@
                         </a>
                         <ul class="nk-menu-sub">
                             <li class="nk-menu-item">
-                                <a href="html/components/elements/alerts.html" class="nk-menu-link"><span class="nk-menu-text">Loan Report</span></a>
+                                <a href="{% url 'loan-portfolio-summary' organization.id %}" class="nk-menu-link"><span class="nk-menu-text">Loan Portfolio Summary</span></a>
                             </li>
                             <li class="nk-menu-item">
-                                <a href="html/components/elements/accordions.html" class="nk-menu-link"><span class="nk-menu-text">Loan Due Report</span></a>
+                                <a href="{% url 'delinquency-report' organization.id %}" class="nk-menu-link"><span class="nk-menu-text"> Deliquency Report</span></a>
                             </li>
                             <li class="nk-menu-item">
-                                <a href="html/components/elements/avatar.html" class="nk-menu-link"><span class="nk-menu-text">Expense Report</span> <span class="nk-menu-badge">New</span></a>
+                                <a href="{% url 'repayment-schedule-report' organization.id %}" class="nk-menu-link"><span class="nk-menu-text">Repayment Schedule Report</span> <span class="nk-menu-badge">New</span></a>
                             </li>
                             <li class="nk-menu-item">
-                                <a href="html/components/elements/badges.html" class="nk-menu-link"><span class="nk-menu-text">Revenue Report</span></a>
+                                <a href="{% url 'loan-application-report' organization.id %}" class="nk-menu-link"><span class="nk-menu-text">Loan Application Report</span></a>
                             </li>
                             <li class="nk-menu-item">
-                                <a href="html/components/elements/buttons.html" class="nk-menu-link"><span class="nk-menu-text">Members Report</span></a>
+                                <a href="{% url 'loan-performance-report' organization.id %}" class="nk-menu-link"><span class="nk-menu-text">Loan Performance Report</span></a>
+                            </li>
+                            <li class="nk-menu-item">
+                                <a href="{% url 'risk-assessment-report' organization.id %}" class="nk-menu-link"><span class="nk-menu-text">Risk Assessment Report</span></a>
+                            </li>
+                            <li class="nk-menu-item">
+                                <a href="{% url 'interest-income-report' organization.id %}" class="nk-menu-link"><span class="nk-menu-text">Interest Income Report</span></a>
+                            </li>
+                            <li class="nk-menu-item">
+                                <a href="{% url 'trends-forecasting' organization.id %}" class="nk-menu-link"><span class="nk-menu-text">Trends & Forecasting</span></a>
                             </li>
                         </ul><!-- .nk-menu-sub -->
                     </li><!-- .nk-menu-item -->
@@ -208,6 +217,7 @@
                         <img class="logo-dark logo-img" src="{% static 'assets/images/logo.png' %}" srcset="{% static 'assets/images/logo.png' %}" alt="logo-dark">
                     </a>
                 </div><!-- .nk-header-brand -->
+                <!--
                 <div class="nk-header-news d-none d-xl-block">
                     <div class="nk-news-list">
                         <a class="nk-news-item" href="#">
@@ -220,7 +230,7 @@
                             </div>
                         </a>
                     </div>
-                </div><!-- .nk-header-news -->
+                </div> .nk-header-news -->
                 <div class="nk-header-tools">
                     <ul class="nk-quick-nav">
                         <li class="dropdown language-dropdown d-none d-sm-block me-n1">
@@ -286,7 +296,7 @@
                                 <div class="dropdown-inner">
                                     <ul class="link-list">
                                         <li><a href="{% url 'profile' %}"><em class="icon ni ni-user-alt"></em><span>View Profile</span></a></li>
-                                        <li><a href="html/user-profile-setting.html"><em class="icon ni ni-setting-alt"></em><span>Account Setting</span></a></li>
+                                       <!-- <li><a href="html/user-profile-setting.html"><em class="icon ni ni-setting-alt"></em><span>Account Setting</span></a></li> -->
                                         <li><a href="html/user-profile-activity.html"><em class="icon ni ni-activity-alt"></em><span>Login Activity</span></a></li>
                                         <li><a class="dark-switch" href="#"><em class="icon ni ni-moon"></em><span>Dark Mode</span></a></li>
                                     </ul>
