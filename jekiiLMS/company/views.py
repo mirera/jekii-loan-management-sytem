@@ -8,10 +8,12 @@ from .forms import OrganizationForm, PackageForm, SmsForm, MpesaSettingForm, Ema
 from user.models import CompanyStaff
 from branch.models import Branch
 from member.models import Member
+from loan.models import Loan
 from company.models import SmsSetting, MpesaSetting, EmailSetting, SystemSetting, SecuritySetting, TemplateSetting
 from jekiiLMS.cred_process import encrypt_secret
 from jekiiLMS.decorators import permission_required
 from jekiiLMS.format_inputs import format_phone_number, deformat_phone_no
+from jekiiLMS.utils import get_user_company
 
 #-- update organization details upon sign up view --
 @login_required(login_url='login')
@@ -361,7 +363,7 @@ def updateEmail(request, pk):
 # -- ends
 
 # -- view to send test email
-@login_required(login_url='login')
+@login_required(login_url='login') 
 def sendTestEmail(request, pk):
     organization = Organization.objects.get(id=pk)
     email_setting = EmailSetting.objects.get(company=organization)
@@ -518,4 +520,68 @@ def enable_2fa(request, pk):
         security_setting.save()
     return redirect('update-organization', organization.id)
 
- 
+
+#reports and analytics views
+
+#loan portfolio summary
+@login_required(login_url='login')
+#@permission_required('company.view_reports') Add this permission on Permissions and assign it by default to admin 
+def loan_portfolio_summary(request, pk):
+    context={}
+    return render(request, 'company/loan_portfolio_summary.html', context)
+
+#delinquency_report view
+@login_required(login_url='login')
+#@permission_required('company.view_reports') 
+def delinquency_report(request, pk):
+    context={}
+    return render(request, 'company/delinquency_report.html', context)
+
+#repayment_schedule_report view
+@login_required(login_url='login')
+#@permission_required('company.view_reports') 
+def repayment_schedule_report(request, pk):
+    context={}
+    return render(request, 'company/repayment_schedule_report.html', context)
+
+#loan_application_report view
+@login_required(login_url='login')
+#@permission_required('company.view_reports') 
+def loan_application_report(request, pk):
+    company = get_user_company(request)
+    loans = Loan.objects.filter(company=company).order_by('-application_date')
+    branches = Branch.objects.filter(company=company)
+    context = {
+        'loans':loans,
+        'branches':branches,
+    }
+    return render(request, 'company/loan_application_report.html', context)
+
+
+#loan_performance_report view
+@login_required(login_url='login')
+#@permission_required('company.view_reports') 
+def loan_performance_report(request, pk):
+    context={}
+    return render(request, 'company/loan_performance_report.html', context)
+
+#risk_assessment_report view
+@login_required(login_url='login')
+#@permission_required('company.view_reports') 
+def risk_assessment_report(request, pk):
+    context={}
+    return render(request, 'company/risk_assessment_report.html', context)
+
+#interest_income_report view
+@login_required(login_url='login')
+#@permission_required('company.view_reports') 
+def interest_income_report(request, pk):
+    context={}
+    return render(request, 'company/interest_income_report.html', context)
+
+#trends_forecasting view
+@login_required(login_url='login')
+#@permission_required('company.view_reports') 
+def trends_forecasting(request, pk):
+    context={}
+    return render(request, 'company/trends_forecasting.html', context)

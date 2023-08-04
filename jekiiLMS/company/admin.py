@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import Organization, Package , SmsSetting , EmailSetting, MpesaSetting, SystemSetting, SecuritySetting, TemplateSetting
 
 # Register your models here.
-admin.site.register(Organization)
+admin.site.register(Organization) 
 admin.site.register(Package)
 admin.site.register(SmsSetting)
 admin.site.register(EmailSetting)

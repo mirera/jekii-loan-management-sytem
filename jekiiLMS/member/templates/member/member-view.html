@@ -120,17 +120,20 @@
                                     </div><!-- .card-inner -->
                                     <div class="card-inner">
                                         <div class="user-account-info py-0">
-                                            <h6 class="overline-title-alt">Member Loan Balance</h6>
-                                            <div class="user-balance">20,000 <small class="currency currency-btc">KES</small></div>
-                                            <div class="user-balance-sub">Initial Loan Amount <span>26,000<span class="currency currency-btc"> KES</span></span></div>
+                                            <h6 class="overline-title-alt">Member Loan History</h6>
+                                            <div class="user-balance-sub">Total Loaned : <span>{{ company_currency }}{{ total_amount_loaned }}</span></div>
+                                            <div class="user-balance-sub">Loans So Far: <span>{{ total_loans }}</span></div>
+                                            <div class="user-balance-sub">Rejected Loans: <span>{{ rejected_loans }}</span></div>
+                                            <div class="user-balance-sub">Rolled Loans: <span>{{ rolled_loans }}</span></div>
                                         </div>
                                     </div><!-- .card-inner -->
                                     <div class="card-inner p-0">
                                         <ul class="link-list-menu"> 
-                                            <li><a class="active" href="#"><em class="icon ni ni-user-fill-c"></em><span>Member Details</span></a></li>  
+                                           <!--  <li><a class="active" ><em class="icon ni ni-user-fill-c"></em><span>Member Details</span></a></li> 
                                             <li><a href="html/user-profile-notification.html"><em class="icon ni ni-bell-fill"></em><span>Account Overview</span></a></li>
                                             <li><a href="html/user-profile-activity.html"><em class="icon ni ni-activity-round-fill"></em><span>Loans</span></a></li>
                                             <li><a href="html/user-profile-setting.html"><em class="icon ni ni-lock-alt-fill"></em><span>Repayments</span></a></li>
+                                            -->
                                         </ul>
                                     </div><!-- .card-inner -->
                                 </div><!-- .card-inner-group -->

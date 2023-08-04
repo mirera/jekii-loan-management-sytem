@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404 
+from django.db.models import Sum
 from django.contrib import messages
 from datetime import datetime
 from django.contrib.auth.decorators import login_required 
@@ -109,7 +110,6 @@ def blacklisted_members(request):
 @login_required(login_url='login')
 @permission_required('member.view_member')
 def viewMember(request, pk):
-
     if request.user.is_authenticated and request.user.is_active:
         try:
             companystaff = CompanyStaff.objects.get(username=request.user.username)
@@ -118,8 +118,19 @@ def viewMember(request, pk):
             company = None
 
     member = Member.objects.get(id=pk, company=company)
-    print(member)
-    context = {'member': member}
+    loans = Loan.objects.filter(member=member, company=company) 
+    total_loans = loans.count() #number of loans
+    total_amount_loaned = loans.aggregate(Sum('approved_amount'))['approved_amount__sum'] or 0 #sum of total_loans' amount
+    rejected_loans = loans.filter(status='rejected').count()
+    rolled_loans = loans.filter(status='rolled_over').count()
+
+    context = {
+        'member': member,
+        'total_amount_loaned':total_amount_loaned,
+        'total_loans':total_loans,
+        'rejected_loans':rejected_loans,
+        'rolled_loans':rolled_loans
+        }
     return render(request, 'member/member-view.html', context) 
 # view member view ends
 
@@ -264,7 +275,7 @@ def members_bulky_action(request):
                     else:
                         due_amount = loan.due_amount
                         final_date = loan.final_due_date
-                        loan_balance = loan.loan_balance()
+                        loan_balance = loan.loan_balance() 
                     
 
                     #format raw message template 

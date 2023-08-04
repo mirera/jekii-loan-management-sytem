@@ -28,7 +28,7 @@
                                             <div class="toggle-expand-content" data-content="pageMenu">
                                                 <ul class="nk-block-tools g-3">
                                                     <li><a href="#" class="btn btn-white btn-outline-light"><em class="icon ni ni-download-cloud"></em><span>Export</span></a></li>
-                                                    <li class="nk-block-tools-opt"><a data-bs-toggle="modal"  href="#addStaff" class="btn text-white bg-primary"><em class="icon ni ni-plus"></em><span>Add Staff</span></a></li>
+                                                    <li class="nk-block-tools-opt"><a data-bs-toggle="modal"  href="#addMember" class="btn text-white bg-primary"><em class="icon ni ni-plus"></em><span>Add Member</span></a></li>
                                                 </ul>
                                             </div>
                                         </div><!-- .toggle-wrap -->
@@ -44,24 +44,26 @@
                                                     <div class="form-inline flex-nowrap gx-3">
                                                         <form method="POST" action="{% url 'members-bulky-action' %}" id="bulk-action-form">
                                                             {% csrf_token %}
-                                                            <div class="form-wrap w-150px">
-                                                                <select class="form-select js-select2" data-search="off" data-placeholder="Bulk Action" name="bulk-action" id="bulk-action-select">
-                                                                    <option value="">Bulk Action</option>
-                                                                    <option value="sms">Send SMS</option>
-                                                                    <option value="activate">Activate</option>
-                                                                    <option value="deactivate">Deactivate</option>
-                                                                    <option value="delete">Delete</option>
-                                                                </select>
-                                                            </div>
-                                                            <div class="btn-wrap">
-                                                                <span class="d-none d-md-block">
-                                                                    <button type="submit" class="btn btn-dim btn-outline-light disabled" id="apply-btn">Apply</button>
-                                                                </span>
-                                                                <span class="d-md-none">
-                                                                    <button type="submit" class="btn btn-dim btn-outline-light btn-icon disabled">
-                                                                        <em class="icon ni ni-arrow-right"></em>
-                                                                    </button>
-                                                                </span>
+                                                            <div class="row gx-2 align-items-center">
+                                                                <div class="col-auto">
+                                                                    <div class="form-wrap w-150px">
+                                                                        <select class="form-select js-select2" data-search="off" data-placeholder="Bulk Action" name="bulk-action" id="bulk-action-select">
+                                                                            <option value="">Bulk Action</option>
+                                                                            <option value="sms">Send SMS</option>
+                                                                            <option value="delete">Delete</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-auto">
+                                                                    <div class="btn-wrap">
+                                                                        <span class="d-none d-md-block">
+                                                                            <button type="submit" class="btn btn-dim btn-outline-light disabled" id="apply-btn">Apply</button>
+                                                                        </span>
+                                                                        <span class="d-md-none">
+                                                                            <button type="submit" class="btn btn-dim btn-outline-light disabled" id="apply-btn">Apply</button>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </form>
                                                         <!-- <div class="btn-wrap">
@@ -106,7 +108,7 @@
                                                                                             <div class="col-6">
                                                                                                 <div class="form-group">
                                                                                                     <label class="overline-title overline-title-alt" for="template-select">Role</label>
-                                                                                                    <select class="form-select js-select2" id="role-select">
+                                                                                                    <select class="form-select js-select2" id="role-select" >
                                                                                                         <!-- Roles will be populated dynamically depending with organization -->
                                                                                                     </select>
                                                                                                 </div>
@@ -117,7 +119,7 @@
                                                                                                     <select class="form-select js-select2" id="status-select">
                                                                                                         <option value="any">Any Status</option>
                                                                                                         <option value="active">Active</option>
-                                                                                                        <option value="pending">inactive</option>
+                                                                                                        <option value="inactive">inactive</option>
                                                                                                     </select>
                                                                                                 </div>
                                                                                             </div>
@@ -250,7 +252,7 @@
                                                     <div class="nk-tb-col nk-tb-col-tools">
                                                         <ul class="nk-tb-actions gx-2">
                                                             <li class="nk-tb-action-hidden">
-                                                                <a href="#" class="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Send Email">
+                                                                <a data-bs-toggle="modal" href="#smsMember" class="btn btn-sm btn-icon btn-trigger" data-toggle="tooltip" data-placement="top" title="Send SMS">
                                                                     <em class="icon ni ni-mail-fill"></em>
                                                                 </a>
                                                             </li>
@@ -700,7 +702,7 @@
             var companyId = $('#templates').data('company-id');
 
             $.ajax({
-                url: 'http://127.0.0.1:8000/api/company/sms-templates/' + companyId + '/', //prep api
+                url: 'http://127.0.0.1:8000/api/company/roles/' + companyId + '/',
                 method: 'GET',
                 dataType: 'json',
                 success: function(response) {
@@ -709,21 +711,35 @@
 
                         // Populate the roles select options
                         var roleSelect = $('#role-select');
-                        $.each(roles, function(key, value) {
+                        $.each(roles, function(index, value) {
                             roleSelect.append($('<option>', {
-                                value: key,
-                                text: key
+                                value: value,
+                                text: value
                             }));
                         });
                     }
                 },
                 error: function(error) {
-                    console.error('Failed to fetch Roles :', error);
+                    console.error('Failed to fetch Roles:', error);
                 }
             });
         }
 
         fetchRoles();
+
+        // Handle role selection
+        $('#role-select').change(function() {
+            var selectedRole = $(this).val();
+            // Perform actions based on the selected role
+            console.log('Selected Role:', selectedRole);
+        });
+
+        // Handle status selection
+        $('#status-select').change(function() {
+            var selectedStatus = $(this).val();
+            // Perform actions based on the selected status
+            console.log('Selected Status:', selectedStatus);
+        });
         
         // Retrieve the SMS templates from the backend and populate the template select options
         function fetchSMSTemplates() {

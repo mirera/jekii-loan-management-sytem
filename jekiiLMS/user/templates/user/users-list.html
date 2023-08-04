@@ -44,25 +44,30 @@
                                                     <div class="form-inline flex-nowrap gx-3">
                                                         <form method="POST" action="{% url 'staffs-bulky-action' %}" id="bulk-action-form">
                                                             {% csrf_token %}
-                                                            <div class="form-wrap w-150px">
-                                                                <select class="form-select js-select2" data-search="off" data-placeholder="Bulk Action" name="bulk-action" id="bulk-action-select">
-                                                                    <option value="">Bulk Action</option>
-                                                                    <option value="sms">Send SMS</option>
-                                                                    <option value="activate">Activate</option>
-                                                                    <option value="deactivate">Deactivate</option>
-                                                                    <option value="delete">Delete</option>
-                                                                </select>
+                                                            <div class="row gx-2 align-items-center">
+                                                                <div class="col-auto">
+                                                                    <div class="form-wrap w-150px">
+                                                                        <select class="form-select js-select2" data-search="off" data-placeholder="Bulk Action" name="bulk-action" id="bulk-action-select">
+                                                                            <option value="">Bulk Action</option>
+                                                                            <option value="sms">Send SMS</option>
+                                                                            <option value="deactivate">Deactivate</option>
+                                                                            <option value="activate">Activate</option>
+                                                                            <option value="delete">Delete</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-auto">
+                                                                    <div class="btn-wrap">
+                                                                        <span class="d-none d-md-block">
+                                                                            <button type="submit" class="btn btn-dim btn-outline-light disabled" id="apply-btn">Apply</button>
+                                                                        </span>
+                                                                        <span class="d-md-none">
+                                                                            <button type="submit" class="btn btn-dim btn-outline-light disabled" id="apply-btn">Apply</button>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
                                                             </div>
-                                                            <div class="btn-wrap">
-                                                                <span class="d-none d-md-block">
-                                                                    <button type="submit" class="btn btn-dim btn-outline-light disabled" id="apply-btn">Apply</button>
-                                                                </span>
-                                                                <span class="d-md-none">
-                                                                    <button type="submit" class="btn btn-dim btn-outline-light btn-icon disabled">
-                                                                        <em class="icon ni ni-arrow-right"></em>
-                                                                    </button>
-                                                                </span>
-                                                            </div>
+                                                            
                                                         </form>
                                                         <!-- <div class="btn-wrap">
                                                             <span class="d-none d-md-block"><button class="btn btn-dim btn-outline-light disabled">Apply</button></span>
@@ -181,7 +186,6 @@
                                                             <label class="custom-control-label" for="check-all"></label>
                                                         </div>
                                                     </div>
-                                                    <div class="nk-tb-col tb-col-lg"><span class="sub-text">ID</span></div>
                                                     <div class="nk-tb-col"><span class="sub-text">Name</span></div>
                                                     <div class="nk-tb-col"><span class="sub-text">Phone</span></div>
                                                     <div class="nk-tb-col"><span class="sub-text">Branch</span></div>
@@ -217,18 +221,17 @@
                                                             <label class="custom-control-label" for="{{admin.id}}"></label>
                                                         </div>
                                                     </div>
-                                                    <div class="nk-tb-col tb-col-lg">
-                                                        <a href="{% url 'view-staff' admin.id %}">{{admin.id}}</a>
-                                                    </div>
                                                     <div class="nk-tb-col">
-                                                        <div class="user-card">
-                                                            <div class="user-avatar sm bg-white">
-                                                                <img src="{{ admin.profile_photo.url }}" >
+                                                        <a href="{% url 'view-staff' admin.id %}">
+                                                            <div class="user-card">
+                                                                <div class="user-avatar sm bg-white">
+                                                                    <img src="{{ admin.profile_photo.url }}" >
+                                                                </div>
+                                                                <div class="user-name">
+                                                                    <span class="tb-lead">{{admin.first_name}} {{admin.last_name}}</span>
+                                                                </div>
                                                             </div>
-                                                            <div class="user-name">
-                                                                <span class="tb-lead">{{admin.first_name}} {{admin.last_name}}</span>
-                                                            </div>
-                                                        </div>
+                                                        </a>
                                                     </div>
                                                     <div class="nk-tb-col">
                                                         <span class=" text-soft">{{admin.phone_no}}</span>

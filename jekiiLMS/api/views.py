@@ -1,15 +1,17 @@
 from rest_framework.response import Response
 from django.db.models import Sum, Count
 from datetime import datetime
+from django.utils import timezone
 from rest_framework.decorators import api_view
 from django.db.models.functions import TruncMonth
 from member.models import Member
 from .serializers import MemberSerializer
 from loan.models import Loan
-from .serializers import LoanSerializer, OrganizationSerializer, ExpenseSerializer, TemplateSettingSerializer
+from branch.models import Branch
+from .serializers import LoanSerializer, OrganizationSerializer, ExpenseSerializer, TemplateSettingSerializer, RoleSerializer
 from company.models import Organization, TemplateSetting
 from branch.models import Expense
-
+from user.models import Role
 
 @api_view(['GET']) 
 def apiEndpoints(request):
@@ -23,11 +25,15 @@ def apiEndpoints(request):
         #company specific endpoints
         'Get company loans':'http://127.0.0.1:8000/api/loans/1',
         'Get company sms-templates':'http://127.0.0.1:8000/api/company/sms-templates/1',
+        'Get company roles':'http://127.0.0.1:8000/api/company/roles/1',
         'Get company members':'http://127.0.0.1:8000/api/members/1',
         'Get company expenses':'http://127.0.0.1:8000/api/expenses/1',
         'Get company income-income':'http://127.0.0.1:8000/api/income-expense/1',
         'Get company loan perfomance':'http://127.0.0.1:8000/api/loans-repayment/1',
         'Get company loan dibursement':'http://127.0.0.1:8000/api/disbursement-data/1',
+
+        #reports
+        'Get company loans':'http://127.0.0.1:8000/api/company/reports/1/main-branch/30days',
     } 
     
     return Response(endpoints)
@@ -58,7 +64,7 @@ def getCompanyLoans(request, company_id):
 
 @api_view(['GET'])
 def getCompanySmsTemplates(request, company_id):
-    company = Organization.objects.get(id=company_id)
+    company = Organization.objects.get(id=company_id) 
     template_setting = TemplateSetting.objects.get(company=company)
 
     sms_templates = {
@@ -74,6 +80,16 @@ def getCompanySmsTemplates(request, company_id):
 
     return Response(sms_templates)
 
+@api_view(['GET'])
+def getCompanyRoles(request, company_id):
+    company = Organization.objects.get(id=company_id) 
+    roles = Role.objects.filter(company=company)
+    roles_names = []
+
+    for role in roles:
+        roles_names.append(role.name)
+
+    return Response(roles_names)
 
 @api_view(['GET'])
 def getCompanyMembers(request, company_id):
@@ -179,4 +195,48 @@ def getCompanyLoansDisbursement(request, company_id):
         month = item['approved_date__month']
         response_data['disbursementData'][month - 1] = item['total_count']
 
+    return Response(response_data)
+
+
+@api_view(['GET'])
+def getCompanyLoansApplicationReports(request, company_id, branch_id, duration):
+    
+    # Retrieve the company based on the company_id
+    try:
+        company = Organization.objects.get(id=company_id)
+    except:
+        company = None
+
+    #selected_branch
+    selected_branch = request.POST.get('selected_branch')
+    branch = Branch.objects.get(branch_name=selected_branch)
+
+    current_date = timezone.now()
+
+    #selected_duration
+    selected_duration = request.POST.get('selected_duration')
+    
+    if selected_duration == '30 days':
+        duration = 30
+    elif selected_duration == '3 months':
+        duration = 90
+    elif selected_duration == '6 months':
+        duration = 180
+    elif selected_duration == '1 year':
+        duration = 365
+    elif selected_duration == 'Custom':
+        duration = selected_duration #build the relativedelta object
+
+    choosen_time = current_date - duration
+
+    #get loan matching the query parameter
+    if selected_branch == 'All branches': #handle case where the branch chosen is 'All branches'
+        loans = Loan.objects.filter(company=company,application_date__lte=choosen_time) #for all branches
+    else:
+        loans = Loan.objects.filter(company=company, branch=branch, application_date__lte=choosen_time)  
+
+    response_data = {
+        
+    }   
+    
     return Response(response_data)
